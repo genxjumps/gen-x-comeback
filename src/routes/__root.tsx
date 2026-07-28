@@ -122,8 +122,30 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
+        <header className="border-b border-border">
+          <div className="mx-auto grid w-full max-w-2xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-4">
+            <Link to="/" className="truncate text-sm font-semibold tracking-tight">
+              Gen X Jumps
+            </Link>
+            <span className="shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
+              Preview
+            </span>
+          </div>
+        </header>
+
+        <main className="flex-1">
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+        </main>
+
+        <footer className="border-t border-border">
+          <div className="mx-auto w-full max-w-2xl px-5 py-6 text-xs text-muted-foreground">
+            Working title and copy — subject to change.
+          </div>
+        </footer>
+      </div>
     </QueryClientProvider>
   );
 }
+
