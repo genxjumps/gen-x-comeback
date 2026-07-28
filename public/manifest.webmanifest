@@ -1,0 +1,16 @@
+{
+  "name": "Gen X Jumps — 7-Day Fitness Comeback",
+  "short_name": "Gen X Jumps",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
