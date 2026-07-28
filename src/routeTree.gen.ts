@@ -10,8 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -19,53 +19,59 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AssessmentRoute = AssessmentRouteImport.update({
-  id: '/assessment',
-  path: '/assessment',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssessmentIndexRoute = AssessmentIndexRouteImport.update({
+  id: '/assessment/',
+  path: '/assessment/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AssessmentCompleteRoute = AssessmentCompleteRouteImport.update({
-  id: '/complete',
-  path: '/complete',
-  getParentRoute: () => AssessmentRoute,
+  id: '/assessment/complete',
+  path: '/assessment/complete',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/assessment': typeof AssessmentRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
+  '/assessment/': typeof AssessmentIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/assessment': typeof AssessmentRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
+  '/assessment': typeof AssessmentIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/assessment': typeof AssessmentRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
+  '/assessment/': typeof AssessmentIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assessment' | '/sitemap.xml' | '/assessment/complete'
+  fullPaths: '/' | '/sitemap.xml' | '/assessment/complete' | '/assessment/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assessment' | '/sitemap.xml' | '/assessment/complete'
-  id: '__root__' | '/' | '/assessment' | '/sitemap.xml' | '/assessment/complete'
+  to: '/' | '/sitemap.xml' | '/assessment/complete' | '/assessment'
+  id:
+    | '__root__'
+    | '/'
+    | '/sitemap.xml'
+    | '/assessment/complete'
+    | '/assessment/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AssessmentRoute: typeof AssessmentRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AssessmentCompleteRoute: typeof AssessmentCompleteRoute
+  AssessmentIndexRoute: typeof AssessmentIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -77,13 +83,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/assessment': {
-      id: '/assessment'
-      path: '/assessment'
-      fullPath: '/assessment'
-      preLoaderRoute: typeof AssessmentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -91,43 +90,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assessment/': {
+      id: '/assessment/'
+      path: '/assessment'
+      fullPath: '/assessment/'
+      preLoaderRoute: typeof AssessmentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/assessment/complete': {
       id: '/assessment/complete'
-      path: '/complete'
+      path: '/assessment/complete'
       fullPath: '/assessment/complete'
       preLoaderRoute: typeof AssessmentCompleteRouteImport
-      parentRoute: typeof AssessmentRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface AssessmentRouteChildren {
-  AssessmentCompleteRoute: typeof AssessmentCompleteRoute
-}
-
-const AssessmentRouteChildren: AssessmentRouteChildren = {
-  AssessmentCompleteRoute: AssessmentCompleteRoute,
-}
-
-const AssessmentRouteWithChildren = AssessmentRoute._addFileChildren(
-  AssessmentRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AssessmentRoute: AssessmentRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AssessmentCompleteRoute: AssessmentCompleteRoute,
+  AssessmentIndexRoute: AssessmentIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
