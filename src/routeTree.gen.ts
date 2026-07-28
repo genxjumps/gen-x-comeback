@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AssessmentRouteImport } from './routes/assessment'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -28,34 +29,42 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssessmentCompleteRoute = AssessmentCompleteRouteImport.update({
+  id: '/complete',
+  path: '/complete',
+  getParentRoute: () => AssessmentRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/assessment': typeof AssessmentRoute
+  '/assessment': typeof AssessmentRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/assessment/complete': typeof AssessmentCompleteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/assessment': typeof AssessmentRoute
+  '/assessment': typeof AssessmentRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/assessment/complete': typeof AssessmentCompleteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/assessment': typeof AssessmentRoute
+  '/assessment': typeof AssessmentRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/assessment/complete': typeof AssessmentCompleteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assessment' | '/sitemap.xml'
+  fullPaths: '/' | '/assessment' | '/sitemap.xml' | '/assessment/complete'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assessment' | '/sitemap.xml'
-  id: '__root__' | '/' | '/assessment' | '/sitemap.xml'
+  to: '/' | '/assessment' | '/sitemap.xml' | '/assessment/complete'
+  id: '__root__' | '/' | '/assessment' | '/sitemap.xml' | '/assessment/complete'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AssessmentRoute: typeof AssessmentRoute
+  AssessmentRoute: typeof AssessmentRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -82,12 +91,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assessment/complete': {
+      id: '/assessment/complete'
+      path: '/complete'
+      fullPath: '/assessment/complete'
+      preLoaderRoute: typeof AssessmentCompleteRouteImport
+      parentRoute: typeof AssessmentRoute
+    }
   }
 }
 
+interface AssessmentRouteChildren {
+  AssessmentCompleteRoute: typeof AssessmentCompleteRoute
+}
+
+const AssessmentRouteChildren: AssessmentRouteChildren = {
+  AssessmentCompleteRoute: AssessmentCompleteRoute,
+}
+
+const AssessmentRouteWithChildren = AssessmentRoute._addFileChildren(
+  AssessmentRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AssessmentRoute: AssessmentRoute,
+  AssessmentRoute: AssessmentRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport

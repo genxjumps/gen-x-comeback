@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export const Route = createFileRoute("/assessment")({
+export const Route = createFileRoute("/assessment/")({
   head: () => ({
     meta: [
       { title: "Assessment — Free 7-Day Fitness Plan" },
