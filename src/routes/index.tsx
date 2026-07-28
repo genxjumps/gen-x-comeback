@@ -6,17 +6,17 @@ import { Separator } from "@/components/ui/separator";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Free 7-Day Fitness Comeback Plan for Gen X" },
+      { title: "Free Personalized 7-Day Fitness Plan for Gen X" },
       {
         name: "description",
         content:
-          "A personalized 7-day workout and protein plan for Gen X adults who want to lose fat, rebuild fitness, and get moving again.",
+          "Get a personalized workout and protein plan built around your current fitness level, physical considerations, available equipment, and realistic schedule.",
       },
-      { property: "og:title", content: "Free 7-Day Fitness Comeback Plan for Gen X" },
+      { property: "og:title", content: "Free Personalized 7-Day Fitness Plan for Gen X" },
       {
         property: "og:description",
         content:
-          "Personalized workouts and protein targets for Gen X adults getting back in motion. Start free in 7 days.",
+          "You will know which workouts to do, when to recover, and how to start losing fat while rebuilding your fitness.",
       },
     ],
   }),
@@ -25,16 +25,16 @@ export const Route = createFileRoute("/")({
 
 const steps = [
   {
-    title: "Answer a short assessment",
-    body: "A few questions about your body, schedule, and starting point.",
+    title: "Tell us where you are now",
+    body: "Answer a few short questions about your fitness, schedule, jump-rope experience, and physical considerations.",
   },
   {
-    title: "Get your 7-day plan",
-    body: "Daily movement built around what you can realistically do this week.",
+    title: "Get your personalized 7-day plan",
+    body: "Receive assigned workouts, recovery days, modifications, and practical protein guidance.",
   },
   {
-    title: "Hit a simple protein target",
-    body: "One clear number per day, no calorie spreadsheets.",
+    title: "Start Day 1 immediately",
+    body: "Open your first workout, complete the assignment, and begin building momentum.",
   },
 ];
 
@@ -42,16 +42,19 @@ function Index() {
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-        Free 7-day offer
+        Free personalized fitness plan
       </p>
 
       <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-        Your 7-day fitness comeback starts this week
+        Know exactly what to do for the next 7 days
       </h1>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        A personalized workout and protein plan for Gen X adults who want to lose fat, rebuild
-        fitness, and get moving again — built around the body and schedule you have right now.
+        Get a personalized workout and protein plan built around your current fitness level, physical considerations, available equipment, and realistic schedule.
+      </p>
+
+      <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+        You will know which workouts to do, when to recover, and how to start losing fat while rebuilding your fitness.
       </p>
 
       <div className="mt-8">
@@ -59,7 +62,7 @@ function Index() {
           <Link to="/assessment">Build My 7-Day Plan</Link>
         </Button>
         <p className="mt-3 text-xs text-muted-foreground">
-          Free. No equipment assumptions, no account needed to start.
+          Free. Takes only a few minutes. No password required to start.
         </p>
       </div>
 

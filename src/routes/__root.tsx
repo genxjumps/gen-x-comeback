@@ -78,11 +78,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#ffffff" },
-      { title: "7-Day Fitness Comeback Plan" },
+      { title: "Free Personalized 7-Day Fitness Plan for Gen X" },
       {
         name: "description",
         content:
-          "Personalized workout and protein plans for Gen X adults getting back in motion.",
+          "Get a personalized workout and protein plan built around your current fitness level, physical considerations, available equipment, and realistic schedule.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -140,9 +140,7 @@ function RootComponent() {
         </main>
 
         <footer className="border-t border-border">
-          <div className="mx-auto w-full max-w-2xl px-5 py-6 text-xs text-muted-foreground">
-            Working title and copy — subject to change.
-          </div>
+          <div className="mx-auto w-full max-w-2xl px-5 py-6 text-xs text-muted-foreground" />
         </footer>
       </div>
     </QueryClientProvider>
