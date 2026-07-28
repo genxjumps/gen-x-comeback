@@ -30,9 +30,9 @@ const AssessmentIndexRoute = AssessmentIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AssessmentCompleteRoute = AssessmentCompleteRouteImport.update({
-  id: '/complete',
-  path: '/complete',
-  getParentRoute: () => AssessmentRoute,
+  id: '/assessment/complete',
+  path: '/assessment/complete',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -70,6 +70,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentIndexRoute: typeof AssessmentIndexRoute
 }
 
@@ -98,10 +99,10 @@ declare module '@tanstack/react-router' {
     }
     '/assessment/complete': {
       id: '/assessment/complete'
-      path: '/complete'
+      path: '/assessment/complete'
       fullPath: '/assessment/complete'
       preLoaderRoute: typeof AssessmentCompleteRouteImport
-      parentRoute: typeof AssessmentRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -109,18 +110,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentIndexRoute: AssessmentIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
