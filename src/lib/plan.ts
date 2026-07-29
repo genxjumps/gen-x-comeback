@@ -108,8 +108,7 @@ export function workoutDays(a: Answers): number {
   return Number.isFinite(n) && n >= 3 && n <= 5 ? n : 3;
 }
 
-// Protein: fat loss + muscle preservation MVP target.
-// 0.8 g per lb (1.76 g per kg) of current bodyweight, rounded to nearest 5 g.
+// Protein: 1.0 g per lb, 2.20462 g per kg of current bodyweight, rounded to nearest 5 g.
 export function proteinTarget(a: Answers): number | null {
   const raw = a.weight.trim();
   if (raw === "") return null;
@@ -117,7 +116,7 @@ export function proteinTarget(a: Answers): number | null {
   if (!Number.isFinite(n) || n <= 0) return null;
   if (a.unit === "lb" && (n < 70 || n > 700)) return null;
   if (a.unit === "kg" && (n < 32 || n > 318)) return null;
-  const grams = a.unit === "lb" ? n * 0.8 : n * 1.76;
+  const grams = a.unit === "lb" ? n * 1.0 : n * 2.20462;
   return Math.round(grams / 5) * 5;
 }
 
