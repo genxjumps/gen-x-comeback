@@ -143,7 +143,7 @@ function ResultsPage() {
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Enter your first name and email to unlock Days 2-7 and receive a private link to your
-            personalized plan.
+            full personalized workout plan.
           </p>
 
           <form
