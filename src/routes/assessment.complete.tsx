@@ -27,17 +27,16 @@ export const Route = createFileRoute("/assessment/complete")({
   component: ResultsPage,
 });
 
-const days = [
-  { day: 2, title: "Recovery and Mobility" },
-  { day: 3, title: "Jump Rope and Full-Body Strength" },
-  { day: 4, title: "Active Recovery" },
-  { day: 5, title: "Full-Body Strength and Cardio" },
-  { day: 6, title: "Optional Movement Day" },
-  { day: 7, title: "Rest and Reset" },
-];
-
 function ResultsPage() {
   const [unlocked, setUnlocked] = useState(false);
+  const [plan, setPlan] = useState<Plan>(() => buildPlan(emptyAnswers));
+
+  useEffect(() => {
+    setPlan(buildPlan(readAnswers()));
+  }, []);
+
+  const dayOne = plan.days[0];
+  const rest = plan.days.slice(1);
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
@@ -49,17 +48,37 @@ function ResultsPage() {
         rope experience, available equipment, movement or impact limits, and the number of days you
         can consistently train.
       </p>
+      <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        Plan track: {plan.tier}
+      </p>
 
       {/* Protein */}
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           Your Daily Protein Target
         </h2>
-        <p className="mt-1.5 text-lg font-semibold tracking-tight">Aim for 145 grams per day</p>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-          Based on the weight you provided, this target is designed to support fat loss, preserve
-          muscle, and improve recovery.
-        </p>
+        {plan.protein.grams !== null ? (
+          <>
+            <p className="mt-1.5 text-lg font-semibold tracking-tight">
+              Aim for {plan.protein.grams} grams per day
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              Based on the weight you provided, this target is designed to support fat loss,
+              preserve muscle, and improve recovery.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="mt-1.5 text-lg font-semibold tracking-tight">
+              Aim for protein at most meals
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              You did not enter a weight, so this is general guidance rather than a personalized
+              number. Include a solid protein source at each meal to support fat loss, preserve
+              muscle, and improve recovery. Add your weight anytime for a specific daily target.
+            </p>
+          </>
+        )}
       </section>
 
       {/* Days */}
@@ -71,16 +90,17 @@ function ResultsPage() {
         <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
           <li className="bg-card p-4">
             <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-sm font-semibold">Day 1: Full-Body Comeback Workout</h3>
+              <h3 className="text-sm font-semibold">Day 1: {dayOne.title}</h3>
               <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
                 Today
               </span>
             </div>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-              You&rsquo;ll move through a full-body workout that blends strength, cardio, and
-              recovery-friendly pacing so you finish feeling worked, not wrecked.
+              {dayOne.description}
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">24 minutes &middot; Bodyweight</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {dayOne.minutes} minutes &middot; {dayOne.equipment}
+            </p>
             <Button
               type="button"
               size="sm"
@@ -91,7 +111,7 @@ function ResultsPage() {
             </Button>
           </li>
 
-          {days.map((d) => (
+          {rest.map((d) => (
             <li
               key={d.day}
               className={
@@ -113,6 +133,7 @@ function ResultsPage() {
           ))}
         </ul>
       </section>
+
 
       <Separator className="my-8" />
 
