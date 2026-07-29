@@ -10,13 +10,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Get a personalized workout and protein plan built around your current fitness level, physical considerations, available equipment, and realistic schedule.",
+          "Get the exact roadmap for where to start, what to do, and how to do it with a personalized workout and protein plan for the next seven days.",
       },
       { property: "og:title", content: "Free Personalized 7-Day Fitness Plan for Gen X" },
       {
         property: "og:description",
         content:
-          "You will know which workouts to do, when to recover, and how to start losing fat while rebuilding your fitness.",
+          "Get the exact roadmap for where to start, what to do, and how to do it with a personalized workout and protein plan for the next seven days.",
       },
     ],
   }),
@@ -25,16 +25,16 @@ export const Route = createFileRoute("/")({
 
 const steps = [
   {
-    title: "Tell us where you are now",
-    body: "Answer a few short questions about your fitness, schedule, jump-rope experience, and physical considerations.",
+    title: "Clarity changes everything.",
+    body: "Answer a few short questions about your current fitness level, schedule, jump-rope experience, equipment, and any movements or impact you need to modify.",
   },
   {
-    title: "Get your personalized 7-day plan",
-    body: "Receive assigned workouts, recovery days, modifications, and practical protein guidance.",
+    title: "The right plan makes progress simpler.",
+    body: "See your complete seven-day schedule, including guided video workouts, recovery days, movement modifications, and a practical protein strategy.",
   },
   {
-    title: "Start Day 1 immediately",
-    body: "Open your first workout, complete the assignment, and begin building momentum.",
+    title: "Results come from consistency.",
+    body: "Start Day 1 with a guided workout that tells you exactly what to do from beginning to end.",
   },
 ];
 
@@ -42,19 +42,23 @@ function Index() {
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-        Free personalized fitness plan
+        Free personalized 7-day fitness plan
       </p>
 
       <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-        Know exactly what to do for the next 7 days
+        Get the exact roadmap for where to start, what to do, and how to do it
       </h1>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        Get a personalized workout and protein plan built around your current fitness level, physical considerations, available equipment, and realistic schedule.
+        No guessing. No complicated program. Just the right workouts, recovery when you need it, and a simple protein plan for your next seven days.
       </p>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        You will know which workouts to do, when to recover, and how to start losing fat while rebuilding your fitness.
+        Get a personalized workout plan built around your current fitness level, schedule, equipment, and any movements or impact you need to modify, so you know which workouts to do, how often to train, and when to recover.
+      </p>
+
+      <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+        Training is only half the equation. You will also get a simple protein plan so you know how much to aim for each day to support fat loss, preserve muscle, and recover without tracking every calorie.
       </p>
 
       <div className="mt-8">
@@ -62,14 +66,17 @@ function Index() {
           <Link to="/assessment">Build My 7-Day Plan</Link>
         </Button>
         <p className="mt-3 text-xs text-muted-foreground">
-          Free. Takes only a few minutes. No password required to start.
+          Answer a few short questions. Get your plan and open Day 1 immediately.
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Free. No password required to start.
         </p>
       </div>
 
       <Separator className="my-10" />
 
       <h2 className="text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
-        How it works
+        How this works
       </h2>
 
       <div className="mt-4 grid gap-3">
