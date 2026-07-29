@@ -35,7 +35,6 @@ const days = [
 ];
 
 function ResultsPage() {
-  const [formOpen, setFormOpen] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
 
   return (
@@ -147,45 +146,32 @@ function ResultsPage() {
             personalized plan.
           </p>
 
-          {!formOpen && (
-            <Button
-              type="button"
-              size="lg"
-              className="mt-4 w-full sm:w-auto"
-              onClick={() => setFormOpen(true)}
-            >
-              Unlock Your Full 7-Day Workout Plan
+          <form
+            className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setUnlocked(true);
+            }}
+          >
+            <div className="grid gap-1.5">
+              <Label htmlFor="first-name">First name</Label>
+              <Input id="first-name" name="firstName" autoComplete="given-name" required />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="email">Email address</Label>
+              <Input id="email" name="email" type="email" autoComplete="email" required />
+            </div>
+            <Button type="submit" className="mt-1 w-full">
+              Unlock My Full 7-Day Workout Plan
             </Button>
-          )}
-
-          {formOpen && (
-            <form
-              className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setUnlocked(true);
-              }}
-            >
-              <div className="grid gap-1.5">
-                <Label htmlFor="first-name">First name</Label>
-                <Input id="first-name" name="firstName" autoComplete="given-name" required />
-              </div>
-              <div className="grid gap-1.5">
-                <Label htmlFor="email">Email address</Label>
-                <Input id="email" name="email" type="email" autoComplete="email" required />
-              </div>
-              <Button type="submit" className="mt-1 w-full">
-                Unlock My Full 7-Day Workout Plan
-              </Button>
-              <p className="text-xs text-muted-foreground">
-                Free. Get immediate access after submitting.
-              </p>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                By submitting, you agree to receive your plan and occasional fitness emails from Gen
-                X Jumps. You can unsubscribe at any time.
-              </p>
-            </form>
-          )}
+            <p className="text-xs text-muted-foreground">
+              Free. Get immediate access after submitting.
+            </p>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              By submitting, you agree to receive your plan and occasional fitness emails from Gen
+              X Jumps. You can unsubscribe at any time.
+            </p>
+          </form>
         </section>
       )}
 
