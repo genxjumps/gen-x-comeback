@@ -7,7 +7,9 @@ export type Answers = {
   q1: string; // none | one | two_three | four_plus
   q2: string; // long_break | inconsistent | active_needs_plan
   q3: string; // no_rope | new | short_bursts | comfortable
-  q4: string[]; // knees | shoulders_wrists | low_back | balance | floor_access | limit_impact | none
+  // knees | shoulders | elbows | wrists | low_back | balance | floor_access | limit_impact | none
+  // legacy: shoulders_wrists (migrated to shoulders + wrists on read)
+  q4: string[];
   q5: string; // 3 | 4 | 5 | 6_7
   equipment: string[]; // jump_rope | dumbbells | mat | rubber_flooring | none
   weight: string;
