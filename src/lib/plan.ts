@@ -148,8 +148,8 @@ export function buildPlan(a: Answers): Plan {
   };
 
   const rotationByTier: Record<Tier, string[]> = {
-    Restart: [strengthTitle, "Mobility and Walking", cardioTitle, strengthTitle, cardioTitle],
-    Rebuild: [cardioTitle, strengthTitle, "Mobility and Walking", cardioTitle, strengthTitle],
+    Restart: [strengthTitle, cardioTitle, strengthTitle, cardioTitle, strengthTitle],
+    Rebuild: [cardioTitle, strengthTitle, cardioTitle, strengthTitle, cardioTitle],
     Ready: [strengthTitle, cardioTitle, strengthTitle, cardioTitle, "Conditioning Finisher"],
   };
 
