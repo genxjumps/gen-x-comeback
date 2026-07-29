@@ -42,6 +42,7 @@ type Answers = {
   q3: string;
   q4: string[];
   q5: string;
+  equipment: string[];
   weight: string;
   unit: "lb" | "kg";
 };
@@ -52,6 +53,7 @@ const emptyAnswers: Answers = {
   q3: "",
   q4: [],
   q5: "",
+  equipment: [],
   weight: "",
   unit: "lb",
 };
@@ -91,6 +93,14 @@ const q5Options = [
   { label: "4 days", value: "4" },
   { label: "5 days", value: "5" },
   { label: "6-7 days", value: "6_7" },
+];
+
+const equipmentOptions = [
+  { label: "Jump rope", value: "jump_rope" },
+  { label: "Dumbbells", value: "dumbbells" },
+  { label: "Exercise or jump rope mat", value: "mat" },
+  { label: "Rubber gym flooring", value: "rubber_flooring" },
+  { label: "None of these", value: "none" },
 ];
 
 function weightError(answers: Answers): string | null {
@@ -165,7 +175,12 @@ function Assessment() {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Answers> & { step?: number };
-        setAnswers({ ...emptyAnswers, ...parsed, q4: parsed.q4 ?? [] });
+        setAnswers({
+          ...emptyAnswers,
+          ...parsed,
+          q4: parsed.q4 ?? [],
+          equipment: parsed.equipment ?? [],
+        });
         if (parsed.step && parsed.step >= 1 && parsed.step <= 3) setStep(parsed.step);
       }
     } catch {
@@ -195,6 +210,14 @@ function Assessment() {
     });
   };
 
+  const toggleEquipment = (value: string, checked: boolean) => {
+    setAnswers((prev) => {
+      if (!checked) return { ...prev, equipment: prev.equipment.filter((v) => v !== value) };
+      if (value === "none") return { ...prev, equipment: ["none"] };
+      return { ...prev, equipment: [...prev.equipment.filter((v) => v !== "none"), value] };
+    });
+  };
+
   const wError = weightError(answers);
 
   const stageValid =
@@ -202,7 +225,7 @@ function Assessment() {
       ? Boolean(answers.q1) && Boolean(answers.q2)
       : step === 2
         ? Boolean(answers.q3) && answers.q4.length > 0
-        : Boolean(answers.q5) && !wError;
+        : Boolean(answers.q5) && answers.equipment.length > 0 && !wError;
 
   const onContinue = () => {
     if (!stageValid) {
@@ -330,6 +353,32 @@ function Assessment() {
                 onChange={(v) => set("q5", v)}
                 options={q5Options}
               />
+            </Question>
+            <Question
+              heading="Which of these do you regularly have access to for your workouts?"
+              hint="Select all that apply."
+              error={
+                showErrors && answers.equipment.length === 0
+                  ? "Select at least one option, or choose None of these."
+                  : null
+              }
+            >
+              <div className="grid gap-2">
+                {equipmentOptions.map((o) => (
+                  <Label
+                    key={o.value}
+                    htmlFor={`equipment-${o.value}`}
+                    className="flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug has-[[data-state=checked]]:border-foreground"
+                  >
+                    <Checkbox
+                      id={`equipment-${o.value}`}
+                      checked={answers.equipment.includes(o.value)}
+                      onCheckedChange={(c) => toggleEquipment(o.value, c === true)}
+                    />
+                    <span>{o.label}</span>
+                  </Label>
+                ))}
+              </div>
             </Question>
             <Question
               heading="Current weight"
