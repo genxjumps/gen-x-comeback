@@ -172,6 +172,20 @@ function Assessment() {
 
   useEffect(() => {
     try {
+      // TEMPORARY TESTING UTILITY: ?reset=1 clears the saved draft and starts fresh.
+      // Remove this before production launch.
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("reset") === "1") {
+        window.localStorage.removeItem(STORAGE_KEY);
+        params.delete("reset");
+        const newUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}${window.location.hash}`;
+        window.history.replaceState(null, "", newUrl);
+        setAnswers(emptyAnswers);
+        setStep(1);
+        setLoaded(true);
+        return;
+      }
+
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Answers> & { step?: number };
