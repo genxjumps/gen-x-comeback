@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
 const steps = [
   {
     title: "Clarity changes everything.",
-    body: "Answer a few short questions about your current fitness level, schedule, jump-rope experience, equipment, and any movements or impact you need to modify.",
+    body: "Answer a few short questions about your current fitness level, schedule, jump rope experience, equipment, and any movements or impact you need to modify.",
   },
   {
     title: "The right plan makes progress simpler.",

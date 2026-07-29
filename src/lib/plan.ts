@@ -7,7 +7,9 @@ export type Answers = {
   q1: string; // none | one | two_three | four_plus
   q2: string; // long_break | inconsistent | active_needs_plan
   q3: string; // no_rope | new | short_bursts | comfortable
-  q4: string[]; // knees | shoulders_wrists | low_back | balance | floor_access | limit_impact | none
+  // knees | shoulders | elbows | wrists | low_back | balance | floor_access | limit_impact | none
+  // legacy: shoulders_wrists (migrated to shoulders + wrists on read)
+  q4: string[];
   q5: string; // 3 | 4 | 5 | 6_7
   equipment: string[]; // jump_rope | dumbbells | mat | rubber_flooring | none
   weight: string;
@@ -48,6 +50,21 @@ export type Plan = {
   };
 };
 
+// Legacy drafts stored a combined "shoulders_wrists" value; expand it into both.
+export function migrateQ4(values: unknown): string[] {
+  if (!Array.isArray(values)) return [];
+  const out: string[] = [];
+  for (const v of values) {
+    if (typeof v !== "string") continue;
+    if (v === "shoulders_wrists") {
+      for (const m of ["shoulders", "wrists"]) if (!out.includes(m)) out.push(m);
+      continue;
+    }
+    if (!out.includes(v)) out.push(v);
+  }
+  return out;
+}
+
 export function readAnswers(): Answers {
   try {
     const raw = window.localStorage.getItem(ASSESSMENT_STORAGE_KEY);
@@ -57,7 +74,7 @@ export function readAnswers(): Answers {
     return {
       ...emptyAnswers,
       ...parsed,
-      q4: Array.isArray(parsed.q4) ? parsed.q4.filter((v) => typeof v === "string") : [],
+      q4: migrateQ4(parsed.q4),
       equipment: Array.isArray(parsed.equipment)
         ? parsed.equipment.filter((v) => typeof v === "string")
         : [],
@@ -134,26 +151,25 @@ export function buildPlan(a: Answers): Plan {
       ? "Low-Impact Cardio and Strength"
       : "Step Cardio and Full-Body Strength";
 
+  // Approved baseline Day 1 description, with a minimal standing-only adaptation.
+  const dayOneDescription = floorLimited
+    ? "You\u2019ll move through a standing full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked."
+    : "You\u2019ll move through a full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked.";
+
   const dayOneByTier: Record<Tier, { title: string; description: string; minutes: number }> = {
     Restart: {
       title: "Full-Body Comeback Workout",
-      description: floorLimited
-        ? "You will move through a standing full-body workout that blends easy strength work, gentle cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked."
-        : "You will move through a full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked.",
+      description: dayOneDescription,
       minutes: 20,
     },
     Rebuild: {
       title: "Full-Body Rebuild Workout",
-      description: floorLimited
-        ? "A standing full-body session that mixes steady strength work with short conditioning bursts to rebuild your base without overloading you on day one."
-        : "A full-body session that mixes steady strength work with short conditioning bursts to rebuild your base without overloading you on day one.",
+      description: dayOneDescription,
       minutes: 24,
     },
     Ready: {
       title: "Full-Body Strength and Conditioning",
-      description: floorLimited
-        ? "A standing full-body session with tighter work-to-rest pacing so you get a real training effect from the very first day."
-        : "A full-body session with tighter work-to-rest pacing so you get a real training effect from the very first day.",
+      description: dayOneDescription,
       minutes: 28,
     },
   };

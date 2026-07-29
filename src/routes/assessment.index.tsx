@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { migrateQ4 } from "@/lib/plan";
 
 export const Route = createFileRoute("/assessment/")({
   head: () => ({
@@ -67,7 +68,7 @@ const q1Options = [
 
 const q2Options = [
   { label: "I\u2019m coming back after a long break", value: "long_break" },
-  { label: "I\u2019ve been inconsistent", value: "inconsistent" },
+  { label: "I\u2019ve been active, but inconsistent", value: "inconsistent" },
   { label: "I\u2019m already active and need a clear plan", value: "active_needs_plan" },
 ];
 
@@ -80,10 +81,12 @@ const q3Options = [
 
 const q4Options = [
   { label: "Knees", value: "knees" },
-  { label: "Shoulders or wrists", value: "shoulders_wrists" },
+  { label: "Shoulders", value: "shoulders" },
+  { label: "Elbows", value: "elbows" },
+  { label: "Wrists", value: "wrists" },
   { label: "Low back", value: "low_back" },
   { label: "Balance", value: "balance" },
-  { label: "Getting down to the floor", value: "floor_access" },
+  { label: "Getting down to or up from the floor", value: "floor_access" },
   { label: "I need to limit impact or jumping", value: "limit_impact" },
   { label: "None of these", value: "none" },
 ];
@@ -192,7 +195,7 @@ function Assessment() {
         setAnswers({
           ...emptyAnswers,
           ...parsed,
-          q4: parsed.q4 ?? [],
+          q4: migrateQ4(parsed.q4),
           equipment: parsed.equipment ?? [],
         });
         if (parsed.step && parsed.step >= 1 && parsed.step <= 3) setStep(parsed.step);
@@ -279,17 +282,24 @@ function Assessment() {
 
       <h1 className="mt-5 text-2xl font-semibold tracking-tight">
         {step === 1
-          ? "Starting point"
+          ? "Your Starting Point"
           : step === 2
-            ? "Rope and physical considerations"
-            : "Practical availability"}
+            ? "Jump Rope and Movement Limits"
+            : "Your Workout Schedule and Protein Target"}
       </h1>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        {step === 1
+          ? "Your answers will help me choose the best starting level for your personalized 7-day fitness plan."
+          : step === 2
+            ? "Your answers will help me choose the right workout combinations and impact level for your personalized 7-day fitness plan."
+            : "Your answers will help me build a realistic weekly workout schedule and calculate a practical daily protein target."}
+      </p>
 
       <div className="mt-6 space-y-4">
         {step === 1 ? (
           <>
             <Question
-              heading="How many structured workouts did you complete in the last seven days?"
+              heading="How many structured workouts did you complete in the past seven days?"
               error={showErrors && !answers.q1 ? "Select one option to continue." : null}
             >
               <SingleSelect
@@ -300,7 +310,7 @@ function Assessment() {
               />
             </Question>
             <Question
-              heading="Which best describes where you are right now?"
+              heading="Which statement best describes where you are with exercise right now?"
               error={showErrors && !answers.q2 ? "Select one option to continue." : null}
             >
               <SingleSelect
@@ -316,7 +326,7 @@ function Assessment() {
         {step === 2 ? (
           <>
             <Question
-              heading="What best describes your jump-rope level?"
+              heading="What best describes your experience with jump rope?"
               error={showErrors && !answers.q3 ? "Select one option to continue." : null}
             >
               <SingleSelect
@@ -327,7 +337,7 @@ function Assessment() {
               />
             </Question>
             <Question
-              heading="Do any of these affect how you exercise right now?"
+              heading="Do any of these cause pain, difficulty, or limitations when you exercise?"
               hint="Select all that apply."
               error={
                 showErrors && answers.q4.length === 0
@@ -358,17 +368,6 @@ function Assessment() {
         {step === 3 ? (
           <>
             <Question
-              heading="How many days can you realistically do one of these short workouts this week?"
-              error={showErrors && !answers.q5 ? "Select one option to continue." : null}
-            >
-              <SingleSelect
-                name="q5"
-                value={answers.q5}
-                onChange={(v) => set("q5", v)}
-                options={q5Options}
-              />
-            </Question>
-            <Question
               heading="Which of these do you regularly have access to for your workouts?"
               hint="Select all that apply."
               error={
@@ -395,8 +394,19 @@ function Assessment() {
               </div>
             </Question>
             <Question
+              heading="How many days per week can you realistically and consistently complete a short workout?"
+              error={showErrors && !answers.q5 ? "Select one option to continue." : null}
+            >
+              <SingleSelect
+                name="q5"
+                value={answers.q5}
+                onChange={(v) => set("q5", v)}
+                options={q5Options}
+              />
+            </Question>
+            <Question
               heading="Current weight"
-              hint="Optional. This is used only to make the protein guidance more useful. It does not change your workout plan."
+              hint={"Optional. I\u2019ll use this only to calculate a more accurate daily protein target. It will not change your workout plan."}
               error={wError}
             >
               <div className="flex gap-2">
@@ -439,7 +449,7 @@ function Assessment() {
           </Button>
         )}
         <Button type="button" className="flex-1" onClick={onContinue} disabled={!stageValid}>
-          {step === 3 ? "Continue to Plan Details" : "Continue"}
+          {step === 3 ? "Get My 7-Day Fitness Plan" : "Continue"}
         </Button>
       </div>
 
