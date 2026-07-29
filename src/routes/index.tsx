@@ -58,7 +58,7 @@ function Index() {
       </p>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        Training is only half the equation. You will also get a simple protein plan so you know how much to aim for each day to support fat loss, preserve muscle, and recover without tracking every calorie.
+        Training is only half the equation. You'll also get a simple protein plan so you know how much to aim for each day to support fat loss, preserve muscle, and recover without tracking every calorie.
       </p>
 
       <div className="mt-8">
