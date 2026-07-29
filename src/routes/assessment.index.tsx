@@ -80,10 +80,12 @@ const q3Options = [
 
 const q4Options = [
   { label: "Knees", value: "knees" },
-  { label: "Shoulders or wrists", value: "shoulders_wrists" },
+  { label: "Shoulders", value: "shoulders" },
+  { label: "Elbows", value: "elbows" },
+  { label: "Wrists", value: "wrists" },
   { label: "Low back", value: "low_back" },
   { label: "Balance", value: "balance" },
-  { label: "Getting down to the floor", value: "floor_access" },
+  { label: "Getting down to or up from the floor", value: "floor_access" },
   { label: "I need to limit impact or jumping", value: "limit_impact" },
   { label: "None of these", value: "none" },
 ];
