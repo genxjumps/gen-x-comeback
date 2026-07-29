@@ -50,6 +50,21 @@ export type Plan = {
   };
 };
 
+// Legacy drafts stored a combined "shoulders_wrists" value; expand it into both.
+export function migrateQ4(values: unknown): string[] {
+  if (!Array.isArray(values)) return [];
+  const out: string[] = [];
+  for (const v of values) {
+    if (typeof v !== "string") continue;
+    if (v === "shoulders_wrists") {
+      for (const m of ["shoulders", "wrists"]) if (!out.includes(m)) out.push(m);
+      continue;
+    }
+    if (!out.includes(v)) out.push(v);
+  }
+  return out;
+}
+
 export function readAnswers(): Answers {
   try {
     const raw = window.localStorage.getItem(ASSESSMENT_STORAGE_KEY);
@@ -59,7 +74,7 @@ export function readAnswers(): Answers {
     return {
       ...emptyAnswers,
       ...parsed,
-      q4: Array.isArray(parsed.q4) ? parsed.q4.filter((v) => typeof v === "string") : [],
+      q4: migrateQ4(parsed.q4),
       equipment: Array.isArray(parsed.equipment)
         ? parsed.equipment.filter((v) => typeof v === "string")
         : [],
