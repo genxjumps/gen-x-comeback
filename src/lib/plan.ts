@@ -151,26 +151,25 @@ export function buildPlan(a: Answers): Plan {
       ? "Low-Impact Cardio and Strength"
       : "Step Cardio and Full-Body Strength";
 
+  // Approved baseline Day 1 description, with a minimal standing-only adaptation.
+  const dayOneDescription = floorLimited
+    ? "You\u2019ll move through a standing full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked."
+    : "You\u2019ll move through a full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked.";
+
   const dayOneByTier: Record<Tier, { title: string; description: string; minutes: number }> = {
     Restart: {
       title: "Full-Body Comeback Workout",
-      description: floorLimited
-        ? "You will move through a standing full-body workout that blends easy strength work, gentle cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked."
-        : "You will move through a full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked.",
+      description: dayOneDescription,
       minutes: 20,
     },
     Rebuild: {
       title: "Full-Body Rebuild Workout",
-      description: floorLimited
-        ? "A standing full-body session that mixes steady strength work with short conditioning bursts to rebuild your base without overloading you on day one."
-        : "A full-body session that mixes steady strength work with short conditioning bursts to rebuild your base without overloading you on day one.",
+      description: dayOneDescription,
       minutes: 24,
     },
     Ready: {
       title: "Full-Body Strength and Conditioning",
-      description: floorLimited
-        ? "A standing full-body session with tighter work-to-rest pacing so you get a real training effect from the very first day."
-        : "A full-body session with tighter work-to-rest pacing so you get a real training effect from the very first day.",
+      description: dayOneDescription,
       minutes: 28,
     },
   };
