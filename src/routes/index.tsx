@@ -80,7 +80,7 @@ function Index() {
 
       <div className="mt-8">
         <Button asChild size="lg" className="w-full sm:w-auto">
-          <Link to="/assessment">Build My 7-Day Plan</Link>
+          <Link to="/assessment/start">Build My 7-Day Plan</Link>
         </Button>
         <p className="mt-3 text-xs text-muted-foreground">
           Answer a few short questions. Get your plan and open Day 1 immediately.
@@ -114,7 +114,7 @@ function Index() {
 
       <div className="mt-10">
         <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-          <Link to="/assessment">Build My 7-Day Plan</Link>
+          <Link to="/assessment/start">Build My 7-Day Plan</Link>
         </Button>
       </div>
     </div>
