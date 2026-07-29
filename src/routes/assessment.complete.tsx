@@ -48,9 +48,6 @@ function ResultsPage() {
         rope experience, available equipment, movement or impact limits, and the number of days you
         can consistently train.
       </p>
-      <p className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-        Plan track: {plan.tier}
-      </p>
 
       {/* Protein */}
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
@@ -69,13 +66,10 @@ function ResultsPage() {
           </>
         ) : (
           <>
-            <p className="mt-1.5 text-lg font-semibold tracking-tight">
-              Aim for protein at most meals
-            </p>
+            <p className="mt-1.5 text-lg font-semibold tracking-tight">General starting target</p>
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              You did not enter a weight, so this is general guidance rather than a personalized
-              number. Include a solid protein source at each meal to support fat loss, preserve
-              muscle, and improve recovery. Add your weight anytime for a specific daily target.
+              You did not enter a current weight, so this is a general starting target. Add your
+              weight to calculate a more accurate daily protein target.
             </p>
           </>
         )}
@@ -83,9 +77,7 @@ function ResultsPage() {
 
       {/* Days */}
       <section className="mt-8">
-        <h2 className="text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
-          Your 7-day schedule
-        </h2>
+
 
         <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
           <li className="bg-card p-4">
