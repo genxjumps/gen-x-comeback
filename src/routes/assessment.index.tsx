@@ -406,7 +406,7 @@ function Assessment() {
             </Question>
             <Question
               heading="Current weight"
-              hint="Optional. I\u2019ll use this only to calculate a more accurate daily protein target. It will not change your workout plan."
+              hint={"Optional. I\u2019ll use this only to calculate a more accurate daily protein target. It will not change your workout plan."}
               error={wError}
             >
               <div className="flex gap-2">
@@ -449,7 +449,7 @@ function Assessment() {
           </Button>
         )}
         <Button type="button" className="flex-1" onClick={onContinue} disabled={!stageValid}>
-          {step === 3 ? "Continue to Plan Details" : "Continue"}
+          {step === 3 ? "Get My 7-Day Fitness Plan" : "Continue"}
         </Button>
       </div>
 
