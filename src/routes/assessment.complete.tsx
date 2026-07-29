@@ -190,11 +190,6 @@ function ResultsPage() {
         </section>
       )}
 
-      <div className="mt-10">
-        <Link to="/" className="text-xs text-muted-foreground underline underline-offset-4">
-          Back to start
-        </Link>
-      </div>
     </div>
   );
 }
