@@ -120,11 +120,12 @@ export function buildPlan(a: Answers): Plan {
   const rope = ownsRope && ropeExperienceAllows && !impactLimited;
 
   const equipment = dumbbells ? "Dumbbells" : "Bodyweight";
-  const standingNote = floorLimited ? "Standing only" : equipment;
+  const standingNote = floorLimited ? `${equipment} · Standing only` : equipment;
 
-  const strengthTitle = floorLimited
-    ? "Standing Full-Body Strength"
-    : "Full-Body Strength";
+  const strengthTitle = `${floorLimited ? "Standing " : ""}Full-Body ${
+    dumbbells ? "Dumbbell Strength" : "Strength"
+  }`;
+
 
   const surfaceNote = cushionedSurface ? "Mat or cushioned surface" : "";
   const cardioTitle = rope
