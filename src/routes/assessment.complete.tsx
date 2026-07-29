@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { buildPlan, emptyAnswers, readAnswers, type Plan } from "@/lib/plan";
+
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
