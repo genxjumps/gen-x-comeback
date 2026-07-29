@@ -9,6 +9,7 @@ export type Answers = {
   q3: string; // no_rope | new | short_bursts | comfortable
   q4: string[]; // knees | shoulders_wrists | low_back | balance | floor_access | limit_impact | none
   q5: string; // 3 | 4 | 5 | 6_7
+  equipment: string[]; // jump_rope | dumbbells | mat | rubber_flooring | none
   weight: string;
   unit: "lb" | "kg";
 };
@@ -19,6 +20,7 @@ export const emptyAnswers: Answers = {
   q3: "",
   q4: [],
   q5: "",
+  equipment: [],
   weight: "",
   unit: "lb",
 };
@@ -40,6 +42,7 @@ export type Plan = {
   flags: {
     rope: boolean;
     dumbbells: boolean;
+    cushionedSurface: boolean;
     impactLimited: boolean;
     floorLimited: boolean;
   };
@@ -55,6 +58,9 @@ export function readAnswers(): Answers {
       ...emptyAnswers,
       ...parsed,
       q4: Array.isArray(parsed.q4) ? parsed.q4.filter((v) => typeof v === "string") : [],
+      equipment: Array.isArray(parsed.equipment)
+        ? parsed.equipment.filter((v) => typeof v === "string")
+        : [],
       unit: parsed.unit === "kg" ? "kg" : "lb",
       weight: typeof parsed.weight === "string" ? parsed.weight : "",
     };
@@ -106,9 +112,12 @@ export function buildPlan(a: Answers): Plan {
   const tier = deriveTier(a);
   const impactLimited = has(a, "limit_impact") || has(a, "knees") || has(a, "balance");
   const floorLimited = has(a, "floor_access");
-  // The assessment does not ask about dumbbells yet, so we never assume them.
-  const dumbbells = false;
-  const rope = a.q3 !== "no_rope" && a.q3 !== "" && !impactLimited;
+  const equip = Array.isArray(a.equipment) ? a.equipment : [];
+  const dumbbells = equip.includes("dumbbells");
+  const cushionedSurface = equip.includes("mat") || equip.includes("rubber_flooring");
+  const ownsRope = equip.includes("jump_rope");
+  const ropeExperienceAllows = a.q3 !== "no_rope" && a.q3 !== "";
+  const rope = ownsRope && ropeExperienceAllows && !impactLimited;
 
   const equipment = dumbbells ? "Dumbbells" : "Bodyweight";
   const standingNote = floorLimited ? "Standing only" : equipment;
@@ -117,6 +126,7 @@ export function buildPlan(a: Answers): Plan {
     ? "Standing Full-Body Strength"
     : "Full-Body Strength";
 
+  const surfaceNote = cushionedSurface ? "Mat or cushioned surface" : "";
   const cardioTitle = rope
     ? "Jump Rope and Full-Body Strength"
     : impactLimited
@@ -167,7 +177,9 @@ export function buildPlan(a: Answers): Plan {
       title: one.title,
       description: one.description,
       minutes: one.minutes,
-      equipment: standingNote,
+      equipment: [standingNote, rope ? "Jump rope" : "", surfaceNote]
+        .filter(Boolean)
+        .join(" \u00b7 "),
     },
   ];
 
@@ -192,6 +204,6 @@ export function buildPlan(a: Answers): Plan {
     tier,
     days,
     protein: { grams: proteinTarget(a) },
-    flags: { rope, dumbbells, impactLimited, floorLimited },
+    flags: { rope, dumbbells, cushionedSurface, impactLimited, floorLimited },
   };
 }
