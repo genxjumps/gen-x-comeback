@@ -368,17 +368,6 @@ function Assessment() {
         {step === 3 ? (
           <>
             <Question
-              heading="How many days can you realistically do one of these short workouts this week?"
-              error={showErrors && !answers.q5 ? "Select one option to continue." : null}
-            >
-              <SingleSelect
-                name="q5"
-                value={answers.q5}
-                onChange={(v) => set("q5", v)}
-                options={q5Options}
-              />
-            </Question>
-            <Question
               heading="Which of these do you regularly have access to for your workouts?"
               hint="Select all that apply."
               error={
@@ -405,8 +394,19 @@ function Assessment() {
               </div>
             </Question>
             <Question
+              heading="How many days per week can you realistically and consistently complete a short workout?"
+              error={showErrors && !answers.q5 ? "Select one option to continue." : null}
+            >
+              <SingleSelect
+                name="q5"
+                value={answers.q5}
+                onChange={(v) => set("q5", v)}
+                options={q5Options}
+              />
+            </Question>
+            <Question
               heading="Current weight"
-              hint="Optional. This is used only to make the protein guidance more useful. It does not change your workout plan."
+              hint="Optional. I\u2019ll use this only to calculate a more accurate daily protein target. It will not change your workout plan."
               error={wError}
             >
               <div className="flex gap-2">
