@@ -282,11 +282,18 @@ function Assessment() {
 
       <h1 className="mt-5 text-2xl font-semibold tracking-tight">
         {step === 1
-          ? "Starting point"
+          ? "Your Starting Point"
           : step === 2
-            ? "Rope and physical considerations"
-            : "Practical availability"}
+            ? "Jump Rope and Movement Limits"
+            : "Your Workout Schedule and Protein Target"}
       </h1>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        {step === 1
+          ? "Your answers will help me choose the best starting level for your personalized 7-day fitness plan."
+          : step === 2
+            ? "Your answers will help me choose the right workout combinations and impact level for your personalized 7-day fitness plan."
+            : "Your answers will help me build a realistic weekly workout schedule and calculate a practical daily protein target."}
+      </p>
 
       <div className="mt-6 space-y-4">
         {step === 1 ? (
