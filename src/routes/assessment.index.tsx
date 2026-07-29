@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { migrateQ4 } from "@/lib/plan";
 
 export const Route = createFileRoute("/assessment/")({
   head: () => ({
@@ -194,7 +195,7 @@ function Assessment() {
         setAnswers({
           ...emptyAnswers,
           ...parsed,
-          q4: parsed.q4 ?? [],
+          q4: migrateQ4(parsed.q4),
           equipment: parsed.equipment ?? [],
         });
         if (parsed.step && parsed.step >= 1 && parsed.step <= 3) setStep(parsed.step);
