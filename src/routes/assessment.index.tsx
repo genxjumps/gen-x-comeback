@@ -68,7 +68,7 @@ const q1Options = [
 
 const q2Options = [
   { label: "I\u2019m coming back after a long break", value: "long_break" },
-  { label: "I\u2019ve been inconsistent", value: "inconsistent" },
+  { label: "I\u2019ve been active, but inconsistent", value: "inconsistent" },
   { label: "I\u2019m already active and need a clear plan", value: "active_needs_plan" },
 ];
 
@@ -299,7 +299,7 @@ function Assessment() {
         {step === 1 ? (
           <>
             <Question
-              heading="How many structured workouts did you complete in the last seven days?"
+              heading="How many structured workouts did you complete in the past seven days?"
               error={showErrors && !answers.q1 ? "Select one option to continue." : null}
             >
               <SingleSelect
@@ -310,7 +310,7 @@ function Assessment() {
               />
             </Question>
             <Question
-              heading="Which best describes where you are right now?"
+              heading="Which statement best describes where you are with exercise right now?"
               error={showErrors && !answers.q2 ? "Select one option to continue." : null}
             >
               <SingleSelect
@@ -326,7 +326,7 @@ function Assessment() {
         {step === 2 ? (
           <>
             <Question
-              heading="What best describes your jump-rope level?"
+              heading="What best describes your experience with jump rope?"
               error={showErrors && !answers.q3 ? "Select one option to continue." : null}
             >
               <SingleSelect
@@ -337,7 +337,7 @@ function Assessment() {
               />
             </Question>
             <Question
-              heading="Do any of these affect how you exercise right now?"
+              heading="Do any of these cause pain, difficulty, or limitations when you exercise?"
               hint="Select all that apply."
               error={
                 showErrors && answers.q4.length === 0
