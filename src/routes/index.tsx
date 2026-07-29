@@ -39,6 +39,22 @@ const steps = [
 ];
 
 function Index() {
+  // TEMPORARY TESTING UTILITY: /?reset=1 clears the saved assessment draft
+  // (answers and saved step) and strips the query param without reloading.
+  // Remove this before production launch.
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("reset") !== "1") return;
+      window.localStorage.removeItem("gxj_assessment_draft_v1");
+      params.delete("reset");
+      const newUrl = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}${window.location.hash}`;
+      window.history.replaceState(null, "", newUrl);
+    } catch {
+      // ignore
+    }
+  }, []);
+
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
