@@ -14,13 +14,13 @@ export const Route = createFileRoute("/assessment/complete")({
       {
         name: "description",
         content:
-          "Preview your personalized 7-day workout schedule and daily protein target, built around your fitness level, equipment, and available training days.",
+          "Preview your personalized 7-day workout schedule and daily protein target, built around your exercise level, jump rope experience, equipment, impact needs, and available training days.",
       },
       { property: "og:title", content: "Your 7-Day Fitness Plan Is Ready | Gen X Jumps" },
       {
         property: "og:description",
         content:
-          "A personalized 7-day workout schedule and daily protein target based on your assessment answers.",
+          "A personalized 7-day workout schedule and daily protein target based on your exercise level, jump rope experience, equipment, impact needs, and training days.",
       },
     ],
   }),
@@ -45,8 +45,8 @@ function ResultsPage() {
       </h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         Based on your answers, I&rsquo;ve built this plan around your current exercise level, jump
-        rope experience, available equipment, movement or impact limits, and the number of days you
-        can consistently train.
+        rope experience, available equipment, whether you need a lower-impact option, and the number
+        of days you can consistently train.
       </p>
 
       {/* Protein */}
@@ -73,6 +73,18 @@ function ResultsPage() {
             </p>
           </>
         )}
+      </section>
+
+      {/* How to approach the workouts */}
+      <section className="mt-4 rounded-lg border border-border bg-card p-4">
+        <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+          How to Approach the Workouts
+        </h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          These workouts are supposed to challenge you. Work hard. Rest when needed. Do fewer reps
+          or use a smaller range of motion when necessary. Skip a movement you cannot perform
+          safely. Stop if you feel pain rather than normal exercise discomfort.
+        </p>
       </section>
 
       {/* Days */}
@@ -168,7 +180,7 @@ function ResultsPage() {
             <ul className="mt-2 grid gap-1.5 text-sm text-muted-foreground">
               <li>The remaining guided video workouts</li>
               <li>Your complete workout and recovery schedule</li>
-              <li>Movement and impact modifications</li>
+              <li>Clear guidance for scaling pace, reps, rest, range of motion, and impact</li>
               <li>A way to return to your plan later</li>
             </ul>
           </div>
