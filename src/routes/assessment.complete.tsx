@@ -116,14 +116,7 @@ function ResultsPage() {
           </li>
 
           {rest.map((d) => (
-            <li
-              key={d.day}
-              className={
-                unlocked
-                  ? "flex items-center justify-between gap-3 bg-card p-4"
-                  : "flex items-center justify-between gap-3 bg-muted/30 p-4"
-              }
-            >
+            <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-muted/30 p-4"}>
               <h3
                 className={
                   unlocked
@@ -133,8 +126,33 @@ function ResultsPage() {
               >
                 Day {d.day}: {d.title}
               </h3>
+              {d.description ? (
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                  {d.description}
+                </p>
+              ) : null}
+              {d.minutes ? (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {d.minutes} minutes &middot; {d.equipment}
+                </p>
+              ) : null}
+              {d.optional ? (
+                <div className="mt-3 rounded-md border border-dashed border-border p-3">
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    Optional Active Recovery
+                  </p>
+                  <p className="mt-1 text-sm font-medium">{d.optional.title}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                    {d.optional.description}
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {d.optional.minutes} minutes &middot; optional, not required
+                  </p>
+                </div>
+              ) : null}
             </li>
           ))}
+
         </ul>
       </section>
 
