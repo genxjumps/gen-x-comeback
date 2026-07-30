@@ -129,6 +129,66 @@ function has(a: Answers, v: string) {
   return a.q4.includes(v);
 }
 
+// Locked workout library. Titles, durations, and rundowns are fixed.
+export const WORKOUTS: Record<string, Workout> = {
+  W01: {
+    code: "W01",
+    title: "Full Body Flush & Fire",
+    description:
+      "Short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
+    minutes: 15,
+  },
+  W02: {
+    code: "W02",
+    title: "Upper Body",
+    description: "Jump rope intervals combined with push-ups, shoulder taps, and tricep work.",
+    minutes: 15,
+  },
+  W03: {
+    code: "W03",
+    title: "Lower Body Power-Up",
+    description: "Jump rope intervals mixed with lunges, glute bridges, and calf raises.",
+    minutes: 15,
+  },
+  W04: {
+    code: "W04",
+    title: "Core and Cardio",
+    description: "Jump rope intervals combined with mountain climbers and floor-based core work.",
+    minutes: 15,
+  },
+  W05: {
+    code: "W05",
+    title: "Total Body",
+    description: "Jump rope intervals mixed with squats, pressing, push-ups, and core stability.",
+    minutes: 15,
+  },
+  W06: {
+    code: "W06",
+    title: "Legs and Lungs",
+    description: "Jump rope intervals combined with lateral lunges, squats, and glute work.",
+    minutes: 15,
+  },
+  W07: {
+    code: "W07",
+    title: "Active Recovery",
+    description: "Easy movement, shoulder mobility, and controlled torso rotation.",
+    minutes: 15,
+  },
+};
+
+const WALK = "Walk or easy movement";
+const RECOVERY = "Recovery";
+const REST = "Rest";
+
+// Fixed seven-day templates keyed by selected workout availability.
+// "opt" marks the recovery day that shows W07 as an optional session.
+const TEMPLATES: Record<number, Array<string>> = {
+  3: ["W01", WALK, "W02", "opt", "W03", WALK, REST],
+  4: ["W01", WALK, "W02", "opt", "W03", WALK, "W04"],
+  5: ["W01", "W02", "opt", "W03", "W04", RECOVERY, "W05"],
+  6: ["W01", "W02", "W03", "W04", "W05", "W06", "W07"],
+};
+
 export function buildPlan(a: Answers): Plan {
   const tier = deriveTier(a);
   const impactLimited = has(a, "limit_impact");
@@ -141,63 +201,36 @@ export function buildPlan(a: Answers): Plan {
   const rope = ownsRope && ropeExperienceAllows && !impactLimited;
 
   const equipmentNote = dumbbells ? "Dumbbells" : "Bodyweight";
-
-  const strengthTitle = `Full-Body ${dumbbells ? "Dumbbell Strength" : "Strength"}`;
-
   const surfaceNote = cushionedSurface ? "Mat or cushioned surface" : "";
-  const cardioTitle = rope
-    ? "Jump Rope and Full-Body Strength"
-    : impactLimited
-      ? "Low-Impact Cardio and Strength"
-      : "Step Cardio and Full-Body Strength";
+  const equipmentLine = [equipmentNote, rope ? "Jump rope" : "", surfaceNote]
+    .filter(Boolean)
+    .join(" \u00b7 ");
 
-  // Approved standard Day 1 description, used for every eligible user.
-  const dayOneDescription =
-    "You\u2019ll move through a full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked.";
+  const template = TEMPLATES[workoutDays(a)] ?? TEMPLATES[3];
 
-  // W01 is Day 1 for every eligible user; only duration varies by tier.
-  const dayOneTitle = "Full Body Flush & Fire";
-  const dayOneMinutes: Record<Tier, number> = { Restart: 20, Rebuild: 24, Ready: 28 };
-
-  const rotationByTier: Record<Tier, string[]> = {
-    Restart: [strengthTitle, cardioTitle, strengthTitle, cardioTitle, strengthTitle],
-    Rebuild: [cardioTitle, strengthTitle, cardioTitle, strengthTitle, cardioTitle],
-    Ready: [strengthTitle, cardioTitle, strengthTitle, cardioTitle, "Conditioning Finisher"],
-  };
-
-  const recoveryTitles = ["Recovery and Mobility", "Active Recovery", "Rest and Reset"];
-
-  const total = workoutDays(a);
-  const rotation = rotationByTier[tier];
-
-  const days: DayEntry[] = [
-    {
-      day: 1,
-      title: dayOneTitle,
-      description: dayOneDescription,
-      minutes: dayOneMinutes[tier],
-      equipment: [equipmentNote, rope ? "Jump rope" : "", surfaceNote]
-        .filter(Boolean)
-        .join(" \u00b7 "),
-    },
-  ];
-
-  let workoutsPlaced = 1;
-  let recoveryIndex = 0;
-  for (let day = 2; day <= 7; day++) {
-    const remainingDays = 7 - day + 1;
-    const remainingWorkouts = total - workoutsPlaced;
-    // Alternate: insert recovery after each workout when frequency allows.
-    const previousWasWorkout = !days[days.length - 1].title.match(/Recovery|Rest/);
-    const needsAll = remainingWorkouts >= remainingDays;
-    if (remainingWorkouts > 0 && (needsAll || !previousWasWorkout || total >= 6)) {
-      days.push({ day, title: rotation[(workoutsPlaced - 1) % rotation.length] });
-      workoutsPlaced += 1;
-    } else {
-      days.push({ day, title: recoveryTitles[recoveryIndex % recoveryTitles.length] });
-      recoveryIndex += 1;
+  const days: DayEntry[] = template.map((slot, i) => {
+    const day = i + 1;
+    if (slot === "opt") {
+      return {
+        day,
+        title: RECOVERY,
+        optional: WORKOUTS.W07,
+      };
     }
-  }
+    const w = WORKOUTS[slot];
+    if (w) {
+      return {
+        day,
+        code: w.code,
+        title: w.title,
+        description: w.description,
+        minutes: w.minutes,
+        equipment: equipmentLine,
+      };
+    }
+    return { day, title: slot };
+  });
+
 
   return {
     tier,
