@@ -27,11 +27,11 @@ export const Route = createFileRoute("/")({
 const steps = [
   {
     title: "Clarity changes everything.",
-    body: "Answer a few short questions about your current fitness level, schedule, jump rope experience, equipment, and any movements or impact you need to modify.",
+    body: "Answer a few short questions about your current fitness level, schedule, jump rope experience, equipment, and whether you need a lower-impact option.",
   },
   {
     title: "The right plan makes progress simpler.",
-    body: "See your complete seven-day schedule, including guided video workouts, recovery days, movement modifications, and a practical protein strategy.",
+    body: "See your complete seven-day schedule, including guided video workouts, recovery days, clear workout-scaling guidance, and a practical protein strategy.",
   },
   {
     title: "Results come from consistency.",
@@ -71,7 +71,7 @@ function Index() {
       </p>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        Get a personalized workout plan built around your current fitness level, schedule, equipment, and any movements or impact you need to modify, so you know which workouts to do, how often to train, and when to recover.
+        Get a personalized workout plan built around your current fitness level, jump rope experience, available equipment, the number of days you can consistently train, and whether you need a lower-impact option.
       </p>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
