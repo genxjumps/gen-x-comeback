@@ -168,18 +168,21 @@ function Assessment() {
 
   useEffect(() => {
     try {
-
-
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Answers> & { step?: number };
+        const rawQ4 = Array.isArray(parsed.q4) ? parsed.q4 : [];
+        const q4 = migrateQ4(rawQ4);
         setAnswers({
           ...emptyAnswers,
           ...parsed,
-          q4: migrateQ4(parsed.q4),
+          q4,
           equipment: parsed.equipment ?? [],
         });
-        if (parsed.step && parsed.step >= 1 && parsed.step <= 3) setStep(parsed.step);
+        let nextStep = parsed.step && parsed.step >= 1 && parsed.step <= 3 ? parsed.step : 1;
+        // Obsolete-only draft: send the user back to Stage 2 to answer the new question.
+        if (q4.length === 0 && rawQ4.length > 0 && nextStep > 2) nextStep = 2;
+        setStep(nextStep);
       }
     } catch {
       /* ignore malformed draft */
@@ -200,13 +203,6 @@ function Assessment() {
     setAnswers((prev) => ({ ...prev, [key]: value }));
   };
 
-  const toggleQ4 = (value: string, checked: boolean) => {
-    setAnswers((prev) => {
-      if (!checked) return { ...prev, q4: prev.q4.filter((v) => v !== value) };
-      if (value === "none") return { ...prev, q4: ["none"] };
-      return { ...prev, q4: [...prev.q4.filter((v) => v !== "none"), value] };
-    });
-  };
 
   const toggleEquipment = (value: string, checked: boolean) => {
     setAnswers((prev) => {
@@ -265,14 +261,14 @@ function Assessment() {
         {step === 1
           ? "Your Starting Point"
           : step === 2
-            ? "Jump Rope and Movement Limits"
+            ? "Jump Rope and Impact"
             : "Your Workout Schedule and Protein Target"}
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         {step === 1
           ? "Your answers will help me choose the best starting level for your personalized 7-day fitness plan."
           : step === 2
-            ? "Your answers will help me choose the right workout combinations and impact level for your personalized 7-day fitness plan."
+            ? "Your answers will help me choose the right jump rope guidance and impact level for your personalized 7-day fitness plan."
             : "Your answers will help me build a realistic weekly workout schedule and calculate a practical daily protein target."}
       </p>
 
@@ -318,30 +314,17 @@ function Assessment() {
               />
             </Question>
             <Question
-              heading="Do any of these cause pain, difficulty, or limitations when you exercise?"
-              hint="Select all that apply."
+              heading="Do you need to limit jumping or use a lower-impact option during workouts?"
               error={
-                showErrors && answers.q4.length === 0
-                  ? "Select at least one option, or choose None of these."
-                  : null
+                showErrors && answers.q4.length === 0 ? "Select one option to continue." : null
               }
             >
-              <div className="grid gap-2">
-                {q4Options.map((o) => (
-                  <Label
-                    key={o.value}
-                    htmlFor={`q4-${o.value}`}
-                    className="flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug has-[[data-state=checked]]:border-foreground"
-                  >
-                    <Checkbox
-                      id={`q4-${o.value}`}
-                      checked={answers.q4.includes(o.value)}
-                      onCheckedChange={(c) => toggleQ4(o.value, c === true)}
-                    />
-                    <span>{o.label}</span>
-                  </Label>
-                ))}
-              </div>
+              <SingleSelect
+                name="q4"
+                value={answers.q4[0] ?? ""}
+                onChange={(v) => set("q4", [v])}
+                options={q4Options}
+              />
             </Question>
           </>
         ) : null}
