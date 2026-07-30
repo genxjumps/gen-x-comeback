@@ -8,6 +8,10 @@ export const CONSENT_COPY =
   "I agree to receive my personalized 7-day plan and occasional fitness emails from Gen X Jumps. I can unsubscribe at any time.";
 export const PLAN_LOGIC_VERSION = "plan-engine-v1";
 export const ASSESSMENT_LOGIC_VERSION = "assessment-v1";
+export const PLAN_FAMILY_LOGIC_VERSION = "plan-family-v1";
+export const SCHEDULE_TEMPLATE_VERSION = "availability-templates-v1";
+export const WORKOUT_CONTENT_VERSION = "workouts-w01-w07-v1";
+export const PROTEIN_LOGIC_VERSION = "protein-v1";
 
 const NAME_RE = /^[^<>&"`\u0000-\u001f\u007f]{1,60}$/;
 
