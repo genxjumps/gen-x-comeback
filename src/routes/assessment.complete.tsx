@@ -215,6 +215,19 @@ function ResultsPage() {
             Enter your first name and email to unlock Days 2 through 7.
           </p>
 
+          <div className="mt-4 rounded-lg border border-border bg-card p-4">
+            <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              You&rsquo;ll Unlock
+            </h3>
+            <ul className="mt-2 grid gap-1.5 text-sm text-muted-foreground">
+              <li>The remaining guided video workouts</li>
+              <li>Your complete workout and recovery schedule</li>
+              <li>Clear guidance for scaling pace, reps, rest, range of motion, and impact</li>
+            </ul>
+          </div>
+
+
+
           <form
             className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
             onSubmit={async (e) => {
