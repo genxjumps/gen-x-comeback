@@ -300,7 +300,7 @@ function ResultsPage() {
       <Separator className="my-8" />
 
       <p className="text-xs leading-relaxed text-muted-foreground">
-        Your plan is saved. Bookmark this page for easy access while you work through the week.
+        Your plan has been saved.
       </p>
     </div>
   );
