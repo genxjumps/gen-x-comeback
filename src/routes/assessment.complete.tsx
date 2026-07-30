@@ -103,7 +103,7 @@ function ResultsPage() {
               {dayOne.description}
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
-              {dayOne.minutes} minutes &middot; {dayOne.equipment}
+              About 15 minutes
             </p>
             <Button
               type="button"
@@ -133,7 +133,7 @@ function ResultsPage() {
               ) : null}
               {d.minutes ? (
                 <p className="mt-2 text-xs text-muted-foreground">
-                  {d.minutes} minutes &middot; {d.equipment}
+                  About 15 minutes
                 </p>
               ) : null}
               {d.optional ? (
@@ -146,7 +146,7 @@ function ResultsPage() {
                     {d.optional.description}
                   </p>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {d.optional.minutes} minutes &middot; optional, not required
+                    About 15 minutes &middot; optional, not required
                   </p>
                 </div>
               ) : null}
