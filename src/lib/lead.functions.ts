@@ -67,7 +67,14 @@ export const saveLeadPlan = createServerFn({ method: "POST" })
     const plan = buildPlan(answers);
 
     const planSnapshot = {
-      logic: { plan: PLAN_LOGIC_VERSION, assessment: ASSESSMENT_LOGIC_VERSION },
+      logic: {
+        plan: PLAN_LOGIC_VERSION,
+        assessment: ASSESSMENT_LOGIC_VERSION,
+        planFamily: PLAN_FAMILY_LOGIC_VERSION,
+        scheduleTemplates: SCHEDULE_TEMPLATE_VERSION,
+        workoutContent: WORKOUT_CONTENT_VERSION,
+        protein: PROTEIN_LOGIC_VERSION,
+      },
       tier: plan.tier,
       flags: plan.flags,
       protein: { grams: plan.protein.grams, fallback: plan.protein.grams === null },
