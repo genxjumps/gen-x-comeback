@@ -298,13 +298,16 @@ function ResultsPage() {
               <p className="text-xs text-muted-foreground">You need to agree before continuing.</p>
             ) : null}
             <Button type="submit" className="mt-1 w-full" disabled={saving}>
-              {saving ? "Saving your plan..." : "Unlock Days 2 Through 7"}
+              {saving ? "Saving your plan..." : "Unlock My Full 7-Day Workout Plan"}
             </Button>
             {error ? (
               <p role="alert" className="text-xs font-medium leading-relaxed">
                 {error}
               </p>
             ) : null}
+            <p className="text-xs text-muted-foreground">
+              Free. Get immediate access after submitting.
+            </p>
           </form>
         </section>
       )}
