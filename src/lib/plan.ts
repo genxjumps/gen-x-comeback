@@ -7,8 +7,8 @@ export type Answers = {
   q1: string; // none | one | two_three | four_plus
   q2: string; // long_break | inconsistent | active_needs_plan
   q3: string; // no_rope | new | short_bursts | comfortable
-  // knees | shoulders | elbows | wrists | low_back | balance | floor_access | limit_impact | none
-  // legacy: shoulders_wrists (migrated to shoulders + wrists on read)
+  // q4: impact answer stored as an array for backwards compatibility.
+  // ["none"] = no impact limit, ["limit_impact"] = needs a lower-impact option.
   q4: string[];
   q5: string; // 3 | 4 | 5 | 6_7
   equipment: string[]; // jump_rope | dumbbells | mat | rubber_flooring | none
@@ -50,19 +50,13 @@ export type Plan = {
   };
 };
 
-// Legacy drafts stored a combined "shoulders_wrists" value; expand it into both.
+// Older drafts stored body-part values that are no longer collected.
+// Keep only the impact answer; everything else is discarded.
 export function migrateQ4(values: unknown): string[] {
   if (!Array.isArray(values)) return [];
-  const out: string[] = [];
-  for (const v of values) {
-    if (typeof v !== "string") continue;
-    if (v === "shoulders_wrists") {
-      for (const m of ["shoulders", "wrists"]) if (!out.includes(m)) out.push(m);
-      continue;
-    }
-    if (!out.includes(v)) out.push(v);
-  }
-  return out;
+  if (values.includes("limit_impact")) return ["limit_impact"];
+  if (values.includes("none")) return ["none"];
+  return [];
 }
 
 export function readAnswers(): Answers {
