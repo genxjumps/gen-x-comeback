@@ -22,7 +22,7 @@ export const Route = createFileRoute("/assessment/")({
       {
         name: "description",
         content:
-          "Answer a few short questions about your starting point, jump-rope level, physical considerations, and weekly availability.",
+          "Answer a few short questions about your starting point, jump rope experience, impact needs, and weekly availability.",
       },
       { property: "og:title", content: "Assessment — Free 7-Day Fitness Plan" },
       {
@@ -80,15 +80,8 @@ const q3Options = [
 ];
 
 const q4Options = [
-  { label: "Knees", value: "knees" },
-  { label: "Shoulders", value: "shoulders" },
-  { label: "Elbows", value: "elbows" },
-  { label: "Wrists", value: "wrists" },
-  { label: "Low back", value: "low_back" },
-  { label: "Balance", value: "balance" },
-  { label: "Getting down to or up from the floor", value: "floor_access" },
-  { label: "I need to limit impact or jumping", value: "limit_impact" },
-  { label: "None of these", value: "none" },
+  { label: "No", value: "none" },
+  { label: "Yes", value: "limit_impact" },
 ];
 
 const q5Options = [
