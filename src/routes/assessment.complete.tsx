@@ -75,6 +75,18 @@ function ResultsPage() {
         )}
       </section>
 
+      {/* How to approach the workouts */}
+      <section className="mt-4 rounded-lg border border-border bg-card p-4">
+        <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+          How to Approach the Workouts
+        </h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+          These workouts are supposed to challenge you. Work hard. Rest when needed. Do fewer reps
+          or use a smaller range of motion when necessary. Skip a movement you cannot perform
+          safely. Stop if you feel pain rather than normal exercise discomfort.
+        </p>
+      </section>
+
       {/* Days */}
       <section className="mt-8">
 
