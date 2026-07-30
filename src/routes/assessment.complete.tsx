@@ -159,8 +159,12 @@ function ResultsPage() {
           </li>
 
           {rest.map((d) => (
-            <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-card p-4 opacity-60"}>
-              <h3 className="text-sm font-medium">
+            <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-muted/30 p-4"}>
+              <h3
+                className={
+                  unlocked ? "text-sm font-medium" : "text-sm font-medium text-muted-foreground/80"
+                }
+              >
                 Day {d.day}: {d.title}
               </h3>
               {d.description ? (
@@ -210,6 +214,19 @@ function ResultsPage() {
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Enter your first name and email to unlock Days 2 through 7.
           </p>
+
+          <div className="mt-4 rounded-lg border border-border bg-card p-4">
+            <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              You&rsquo;ll Unlock
+            </h3>
+            <ul className="mt-2 grid gap-1.5 text-sm text-muted-foreground">
+              <li>The remaining guided video workouts</li>
+              <li>Your complete workout and recovery schedule</li>
+              <li>Clear guidance for scaling pace, reps, rest, range of motion, and impact</li>
+            </ul>
+          </div>
+
+
 
           <form
             className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
@@ -281,13 +298,16 @@ function ResultsPage() {
               <p className="text-xs text-muted-foreground">You need to agree before continuing.</p>
             ) : null}
             <Button type="submit" className="mt-1 w-full" disabled={saving}>
-              {saving ? "Saving your plan..." : "Unlock Days 2 Through 7"}
+              {saving ? "Saving your plan..." : "Unlock My Full 7-Day Workout Plan"}
             </Button>
             {error ? (
               <p role="alert" className="text-xs font-medium leading-relaxed">
                 {error}
               </p>
             ) : null}
+            <p className="text-xs text-muted-foreground">
+              Free. Get immediate access after submitting.
+            </p>
           </form>
         </section>
       )}
