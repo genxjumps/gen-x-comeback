@@ -120,8 +120,8 @@ function has(a: Answers, v: string) {
 
 export function buildPlan(a: Answers): Plan {
   const tier = deriveTier(a);
-  const impactLimited = has(a, "limit_impact") || has(a, "knees") || has(a, "balance");
-  const floorLimited = has(a, "floor_access");
+  const impactLimited = has(a, "limit_impact");
+  const floorLimited = false;
   const equip = Array.isArray(a.equipment) ? a.equipment : [];
   const dumbbells = equip.includes("dumbbells");
   const cushionedSurface = equip.includes("mat") || equip.includes("rubber_flooring");
@@ -129,13 +129,9 @@ export function buildPlan(a: Answers): Plan {
   const ropeExperienceAllows = a.q3 !== "no_rope" && a.q3 !== "";
   const rope = ownsRope && ropeExperienceAllows && !impactLimited;
 
-  const equipment = dumbbells ? "Dumbbells" : "Bodyweight";
-  const standingNote = floorLimited ? `${equipment} · Standing only` : equipment;
+  const equipmentNote = dumbbells ? "Dumbbells" : "Bodyweight";
 
-  const strengthTitle = `${floorLimited ? "Standing " : ""}Full-Body ${
-    dumbbells ? "Dumbbell Strength" : "Strength"
-  }`;
-
+  const strengthTitle = `Full-Body ${dumbbells ? "Dumbbell Strength" : "Strength"}`;
 
   const surfaceNote = cushionedSurface ? "Mat or cushioned surface" : "";
   const cardioTitle = rope
@@ -144,28 +140,13 @@ export function buildPlan(a: Answers): Plan {
       ? "Low-Impact Cardio and Strength"
       : "Step Cardio and Full-Body Strength";
 
-  // Approved baseline Day 1 description, with a minimal standing-only adaptation.
-  const dayOneDescription = floorLimited
-    ? "You\u2019ll move through a standing full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked."
-    : "You\u2019ll move through a full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked.";
+  // Approved standard Day 1 description, used for every eligible user.
+  const dayOneDescription =
+    "You\u2019ll move through a full-body workout that blends strength, cardio, and recovery-friendly pacing so you finish feeling worked, not wrecked.";
 
-  const dayOneByTier: Record<Tier, { title: string; description: string; minutes: number }> = {
-    Restart: {
-      title: "Full-Body Comeback Workout",
-      description: dayOneDescription,
-      minutes: 20,
-    },
-    Rebuild: {
-      title: "Full-Body Rebuild Workout",
-      description: dayOneDescription,
-      minutes: 24,
-    },
-    Ready: {
-      title: "Full-Body Strength and Conditioning",
-      description: dayOneDescription,
-      minutes: 28,
-    },
-  };
+  // W01 is Day 1 for every eligible user; only duration varies by tier.
+  const dayOneTitle = "Full Body Flush & Fire";
+  const dayOneMinutes: Record<Tier, number> = { Restart: 20, Rebuild: 24, Ready: 28 };
 
   const rotationByTier: Record<Tier, string[]> = {
     Restart: [strengthTitle, cardioTitle, strengthTitle, cardioTitle, strengthTitle],
@@ -173,21 +154,18 @@ export function buildPlan(a: Answers): Plan {
     Ready: [strengthTitle, cardioTitle, strengthTitle, cardioTitle, "Conditioning Finisher"],
   };
 
-  const recoveryTitles = floorLimited
-    ? ["Recovery and Standing Mobility", "Active Recovery Walk", "Rest and Reset"]
-    : ["Recovery and Mobility", "Active Recovery", "Rest and Reset"];
+  const recoveryTitles = ["Recovery and Mobility", "Active Recovery", "Rest and Reset"];
 
   const total = workoutDays(a);
   const rotation = rotationByTier[tier];
-  const one = dayOneByTier[tier];
 
   const days: DayEntry[] = [
     {
       day: 1,
-      title: one.title,
-      description: one.description,
-      minutes: one.minutes,
-      equipment: [standingNote, rope ? "Jump rope" : "", surfaceNote]
+      title: dayOneTitle,
+      description: dayOneDescription,
+      minutes: dayOneMinutes[tier],
+      equipment: [equipmentNote, rope ? "Jump rope" : "", surfaceNote]
         .filter(Boolean)
         .join(" \u00b7 "),
     },
