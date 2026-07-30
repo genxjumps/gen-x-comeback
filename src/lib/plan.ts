@@ -92,9 +92,13 @@ export function readAnswers(): Answers {
 }
 
 // Tier is determined by Q1 (recent workout count) and Q2 (exercise status) only.
+const VALID_Q1 = ["none", "one", "two_three", "four_plus"];
+const VALID_Q2 = ["long_break", "inconsistent", "active_needs_plan"];
+
 export function deriveTier(a: Answers): Tier {
   const q1 = a.q1;
   const q2 = a.q2;
+  if (!VALID_Q1.includes(q1) || !VALID_Q2.includes(q2)) return "Restart";
   if (q1 === "none") return "Restart";
   if (q1 === "one") return q2 === "active_needs_plan" ? "Rebuild" : "Restart";
   if (q1 === "two_three") return "Rebuild";
