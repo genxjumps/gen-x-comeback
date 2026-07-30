@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { buildPlan, emptyAnswers, readAnswers, type Plan } from "@/lib/plan";
-
+import { readAnswers, type Answers, type Plan } from "@/lib/plan";
+import { CONSENT_COPY, saveLeadPlan } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
@@ -14,7 +16,7 @@ export const Route = createFileRoute("/assessment/complete")({
       {
         name: "description",
         content:
-          "Preview your personalized 7-day workout schedule and daily protein target, built around your exercise level, jump rope experience, equipment, impact needs, and available training days.",
+          "Save your personalized 7-day workout schedule and daily protein target, built around your exercise level, jump rope experience, equipment, impact needs, and available training days.",
       },
       { property: "og:title", content: "Your 7-Day Fitness Plan Is Ready | Gen X Jumps" },
       {
@@ -27,21 +29,160 @@ export const Route = createFileRoute("/assessment/complete")({
   component: ResultsPage,
 });
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isCompleteDraft(a: Answers): boolean {
+  const q1 = ["none", "one", "two_three", "four_plus"].includes(a.q1);
+  const q2 = ["long_break", "inconsistent", "active_needs_plan"].includes(a.q2);
+  const q3 = ["no_rope", "new", "short_bursts", "comfortable"].includes(a.q3);
+  const q4 = a.q4.length === 1 && ["none", "limit_impact"].includes(a.q4[0]);
+  const q5 = ["3", "4", "5", "6_7"].includes(a.q5);
+  const equipment = a.equipment.length > 0;
+  return q1 && q2 && q3 && q4 && q5 && equipment;
+}
+
 function ResultsPage() {
-  const [unlocked, setUnlocked] = useState(false);
-  const [plan, setPlan] = useState<Plan>(() => buildPlan(emptyAnswers));
+  const navigate = useNavigate();
+  const save = useServerFn(saveLeadPlan);
+
+  const [answers, setAnswers] = useState<Answers | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<{ firstName: string; plan: Plan } | null>(null);
 
   useEffect(() => {
-    setPlan(buildPlan(readAnswers()));
-  }, []);
+    const a = readAnswers();
+    if (!isCompleteDraft(a)) {
+      navigate({ to: "/assessment" });
+      return;
+    }
+    setAnswers(a);
+  }, [navigate]);
 
+  if (!answers) return null;
+
+  if (!result) {
+    const nameOk = firstName.trim().length > 0;
+    const emailOk = EMAIL_RE.test(email.trim());
+
+    return (
+      <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
+        <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+          Save Your Personalized 7-Day Plan
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          Your answers are ready. Enter your first name and email to generate and save your plan,
+          then see your full seven-day schedule and daily protein target.
+        </p>
+
+        <div className="mt-6 rounded-lg border border-border bg-card p-4">
+          <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+            You&rsquo;ll Get
+          </h2>
+          <ul className="mt-2 grid gap-1.5 text-sm text-muted-foreground">
+            <li>Your complete workout and recovery schedule</li>
+            <li>Your daily protein target</li>
+            <li>Clear guidance for scaling pace, reps, rest, range of motion, and impact</li>
+          </ul>
+        </div>
+
+        <form
+          className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setShowErrors(true);
+            if (!nameOk || !emailOk || !consent || saving) return;
+            setSaving(true);
+            setError(null);
+            try {
+              const res = await save({
+                data: {
+                  firstName: firstName.trim(),
+                  email: email.trim(),
+                  consentGranted: true as const,
+                  assessment: answers,
+                },
+              });
+              setResult(res);
+            } catch {
+              setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
+            } finally {
+              setSaving(false);
+            }
+          }}
+        >
+          <div className="grid gap-1.5">
+            <Label htmlFor="first-name">First name</Label>
+            <Input
+              id="first-name"
+              name="firstName"
+              autoComplete="given-name"
+              value={firstName}
+              maxLength={60}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+            {showErrors && !nameOk ? (
+              <p className="text-xs text-muted-foreground">Enter your first name.</p>
+            ) : null}
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="email">Email address</Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            {showErrors && !emailOk ? (
+              <p className="text-xs text-muted-foreground">Enter a valid email address.</p>
+            ) : null}
+          </div>
+          <div className="flex items-start gap-2">
+            <Checkbox
+              id="consent"
+              checked={consent}
+              onCheckedChange={(v) => setConsent(v === true)}
+              className="mt-0.5"
+            />
+            <Label htmlFor="consent" className="text-xs font-normal leading-relaxed">
+              {CONSENT_COPY}
+            </Label>
+          </div>
+          {showErrors && !consent ? (
+            <p className="text-xs text-muted-foreground">You need to agree before continuing.</p>
+          ) : null}
+          <Button type="submit" className="mt-1 w-full" disabled={saving}>
+            {saving ? "Saving your plan..." : "Show My 7-Day Plan"}
+          </Button>
+          {error ? (
+            <p role="alert" className="text-xs font-medium leading-relaxed">
+              {error}
+            </p>
+          ) : null}
+          <p className="text-xs text-muted-foreground">
+            Free. Your plan appears right after saving.
+          </p>
+        </form>
+      </div>
+    );
+  }
+
+  const plan = result.plan;
   const dayOne = plan.days[0];
   const rest = plan.days.slice(1);
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
-        Your Personalized 7-Day Fitness Plan Is Ready
+        {result.firstName}, Your 7-Day Comeback Plan Is Ready
       </h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         Based on your answers, I&rsquo;ve built this plan around your current exercise level, jump
@@ -102,8 +243,6 @@ function ResultsPage() {
 
       {/* Days */}
       <section className="mt-8">
-
-
         <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
           <li className="bg-card p-4">
             <div className="flex items-baseline justify-between gap-3">
@@ -115,9 +254,7 @@ function ResultsPage() {
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
               {dayOne.description}
             </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              About 15 minutes
-            </p>
+            <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
             <Button
               type="button"
               size="sm"
@@ -129,14 +266,8 @@ function ResultsPage() {
           </li>
 
           {rest.map((d) => (
-            <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-muted/30 p-4"}>
-              <h3
-                className={
-                  unlocked
-                    ? "text-sm font-medium"
-                    : "text-sm font-medium text-muted-foreground/80"
-                }
-              >
+            <li key={d.day} className="bg-card p-4">
+              <h3 className="text-sm font-medium">
                 Day {d.day}: {d.title}
               </h3>
               {d.description ? (
@@ -145,9 +276,7 @@ function ResultsPage() {
                 </p>
               ) : null}
               {d.minutes ? (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  About 15 minutes
-                </p>
+                <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
               ) : null}
               {d.optional ? (
                 <div className="mt-3 rounded-md border border-dashed border-border p-3">
@@ -165,88 +294,14 @@ function ResultsPage() {
               ) : null}
             </li>
           ))}
-
         </ul>
       </section>
 
-
       <Separator className="my-8" />
 
-      {/* Unlock */}
-      {unlocked ? (
-        <section>
-          <h2 className="text-lg font-semibold tracking-tight">
-            Your Full 7-Day Workout Plan Is Unlocked
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Your complete workout and recovery schedule is now available. Start with Day 1 and
-            follow the plan in order.
-          </p>
-          <Button
-            type="button"
-            className="mt-4 w-full sm:w-auto"
-            onClick={(e) => e.preventDefault()}
-          >
-            View My Full Plan
-          </Button>
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            I&rsquo;ve also emailed you a private link to your plan so you can return to it anytime.
-            You can bookmark this page for easy access, too.
-          </p>
-        </section>
-      ) : (
-        <section>
-          <h2 className="text-lg font-semibold tracking-tight">
-            Unlock Your Full 7-Day Workout Plan
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Enter your first name and email to unlock Days 2-7 and receive a private link to your
-            personalized plan.
-          </p>
-
-          <div className="mt-4 rounded-lg border border-border bg-card p-4">
-            <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-              You&rsquo;ll Unlock
-            </h3>
-            <ul className="mt-2 grid gap-1.5 text-sm text-muted-foreground">
-              <li>The remaining guided video workouts</li>
-              <li>Your complete workout and recovery schedule</li>
-              <li>Clear guidance for scaling pace, reps, rest, range of motion, and impact</li>
-              <li>A way to return to your plan later</li>
-            </ul>
-          </div>
-
-
-
-          <form
-            className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setUnlocked(true);
-            }}
-          >
-            <div className="grid gap-1.5">
-              <Label htmlFor="first-name">First name</Label>
-              <Input id="first-name" name="firstName" autoComplete="given-name" required />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="email">Email address</Label>
-              <Input id="email" name="email" type="email" autoComplete="email" required />
-            </div>
-            <Button type="submit" className="mt-1 w-full">
-              Unlock My Full 7-Day Workout Plan
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              Free. Get immediate access after submitting.
-            </p>
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              By submitting, you agree to receive your plan and occasional fitness emails from Gen
-              X Jumps. You can unsubscribe at any time.
-            </p>
-          </form>
-        </section>
-      )}
-
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Your plan is saved. Bookmark this page for easy access while you work through the week.
+      </p>
     </div>
   );
 }
