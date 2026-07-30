@@ -66,10 +66,23 @@ function ResultsPage() {
           </>
         ) : (
           <>
-            <p className="mt-1.5 text-lg font-semibold tracking-tight">General starting target</p>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              You did not enter a current weight, so this is a general starting target. Add your
-              weight to calculate a more accurate daily protein target.
+            <p className="mt-1.5 text-sm font-medium leading-relaxed">
+              Aim for about 1 gram of protein per pound of current bodyweight each day. If you use
+              kilograms, multiply your weight by 2.2.
+            </p>
+            <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
+              <li>150 lb - about 150 g/day</li>
+              <li>180 lb - about 180 g/day</li>
+              <li>200 lb - about 200 g/day</li>
+            </ul>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+              A simple way to get there is to build three or four meals or eating times around a
+              solid protein source. Aim for roughly 30-40 grams each time, then adjust based on your
+              bodyweight target.
+            </p>
+            <p className="mt-2 text-sm font-medium leading-relaxed">
+              Protein first. Before you build the rest of the meal, decide where the protein is
+              coming from.
             </p>
           </>
         )}

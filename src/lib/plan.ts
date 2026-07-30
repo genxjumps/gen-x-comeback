@@ -91,19 +91,14 @@ export function readAnswers(): Answers {
   }
 }
 
+// Tier is determined by Q1 (recent workout count) and Q2 (exercise status) only.
 export function deriveTier(a: Answers): Tier {
-  let score = 0;
-  if (a.q1 === "one") score += 1;
-  if (a.q1 === "two_three") score += 2;
-  if (a.q1 === "four_plus") score += 3;
-  if (a.q2 === "inconsistent") score += 1;
-  if (a.q2 === "active_needs_plan") score += 3;
-  if (a.q3 === "short_bursts") score += 1;
-  if (a.q3 === "comfortable") score += 2;
-  if (a.q5 === "5") score += 1;
-  if (a.q5 === "6_7") score += 2;
-  if (score >= 7) return "Ready";
-  if (score >= 3) return "Rebuild";
+  const q1 = a.q1;
+  const q2 = a.q2;
+  if (q1 === "none") return "Restart";
+  if (q1 === "one") return q2 === "active_needs_plan" ? "Rebuild" : "Restart";
+  if (q1 === "two_three") return "Rebuild";
+  if (q1 === "four_plus") return q2 === "active_needs_plan" ? "Ready" : "Rebuild";
   return "Restart";
 }
 
