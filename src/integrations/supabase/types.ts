@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      lead_plans: {
+        Row: {
+          assessment_json: Json
+          consent_at: string
+          consent_copy: string
+          consent_granted: boolean
+          consent_version: string
+          created_at: string
+          email_normalized: string
+          email_original: string
+          first_name: string
+          id: string
+          plan_json: Json
+          updated_at: string
+        }
+        Insert: {
+          assessment_json: Json
+          consent_at: string
+          consent_copy: string
+          consent_granted: boolean
+          consent_version: string
+          created_at?: string
+          email_normalized: string
+          email_original: string
+          first_name: string
+          id?: string
+          plan_json: Json
+          updated_at?: string
+        }
+        Update: {
+          assessment_json?: Json
+          consent_at?: string
+          consent_copy?: string
+          consent_granted?: boolean
+          consent_version?: string
+          created_at?: string
+          email_normalized?: string
+          email_original?: string
+          first_name?: string
+          id?: string
+          plan_json?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
