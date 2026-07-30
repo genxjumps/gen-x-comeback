@@ -29,13 +29,24 @@ export const emptyAnswers: Answers = {
 
 export type Tier = "Restart" | "Rebuild" | "Ready";
 
+export type Workout = {
+  code: string;
+  title: string;
+  description: string;
+  minutes: number;
+};
+
 export type DayEntry = {
   day: number;
   title: string;
   description?: string;
   minutes?: number;
   equipment?: string;
+  code?: string;
+  /** Optional recommended Active Recovery session shown on a recovery day. */
+  optional?: Workout;
 };
+
 
 export type Plan = {
   tier: Tier;
