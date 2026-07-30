@@ -159,8 +159,12 @@ function ResultsPage() {
           </li>
 
           {rest.map((d) => (
-            <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-card p-4 opacity-60"}>
-              <h3 className="text-sm font-medium">
+            <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-muted/30 p-4"}>
+              <h3
+                className={
+                  unlocked ? "text-sm font-medium" : "text-sm font-medium text-muted-foreground/80"
+                }
+              >
                 Day {d.day}: {d.title}
               </h3>
               {d.description ? (
