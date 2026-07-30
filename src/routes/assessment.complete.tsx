@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { readAnswers, type Answers, type Plan } from "@/lib/plan";
+import { buildPlan, readAnswers, type Answers } from "@/lib/plan";
 import { CONSENT_COPY, saveLeadPlan } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/assessment/complete")({
@@ -52,7 +52,7 @@ function ResultsPage() {
   const [showErrors, setShowErrors] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ firstName: string; plan: Plan } | null>(null);
+  const [unlocked, setUnlocked] = useState(false);
 
   useEffect(() => {
     const a = readAnswers();
@@ -63,126 +63,19 @@ function ResultsPage() {
     setAnswers(a);
   }, [navigate]);
 
-  if (!answers) return null;
+  const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
 
-  if (!result) {
-    const nameOk = firstName.trim().length > 0;
-    const emailOk = EMAIL_RE.test(email.trim());
+  if (!answers || !plan) return null;
 
-    return (
-      <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
-        <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
-          Save Your Personalized 7-Day Plan
-        </h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Your answers are ready. Enter your first name and email to generate and save your plan,
-          then see your full seven-day schedule and daily protein target.
-        </p>
-
-        <div className="mt-6 rounded-lg border border-border bg-card p-4">
-          <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-            You&rsquo;ll Get
-          </h2>
-          <ul className="mt-2 grid gap-1.5 text-sm text-muted-foreground">
-            <li>Your complete workout and recovery schedule</li>
-            <li>Your daily protein target</li>
-            <li>Clear guidance for scaling pace, reps, rest, range of motion, and impact</li>
-          </ul>
-        </div>
-
-        <form
-          className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setShowErrors(true);
-            if (!nameOk || !emailOk || !consent || saving) return;
-            setSaving(true);
-            setError(null);
-            try {
-              const res = await save({
-                data: {
-                  firstName: firstName.trim(),
-                  email: email.trim(),
-                  consentGranted: true as const,
-                  assessment: answers,
-                },
-              });
-              setResult(res);
-            } catch {
-              setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
-            } finally {
-              setSaving(false);
-            }
-          }}
-        >
-          <div className="grid gap-1.5">
-            <Label htmlFor="first-name">First name</Label>
-            <Input
-              id="first-name"
-              name="firstName"
-              autoComplete="given-name"
-              value={firstName}
-              maxLength={60}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-            {showErrors && !nameOk ? (
-              <p className="text-xs text-muted-foreground">Enter your first name.</p>
-            ) : null}
-          </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="email">Email address</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            {showErrors && !emailOk ? (
-              <p className="text-xs text-muted-foreground">Enter a valid email address.</p>
-            ) : null}
-          </div>
-          <div className="flex items-start gap-2">
-            <Checkbox
-              id="consent"
-              checked={consent}
-              onCheckedChange={(v) => setConsent(v === true)}
-              className="mt-0.5"
-            />
-            <Label htmlFor="consent" className="text-xs font-normal leading-relaxed">
-              {CONSENT_COPY}
-            </Label>
-          </div>
-          {showErrors && !consent ? (
-            <p className="text-xs text-muted-foreground">You need to agree before continuing.</p>
-          ) : null}
-          <Button type="submit" className="mt-1 w-full" disabled={saving}>
-            {saving ? "Saving your plan..." : "Show My 7-Day Plan"}
-          </Button>
-          {error ? (
-            <p role="alert" className="text-xs font-medium leading-relaxed">
-              {error}
-            </p>
-          ) : null}
-          <p className="text-xs text-muted-foreground">
-            Free. Your plan appears right after saving.
-          </p>
-        </form>
-      </div>
-    );
-  }
-
-  const plan = result.plan;
   const dayOne = plan.days[0];
   const rest = plan.days.slice(1);
+  const nameOk = firstName.trim().length > 0;
+  const emailOk = EMAIL_RE.test(email.trim());
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
-        {result.firstName}, Your 7-Day Comeback Plan Is Ready
+        Your Personalized 7-Day Fitness Plan Is Ready
       </h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         Based on your answers, I&rsquo;ve built this plan around your current exercise level, jump
@@ -266,7 +159,7 @@ function ResultsPage() {
           </li>
 
           {rest.map((d) => (
-            <li key={d.day} className="bg-card p-4">
+            <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-card p-4 opacity-60"}>
               <h3 className="text-sm font-medium">
                 Day {d.day}: {d.title}
               </h3>
@@ -299,9 +192,105 @@ function ResultsPage() {
 
       <Separator className="my-8" />
 
-      <p className="text-xs leading-relaxed text-muted-foreground">
-        Your plan has been saved.
-      </p>
+      {unlocked ? (
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="text-lg font-semibold tracking-tight">
+            Your Full 7-Day Workout Plan Is Unlocked
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Your complete workout and recovery schedule is now available. Start with Day 1 and
+            follow the plan in order.
+          </p>
+        </section>
+      ) : (
+        <section>
+          <h2 className="text-lg font-semibold tracking-tight">
+            Unlock Your Full 7-Day Workout Plan
+          </h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Enter your first name and email to unlock Days 2 through 7.
+          </p>
+
+          <form
+            className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              setShowErrors(true);
+              if (!nameOk || !emailOk || !consent || saving) return;
+              setSaving(true);
+              setError(null);
+              try {
+                await save({
+                  data: {
+                    firstName: firstName.trim(),
+                    email: email.trim(),
+                    consentGranted: true as const,
+                    assessment: answers,
+                  },
+                });
+                setUnlocked(true);
+              } catch {
+                setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
+              } finally {
+                setSaving(false);
+              }
+            }}
+          >
+            <div className="grid gap-1.5">
+              <Label htmlFor="first-name">First name</Label>
+              <Input
+                id="first-name"
+                name="firstName"
+                autoComplete="given-name"
+                value={firstName}
+                maxLength={60}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+              {showErrors && !nameOk ? (
+                <p className="text-xs text-muted-foreground">Enter your first name.</p>
+              ) : null}
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="email">Email address</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              {showErrors && !emailOk ? (
+                <p className="text-xs text-muted-foreground">Enter a valid email address.</p>
+              ) : null}
+            </div>
+            <div className="flex items-start gap-2">
+              <Checkbox
+                id="consent"
+                checked={consent}
+                onCheckedChange={(v) => setConsent(v === true)}
+                className="mt-0.5"
+              />
+              <Label htmlFor="consent" className="text-xs font-normal leading-relaxed">
+                {CONSENT_COPY}
+              </Label>
+            </div>
+            {showErrors && !consent ? (
+              <p className="text-xs text-muted-foreground">You need to agree before continuing.</p>
+            ) : null}
+            <Button type="submit" className="mt-1 w-full" disabled={saving}>
+              {saving ? "Saving your plan..." : "Unlock Days 2 Through 7"}
+            </Button>
+            {error ? (
+              <p role="alert" className="text-xs font-medium leading-relaxed">
+                {error}
+              </p>
+            ) : null}
+          </form>
+        </section>
+      )}
     </div>
   );
 }
