@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,7 @@ export const Route = createFileRoute("/assessment/complete")({
 });
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ACCESS_MARKER_KEY = "gxj_plan_access_v1";
 
 function isCompleteDraft(a: Answers): boolean {
   const q1 = ["none", "one", "two_three", "four_plus"].includes(a.q1);
