@@ -236,33 +236,53 @@ function ResultsPage() {
 
       {/* Days */}
       <section className="mt-8">
+        {unlocked ? (
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+            {completedDays.length} of {TOTAL_ASSIGNMENTS} assignments complete
+          </p>
+        ) : null}
         <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
           <li className="bg-card p-4">
             <div className="flex items-baseline justify-between gap-3">
               <h3 className="text-sm font-semibold">Day 1: {dayOne.title}</h3>
               <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
-                Today
+                {dayOneComplete ? "Complete" : "Today"}
               </span>
             </div>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
               {dayOne.description}
             </p>
             <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
-            <Button asChild size="sm" className="mt-3 w-full sm:w-auto">
-              <Link to="/your-plan/day/1">Start Day 1 Workout</Link>
+            <Button
+              asChild
+              size="sm"
+              variant={dayOneComplete ? "outline" : "default"}
+              className="mt-3 w-full sm:w-auto"
+            >
+              <Link to="/your-plan/day/1">
+                {dayOneComplete ? "Review Day 1 Workout" : "Start Day 1 Workout"}
+              </Link>
             </Button>
 
           </li>
 
           {rest.map((d) => (
             <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-muted/30 p-4"}>
-              <h3
-                className={
-                  unlocked ? "text-sm font-medium" : "text-sm font-medium text-muted-foreground/80"
-                }
-              >
-                Day {d.day}: {d.title}
-              </h3>
+              <div className="flex items-baseline justify-between gap-3">
+                <h3
+                  className={
+                    unlocked ? "text-sm font-medium" : "text-sm font-medium text-muted-foreground/80"
+                  }
+                >
+                  Day {d.day}: {d.title}
+                </h3>
+                {unlocked && d.day === currentDay ? (
+                  <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
+                    Up Next
+                  </span>
+                ) : null}
+              </div>
+
               {d.description ? (
                 <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                   {d.description}
