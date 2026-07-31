@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,7 @@ export const Route = createFileRoute("/assessment/complete")({
 });
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ACCESS_MARKER_KEY = "gxj_plan_access_v1";
 
 function isCompleteDraft(a: Answers): boolean {
   const q1 = ["none", "one", "two_three", "four_plus"].includes(a.q1);
@@ -53,6 +54,7 @@ function ResultsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
+  const [recognized, setRecognized] = useState(false);
 
   useEffect(() => {
     const a = readAnswers();
@@ -61,6 +63,14 @@ function ResultsPage() {
       return;
     }
     setAnswers(a);
+    try {
+      if (window.localStorage.getItem(ACCESS_MARKER_KEY) === "true") {
+        setRecognized(true);
+        setUnlocked(true);
+      }
+    } catch {
+      /* ignore storage errors */
+    }
   }, [navigate]);
 
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
@@ -82,6 +92,12 @@ function ResultsPage() {
         rope experience, available equipment, whether you need a lower-impact option, and the number
         of days you can consistently train.
       </p>
+      {recognized ? (
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          This browser recognizes your previous access. Your latest answers were used to rebuild this
+          plan.
+        </p>
+      ) : null}
 
       {/* Protein */}
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
@@ -148,13 +164,8 @@ function ResultsPage() {
               {dayOne.description}
             </p>
             <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
-            <Button
-              type="button"
-              size="sm"
-              className="mt-3 w-full sm:w-auto"
-              onClick={(e) => e.preventDefault()}
-            >
-              Start Day 1 Workout
+            <Button asChild size="sm" className="mt-3 w-full sm:w-auto">
+              <Link to="/preview/w01">Start Day 1 Workout</Link>
             </Button>
           </li>
 
@@ -245,6 +256,11 @@ function ResultsPage() {
                     assessment: answers,
                   },
                 });
+                try {
+                  window.localStorage.setItem(ACCESS_MARKER_KEY, "true");
+                } catch {
+                  /* ignore storage errors */
+                }
                 setUnlocked(true);
               } catch {
                 setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
