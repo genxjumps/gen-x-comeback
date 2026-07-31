@@ -54,6 +54,7 @@ function ResultsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
+  const [recognized, setRecognized] = useState(false);
 
   useEffect(() => {
     const a = readAnswers();
@@ -62,6 +63,14 @@ function ResultsPage() {
       return;
     }
     setAnswers(a);
+    try {
+      if (window.localStorage.getItem(ACCESS_MARKER_KEY) === "true") {
+        setRecognized(true);
+        setUnlocked(true);
+      }
+    } catch {
+      /* ignore storage errors */
+    }
   }, [navigate]);
 
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
