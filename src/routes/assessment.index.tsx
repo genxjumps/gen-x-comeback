@@ -171,24 +171,24 @@ function Assessment() {
       const raw = window.localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Answers> & { step?: number };
+        const { step: _savedStep, ...savedAnswers } = parsed;
         const rawQ4 = Array.isArray(parsed.q4) ? parsed.q4 : [];
         const q4 = migrateQ4(rawQ4);
         setAnswers({
           ...emptyAnswers,
-          ...parsed,
+          ...savedAnswers,
           q4,
           equipment: parsed.equipment ?? [],
         });
-        let nextStep = parsed.step && parsed.step >= 1 && parsed.step <= 3 ? parsed.step : 1;
-        // Obsolete-only draft: send the user back to Stage 2 to answer the new question.
-        if (q4.length === 0 && rawQ4.length > 0 && nextStep > 2) nextStep = 2;
-        setStep(nextStep);
+        // Prefilled answers are restored, but the flow always begins at Step 1 and
+        // advances one stage per Continue press. The saved step is intentionally ignored.
       }
     } catch {
       /* ignore malformed draft */
     }
     setLoaded(true);
   }, []);
+
 
   useEffect(() => {
     if (!loaded) return;
