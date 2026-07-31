@@ -92,6 +92,12 @@ function ResultsPage() {
         rope experience, available equipment, whether you need a lower-impact option, and the number
         of days you can consistently train.
       </p>
+      {recognized ? (
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          This browser recognizes your previous access. Your latest answers were used to rebuild this
+          plan.
+        </p>
+      ) : null}
 
       {/* Protein */}
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
@@ -158,13 +164,8 @@ function ResultsPage() {
               {dayOne.description}
             </p>
             <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
-            <Button
-              type="button"
-              size="sm"
-              className="mt-3 w-full sm:w-auto"
-              onClick={(e) => e.preventDefault()}
-            >
-              Start Day 1 Workout
+            <Button asChild size="sm" className="mt-3 w-full sm:w-auto">
+              <Link to="/preview/w01">Start Day 1 Workout</Link>
             </Button>
           </li>
 
