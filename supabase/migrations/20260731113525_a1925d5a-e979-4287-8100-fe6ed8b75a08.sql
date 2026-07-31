@@ -1,0 +1,1 @@
+DELETE FROM public.lead_plans WHERE email_normalized = 'testhub-checkpoint@example.com';

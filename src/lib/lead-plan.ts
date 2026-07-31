@@ -86,6 +86,54 @@ export const completeDayInputSchema = z.object({
 
 export type ProgressResult = { ok: true; completedDays: number[] } | { ok: false };
 
+/** Display-safe shape of one stored plan day. */
+export type PlanDayView = {
+  day: number;
+  code: string | null;
+  title: string;
+  description: string | null;
+  minutes: number | null;
+  optional: { code: string; title: string; description: string; minutes: number } | null;
+};
+
+export type PlanHubData = {
+  firstName: string;
+  tier: string;
+  protein: { grams: number | null; fallback: boolean };
+  flags: {
+    rope: boolean;
+    dumbbells: boolean;
+    cushionedSurface: boolean;
+    impactLimited: boolean;
+    floorLimited: boolean;
+  };
+  days: PlanDayView[];
+  completedDays: number[];
+};
+
+export type PlanHubResult = { ok: true; data: PlanHubData } | { ok: false };
+
+/** Earliest incomplete day, or null when every assignment is complete. */
+export function currentAssignmentDay(days: PlanDayView[], completedDays: number[]): number | null {
+  for (const d of days) {
+    if (!completedDays.includes(d.day)) return d.day;
+  }
+  return null;
+}
+
+/** Text-only assignment kind, derived from the saved plan. No icons, no branding. */
+export function assignmentKind(day: PlanDayView): string {
+  if (day.code === "W07") return "Active recovery";
+  if (day.code) return "Workout";
+  const t = day.title.toLowerCase();
+  if (t.includes("walk")) return "Walk or easy movement";
+  if (t.includes("recovery")) return "Recovery";
+  if (t.includes("rest")) return "Rest";
+  return "Assignment";
+}
+
+
+
 
 export type SaveLeadPlanResult = { firstName: string; plan: Plan; accessToken: string };
 export type RegenerateResult =

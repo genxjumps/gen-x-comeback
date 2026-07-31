@@ -11,6 +11,8 @@ import {
   planFromAnswers,
   regenerateInputSchema,
   tokenOnlyInputSchema,
+  type PlanDayView,
+  type PlanHubResult,
   type ProgressResult,
   type RegenerateResult,
   type SaveLeadPlanResult,
@@ -184,3 +186,73 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
     return { ok: true, firstName: lead.first_name, plan };
   });
 
+
+export const getPlanHub = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
+  .handler(async ({ data }): Promise<PlanHubResult> => {
+    const accessTokenHash = await hashAccessToken(data.token);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("lead_plans")
+      .select("id, first_name, plan_json")
+      .eq("access_token_hash", accessTokenHash)
+      .limit(1);
+
+    if (error) throw new Error(error.message);
+    const lead = rows?.[0];
+    if (!lead) return { ok: false };
+
+    const snapshot = (lead.plan_json ?? {}) as {
+      tier?: string;
+      protein?: { grams?: number | null; fallback?: boolean };
+      flags?: Record<string, boolean>;
+      days?: Array<Record<string, unknown>>;
+    };
+
+    const days: PlanDayView[] = (snapshot.days ?? []).map((d, i) => {
+      const opt = d.optional as
+        | { code?: string; title?: string; description?: string; minutes?: number }
+        | null
+        | undefined;
+      return {
+        day: typeof d.day === "number" ? d.day : i + 1,
+        code: typeof d.code === "string" ? d.code : null,
+        title: typeof d.title === "string" ? d.title : "Assignment",
+        description: typeof d.description === "string" ? d.description : null,
+        minutes: typeof d.minutes === "number" ? d.minutes : null,
+        optional: opt
+          ? {
+              code: String(opt.code ?? ""),
+              title: String(opt.title ?? ""),
+              description: String(opt.description ?? ""),
+              minutes: typeof opt.minutes === "number" ? opt.minutes : 15,
+            }
+          : null,
+      };
+    });
+
+    const flags = snapshot.flags ?? {};
+
+    return {
+      ok: true,
+      data: {
+        firstName: lead.first_name,
+        tier: typeof snapshot.tier === "string" ? snapshot.tier : "",
+        protein: {
+          grams:
+            typeof snapshot.protein?.grams === "number" ? snapshot.protein.grams : null,
+          fallback: snapshot.protein?.fallback !== false && snapshot.protein?.grams == null,
+        },
+        flags: {
+          rope: flags.rope === true,
+          dumbbells: flags.dumbbells === true,
+          cushionedSurface: flags.cushionedSurface === true,
+          impactLimited: flags.impactLimited === true,
+          floorLimited: flags.floorLimited === true,
+        },
+        days,
+        completedDays: await listCompletedDays(lead.id),
+      },
+    };
+  });

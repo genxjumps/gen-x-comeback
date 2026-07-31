@@ -3,7 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { readAnswers, type Answers } from "@/lib/plan";
-import { ACCESS_TOKEN_STORAGE_KEY, RAW_TOKEN_RE } from "@/lib/lead-plan";
+import { readStoredToken } from "@/components/plan-access";
+import { PlanNav } from "@/components/plan-nav";
 import { completePlanDay, getPlanProgress, verifyAccessToken } from "@/lib/lead.functions";
 
 
@@ -63,15 +64,6 @@ export function cardioOption(a: Answers): string {
     return "Use the rope while your rhythm is clean, then finish the interval with ghost jumps as needed. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
   }
   return "Use the rope normally for every cardio interval and scale your pace as needed. Slow the turns down before you break your rhythm.";
-}
-
-function readStoredToken(): string | null {
-  try {
-    const v = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-    return v && RAW_TOKEN_RE.test(v) ? v : null;
-  } catch {
-    return null;
-  }
 }
 
 function DayOnePage() {
@@ -151,7 +143,7 @@ function DayOnePage() {
         </p>
         <div className="mt-6 grid gap-3 sm:flex">
           <Button asChild className="w-full sm:w-auto">
-            <Link to="/assessment/complete">Go to My Plan</Link>
+            <Link to="/your-plan">Go to My Plan</Link>
           </Button>
           <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link to="/assessment/start">Build My 7-Day Plan</Link>
@@ -162,9 +154,9 @@ function DayOnePage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
+    <div className="mx-auto w-full max-w-2xl px-5 py-10 pb-28 sm:py-14 sm:pb-28">
       <Link
-        to="/assessment/complete"
+        to="/your-plan"
         className="text-xs uppercase tracking-widest text-muted-foreground underline-offset-4 hover:underline"
       >
         Back to My Plan
@@ -240,7 +232,7 @@ function DayOnePage() {
               Nice work. Your progress is saved.
             </p>
             <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
-              <Link to="/assessment/complete">Continue to My Plan</Link>
+              <Link to="/your-plan">Continue to My Plan</Link>
             </Button>
           </div>
         ) : (
@@ -264,10 +256,11 @@ function DayOnePage() {
 
       <div className="mt-6">
         <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-          <Link to="/assessment/complete">Back to My Plan</Link>
+          <Link to="/your-plan">Back to My Plan</Link>
         </Button>
       </div>
 
+      <PlanNav />
     </div>
   );
 }
