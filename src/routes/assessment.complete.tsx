@@ -236,8 +236,9 @@ function ResultsPage() {
             </p>
             <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
             <Button asChild size="sm" className="mt-3 w-full sm:w-auto">
-              <Link to="/preview/w01">Start Day 1 Workout</Link>
+              <Link to="/your-plan/day/1">Start Day 1 Workout</Link>
             </Button>
+
           </li>
 
           {rest.map((d) => (
