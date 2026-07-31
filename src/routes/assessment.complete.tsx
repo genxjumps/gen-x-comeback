@@ -12,8 +12,13 @@ import {
   CONSENT_COPY,
   LEGACY_ACCESS_MARKER_KEY,
   RAW_TOKEN_RE,
+  TOTAL_ASSIGNMENTS,
 } from "@/lib/lead-plan";
-import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
+import {
+  getPlanProgress,
+  regeneratePlanWithToken,
+  saveLeadPlan,
+} from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
