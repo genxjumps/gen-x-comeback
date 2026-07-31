@@ -2,7 +2,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { PlanNav } from "@/components/plan-nav";
 import { AccessDenied, readStoredToken } from "@/components/plan-access";
 import {
   TOTAL_ASSIGNMENTS,
@@ -101,7 +100,7 @@ function PlanHubPage() {
   const pct = Math.round((completedCount / TOTAL_ASSIGNMENTS) * 100);
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 pb-28 sm:py-14 sm:pb-28">
+    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
         Your Plan
       </p>
@@ -120,6 +119,18 @@ function PlanHubPage() {
         aria-label="Plan progress"
       >
         <div className="h-full bg-foreground" style={{ width: `${pct}%` }} />
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+        <Link to="/your-plan" hash="current" className="underline-offset-4 hover:underline">
+          Current
+        </Link>
+        <Link to="/your-plan" hash="schedule" className="underline-offset-4 hover:underline">
+          Schedule
+        </Link>
+        <Link to="/your-plan" hash="guidance" className="underline-offset-4 hover:underline">
+          Guidance
+        </Link>
       </div>
 
       {/* Current assignment */}
@@ -274,8 +285,6 @@ function PlanHubPage() {
           </p>
         </div>
       </section>
-
-      <PlanNav />
     </div>
   );
 }
