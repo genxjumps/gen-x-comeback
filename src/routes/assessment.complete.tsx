@@ -134,6 +134,8 @@ function ResultsPage() {
           setUnlocked(true);
           const progress = await loadProgress({ data: { token } });
           if (!cancelled && progress.ok) setCompletedDays(progress.completedDays);
+          // Latest answers are processed and saved: the private hub is the destination.
+          if (!cancelled) navigate({ to: "/your-plan", replace: true });
         } else if (!recoveryToken) {
           try {
             window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
@@ -367,6 +369,7 @@ function ResultsPage() {
                   /* ignore storage errors */
                 }
                 setUnlocked(true);
+                navigate({ to: "/your-plan" });
               } catch {
                 setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
               } finally {

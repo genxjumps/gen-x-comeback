@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/your-plan/")({
 
 const ROW_CLASS = "block p-4 hover:bg-muted/60";
 
-function RowLink({ day, children }: { day: number; children: React.ReactNode }) {
+function RowLink({ day, children }: { day: number; children: ReactNode }) {
   if (day === 1) {
     return (
       <Link to="/your-plan/day/1" className={ROW_CLASS}>
