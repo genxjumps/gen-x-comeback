@@ -7,7 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { buildPlan, readAnswers, type Answers } from "@/lib/plan";
-import { CONSENT_COPY, saveLeadPlan } from "@/lib/lead.functions";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  CONSENT_COPY,
+  LEGACY_ACCESS_MARKER_KEY,
+  RAW_TOKEN_RE,
+} from "@/lib/lead-plan";
+import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
