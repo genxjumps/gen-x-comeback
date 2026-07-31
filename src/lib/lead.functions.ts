@@ -94,7 +94,17 @@ async function resetProgress(leadPlanId: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
-
+/** Order-insensitive canonical JSON so stored answers compare reliably. */
+function canonical(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([, v]) => v !== undefined)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
+    return `{${entries.map(([k, v]) => `${JSON.stringify(k)}:${canonical(v)}`).join(",")}}`;
+  }
+  return JSON.stringify(value ?? null);
+}
 
 export const saveLeadPlan = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => leadInputSchema.parse(data))
@@ -108,24 +118,31 @@ export const saveLeadPlan = createServerFn({ method: "POST" })
     const accessTokenHash = await hashAccessToken(accessToken);
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("lead_plans").upsert(
-      {
-        email_normalized: emailNormalized,
-        email_original: data.email,
-        first_name: data.firstName,
-        consent_granted: true,
-        consent_copy: CONSENT_COPY,
-        consent_version: CONSENT_VERSION,
-        consent_at: now,
-        assessment_json: JSON.parse(JSON.stringify(answers)),
-        plan_json: JSON.parse(JSON.stringify(snapshot)),
-        access_token_hash: accessTokenHash,
-        updated_at: now,
-      },
-      { onConflict: "email_normalized" },
-    );
+    const { data: rows, error: upsertError } = await supabaseAdmin
+      .from("lead_plans")
+      .upsert(
+        {
+          email_normalized: emailNormalized,
+          email_original: data.email,
+          first_name: data.firstName,
+          consent_granted: true,
+          consent_copy: CONSENT_COPY,
+          consent_version: CONSENT_VERSION,
+          consent_at: now,
+          assessment_json: JSON.parse(JSON.stringify(answers)),
+          plan_json: JSON.parse(JSON.stringify(snapshot)),
+          access_token_hash: accessTokenHash,
+          updated_at: now,
+        },
+        { onConflict: "email_normalized" },
+      )
+      .select("id");
 
-    if (error) throw new Error(error.message);
+    if (upsertError) throw new Error(upsertError.message);
+
+    // This opt-in replaces whatever current plan existed for this email, so progress resets.
+    const leadPlanId = rows?.[0]?.id;
+    if (leadPlanId) await resetProgress(leadPlanId);
 
     return { firstName: data.firstName, plan, accessToken };
   });
@@ -138,7 +155,7 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: rows, error } = await supabaseAdmin
       .from("lead_plans")
-      .select("id, first_name")
+      .select("id, first_name, assessment_json")
       .eq("access_token_hash", accessTokenHash)
       .limit(1);
 
@@ -148,6 +165,7 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
 
     const answers = data.assessment as Answers;
     const { plan, snapshot } = planFromAnswers(answers);
+    const changed = canonical(lead.assessment_json) !== canonical(answers);
 
     const { error: updateError } = await supabaseAdmin
       .from("lead_plans")
@@ -160,5 +178,9 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
 
     if (updateError) throw new Error(updateError.message);
 
+    // Only a real reassessment replaces the plan; an identical reload keeps progress.
+    if (changed) await resetProgress(lead.id);
+
     return { ok: true, firstName: lead.first_name, plan };
   });
+
