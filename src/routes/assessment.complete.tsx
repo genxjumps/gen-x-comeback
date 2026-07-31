@@ -12,8 +12,13 @@ import {
   CONSENT_COPY,
   LEGACY_ACCESS_MARKER_KEY,
   RAW_TOKEN_RE,
+  TOTAL_ASSIGNMENTS,
 } from "@/lib/lead-plan";
-import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
+import {
+  getPlanProgress,
+  regeneratePlanWithToken,
+  saveLeadPlan,
+} from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
@@ -78,6 +83,7 @@ function ResultsPage() {
   const navigate = useNavigate();
   const save = useServerFn(saveLeadPlan);
   const regenerate = useServerFn(regeneratePlanWithToken);
+  const loadProgress = useServerFn(getPlanProgress);
 
   const [answers, setAnswers] = useState<Answers | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -89,6 +95,7 @@ function ResultsPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [recognized, setRecognized] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [completedDays, setCompletedDays] = useState<number[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -125,6 +132,8 @@ function ResultsPage() {
           }
           setRecognized(true);
           setUnlocked(true);
+          const progress = await loadProgress({ data: { token } });
+          if (!cancelled && progress.ok) setCompletedDays(progress.completedDays);
         } else if (!recoveryToken) {
           try {
             window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
@@ -142,7 +151,8 @@ function ResultsPage() {
     return () => {
       cancelled = true;
     };
-  }, [navigate, regenerate]);
+  }, [navigate, regenerate, loadProgress]);
+
 
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
 
@@ -152,6 +162,9 @@ function ResultsPage() {
   const rest = plan.days.slice(1);
   const nameOk = firstName.trim().length > 0;
   const emailOk = EMAIL_RE.test(email.trim());
+  const dayOneComplete = completedDays.includes(1);
+  const currentDay = unlocked && dayOneComplete ? 2 : 1;
+
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
@@ -223,33 +236,53 @@ function ResultsPage() {
 
       {/* Days */}
       <section className="mt-8">
+        {unlocked ? (
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+            {completedDays.length} of {TOTAL_ASSIGNMENTS} assignments complete
+          </p>
+        ) : null}
         <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
           <li className="bg-card p-4">
             <div className="flex items-baseline justify-between gap-3">
               <h3 className="text-sm font-semibold">Day 1: {dayOne.title}</h3>
               <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
-                Today
+                {dayOneComplete ? "Complete" : "Today"}
               </span>
             </div>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
               {dayOne.description}
             </p>
             <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
-            <Button asChild size="sm" className="mt-3 w-full sm:w-auto">
-              <Link to="/your-plan/day/1">Start Day 1 Workout</Link>
+            <Button
+              asChild
+              size="sm"
+              variant={dayOneComplete ? "outline" : "default"}
+              className="mt-3 w-full sm:w-auto"
+            >
+              <Link to="/your-plan/day/1">
+                {dayOneComplete ? "Review Day 1 Workout" : "Start Day 1 Workout"}
+              </Link>
             </Button>
 
           </li>
 
           {rest.map((d) => (
             <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-muted/30 p-4"}>
-              <h3
-                className={
-                  unlocked ? "text-sm font-medium" : "text-sm font-medium text-muted-foreground/80"
-                }
-              >
-                Day {d.day}: {d.title}
-              </h3>
+              <div className="flex items-baseline justify-between gap-3">
+                <h3
+                  className={
+                    unlocked ? "text-sm font-medium" : "text-sm font-medium text-muted-foreground/80"
+                  }
+                >
+                  Day {d.day}: {d.title}
+                </h3>
+                {unlocked && d.day === currentDay ? (
+                  <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
+                    Up Next
+                  </span>
+                ) : null}
+              </div>
+
               {d.description ? (
                 <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                   {d.description}

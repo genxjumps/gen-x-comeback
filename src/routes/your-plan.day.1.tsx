@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { readAnswers, type Answers } from "@/lib/plan";
 import { ACCESS_TOKEN_STORAGE_KEY, RAW_TOKEN_RE } from "@/lib/lead-plan";
-import { verifyAccessToken } from "@/lib/lead.functions";
+import { completePlanDay, getPlanProgress, verifyAccessToken } from "@/lib/lead.functions";
+
 
 export const Route = createFileRoute("/your-plan/day/1")({
   head: () => ({
@@ -75,24 +76,33 @@ function readStoredToken(): string | null {
 
 function DayOnePage() {
   const verify = useServerFn(verifyAccessToken);
+  const loadProgress = useServerFn(getPlanProgress);
+  const completeDay = useServerFn(completePlanDay);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
   const [answers, setAnswers] = useState<Answers | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [completed, setCompleted] = useState(false);
+  const [marking, setMarking] = useState(false);
+  const [markError, setMarkError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const a = readAnswers();
-    const token = readStoredToken();
-    if (!token) {
+    const stored = readStoredToken();
+    if (!stored) {
       setStatus("denied");
       return;
     }
     void (async () => {
       try {
-        const result = await verify({ data: { token } });
+        const result = await verify({ data: { token: stored } });
         if (cancelled) return;
         if (result.ok) {
           setAnswers(a);
+          setToken(stored);
           setStatus("allowed");
+          const progress = await loadProgress({ data: { token: stored } });
+          if (!cancelled && progress.ok) setCompleted(progress.completedDays.includes(1));
         } else {
           setStatus("denied");
         }
@@ -103,7 +113,23 @@ function DayOnePage() {
     return () => {
       cancelled = true;
     };
-  }, [verify]);
+  }, [verify, loadProgress]);
+
+  async function markComplete() {
+    if (!token || marking || completed) return;
+    setMarking(true);
+    setMarkError(null);
+    try {
+      const result = await completeDay({ data: { token, day: 1 as const } });
+      if (result.ok) setCompleted(true);
+      else setMarkError("We could not confirm your access. Open your plan again and retry.");
+    } catch {
+      setMarkError("We could not save that. Try again.");
+    } finally {
+      setMarking(false);
+    }
+  }
+
 
   if (status === "checking") {
     return (
@@ -206,11 +232,42 @@ function DayOnePage() {
         </ul>
       </section>
 
-      <div className="mt-8">
+      <section className="mt-8">
+        {completed ? (
+          <div className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm font-semibold">Day 1 Complete</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              Nice work. Your progress is saved.
+            </p>
+            <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
+              <Link to="/assessment/complete">Continue to My Plan</Link>
+            </Button>
+          </div>
+        ) : (
+          <>
+            <Button
+              size="lg"
+              className="w-full sm:w-auto"
+              disabled={marking}
+              onClick={markComplete}
+            >
+              {marking ? "Saving..." : "Mark Day 1 Complete"}
+            </Button>
+            {markError ? (
+              <p role="alert" className="mt-2 text-xs font-medium leading-relaxed">
+                {markError}
+              </p>
+            ) : null}
+          </>
+        )}
+      </section>
+
+      <div className="mt-6">
         <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
           <Link to="/assessment/complete">Back to My Plan</Link>
         </Button>
       </div>
+
     </div>
   );
 }

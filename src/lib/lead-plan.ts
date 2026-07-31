@@ -77,6 +77,15 @@ export const tokenOnlyInputSchema = z.object({
 
 export type VerifyAccessResult = { ok: true; firstName: string } | { ok: false };
 
+export const TOTAL_ASSIGNMENTS = 7;
+
+export const completeDayInputSchema = z.object({
+  token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
+  day: z.literal(1),
+});
+
+export type ProgressResult = { ok: true; completedDays: number[] } | { ok: false };
+
 
 export type SaveLeadPlanResult = { firstName: string; plan: Plan; accessToken: string };
 export type RegenerateResult =
