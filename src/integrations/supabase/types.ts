@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       lead_plans: {
         Row: {
+          access_token_hash: string | null
           assessment_json: Json
           consent_at: string
           consent_copy: string
@@ -30,6 +31,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          access_token_hash?: string | null
           assessment_json: Json
           consent_at: string
           consent_copy: string
@@ -44,6 +46,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          access_token_hash?: string | null
           assessment_json?: Json
           consent_at?: string
           consent_copy?: string
