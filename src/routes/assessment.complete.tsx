@@ -288,7 +288,7 @@ function ResultsPage() {
             follow the plan in order.
           </p>
         </section>
-      ) : (
+      ) : checkingAccess ? null : (
         <section>
           <h2 className="text-lg font-semibold tracking-tight">
             Unlock Your Full 7-Day Workout Plan
@@ -319,7 +319,7 @@ function ResultsPage() {
               setSaving(true);
               setError(null);
               try {
-                await save({
+                const result = await save({
                   data: {
                     firstName: firstName.trim(),
                     email: email.trim(),
@@ -328,7 +328,7 @@ function ResultsPage() {
                   },
                 });
                 try {
-                  window.localStorage.setItem(ACCESS_MARKER_KEY, "true");
+                  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, result.accessToken);
                 } catch {
                   /* ignore storage errors */
                 }
