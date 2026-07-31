@@ -162,6 +162,9 @@ function ResultsPage() {
   const rest = plan.days.slice(1);
   const nameOk = firstName.trim().length > 0;
   const emailOk = EMAIL_RE.test(email.trim());
+  const dayOneComplete = completedDays.includes(1);
+  const currentDay = unlocked && dayOneComplete ? 2 : 1;
+
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
