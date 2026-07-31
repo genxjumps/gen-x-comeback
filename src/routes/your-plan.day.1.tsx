@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { readAnswers, type Answers } from "@/lib/plan";
 import { ACCESS_TOKEN_STORAGE_KEY, RAW_TOKEN_RE } from "@/lib/lead-plan";
-import { verifyAccessToken } from "@/lib/lead.functions";
+import { completePlanDay, getPlanProgress, verifyAccessToken } from "@/lib/lead.functions";
+
 
 export const Route = createFileRoute("/your-plan/day/1")({
   head: () => ({
