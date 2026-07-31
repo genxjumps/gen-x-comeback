@@ -3,9 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { PlanNav } from "@/components/plan-nav";
+import { AccessDenied, readStoredToken } from "@/components/plan-access";
 import {
-  ACCESS_TOKEN_STORAGE_KEY,
-  RAW_TOKEN_RE,
   TOTAL_ASSIGNMENTS,
   assignmentKind,
   currentAssignmentDay,
@@ -36,34 +35,20 @@ export const Route = createFileRoute("/your-plan/")({
   component: PlanHubPage,
 });
 
-export function readStoredToken(): string | null {
-  try {
-    const v = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-    return v && RAW_TOKEN_RE.test(v) ? v : null;
-  } catch {
-    return null;
-  }
-}
+const ROW_CLASS = "block p-4 hover:bg-muted/60";
 
-export function AccessDenied() {
+function RowLink({ day, children }: { day: number; children: React.ReactNode }) {
+  if (day === 1) {
+    return (
+      <Link to="/your-plan/day/1" className={ROW_CLASS}>
+        {children}
+      </Link>
+    );
+  }
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
-      <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
-        This Plan Is Private
-      </h1>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        We could not confirm access from this browser. Open your saved results or build your plan to
-        unlock it.
-      </p>
-      <div className="mt-6 grid gap-3 sm:flex">
-        <Button asChild className="w-full sm:w-auto">
-          <Link to="/assessment/complete">Go to My Results</Link>
-        </Button>
-        <Button asChild variant="outline" className="w-full sm:w-auto">
-          <Link to="/assessment/start">Build My 7-Day Plan</Link>
-        </Button>
-      </div>
-    </div>
+    <Link to="/your-plan/day/$day" params={{ day: String(day) }} className={ROW_CLASS}>
+      {children}
+    </Link>
   );
 }
 
@@ -200,11 +185,7 @@ function PlanHubPage() {
             const status = complete ? "Complete" : isCurrent ? "Current" : "Upcoming";
             return (
               <li key={d.day} className={isCurrent ? "bg-card" : "bg-muted/30"}>
-                <Link
-                  to={d.day === 1 ? "/your-plan/day/1" : "/your-plan/day/$day"}
-                  params={d.day === 1 ? {} : { day: String(d.day) }}
-                  className="block p-4 hover:bg-muted/60"
-                >
+                <RowLink day={d.day}>
                   <div className="flex items-baseline justify-between gap-3">
                     <h3 className="text-sm font-semibold">
                       Day {d.day}: {d.title}
@@ -229,7 +210,7 @@ function PlanHubPage() {
                       Optional Active Recovery available: {d.optional.title}
                     </p>
                   ) : null}
-                </Link>
+                </RowLink>
               </li>
             );
           })}
