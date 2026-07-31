@@ -232,11 +232,42 @@ function DayOnePage() {
         </ul>
       </section>
 
-      <div className="mt-8">
+      <section className="mt-8">
+        {completed ? (
+          <div className="rounded-lg border border-border bg-card p-4">
+            <p className="text-sm font-semibold">Day 1 Complete</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              Nice work. Your progress is saved.
+            </p>
+            <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
+              <Link to="/assessment/complete">Continue to My Plan</Link>
+            </Button>
+          </div>
+        ) : (
+          <>
+            <Button
+              size="lg"
+              className="w-full sm:w-auto"
+              disabled={marking}
+              onClick={markComplete}
+            >
+              {marking ? "Saving..." : "Mark Day 1 Complete"}
+            </Button>
+            {markError ? (
+              <p role="alert" className="mt-2 text-xs font-medium leading-relaxed">
+                {markError}
+              </p>
+            ) : null}
+          </>
+        )}
+      </section>
+
+      <div className="mt-6">
         <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
           <Link to="/assessment/complete">Back to My Plan</Link>
         </Button>
       </div>
+
     </div>
   );
 }
