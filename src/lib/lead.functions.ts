@@ -4,12 +4,14 @@ import type { Answers } from "@/lib/plan";
 import {
   CONSENT_COPY,
   CONSENT_VERSION,
+  completeDayInputSchema,
   generateAccessToken,
   hashAccessToken,
   leadInputSchema,
   planFromAnswers,
   regenerateInputSchema,
   tokenOnlyInputSchema,
+  type ProgressResult,
   type RegenerateResult,
   type SaveLeadPlanResult,
   type VerifyAccessResult,
@@ -31,6 +33,67 @@ export const verifyAccessToken = createServerFn({ method: "POST" })
     const lead = rows?.[0];
     return lead ? { ok: true, firstName: lead.first_name } : { ok: false };
   });
+
+/** Resolves the lead id for a raw access token, or null. Server-only. */
+async function resolveLeadIdByToken(rawToken: string): Promise<string | null> {
+  const accessTokenHash = await hashAccessToken(rawToken);
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: rows, error } = await supabaseAdmin
+    .from("lead_plans")
+    .select("id")
+    .eq("access_token_hash", accessTokenHash)
+    .limit(1);
+  if (error) throw new Error(error.message);
+  return rows?.[0]?.id ?? null;
+}
+
+async function listCompletedDays(leadPlanId: string): Promise<number[]> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("lead_plan_day_completions")
+    .select("day_number")
+    .eq("lead_plan_id", leadPlanId)
+    .order("day_number", { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data ?? []).map((r) => r.day_number);
+}
+
+export const getPlanProgress = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
+  .handler(async ({ data }): Promise<ProgressResult> => {
+    const leadPlanId = await resolveLeadIdByToken(data.token);
+    if (!leadPlanId) return { ok: false };
+    return { ok: true, completedDays: await listCompletedDays(leadPlanId) };
+  });
+
+export const completePlanDay = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => completeDayInputSchema.parse(data))
+  .handler(async ({ data }): Promise<ProgressResult> => {
+    const leadPlanId = await resolveLeadIdByToken(data.token);
+    if (!leadPlanId) return { ok: false };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("lead_plan_day_completions")
+      .upsert(
+        { lead_plan_id: leadPlanId, day_number: data.day },
+        { onConflict: "lead_plan_id,day_number", ignoreDuplicates: true },
+      );
+    if (error) throw new Error(error.message);
+
+    return { ok: true, completedDays: await listCompletedDays(leadPlanId) };
+  });
+
+/** A successful reassessment replaces the current plan, so progress resets. */
+async function resetProgress(leadPlanId: string): Promise<void> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error } = await supabaseAdmin
+    .from("lead_plan_day_completions")
+    .delete()
+    .eq("lead_plan_id", leadPlanId);
+  if (error) throw new Error(error.message);
+}
+
 
 
 export const saveLeadPlan = createServerFn({ method: "POST" })
