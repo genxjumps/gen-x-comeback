@@ -83,6 +83,7 @@ function ResultsPage() {
   const navigate = useNavigate();
   const save = useServerFn(saveLeadPlan);
   const regenerate = useServerFn(regeneratePlanWithToken);
+  const loadProgress = useServerFn(getPlanProgress);
 
   const [answers, setAnswers] = useState<Answers | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -94,6 +95,7 @@ function ResultsPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [recognized, setRecognized] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [completedDays, setCompletedDays] = useState<number[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -130,6 +132,8 @@ function ResultsPage() {
           }
           setRecognized(true);
           setUnlocked(true);
+          const progress = await loadProgress({ data: { token } });
+          if (!cancelled && progress.ok) setCompletedDays(progress.completedDays);
         } else if (!recoveryToken) {
           try {
             window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
@@ -147,7 +151,8 @@ function ResultsPage() {
     return () => {
       cancelled = true;
     };
-  }, [navigate, regenerate]);
+  }, [navigate, regenerate, loadProgress]);
+
 
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
 
