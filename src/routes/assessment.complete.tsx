@@ -7,7 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { buildPlan, readAnswers, type Answers } from "@/lib/plan";
-import { CONSENT_COPY, saveLeadPlan } from "@/lib/lead.functions";
+import {
+  ACCESS_TOKEN_STORAGE_KEY,
+  CONSENT_COPY,
+  LEGACY_ACCESS_MARKER_KEY,
+  RAW_TOKEN_RE,
+} from "@/lib/lead-plan";
+import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
@@ -30,7 +36,6 @@ export const Route = createFileRoute("/assessment/complete")({
 });
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const ACCESS_MARKER_KEY = "gxj_plan_access_v1";
 
 function isCompleteDraft(a: Answers): boolean {
   const q1 = ["none", "one", "two_three", "four_plus"].includes(a.q1);
@@ -42,9 +47,37 @@ function isCompleteDraft(a: Answers): boolean {
   return q1 && q2 && q3 && q4 && q5 && equipment;
 }
 
+function readStoredToken(): string | null {
+  try {
+    const v = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
+    return v && RAW_TOKEN_RE.test(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Reads a one-time `?access=` recovery token and strips it from the visible URL. */
+function takeRecoveryTokenFromUrl(): string | null {
+  try {
+    const url = new URL(window.location.href);
+    const raw = url.searchParams.get("access");
+    if (!raw) return null;
+    url.searchParams.delete("access");
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${url.pathname}${url.search}${url.hash}`,
+    );
+    return RAW_TOKEN_RE.test(raw) ? raw : null;
+  } catch {
+    return null;
+  }
+}
+
 function ResultsPage() {
   const navigate = useNavigate();
   const save = useServerFn(saveLeadPlan);
+  const regenerate = useServerFn(regeneratePlanWithToken);
 
   const [answers, setAnswers] = useState<Answers | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -55,23 +88,61 @@ function ResultsPage() {
   const [error, setError] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
   const [recognized, setRecognized] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     const a = readAnswers();
     if (!isCompleteDraft(a)) {
       navigate({ to: "/assessment" });
       return;
     }
     setAnswers(a);
+
+    // The old boolean marker never unlocks anything on its own.
     try {
-      if (window.localStorage.getItem(ACCESS_MARKER_KEY) === "true") {
-        setRecognized(true);
-        setUnlocked(true);
-      }
+      window.localStorage.removeItem(LEGACY_ACCESS_MARKER_KEY);
     } catch {
       /* ignore storage errors */
     }
-  }, [navigate]);
+
+    const recoveryToken = takeRecoveryTokenFromUrl();
+    const token = recoveryToken ?? readStoredToken();
+    if (!token) {
+      setCheckingAccess(false);
+      return;
+    }
+
+    void (async () => {
+      try {
+        const result = await regenerate({ data: { token, assessment: a } });
+        if (cancelled) return;
+        if (result.ok) {
+          try {
+            window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+          } catch {
+            /* ignore storage errors */
+          }
+          setRecognized(true);
+          setUnlocked(true);
+        } else if (!recoveryToken) {
+          try {
+            window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+          } catch {
+            /* ignore storage errors */
+          }
+        }
+      } catch {
+        /* fall back to the first-time opt-in form */
+      } finally {
+        if (!cancelled) setCheckingAccess(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate, regenerate]);
 
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
 
@@ -217,7 +288,7 @@ function ResultsPage() {
             follow the plan in order.
           </p>
         </section>
-      ) : (
+      ) : checkingAccess ? null : (
         <section>
           <h2 className="text-lg font-semibold tracking-tight">
             Unlock Your Full 7-Day Workout Plan
@@ -248,7 +319,7 @@ function ResultsPage() {
               setSaving(true);
               setError(null);
               try {
-                await save({
+                const result = await save({
                   data: {
                     firstName: firstName.trim(),
                     email: email.trim(),
@@ -257,7 +328,7 @@ function ResultsPage() {
                   },
                 });
                 try {
-                  window.localStorage.setItem(ACCESS_MARKER_KEY, "true");
+                  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, result.accessToken);
                 } catch {
                   /* ignore storage errors */
                 }
