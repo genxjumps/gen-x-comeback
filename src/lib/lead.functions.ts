@@ -9,9 +9,29 @@ import {
   leadInputSchema,
   planFromAnswers,
   regenerateInputSchema,
+  tokenOnlyInputSchema,
   type RegenerateResult,
   type SaveLeadPlanResult,
+  type VerifyAccessResult,
 } from "@/lib/lead-plan";
+
+export const verifyAccessToken = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
+  .handler(async ({ data }): Promise<VerifyAccessResult> => {
+    const accessTokenHash = await hashAccessToken(data.token);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("lead_plans")
+      .select("first_name")
+      .eq("access_token_hash", accessTokenHash)
+      .limit(1);
+
+    if (error) throw new Error(error.message);
+    const lead = rows?.[0];
+    return lead ? { ok: true, firstName: lead.first_name } : { ok: false };
+  });
+
 
 export const saveLeadPlan = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => leadInputSchema.parse(data))

@@ -71,6 +71,13 @@ export const regenerateInputSchema = z.object({
   assessment: answersSchema,
 });
 
+export const tokenOnlyInputSchema = z.object({
+  token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
+});
+
+export type VerifyAccessResult = { ok: true; firstName: string } | { ok: false };
+
+
 export type SaveLeadPlanResult = { firstName: string; plan: Plan; accessToken: string };
 export type RegenerateResult =
   | { ok: true; firstName: string; plan: Plan }
