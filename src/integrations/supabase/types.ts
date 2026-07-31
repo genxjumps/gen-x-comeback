@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      lead_plan_day_completions: {
+        Row: {
+          completed_at: string
+          created_at: string
+          day_number: number
+          id: string
+          lead_plan_id: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          day_number: number
+          id?: string
+          lead_plan_id: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          day_number?: number
+          id?: string
+          lead_plan_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_plan_day_completions_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: false
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_plans: {
         Row: {
           access_token_hash: string | null
