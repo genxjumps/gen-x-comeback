@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { PlanNav } from "@/components/plan-nav";
 import { AccessDenied, readStoredToken } from "@/components/plan-access";
 import {
   assignmentKind,
@@ -91,7 +90,7 @@ function DayDetailPage() {
   const entry = hub.days.find((d) => d.day === dayNumber);
   if (!entry) {
     return (
-      <div className="mx-auto w-full max-w-2xl px-5 py-10 pb-28 sm:py-14">
+      <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
         <h1 className="text-2xl font-semibold leading-tight tracking-tight">
           Assignment Not Found
         </h1>
@@ -101,7 +100,6 @@ function DayDetailPage() {
         <Button asChild className="mt-6 w-full sm:w-auto">
           <Link to="/your-plan">Back to My Plan</Link>
         </Button>
-        <PlanNav />
       </div>
     );
   }
@@ -112,7 +110,7 @@ function DayDetailPage() {
   const statusLabel = complete ? "Complete" : isCurrent ? "Current" : "Upcoming";
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 pb-28 sm:py-14 sm:pb-28">
+    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <Link
         to="/your-plan"
         className="text-xs uppercase tracking-widest text-muted-foreground underline-offset-4 hover:underline"
@@ -173,8 +171,6 @@ function DayDetailPage() {
           <Link to="/your-plan">Back to My Plan</Link>
         </Button>
       </div>
-
-      <PlanNav />
     </div>
   );
 }

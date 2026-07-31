@@ -4,7 +4,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { readAnswers, type Answers } from "@/lib/plan";
 import { readStoredToken } from "@/components/plan-access";
-import { PlanNav } from "@/components/plan-nav";
 import { completePlanDay, getPlanProgress, verifyAccessToken } from "@/lib/lead.functions";
 
 
@@ -154,7 +153,7 @@ function DayOnePage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 pb-28 sm:py-14 sm:pb-28">
+    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <Link
         to="/your-plan"
         className="text-xs uppercase tracking-widest text-muted-foreground underline-offset-4 hover:underline"
@@ -259,8 +258,6 @@ function DayOnePage() {
           <Link to="/your-plan">Back to My Plan</Link>
         </Button>
       </div>
-
-      <PlanNav />
     </div>
   );
 }
