@@ -256,6 +256,11 @@ function ResultsPage() {
                     assessment: answers,
                   },
                 });
+                try {
+                  window.localStorage.setItem(ACCESS_MARKER_KEY, "true");
+                } catch {
+                  /* ignore storage errors */
+                }
                 setUnlocked(true);
               } catch {
                 setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
