@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
+import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 
@@ -30,6 +31,11 @@ const AssessmentIndexRoute = AssessmentIndexRouteImport.update({
   path: '/assessment/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PreviewW01Route = PreviewW01RouteImport.update({
+  id: '/preview/w01',
+  path: '/preview/w01',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AssessmentStartRoute = AssessmentStartRouteImport.update({
   id: '/assessment/start',
   path: '/assessment/start',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/preview/w01': typeof PreviewW01Route
   '/assessment/': typeof AssessmentIndexRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/preview/w01': typeof PreviewW01Route
   '/assessment': typeof AssessmentIndexRoute
 }
 export interface FileRoutesById {
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/preview/w01': typeof PreviewW01Route
   '/assessment/': typeof AssessmentIndexRoute
 }
 export interface FileRouteTypes {
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/preview/w01'
     | '/assessment/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -77,6 +87,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/preview/w01'
     | '/assessment'
   id:
     | '__root__'
@@ -84,6 +95,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/preview/w01'
     | '/assessment/'
   fileRoutesById: FileRoutesById
 }
@@ -92,6 +104,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentStartRoute: typeof AssessmentStartRoute
+  PreviewW01Route: typeof PreviewW01Route
   AssessmentIndexRoute: typeof AssessmentIndexRoute
 }
 
@@ -118,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/preview/w01': {
+      id: '/preview/w01'
+      path: '/preview/w01'
+      fullPath: '/preview/w01'
+      preLoaderRoute: typeof PreviewW01RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/assessment/start': {
       id: '/assessment/start'
       path: '/assessment/start'
@@ -140,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentStartRoute: AssessmentStartRoute,
+  PreviewW01Route: PreviewW01Route,
   AssessmentIndexRoute: AssessmentIndexRoute,
 }
 export const routeTree = rootRouteImport
