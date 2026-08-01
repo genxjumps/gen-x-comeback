@@ -17,7 +17,6 @@ import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
 import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
-import { Route as YourPlanDay1RouteImport } from './routes/your-plan.day.1'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -60,11 +59,6 @@ const AssessmentCompleteRoute = AssessmentCompleteRouteImport.update({
   path: '/assessment/complete',
   getParentRoute: () => rootRouteImport,
 } as any)
-const YourPlanDay1Route = YourPlanDay1RouteImport.update({
-  id: '/your-plan/day/1',
-  path: '/your-plan/day/1',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
   id: '/your-plan/day/$day',
   path: '/your-plan/day/$day',
@@ -81,7 +75,6 @@ export interface FileRoutesByFullPath {
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
-  '/your-plan/day/1': typeof YourPlanDay1Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -93,7 +86,6 @@ export interface FileRoutesByTo {
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
-  '/your-plan/day/1': typeof YourPlanDay1Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -106,7 +98,6 @@ export interface FileRoutesById {
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
-  '/your-plan/day/1': typeof YourPlanDay1Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,7 +111,6 @@ export interface FileRouteTypes {
     | '/assessment/'
     | '/your-plan/'
     | '/your-plan/day/$day'
-    | '/your-plan/day/1'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -132,7 +122,6 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/your-plan'
     | '/your-plan/day/$day'
-    | '/your-plan/day/1'
   id:
     | '__root__'
     | '/'
@@ -144,7 +133,6 @@ export interface FileRouteTypes {
     | '/assessment/'
     | '/your-plan/'
     | '/your-plan/day/$day'
-    | '/your-plan/day/1'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -157,7 +145,6 @@ export interface RootRouteChildren {
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
-  YourPlanDay1Route: typeof YourPlanDay1Route
 }
 
 declare module '@tanstack/react-router' {
@@ -218,13 +205,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentCompleteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/your-plan/day/1': {
-      id: '/your-plan/day/1'
-      path: '/your-plan/day/1'
-      fullPath: '/your-plan/day/1'
-      preLoaderRoute: typeof YourPlanDay1RouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/your-plan/day/$day': {
       id: '/your-plan/day/$day'
       path: '/your-plan/day/$day'
@@ -245,7 +225,6 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,
-  YourPlanDay1Route: YourPlanDay1Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,56 +1,22 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { readStoredToken } from "@/components/plan-access";
 import { cardioGuidance, type CardioContext } from "@/lib/lead-plan";
 import { completePlanDay, getDayOneBrief } from "@/lib/lead.functions";
+import {
+  W01_APPROACH,
+  W01_DURATION,
+  W01_EQUIPMENT_NOTES,
+  W01_EXPECT,
+  W01_IFRAME_SRC,
+  W01_RUNDOWN,
+  W01_TITLE,
+} from "@/lib/w01-content";
 
-const RUNDOWN =
-  "Short jump rope intervals mixed with sumo squats, push-ups, and seated core work.";
-
-export const Route = createFileRoute("/your-plan/day/1")({
-  head: () => ({
-    meta: [
-      { title: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
-      {
-        name: "description",
-        content:
-          "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan.",
-      },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
-      {
-        property: "og:description",
-        content:
-          "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
-  component: DayOnePage,
-});
-
-const IFRAME_SRC =
-  "https://customer-cvsfidz4ao4uk9i5.cloudflarestream.com/40ae220635bc55bc66d1f68cb11ab997/iframe?poster=https%3A%2F%2Fcustomer-cvsfidz4ao4uk9i5.cloudflarestream.com%2F40ae220635bc55bc66d1f68cb11ab997%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600";
-
-const EXPECT = [
-  "Three circuits",
-  "Three rounds per circuit",
-  "20-second cardio intervals",
-  "Bodyweight repetitions",
-  "Built-in rest and circuit breaks",
-];
-
-const EQUIPMENT_NOTES = [
-  "No dumbbells required",
-  "Jump rope optional because ghost jumps or lower-impact cardio can replace it",
-  "Mat or cushioned surface recommended for floor work",
-];
-
-
-function DayOnePage() {
+/** Protected Day 1 workout. Requires a valid saved-plan access token. */
+export function DayOneWorkout() {
   const loadBrief = useServerFn(getDayOneBrief);
   const completeDay = useServerFn(completePlanDay);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
@@ -147,11 +113,11 @@ function DayOnePage() {
         Day 1
       </p>
       <h1 className="mt-2 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
-        Full Body Flush &amp; Fire
+        {W01_TITLE}
       </h1>
-      <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
+      <p className="mt-2 text-xs text-muted-foreground">{W01_DURATION}</p>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        {RUNDOWN}
+        {W01_RUNDOWN}
       </p>
 
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
@@ -159,7 +125,7 @@ function DayOnePage() {
           What to Expect
         </h2>
         <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
-          {EXPECT.map((item) => (
+          {W01_EXPECT.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
@@ -167,7 +133,7 @@ function DayOnePage() {
 
       <div className="mt-6 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
         <iframe
-          src={IFRAME_SRC}
+          src={W01_IFRAME_SRC}
           loading="lazy"
           allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
@@ -188,9 +154,7 @@ function DayOnePage() {
           How to Approach This Workout
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          These workouts are supposed to challenge you. Work hard. Rest when needed. Do fewer reps
-          or use a smaller range of motion when necessary. Skip a movement you cannot perform
-          safely. Stop if you feel pain rather than normal exercise discomfort.
+          {W01_APPROACH}
         </p>
       </section>
 
@@ -199,7 +163,7 @@ function DayOnePage() {
           Equipment
         </h2>
         <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
-          {EQUIPMENT_NOTES.map((item) => (
+          {W01_EQUIPMENT_NOTES.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>

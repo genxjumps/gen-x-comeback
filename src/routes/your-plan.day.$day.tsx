@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied, readStoredToken } from "@/components/plan-access";
+import { DayOneWorkout } from "@/components/day-one-workout";
 import {
   assignmentKind,
   currentAssignmentDay,
@@ -11,26 +12,35 @@ import {
 import { getPlanHub } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/your-plan/day/$day")({
-  head: () => ({
-    meta: [
-      { title: "Your Assignment Details | Gen X Jumps" },
-      {
-        name: "description",
-        content:
-          "The saved details for this assignment in your 7-day plan, including the title, rundown, duration, and any optional active recovery.",
-      },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Your Assignment Details | Gen X Jumps" },
-      {
-        property: "og:description",
-        content: "The saved details for this assignment in your 7-day plan.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
-  component: DayDetailPage,
+  head: ({ params }) => {
+    const isDayOne = params.day === "1";
+    const title = isDayOne
+      ? "Day 1 - Full Body Flush & Fire | Gen X Jumps"
+      : "Your Assignment Details | Gen X Jumps";
+    const description = isDayOne
+      ? "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan."
+      : "The saved details for this assignment in your 7-day plan, including the title, rundown, duration, and any optional active recovery.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { name: "robots", content: "noindex, nofollow" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary" },
+      ],
+    };
+  },
+  component: DayRoutePage,
 });
+
+function DayRoutePage() {
+  const { day } = Route.useParams();
+  // Day 1 has its own real workout page; days 2-7 render saved assignment details.
+  if (day === "1") return <DayOneWorkout />;
+  return <DayDetailPage />;
+}
 
 function DayDetailPage() {
   const { day } = Route.useParams();
