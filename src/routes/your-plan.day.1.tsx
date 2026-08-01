@@ -180,7 +180,7 @@ function DayOnePage() {
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           Your Cardio Option
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cardioOption(answers)}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cardioGuidance(cardio)}</p>
       </section>
 
       <section className="mt-4 rounded-lg border border-border bg-card p-4">
