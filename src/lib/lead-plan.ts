@@ -80,12 +80,15 @@ export type VerifyAccessResult = { ok: true; firstName: string } | { ok: false }
 
 export const TOTAL_ASSIGNMENTS = 7;
 
-/** Days with real delivery + completion implemented so far. */
-export const COMPLETABLE_DAYS = [1, 2] as const;
+/** Every assignment day in a plan has real delivery + completion. */
+export const COMPLETABLE_DAYS = [1, 2, 3, 4, 5, 6, 7] as const;
+
+/** Valid plan day number: 1 through 7 only. */
+export const planDaySchema = z.number().int().min(1).max(TOTAL_ASSIGNMENTS);
 
 export const completeDayInputSchema = z.object({
   token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
-  day: z.union([z.literal(1), z.literal(2)]),
+  day: planDaySchema,
 });
 
 
