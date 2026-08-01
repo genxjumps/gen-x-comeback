@@ -10,7 +10,9 @@ import {
   leadInputSchema,
   planFromAnswers,
   regenerateInputSchema,
+  ropeLevelFromExperience,
   tokenOnlyInputSchema,
+  type DayOneBriefResult,
   type PlanDayView,
   type PlanHubResult,
   type ProgressResult,
@@ -66,6 +68,47 @@ export const getPlanProgress = createServerFn({ method: "POST" })
     const leadPlanId = await resolveLeadIdByToken(data.token);
     if (!leadPlanId) return { ok: false };
     return { ok: true, completedDays: await listCompletedDays(leadPlanId) };
+  });
+
+/**
+ * Authoritative Day 1 brief: only the small guidance fields the page needs,
+ * derived server-side from the saved assessment. Never from browser state.
+ */
+export const getDayOneBrief = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
+  .handler(async ({ data }): Promise<DayOneBriefResult> => {
+    const accessTokenHash = await hashAccessToken(data.token);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("lead_plans")
+      .select("id, assessment_json, plan_json")
+      .eq("access_token_hash", accessTokenHash)
+      .limit(1);
+
+    if (error) throw new Error(error.message);
+    const lead = rows?.[0];
+    if (!lead) return { ok: false };
+
+    const saved = (lead.assessment_json ?? {}) as {
+      q3?: unknown;
+      q4?: unknown;
+      equipment?: unknown;
+    };
+    const savedFlags = ((lead.plan_json ?? {}) as { flags?: Record<string, unknown> }).flags ?? {};
+
+    const q4 = Array.isArray(saved.q4) ? saved.q4 : [];
+    const equipment = Array.isArray(saved.equipment) ? saved.equipment : [];
+
+    return {
+      ok: true,
+      cardio: {
+        impactLimited: q4.includes("limit_impact") || savedFlags['impactLimited'] === true,
+        ownsRope: equipment.includes("jump_rope"),
+        ropeLevel: ropeLevelFromExperience(typeof saved.q3 === "string" ? saved.q3 : ""),
+      },
+      completedDays: await listCompletedDays(lead.id),
+    };
   });
 
 export const completePlanDay = createServerFn({ method: "POST" })

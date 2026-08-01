@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { readAnswers, type Answers } from "@/lib/plan";
 import { readStoredToken } from "@/components/plan-access";
-import { completePlanDay, getPlanProgress, verifyAccessToken } from "@/lib/lead.functions";
+import { cardioGuidance, type CardioContext } from "@/lib/lead-plan";
+import { completePlanDay, getDayOneBrief } from "@/lib/lead.functions";
 
+const RUNDOWN =
+  "Short jump rope intervals mixed with sumo squats, push-ups, and seated core work.";
 
 export const Route = createFileRoute("/your-plan/day/1")({
   head: () => ({
@@ -14,14 +16,14 @@ export const Route = createFileRoute("/your-plan/day/1")({
       {
         name: "description",
         content:
-          "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with squats, push-ups, and balance work, with a cardio option matched to your assessment.",
+          "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan.",
       },
       { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
       {
         property: "og:description",
         content:
-          "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with squats, push-ups, and balance work.",
+          "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -47,30 +49,12 @@ const EQUIPMENT_NOTES = [
   "Mat or cushioned surface recommended for floor work",
 ];
 
-export function cardioOption(a: Answers): string {
-  const impactLimited = a.q4.includes("limit_impact");
-  const ownsRope = Array.isArray(a.equipment) && a.equipment.includes("jump_rope");
-  if (impactLimited) {
-    return "During every jump rope interval, march in place or use step-touches instead of jumping. Keep one foot on the floor the entire time and drive the pace with your arms and your breathing.";
-  }
-  if (!ownsRope) {
-    return "Use ghost jumps for every cardio interval. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
-  }
-  if (a.q3 === "never" || a.q3 === "no_rope" || a.q3 === "new") {
-    return "Try the rope at the start of each interval. When resetting the rope takes over more than the jumping does, put it down and finish the interval with ghost jumps. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
-  }
-  if (a.q3 === "short_bursts") {
-    return "Use the rope while your rhythm is clean, then finish the interval with ghost jumps as needed. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
-  }
-  return "Use the rope normally for every cardio interval and scale your pace as needed. Slow the turns down before you break your rhythm.";
-}
 
 function DayOnePage() {
-  const verify = useServerFn(verifyAccessToken);
-  const loadProgress = useServerFn(getPlanProgress);
+  const loadBrief = useServerFn(getDayOneBrief);
   const completeDay = useServerFn(completePlanDay);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
-  const [answers, setAnswers] = useState<Answers | null>(null);
+  const [cardio, setCardio] = useState<CardioContext | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const [marking, setMarking] = useState(false);
@@ -78,7 +62,6 @@ function DayOnePage() {
 
   useEffect(() => {
     let cancelled = false;
-    const a = readAnswers();
     const stored = readStoredToken();
     if (!stored) {
       setStatus("denied");
@@ -86,14 +69,13 @@ function DayOnePage() {
     }
     void (async () => {
       try {
-        const result = await verify({ data: { token: stored } });
+        const result = await loadBrief({ data: { token: stored } });
         if (cancelled) return;
         if (result.ok) {
-          setAnswers(a);
+          setCardio(result.cardio);
+          setCompleted(result.completedDays.includes(1));
           setToken(stored);
           setStatus("allowed");
-          const progress = await loadProgress({ data: { token: stored } });
-          if (!cancelled && progress.ok) setCompleted(progress.completedDays.includes(1));
         } else {
           setStatus("denied");
         }
@@ -104,7 +86,7 @@ function DayOnePage() {
     return () => {
       cancelled = true;
     };
-  }, [verify, loadProgress]);
+  }, [loadBrief]);
 
   async function markComplete() {
     if (!token || marking || completed) return;
@@ -130,7 +112,7 @@ function DayOnePage() {
     );
   }
 
-  if (status === "denied" || !answers) {
+  if (status === "denied" || !cardio) {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
         <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
@@ -169,7 +151,7 @@ function DayOnePage() {
       </h1>
       <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        Short jump rope intervals mixed with squats, push-ups, and balance work.
+        {RUNDOWN}
       </p>
 
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
@@ -198,7 +180,7 @@ function DayOnePage() {
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           Your Cardio Option
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cardioOption(answers)}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cardioGuidance(cardio)}</p>
       </section>
 
       <section className="mt-4 rounded-lg border border-border bg-card p-4">

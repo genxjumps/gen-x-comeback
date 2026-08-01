@@ -87,6 +87,44 @@ export const completeDayInputSchema = z.object({
 
 export type ProgressResult = { ok: true; completedDays: number[] } | { ok: false };
 
+/**
+ * Minimal server-derived inputs for Day 1 cardio guidance.
+ * Ownership comes from the saved equipment answer, never from rope experience.
+ */
+export type CardioContext = {
+  impactLimited: boolean;
+  ownsRope: boolean;
+  ropeLevel: "beginner" | "short_bursts" | "comfortable";
+};
+
+export type DayOneBriefResult =
+  | { ok: true; cardio: CardioContext; completedDays: number[] }
+  | { ok: false };
+
+/** Maps a saved q3 value to a guidance level. Legacy "no_rope" means "never". */
+export function ropeLevelFromExperience(q3: string): CardioContext["ropeLevel"] {
+  if (q3 === "comfortable") return "comfortable";
+  if (q3 === "short_bursts") return "short_bursts";
+  return "beginner"; // never | no_rope (legacy) | new
+}
+
+/** Day 1 cardio instruction. Lower-impact guidance overrides all rope guidance. */
+export function cardioGuidance(c: CardioContext): string {
+  if (c.impactLimited) {
+    return "During every jump rope interval, march in place or use step-touches instead of jumping. Keep one foot on the floor the entire time and drive the pace with your arms and your breathing.";
+  }
+  if (!c.ownsRope) {
+    return "Use ghost jumps for every cardio interval. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+  }
+  if (c.ropeLevel === "beginner") {
+    return "Try the rope at the start of each interval. When resetting the rope takes over more than the jumping does, put it down and finish the interval with ghost jumps. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+  }
+  if (c.ropeLevel === "short_bursts") {
+    return "Use the rope while your rhythm is clean, then finish the interval with ghost jumps as needed. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+  }
+  return "Use the rope normally for every cardio interval and scale your pace as needed. Slow the turns down before you break your rhythm.";
+}
+
 /** Display-safe shape of one stored plan day. */
 export type PlanDayView = {
   day: number;
