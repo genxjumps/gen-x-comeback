@@ -132,38 +132,38 @@ function has(a: Answers, v: string) {
 export const WORKOUTS: Record<string, Workout> = {
   W01: {
     code: "W01",
-    title: "Full Body Flush & Fire",
+    title: "Jump Rope + Full Body",
     description:
       "Short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
     minutes: 15,
   },
   W02: {
     code: "W02",
-    title: "Upper Body",
+    title: "Jump Rope + Upper Body",
     description: "Jump rope intervals combined with push-ups, shoulder taps, and tricep work.",
     minutes: 15,
   },
   W03: {
     code: "W03",
-    title: "Lower Body Power-Up",
+    title: "Jump Rope + Lower Body",
     description: "Jump rope intervals mixed with lunges, glute bridges, and calf raises.",
     minutes: 15,
   },
   W04: {
     code: "W04",
-    title: "Core and Cardio",
+    title: "Jump Rope + Core",
     description: "Jump rope intervals combined with mountain climbers and floor-based core work.",
     minutes: 15,
   },
   W05: {
     code: "W05",
-    title: "Total Body",
+    title: "Jump Rope + Total Body",
     description: "Jump rope intervals mixed with squats, pressing, push-ups, and core stability.",
     minutes: 15,
   },
   W06: {
     code: "W06",
-    title: "Legs and Lungs",
+    title: "Jump Rope + Legs",
     description: "Jump rope intervals combined with lateral lunges, squats, and glute work.",
     minutes: 15,
   },
