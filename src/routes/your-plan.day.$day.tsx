@@ -30,8 +30,15 @@ export const Route = createFileRoute("/your-plan/day/$day")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: DayDetailPage,
+  component: DayRoutePage,
 });
+
+function DayRoutePage() {
+  const { day } = Route.useParams();
+  // Day 1 has its own real workout page; days 2-7 render saved assignment details.
+  if (day === "1") return <DayOneWorkout />;
+  return <DayDetailPage />;
+}
 
 function DayDetailPage() {
   const { day } = Route.useParams();
