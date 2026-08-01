@@ -39,7 +39,7 @@ const ROW_CLASS = "block p-4 hover:bg-muted/60";
 function RowLink({ day, children }: { day: number; children: ReactNode }) {
   if (day === 1) {
     return (
-      <Link to="/your-plan/day/1" className={ROW_CLASS}>
+      <Link to="/your-plan/day/$day" params={{ day: "1" }} className={ROW_CLASS}>
         {children}
       </Link>
     );
@@ -165,7 +165,7 @@ function PlanHubPage() {
             ) : null}
             {currentEntry.day === 1 ? (
               <Button asChild size="lg" className="mt-4 w-full sm:w-auto">
-                <Link to="/your-plan/day/1">Start Day 1</Link>
+                <Link to="/your-plan/day/$day" params={{ day: "1" }}>Start Day 1</Link>
               </Button>
             ) : (
               <Button asChild size="lg" className="mt-4 w-full sm:w-auto">
