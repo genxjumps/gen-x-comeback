@@ -126,7 +126,9 @@ function Question({
         <h2 className="text-sm font-medium leading-snug">{heading}</h2>
         {hint ? <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{hint}</p> : null}
         <div className="mt-3">{children}</div>
-        {error ? <p className="mt-2 text-xs font-medium text-foreground">{error}</p> : null}
+        <div aria-live="polite" role="status">
+          {error ? <p className="mt-2 text-xs font-medium text-foreground">{error}</p> : null}
+        </div>
       </CardContent>
     </Card>
   );
