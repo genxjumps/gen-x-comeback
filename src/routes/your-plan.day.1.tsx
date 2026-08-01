@@ -51,11 +51,10 @@ const EQUIPMENT_NOTES = [
 
 
 function DayOnePage() {
-  const verify = useServerFn(verifyAccessToken);
-  const loadProgress = useServerFn(getPlanProgress);
+  const loadBrief = useServerFn(getDayOneBrief);
   const completeDay = useServerFn(completePlanDay);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
-  const [answers, setAnswers] = useState<Answers | null>(null);
+  const [cardio, setCardio] = useState<CardioContext | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [completed, setCompleted] = useState(false);
   const [marking, setMarking] = useState(false);
@@ -63,7 +62,6 @@ function DayOnePage() {
 
   useEffect(() => {
     let cancelled = false;
-    const a = readAnswers();
     const stored = readStoredToken();
     if (!stored) {
       setStatus("denied");
@@ -71,14 +69,13 @@ function DayOnePage() {
     }
     void (async () => {
       try {
-        const result = await verify({ data: { token: stored } });
+        const result = await loadBrief({ data: { token: stored } });
         if (cancelled) return;
         if (result.ok) {
-          setAnswers(a);
+          setCardio(result.cardio);
+          setCompleted(result.completedDays.includes(1));
           setToken(stored);
           setStatus("allowed");
-          const progress = await loadProgress({ data: { token: stored } });
-          if (!cancelled && progress.ok) setCompleted(progress.completedDays.includes(1));
         } else {
           setStatus("denied");
         }
@@ -89,7 +86,7 @@ function DayOnePage() {
     return () => {
       cancelled = true;
     };
-  }, [verify, loadProgress]);
+  }, [loadBrief]);
 
   async function markComplete() {
     if (!token || marking || completed) return;
