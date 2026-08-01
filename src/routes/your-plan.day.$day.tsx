@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied, readStoredToken } from "@/components/plan-access";
+import { DayOneWorkout } from "@/components/day-one-workout";
 import {
   assignmentKind,
   currentAssignmentDay,
