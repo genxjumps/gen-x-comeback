@@ -126,7 +126,9 @@ function Question({
         <h2 className="text-sm font-medium leading-snug">{heading}</h2>
         {hint ? <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{hint}</p> : null}
         <div className="mt-3">{children}</div>
-        {error ? <p className="mt-2 text-xs font-medium text-foreground">{error}</p> : null}
+        <div aria-live="polite" role="status">
+          {error ? <p className="mt-2 text-xs font-medium text-foreground">{error}</p> : null}
+        </div>
       </CardContent>
     </Card>
   );
@@ -412,14 +414,14 @@ function Assessment() {
             <Link to="/">Back</Link>
           </Button>
         )}
-        <Button type="button" className="flex-1" onClick={onContinue} disabled={!stageValid}>
+        <Button type="button" className="flex-1" onClick={onContinue}>
           {step === 3 ? "Get My 7-Day Fitness Plan" : "Continue"}
         </Button>
       </div>
 
       <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-        Temporary checkpoint behavior: your draft answers are saved only in this browser using local
-        storage. No account, database, or server storage is connected yet.
+        Your answers are saved in this browser while you complete the assessment. After you submit
+        your name and email, your plan and progress are saved so you can return to them.
       </p>
     </div>
   );
