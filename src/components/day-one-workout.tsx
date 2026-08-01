@@ -5,9 +5,15 @@ import { Button } from "@/components/ui/button";
 import { readStoredToken } from "@/components/plan-access";
 import { cardioGuidance, type CardioContext } from "@/lib/lead-plan";
 import { completePlanDay, getDayOneBrief } from "@/lib/lead.functions";
-
-const RUNDOWN =
-  "Short jump rope intervals mixed with sumo squats, push-ups, and seated core work.";
+import {
+  W01_APPROACH,
+  W01_DURATION,
+  W01_EQUIPMENT_NOTES,
+  W01_EXPECT,
+  W01_IFRAME_SRC,
+  W01_RUNDOWN,
+  W01_TITLE,
+} from "@/lib/w01-content";
 
 /** Protected Day 1 workout. Requires a valid saved-plan access token. */
 export function DayOneWorkout() {
@@ -107,11 +113,11 @@ export function DayOneWorkout() {
         Day 1
       </p>
       <h1 className="mt-2 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
-        Full Body Flush &amp; Fire
+        {W01_TITLE}
       </h1>
-      <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
+      <p className="mt-2 text-xs text-muted-foreground">{W01_DURATION}</p>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        {RUNDOWN}
+        {W01_RUNDOWN}
       </p>
 
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
@@ -119,7 +125,7 @@ export function DayOneWorkout() {
           What to Expect
         </h2>
         <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
-          {EXPECT.map((item) => (
+          {W01_EXPECT.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
@@ -127,7 +133,7 @@ export function DayOneWorkout() {
 
       <div className="mt-6 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
         <iframe
-          src={IFRAME_SRC}
+          src={W01_IFRAME_SRC}
           loading="lazy"
           allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
           allowFullScreen
@@ -148,9 +154,7 @@ export function DayOneWorkout() {
           How to Approach This Workout
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          These workouts are supposed to challenge you. Work hard. Rest when needed. Do fewer reps
-          or use a smaller range of motion when necessary. Skip a movement you cannot perform
-          safely. Stop if you feel pain rather than normal exercise discomfort.
+          {W01_APPROACH}
         </p>
       </section>
 
@@ -159,7 +163,7 @@ export function DayOneWorkout() {
           Equipment
         </h2>
         <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
-          {EQUIPMENT_NOTES.map((item) => (
+          {W01_EQUIPMENT_NOTES.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ul>
