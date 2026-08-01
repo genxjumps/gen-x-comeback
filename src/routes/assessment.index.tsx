@@ -73,9 +73,9 @@ const q2Options = [
 ];
 
 const q3Options = [
-  { label: "I don\u2019t have a rope", value: "no_rope" },
-  { label: "I\u2019m brand new", value: "new" },
-  { label: "I can jump in short bursts", value: "short_bursts" },
+  { label: "I\u2019ve never jumped rope", value: "no_rope" },
+  { label: "I\u2019m new to jumping rope", value: "new" },
+  { label: "I can jump for short periods", value: "short_bursts" },
   { label: "I\u2019m comfortable jumping rope", value: "comfortable" },
 ];
 
@@ -303,7 +303,7 @@ function Assessment() {
         {step === 2 ? (
           <>
             <Question
-              heading="What best describes your experience with jump rope?"
+              heading={"What\u2019s your current jump rope experience?"}
               error={showErrors && !answers.q3 ? "Select one option to continue." : null}
             >
               <SingleSelect
