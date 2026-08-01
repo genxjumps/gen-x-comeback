@@ -303,7 +303,7 @@ function Assessment() {
         {step === 2 ? (
           <>
             <Question
-              heading="What best describes your experience with jump rope?"
+              heading="What&rsquo;s your current jump rope experience?"
               error={showErrors && !answers.q3 ? "Select one option to continue." : null}
             >
               <SingleSelect
