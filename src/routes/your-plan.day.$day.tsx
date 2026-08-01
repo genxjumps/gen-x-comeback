@@ -12,24 +12,26 @@ import {
 import { getPlanHub } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/your-plan/day/$day")({
-  head: () => ({
-    meta: [
-      { title: "Your Assignment Details | Gen X Jumps" },
-      {
-        name: "description",
-        content:
-          "The saved details for this assignment in your 7-day plan, including the title, rundown, duration, and any optional active recovery.",
-      },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Your Assignment Details | Gen X Jumps" },
-      {
-        property: "og:description",
-        content: "The saved details for this assignment in your 7-day plan.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: ({ params }) => {
+    const isDayOne = params.day === "1";
+    const title = isDayOne
+      ? "Day 1 - Full Body Flush & Fire | Gen X Jumps"
+      : "Your Assignment Details | Gen X Jumps";
+    const description = isDayOne
+      ? "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan."
+      : "The saved details for this assignment in your 7-day plan, including the title, rundown, duration, and any optional active recovery.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { name: "robots", content: "noindex, nofollow" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary" },
+      ],
+    };
+  },
   component: DayRoutePage,
 });
 
