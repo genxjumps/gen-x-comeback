@@ -352,7 +352,14 @@ function ResultsPage() {
             onSubmit={async (e) => {
               e.preventDefault();
               setShowErrors(true);
-              if (!nameOk || !emailOk || !consent || saving) return;
+              if (!nameOk || !emailOk || !consent) {
+                const selector = !nameOk ? "#first-name" : !emailOk ? "#email" : "#consent";
+                window.requestAnimationFrame(() => {
+                  document.querySelector<HTMLElement>(selector)?.focus();
+                });
+                return;
+              }
+              if (saving) return;
               setSaving(true);
               setError(null);
               try {
