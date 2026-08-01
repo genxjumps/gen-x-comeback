@@ -223,9 +223,33 @@ function Assessment() {
         ? Boolean(answers.q3) && answers.q4.length > 0
         : Boolean(answers.q5) && answers.equipment.length > 0 && !wError;
 
+  /** Moves keyboard focus to the first invalid control on the current stage. */
+  const focusFirstInvalid = () => {
+    const targets: string[] =
+      step === 1
+        ? [answers.q1 ? "" : `#q1-${q1Options[0].value}`, answers.q2 ? "" : `#q2-${q2Options[0].value}`]
+        : step === 2
+          ? [
+              answers.q3 ? "" : `#q3-${q3Options[0].value}`,
+              answers.q4.length > 0 ? "" : `#q4-${q4Options[0].value}`,
+            ]
+          : [
+              answers.equipment.length > 0 ? "" : `#equipment-${equipmentOptions[0].value}`,
+              answers.q5 ? "" : `#q5-${q5Options[0].value}`,
+              wError ? "#weight" : "",
+            ];
+    const selector = targets.find((s) => s !== "");
+    if (!selector) return;
+    window.requestAnimationFrame(() => {
+      const el = document.querySelector<HTMLElement>(selector);
+      el?.focus();
+    });
+  };
+
   const onContinue = () => {
     if (!stageValid) {
       setShowErrors(true);
+      focusFirstInvalid();
       return;
     }
     setShowErrors(false);
