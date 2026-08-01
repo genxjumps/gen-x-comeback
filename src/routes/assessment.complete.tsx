@@ -387,11 +387,14 @@ function ResultsPage() {
                 value={firstName}
                 maxLength={60}
                 onChange={(e) => setFirstName(e.target.value)}
-                required
+                aria-invalid={showErrors && !nameOk ? true : undefined}
+                aria-describedby="first-name-error"
               />
-              {showErrors && !nameOk ? (
-                <p className="text-xs text-muted-foreground">Enter your first name.</p>
-              ) : null}
+              <div id="first-name-error" aria-live="polite" role="status">
+                {showErrors && !nameOk ? (
+                  <p className="text-xs text-muted-foreground">Enter your first name.</p>
+                ) : null}
+              </div>
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="email">Email address</Label>
@@ -402,11 +405,14 @@ function ResultsPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
+                aria-invalid={showErrors && !emailOk ? true : undefined}
+                aria-describedby="email-error"
               />
-              {showErrors && !emailOk ? (
-                <p className="text-xs text-muted-foreground">Enter a valid email address.</p>
-              ) : null}
+              <div id="email-error" aria-live="polite" role="status">
+                {showErrors && !emailOk ? (
+                  <p className="text-xs text-muted-foreground">Enter a valid email address.</p>
+                ) : null}
+              </div>
             </div>
             <div className="flex items-start gap-2">
               <Checkbox
@@ -414,14 +420,17 @@ function ResultsPage() {
                 checked={consent}
                 onCheckedChange={(v) => setConsent(v === true)}
                 className="mt-0.5"
+                aria-describedby="consent-error"
               />
               <Label htmlFor="consent" className="text-xs font-normal leading-relaxed">
                 {CONSENT_COPY}
               </Label>
             </div>
-            {showErrors && !consent ? (
-              <p className="text-xs text-muted-foreground">You need to agree before continuing.</p>
-            ) : null}
+            <div id="consent-error" aria-live="polite" role="status">
+              {showErrors && !consent ? (
+                <p className="text-xs text-muted-foreground">You need to agree before continuing.</p>
+              ) : null}
+            </div>
             <Button type="submit" className="mt-1 w-full" disabled={saving}>
               {saving ? "Saving your plan..." : "Unlock My Full 7-Day Workout Plan"}
             </Button>
