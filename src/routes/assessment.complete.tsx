@@ -261,7 +261,7 @@ function ResultsPage() {
               variant={dayOneComplete ? "outline" : "default"}
               className="mt-3 w-full sm:w-auto"
             >
-              <Link to="/your-plan/day/1">
+              <Link to={unlocked ? "/your-plan/day/1" : "/preview/w01"}>
                 {dayOneComplete ? "Review Day 1 Workout" : "Start Day 1 Workout"}
               </Link>
             </Button>
