@@ -273,7 +273,7 @@ function ResultsPage() {
           </li>
 
           {rest.map((d) => (
-            <li key={d.day} className={unlocked ? "bg-card p-4" : "bg-muted/30 p-4"}>
+            <li key={d.day} className={unlocked ? "bg-card px-4 py-2.5" : "bg-muted/30 px-4 py-2.5"}>
               <div className="flex items-baseline justify-between gap-3">
                 <h3
                   className={
@@ -288,28 +288,8 @@ function ResultsPage() {
                   </span>
                 ) : null}
               </div>
-
-              {d.description ? (
-                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                  {d.description}
-                </p>
-              ) : null}
-              {d.minutes ? (
-                <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
-              ) : null}
               {d.optional ? (
-                <div className="mt-3 rounded-md border border-dashed border-border p-3">
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                    Optional Active Recovery
-                  </p>
-                  <p className="mt-1 text-sm font-medium">{d.optional.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {d.optional.description}
-                  </p>
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    About 15 minutes &middot; optional, not required
-                  </p>
-                </div>
+                <p className="mt-1 text-xs text-muted-foreground">Optional: Active Recovery</p>
               ) : null}
             </li>
           ))}
