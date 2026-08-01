@@ -45,7 +45,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function isCompleteDraft(a: Answers): boolean {
   const q1 = ["none", "one", "two_three", "four_plus"].includes(a.q1);
   const q2 = ["long_break", "inconsistent", "active_needs_plan"].includes(a.q2);
-  const q3 = ["no_rope", "new", "short_bursts", "comfortable"].includes(a.q3);
+  const q3 = ["never", "no_rope", "new", "short_bursts", "comfortable"].includes(a.q3);
   const q4 = a.q4.length === 1 && ["none", "limit_impact"].includes(a.q4[0]);
   const q5 = ["3", "4", "5", "6_7"].includes(a.q5);
   const equipment = a.equipment.length > 0;
