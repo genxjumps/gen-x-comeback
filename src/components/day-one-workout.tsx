@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { readStoredToken } from "@/components/plan-access";
@@ -9,48 +9,8 @@ import { completePlanDay, getDayOneBrief } from "@/lib/lead.functions";
 const RUNDOWN =
   "Short jump rope intervals mixed with sumo squats, push-ups, and seated core work.";
 
-export const Route = createFileRoute("/your-plan/day/1")({
-  head: () => ({
-    meta: [
-      { title: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
-      {
-        name: "description",
-        content:
-          "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan.",
-      },
-      { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
-      {
-        property: "og:description",
-        content:
-          "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
-  component: DayOnePage,
-});
-
-const IFRAME_SRC =
-  "https://customer-cvsfidz4ao4uk9i5.cloudflarestream.com/40ae220635bc55bc66d1f68cb11ab997/iframe?poster=https%3A%2F%2Fcustomer-cvsfidz4ao4uk9i5.cloudflarestream.com%2F40ae220635bc55bc66d1f68cb11ab997%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600";
-
-const EXPECT = [
-  "Three circuits",
-  "Three rounds per circuit",
-  "20-second cardio intervals",
-  "Bodyweight repetitions",
-  "Built-in rest and circuit breaks",
-];
-
-const EQUIPMENT_NOTES = [
-  "No dumbbells required",
-  "Jump rope optional because ghost jumps or lower-impact cardio can replace it",
-  "Mat or cushioned surface recommended for floor work",
-];
-
-
-function DayOnePage() {
+/** Protected Day 1 workout. Requires a valid saved-plan access token. */
+export function DayOneWorkout() {
   const loadBrief = useServerFn(getDayOneBrief);
   const completeDay = useServerFn(completePlanDay);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
