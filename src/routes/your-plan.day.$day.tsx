@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied, readStoredToken } from "@/components/plan-access";
 import { DayOneWorkout } from "@/components/day-one-workout";
+import { DayTwoAssignment } from "@/components/day-two-assignment";
 import {
   assignmentKind,
   currentAssignmentDay,
@@ -13,13 +14,18 @@ import { getPlanHub } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/your-plan/day/$day")({
   head: ({ params }) => {
-    const isDayOne = params.day === "1";
-    const title = isDayOne
-      ? "Day 1 - Full Body Flush & Fire | Gen X Jumps"
-      : "Your Assignment Details | Gen X Jumps";
-    const description = isDayOne
-      ? "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan."
-      : "The saved details for this assignment in your 7-day plan, including the title, rundown, duration, and any optional active recovery.";
+    const title =
+      params.day === "1"
+        ? "Day 1 - Full Body Flush & Fire | Gen X Jumps"
+        : params.day === "2"
+          ? "Day 2 Assignment | Gen X Jumps"
+          : "Your Assignment Details | Gen X Jumps";
+    const description =
+      params.day === "1"
+        ? "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan."
+        : params.day === "2"
+          ? "Your assigned Day 2 action from your saved 7-day plan, either the Upper Body workout or easy movement, with guidance matched to your saved answers."
+          : "The saved details for this assignment in your 7-day plan, including the title, rundown, duration, and any optional active recovery.";
     return {
       meta: [
         { title },
@@ -37,8 +43,9 @@ export const Route = createFileRoute("/your-plan/day/$day")({
 
 function DayRoutePage() {
   const { day } = Route.useParams();
-  // Day 1 has its own real workout page; days 2-7 render saved assignment details.
+  // Days 1 and 2 have real delivery; days 3-7 render saved assignment details only.
   if (day === "1") return <DayOneWorkout />;
+  if (day === "2") return <DayTwoAssignment />;
   return <DayDetailPage />;
 }
 
@@ -50,7 +57,7 @@ function DayDetailPage() {
   const [hub, setHub] = useState<PlanHubData | null>(null);
 
   const dayNumber = Number(day);
-  const valid = Number.isInteger(dayNumber) && dayNumber >= 2 && dayNumber <= 7;
+  const valid = Number.isInteger(dayNumber) && dayNumber >= 3 && dayNumber <= 7;
 
   useEffect(() => {
     if (!valid) {

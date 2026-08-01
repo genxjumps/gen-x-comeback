@@ -5,13 +5,16 @@ import {
   CONSENT_COPY,
   CONSENT_VERSION,
   completeDayInputSchema,
+  dayBriefInputSchema,
   generateAccessToken,
   hashAccessToken,
   leadInputSchema,
   planFromAnswers,
   regenerateInputSchema,
   ropeLevelFromExperience,
+  toPlanDayView,
   tokenOnlyInputSchema,
+  type DayBriefResult,
   type DayOneBriefResult,
   type PlanDayView,
   type PlanHubResult,
@@ -111,11 +114,69 @@ export const getDayOneBrief = createServerFn({ method: "POST" })
     };
   });
 
+/**
+ * Server-authoritative brief for a protected day page. Guidance and the
+ * assignment always come from the saved plan, never from browser state.
+ */
+export const getDayBrief = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => dayBriefInputSchema.parse(data))
+  .handler(async ({ data }): Promise<DayBriefResult> => {
+    const accessTokenHash = await hashAccessToken(data.token);
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("lead_plans")
+      .select("id, assessment_json, plan_json")
+      .eq("access_token_hash", accessTokenHash)
+      .limit(1);
+
+    if (error) throw new Error(error.message);
+    const lead = rows?.[0];
+    if (!lead) return { ok: false };
+
+    const saved = (lead.assessment_json ?? {}) as {
+      q3?: unknown;
+      q4?: unknown;
+      equipment?: unknown;
+    };
+    const snapshot = (lead.plan_json ?? {}) as {
+      tier?: string;
+      flags?: Record<string, unknown>;
+      days?: Array<Record<string, unknown>>;
+    };
+    const savedFlags = snapshot.flags ?? {};
+    const q4 = Array.isArray(saved.q4) ? saved.q4 : [];
+    const equipment = Array.isArray(saved.equipment) ? saved.equipment : [];
+
+    const raw = (snapshot.days ?? []).find(
+      (d, i) => (typeof d.day === "number" ? d.day : i + 1) === data.day,
+    );
+
+    return {
+      ok: true,
+      tier: typeof snapshot.tier === "string" ? snapshot.tier : "",
+      cardio: {
+        impactLimited: q4.includes("limit_impact") || savedFlags['impactLimited'] === true,
+        ownsRope: equipment.includes("jump_rope"),
+        ropeLevel: ropeLevelFromExperience(typeof saved.q3 === "string" ? saved.q3 : ""),
+      },
+      day: raw ? toPlanDayView(raw, data.day - 1) : null,
+      completedDays: await listCompletedDays(lead.id),
+    };
+  });
+
 export const completePlanDay = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => completeDayInputSchema.parse(data))
   .handler(async ({ data }): Promise<ProgressResult> => {
     const leadPlanId = await resolveLeadIdByToken(data.token);
     if (!leadPlanId) return { ok: false };
+
+    // Sequential progression is enforced server-side: every earlier day must
+    // already be complete, so direct URL access cannot complete a day early.
+    const already = await listCompletedDays(leadPlanId);
+    for (let d = 1; d < data.day; d += 1) {
+      if (!already.includes(d)) return { ok: false };
+    }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
@@ -128,6 +189,7 @@ export const completePlanDay = createServerFn({ method: "POST" })
 
     return { ok: true, completedDays: await listCompletedDays(leadPlanId) };
   });
+
 
 /** A successful reassessment replaces the current plan, so progress resets. */
 async function resetProgress(leadPlanId: string): Promise<void> {
@@ -253,27 +315,7 @@ export const getPlanHub = createServerFn({ method: "POST" })
       days?: Array<Record<string, unknown>>;
     };
 
-    const days: PlanDayView[] = (snapshot.days ?? []).map((d, i) => {
-      const opt = d.optional as
-        | { code?: string; title?: string; description?: string; minutes?: number }
-        | null
-        | undefined;
-      return {
-        day: typeof d.day === "number" ? d.day : i + 1,
-        code: typeof d.code === "string" ? d.code : null,
-        title: typeof d.title === "string" ? d.title : "Assignment",
-        description: typeof d.description === "string" ? d.description : null,
-        minutes: typeof d.minutes === "number" ? d.minutes : null,
-        optional: opt
-          ? {
-              code: String(opt.code ?? ""),
-              title: String(opt.title ?? ""),
-              description: String(opt.description ?? ""),
-              minutes: typeof opt.minutes === "number" ? opt.minutes : 15,
-            }
-          : null,
-      };
-    });
+    const days: PlanDayView[] = (snapshot.days ?? []).map((d, i) => toPlanDayView(d, i));
 
     const flags = snapshot.flags ?? {};
 
