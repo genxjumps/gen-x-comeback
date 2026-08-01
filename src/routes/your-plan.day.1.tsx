@@ -151,7 +151,7 @@ function DayOnePage() {
       </h1>
       <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        Short jump rope intervals mixed with squats, push-ups, and balance work.
+        {RUNDOWN}
       </p>
 
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
