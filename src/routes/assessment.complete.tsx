@@ -347,6 +347,7 @@ function ResultsPage() {
 
 
           <form
+            noValidate
             className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
             onSubmit={async (e) => {
               e.preventDefault();
