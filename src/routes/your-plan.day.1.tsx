@@ -112,7 +112,7 @@ function DayOnePage() {
     );
   }
 
-  if (status === "denied" || !answers) {
+  if (status === "denied" || !cardio) {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
         <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
