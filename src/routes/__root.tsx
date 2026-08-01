@@ -123,27 +123,35 @@ function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const inAssessment = pathname === "/assessment" || pathname.startsWith("/assessment/");
   const inPlan = pathname === "/your-plan" || pathname.startsWith("/your-plan/");
+  const inJumpRopes = pathname === "/jump-ropes";
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col bg-background text-foreground">
         <header className="border-b border-border">
           <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-5 py-4">
-            {inAssessment ? (
+            {inPlan || inJumpRopes ? (
+              <>
+                <Link
+                  to="/your-plan"
+                  className="truncate text-sm font-semibold tracking-tight"
+                >
+                  My Plan
+                </Link>
+                <Link
+                  to="/jump-ropes"
+                  className="shrink-0 text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Jump Ropes
+                </Link>
+              </>
+            ) : inAssessment ? (
               <span className="truncate text-sm font-semibold tracking-tight">Gen X Jumps</span>
             ) : (
               <Link to="/" className="truncate text-sm font-semibold tracking-tight">
                 Gen X Jumps
               </Link>
             )}
-            {inPlan ? (
-              <Link
-                to="/jump-ropes"
-                className="shrink-0 text-sm text-muted-foreground hover:text-foreground"
-              >
-                Jump Ropes
-              </Link>
-            ) : null}
             <span className="ml-auto shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground">
               Preview
             </span>
