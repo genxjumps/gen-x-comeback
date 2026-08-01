@@ -80,10 +80,14 @@ export type VerifyAccessResult = { ok: true; firstName: string } | { ok: false }
 
 export const TOTAL_ASSIGNMENTS = 7;
 
+/** Days with real delivery + completion implemented so far. */
+export const COMPLETABLE_DAYS = [1, 2] as const;
+
 export const completeDayInputSchema = z.object({
   token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
-  day: z.literal(1),
+  day: z.union([z.literal(1), z.literal(2)]),
 });
+
 
 export type ProgressResult = { ok: true; completedDays: number[] } | { ok: false };
 
@@ -100,6 +104,29 @@ export type CardioContext = {
 export type DayOneBriefResult =
   | { ok: true; cardio: CardioContext; completedDays: number[] }
   | { ok: false };
+
+/**
+ * Server-authoritative brief for a protected day page: guidance plus the saved
+ * assignment for that day, its tier, and current completion state.
+ */
+export type DayBriefResult =
+  | {
+      ok: true;
+      cardio: CardioContext;
+      completedDays: number[];
+      tier: string;
+      day: PlanDayView | null;
+    }
+  | { ok: false };
+
+/** Tier-appropriate easy-movement duration for a saved walk assignment. */
+export function movementDuration(tier: string): string {
+  if (tier === "Ready") return "20 to 30 minutes";
+  if (tier === "Rebuild") return "About 20 minutes";
+  return "10 to 20 minutes";
+}
+
+
 
 /** Maps a saved q3 value to a guidance level. Legacy "no_rope" means "never". */
 export function ropeLevelFromExperience(q3: string): CardioContext["ropeLevel"] {
@@ -134,6 +161,36 @@ export type PlanDayView = {
   minutes: number | null;
   optional: { code: string; title: string; description: string; minutes: number } | null;
 };
+
+/** Normalizes one stored plan-day record into the display-safe shape. */
+export function toPlanDayView(d: Record<string, unknown>, index: number): PlanDayView {
+  const opt = d.optional as
+    | { code?: string; title?: string; description?: string; minutes?: number }
+    | null
+    | undefined;
+  return {
+    day: typeof d.day === "number" ? d.day : index + 1,
+    code: typeof d.code === "string" ? d.code : null,
+    title: typeof d.title === "string" ? d.title : "Assignment",
+    description: typeof d.description === "string" ? d.description : null,
+    minutes: typeof d.minutes === "number" ? d.minutes : null,
+    optional: opt
+      ? {
+          code: String(opt.code ?? ""),
+          title: String(opt.title ?? ""),
+          description: String(opt.description ?? ""),
+          minutes: typeof opt.minutes === "number" ? opt.minutes : 15,
+        }
+      : null,
+  };
+}
+
+export const dayBriefInputSchema = z.object({
+  token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
+  day: z.union([z.literal(1), z.literal(2)]),
+});
+
+
 
 export type PlanHubData = {
   firstName: string;
