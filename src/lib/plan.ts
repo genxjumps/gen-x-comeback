@@ -6,7 +6,7 @@ export const ASSESSMENT_STORAGE_KEY = "gxj_assessment_draft_v1";
 export type Answers = {
   q1: string; // none | one | two_three | four_plus
   q2: string; // long_break | inconsistent | active_needs_plan
-  q3: string; // no_rope | new | short_bursts | comfortable
+  q3: string; // jump rope experience only: never | new | short_bursts | comfortable ("no_rope" is legacy for never)
   // q4: impact answer stored as an array for backwards compatibility.
   // ["none"] = no impact limit, ["limit_impact"] = needs a lower-impact option.
   q4: string[];
@@ -195,9 +195,10 @@ export function buildPlan(a: Answers): Plan {
   const equip = Array.isArray(a.equipment) ? a.equipment : [];
   const dumbbells = equip.includes("dumbbells");
   const cushionedSurface = equip.includes("mat") || equip.includes("rubber_flooring");
+  // Rope availability comes from the equipment answer and impact limitation only.
+  // Jump rope experience (q3) never implies ownership.
   const ownsRope = equip.includes("jump_rope");
-  const ropeExperienceAllows = a.q3 !== "no_rope" && a.q3 !== "";
-  const rope = ownsRope && ropeExperienceAllows && !impactLimited;
+  const rope = ownsRope && !impactLimited;
 
   const equipmentNote = dumbbells ? "Dumbbells" : "Bodyweight";
   const surfaceNote = cushionedSurface ? "Mat or cushioned surface" : "";

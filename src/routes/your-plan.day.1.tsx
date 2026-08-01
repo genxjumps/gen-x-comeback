@@ -53,10 +53,10 @@ export function cardioOption(a: Answers): string {
   if (impactLimited) {
     return "During every jump rope interval, march in place or use step-touches instead of jumping. Keep one foot on the floor the entire time and drive the pace with your arms and your breathing.";
   }
-  if (!ownsRope || a.q3 === "no_rope") {
+  if (!ownsRope) {
     return "Use ghost jumps for every cardio interval. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
   }
-  if (a.q3 === "new") {
+  if (a.q3 === "never" || a.q3 === "no_rope" || a.q3 === "new") {
     return "Try the rope at the start of each interval. When resetting the rope takes over more than the jumping does, put it down and finish the interval with ghost jumps. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
   }
   if (a.q3 === "short_bursts") {

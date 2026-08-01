@@ -73,7 +73,7 @@ const q2Options = [
 ];
 
 const q3Options = [
-  { label: "I\u2019ve never jumped rope", value: "no_rope" },
+  { label: "I\u2019ve never jumped rope", value: "never" },
   { label: "I\u2019m new to jumping rope", value: "new" },
   { label: "I can jump for short periods", value: "short_bursts" },
   { label: "I\u2019m comfortable jumping rope", value: "comfortable" },

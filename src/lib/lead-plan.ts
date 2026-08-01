@@ -24,7 +24,8 @@ export const answersSchema = z
   .object({
     q1: z.enum(["none", "one", "two_three", "four_plus"]),
     q2: z.enum(["long_break", "inconsistent", "active_needs_plan"]),
-    q3: z.enum(["no_rope", "new", "short_bursts", "comfortable"]),
+    // "no_rope" is the legacy value for "never" (kept accepted for older saved drafts).
+    q3: z.enum(["never", "no_rope", "new", "short_bursts", "comfortable"]),
     q4: z.array(z.enum(["none", "limit_impact"])).length(1),
     q5: z.enum(["3", "4", "5", "6_7"]),
     equipment: z
