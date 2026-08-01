@@ -190,8 +190,34 @@ export function toPlanDayView(d: Record<string, unknown>, index: number): PlanDa
 
 export const dayBriefInputSchema = z.object({
   token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
-  day: z.union([z.literal(1), z.literal(2)]),
+  day: planDaySchema,
 });
+
+/** Delivery kind for a saved assignment day, derived from the saved plan only. */
+export type AssignmentType = "workout" | "walk" | "recovery" | "rest";
+
+export function assignmentType(day: PlanDayView | null): AssignmentType {
+  if (!day) return "rest";
+  if (day.code) return "workout";
+  const t = day.title.toLowerCase();
+  if (t.includes("walk") || t.includes("movement")) return "walk";
+  if (t.includes("recovery")) return "recovery";
+  return "rest";
+}
+
+/** Completion button label for a saved assignment day. */
+export function completionLabel(day: PlanDayView | null, dayNumber: number): string {
+  switch (assignmentType(day)) {
+    case "walk":
+      return "Mark Movement Complete";
+    case "recovery":
+      return "Mark Recovery Complete";
+    case "rest":
+      return "Mark Rest Day Complete";
+    default:
+      return `Mark Day ${dayNumber} Complete`;
+  }
+}
 
 
 
