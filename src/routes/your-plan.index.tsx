@@ -177,7 +177,7 @@ function PlanHubPage() {
           </>
         ) : (
           <>
-            <h3 className="mt-2 text-lg font-semibold tracking-tight">Plan Complete</h3>
+            <h3 className="mt-2 text-lg font-semibold tracking-tight">7-Day Plan Complete</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               You finished all seven assignments in this plan. Review any day below whenever you
               want.
