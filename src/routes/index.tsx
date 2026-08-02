@@ -142,7 +142,7 @@ function Index() {
 
       <div className="mt-10">
         <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-          <Link to="/assessment/start">Build My 7-Day Plan</Link>
+          <Link to={ctaTo}>{ctaLabel}</Link>
         </Button>
       </div>
     </div>
