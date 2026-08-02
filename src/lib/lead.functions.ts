@@ -334,7 +334,6 @@ export const getPlanHub = createServerFn({ method: "POST" })
           dumbbells: flags.dumbbells === true,
           cushionedSurface: flags.cushionedSurface === true,
           impactLimited: flags.impactLimited === true,
-          
         },
         days,
         completedDays: await listCompletedDays(lead.id),
