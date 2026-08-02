@@ -183,10 +183,6 @@ export function toPlanDayView(d: Record<string, unknown>, index: number): PlanDa
   };
 }
 
-export const dayBriefInputSchema = z.object({
-  token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
-  day: planDaySchema,
-});
 
 /** Delivery kind for a saved assignment day, derived from the saved plan only. */
 export type AssignmentType = "workout" | "walk" | "recovery" | "rest";
