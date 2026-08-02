@@ -11,7 +11,6 @@ import {
   ACCESS_TOKEN_STORAGE_KEY,
   CONSENT_COPY,
   RAW_TOKEN_RE,
-  TOTAL_ASSIGNMENTS,
 } from "@/lib/lead-plan";
 import {
   regeneratePlanWithToken,
@@ -85,7 +84,6 @@ function ResultsPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [recognized, setRecognized] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
-  const [completedDays, setCompletedDays] = useState<number[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -145,8 +143,6 @@ function ResultsPage() {
   const rest = plan.days.slice(1);
   const nameOk = firstName.trim().length > 0;
   const emailOk = EMAIL_RE.test(email.trim());
-  const dayOneComplete = completedDays.includes(1);
-  const currentDay = unlocked && dayOneComplete ? 2 : 1;
 
 
   return (
@@ -219,17 +215,12 @@ function ResultsPage() {
 
       {/* Days */}
       <section className="mt-8">
-        {unlocked ? (
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-            {completedDays.length} of {TOTAL_ASSIGNMENTS} assignments complete
-          </p>
-        ) : null}
         <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
           <li className="bg-card p-4">
             <div className="flex items-baseline justify-between gap-3">
               <h3 className="text-sm font-semibold">Day 1: {dayOne.title}</h3>
               <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
-                {dayOneComplete ? "Complete" : "Today"}
+                Today
               </span>
             </div>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
@@ -239,7 +230,7 @@ function ResultsPage() {
             <Button
               asChild
               size="sm"
-              variant={dayOneComplete ? "outline" : "default"}
+              variant="default"
               className="mt-3 w-full sm:w-auto"
             >
               <Link
@@ -247,7 +238,7 @@ function ResultsPage() {
                   ? { to: "/your-plan/day/$day" as const, params: { day: "1" } }
                   : { to: "/preview/w01" as const })}
               >
-                {dayOneComplete ? "Review Day 1 Workout" : "Start Day 1 Workout"}
+                Start Day 1 Workout
               </Link>
             </Button>
 
@@ -263,11 +254,6 @@ function ResultsPage() {
                 >
                   Day {d.day}: {d.title}
                 </h3>
-                {unlocked && d.day === currentDay ? (
-                  <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
-                    Up Next
-                  </span>
-                ) : null}
               </div>
               {d.optional ? (
                 <p className="mt-1 text-xs text-muted-foreground">Optional: Active Recovery</p>
