@@ -2,19 +2,27 @@
 import { z } from "zod";
 
 import { RAW_TOKEN_RE, TOTAL_ASSIGNMENTS } from "@/lib/lead-plan";
+import {
+  EQUIPMENT_VALUES,
+  Q1_VALUES,
+  Q2_VALUES,
+  Q3_VALUES,
+  Q4_VALUES,
+  Q5_VALUES,
+} from "@/lib/plan";
 
 const NAME_RE = /^[^<>&"`\u0000-\u001f\u007f]{1,60}$/;
 
 export const answersSchema = z
   .object({
-    q1: z.enum(["none", "one", "two_three", "four_plus"]),
-    q2: z.enum(["long_break", "inconsistent", "active_needs_plan"]),
+    q1: z.enum(Q1_VALUES),
+    q2: z.enum(Q2_VALUES),
     // "no_rope" is the legacy value for "never" (kept accepted for older saved drafts).
-    q3: z.enum(["never", "no_rope", "new", "short_bursts", "comfortable"]),
-    q4: z.array(z.enum(["none", "limit_impact"])).length(1),
-    q5: z.enum(["3", "4", "5", "6_7"]),
+    q3: z.enum(Q3_VALUES),
+    q4: z.array(z.enum(Q4_VALUES)).length(1),
+    q5: z.enum(Q5_VALUES),
     equipment: z
-      .array(z.enum(["jump_rope", "dumbbells", "mat", "rubber_flooring", "none"]))
+      .array(z.enum(EQUIPMENT_VALUES))
       .min(1)
       .max(5),
     weight: z.string().max(10),
