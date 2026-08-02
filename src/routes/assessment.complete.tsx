@@ -11,7 +11,6 @@ import {
   ACCESS_TOKEN_STORAGE_KEY,
   CONSENT_COPY,
   RAW_TOKEN_RE,
-  TOTAL_ASSIGNMENTS,
 } from "@/lib/lead-plan";
 import {
   regeneratePlanWithToken,
