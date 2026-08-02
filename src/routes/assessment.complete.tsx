@@ -215,11 +215,6 @@ function ResultsPage() {
 
       {/* Days */}
       <section className="mt-8">
-        {unlocked ? (
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-            {completedDays.length} of {TOTAL_ASSIGNMENTS} assignments complete
-          </p>
-        ) : null}
         <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
           <li className="bg-card p-4">
             <div className="flex items-baseline justify-between gap-3">
