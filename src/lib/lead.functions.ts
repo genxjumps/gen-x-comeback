@@ -4,16 +4,11 @@ import type { Answers } from "@/lib/plan";
 import {
   CONSENT_COPY,
   CONSENT_VERSION,
-  completeDayInputSchema,
-  dayBriefInputSchema,
   generateAccessToken,
   hashAccessToken,
-  leadInputSchema,
   planFromAnswers,
-  regenerateInputSchema,
   ropeLevelFromExperience,
   toPlanDayView,
-  tokenOnlyInputSchema,
   type DayBriefResult,
   type DayOneBriefResult,
   type PlanDayView,
@@ -23,6 +18,13 @@ import {
   type SaveLeadPlanResult,
   type VerifyAccessResult,
 } from "@/lib/lead-plan";
+import {
+  completeDayInputSchema,
+  dayBriefInputSchema,
+  leadInputSchema,
+  regenerateInputSchema,
+  tokenOnlyInputSchema,
+} from "@/lib/lead-schemas";
 
 export const verifyAccessToken = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
