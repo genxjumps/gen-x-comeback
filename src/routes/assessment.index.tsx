@@ -47,68 +47,47 @@ export const Route = createFileRoute("/assessment/")({
   component: Assessment,
 });
 
-const STORAGE_KEY = "gxj_assessment_draft_v1";
-
-type Answers = {
-  q1: string;
-  q2: string;
-  q3: string;
-  q4: string[];
-  q5: string;
-  equipment: string[];
-  weight: string;
-  unit: "lb" | "kg";
-};
-
-const emptyAnswers: Answers = {
-  q1: "",
-  q2: "",
-  q3: "",
-  q4: [],
-  q5: "",
-  equipment: [],
-  weight: "",
-  unit: "lb",
-};
+const STORAGE_KEY = ASSESSMENT_STORAGE_KEY;
 
 const q1Options = [
-  { label: "None", value: "none" },
-  { label: "1 workout", value: "one" },
-  { label: "2-3 workouts", value: "two_three" },
-  { label: "4 or more workouts", value: "four_plus" },
+  { label: "None", value: Q1_VALUES[0] },
+  { label: "1 workout", value: Q1_VALUES[1] },
+  { label: "2-3 workouts", value: Q1_VALUES[2] },
+  { label: "4 or more workouts", value: Q1_VALUES[3] },
 ];
 
 const q2Options = [
-  { label: "I\u2019m coming back after a long break", value: "long_break" },
-  { label: "I\u2019ve been active, but inconsistent", value: "inconsistent" },
-  { label: "I\u2019m already active and need a clear plan", value: "active_needs_plan" },
+  { label: "I\u2019m coming back after a long break", value: Q2_VALUES[0] },
+  { label: "I\u2019ve been active, but inconsistent", value: Q2_VALUES[1] },
+  { label: "I\u2019m already active and need a clear plan", value: Q2_VALUES[2] },
 ];
 
+// Legacy Q3_VALUES[1] ("no_rope") is accepted in saved drafts but never rendered.
 const q3Options = [
-  { label: "I\u2019ve never jumped rope", value: "never" },
-  { label: "I\u2019m new to jumping rope", value: "new" },
-  { label: "I can jump for short periods", value: "short_bursts" },
-  { label: "I\u2019m comfortable jumping rope", value: "comfortable" },
+  { label: "I\u2019ve never jumped rope", value: Q3_VALUES[0] },
+  { label: "I\u2019m new to jumping rope", value: Q3_VALUES[2] },
+  { label: "I can jump for short periods", value: Q3_VALUES[3] },
+  { label: "I\u2019m comfortable jumping rope", value: Q3_VALUES[4] },
 ];
 
 const q4Options = [
-  { label: "No", value: "none" },
-  { label: "Yes", value: "limit_impact" },
+  { label: "No", value: Q4_VALUES[0] },
+  { label: "Yes", value: Q4_VALUES[1] },
 ];
 
 const q5Options = [
-  { label: "3 days", value: "3" },
-  { label: "4 days", value: "4" },
-  { label: "5 days", value: "5" },
-  { label: "6-7 days", value: "6_7" },
+  { label: "3 days", value: Q5_VALUES[0] },
+  { label: "4 days", value: Q5_VALUES[1] },
+  { label: "5 days", value: Q5_VALUES[2] },
+  { label: "6-7 days", value: Q5_VALUES[3] },
 ];
 
 const equipmentOptions = [
-  { label: "Jump rope", value: "jump_rope" },
-  { label: "Dumbbells", value: "dumbbells" },
-  { label: "Exercise or jump rope mat", value: "mat" },
-  { label: "Rubber gym flooring", value: "rubber_flooring" },
-  { label: "None of these", value: "none" },
+  { label: "Jump rope", value: EQUIPMENT_VALUES[0] },
+  { label: "Dumbbells", value: EQUIPMENT_VALUES[1] },
+  { label: "Exercise or jump rope mat", value: EQUIPMENT_VALUES[2] },
+  { label: "Rubber gym flooring", value: EQUIPMENT_VALUES[3] },
+  { label: "None of these", value: EQUIPMENT_VALUES[4] },
 ];
 
 function weightError(answers: Answers): string | null {
@@ -116,8 +95,11 @@ function weightError(answers: Answers): string | null {
   if (raw === "") return null;
   const n = Number(raw);
   if (!Number.isFinite(n)) return "Enter a number or leave this blank.";
-  if (answers.unit === "lb" && (n < 70 || n > 700)) return "Enter a weight between 70 and 700 lb.";
-  if (answers.unit === "kg" && (n < 32 || n > 318)) return "Enter a weight between 32 and 318 kg.";
+  const { lb, kg } = WEIGHT_BOUNDS;
+  if (answers.unit === "lb" && (n < lb.min || n > lb.max))
+    return `Enter a weight between ${lb.min} and ${lb.max} lb.`;
+  if (answers.unit === "kg" && (n < kg.min || n > kg.max))
+    return `Enter a weight between ${kg.min} and ${kg.max} kg.`;
   return null;
 }
 
