@@ -10,7 +10,6 @@ import { buildPlan, readAnswers, type Answers } from "@/lib/plan";
 import {
   ACCESS_TOKEN_STORAGE_KEY,
   CONSENT_COPY,
-  LEGACY_ACCESS_MARKER_KEY,
   RAW_TOKEN_RE,
   TOTAL_ASSIGNMENTS,
 } from "@/lib/lead-plan";
@@ -96,13 +95,6 @@ function ResultsPage() {
       return;
     }
     setAnswers(a);
-
-    // The old boolean marker never unlocks anything on its own.
-    try {
-      window.localStorage.removeItem(LEGACY_ACCESS_MARKER_KEY);
-    } catch {
-      /* ignore storage errors */
-    }
 
     const recoveryToken = takeRecoveryTokenFromUrl();
     const token = recoveryToken ?? readStoredToken();
