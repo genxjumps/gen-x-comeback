@@ -190,7 +190,6 @@ const TEMPLATES: Record<number, Array<string>> = {
 export function buildPlan(a: Answers): Plan {
   const tier = deriveTier(a);
   const impactLimited = has(a, "limit_impact");
-  
   const equip = Array.isArray(a.equipment) ? a.equipment : [];
   const dumbbells = equip.includes("dumbbells");
   const cushionedSurface = equip.includes("mat") || equip.includes("rubber_flooring");
@@ -229,6 +228,7 @@ export function buildPlan(a: Answers): Plan {
     }
     return { day, title: slot };
   });
+
 
   return {
     tier,
