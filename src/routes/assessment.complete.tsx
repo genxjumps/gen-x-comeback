@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { buildPlan, readAnswers, type Answers } from "@/lib/plan";
+import { buildPlan, isCompleteDraft, readAnswers, type Answers } from "@/lib/plan";
 import {
   ACCESS_TOKEN_STORAGE_KEY,
   CONSENT_COPY,
@@ -39,17 +39,6 @@ export const Route = createFileRoute("/assessment/complete")({
 });
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function isCompleteDraft(a: Answers): boolean {
-  const q1 = ["none", "one", "two_three", "four_plus"].includes(a.q1);
-  const q2 = ["long_break", "inconsistent", "active_needs_plan"].includes(a.q2);
-  const q3 = ["never", "no_rope", "new", "short_bursts", "comfortable"].includes(a.q3);
-  const q4 = a.q4.length === 1 && ["none", "limit_impact"].includes(a.q4[0]);
-  const q5 = ["3", "4", "5", "6_7"].includes(a.q5);
-  const equipment = a.equipment.length > 0;
-  return q1 && q2 && q3 && q4 && q5 && equipment;
-}
-
 
 /** Reads a one-time `?access=` recovery token and strips it from the visible URL. */
 function takeRecoveryTokenFromUrl(): string | null {

@@ -90,14 +90,44 @@ export function readAnswers(): Answers {
   }
 }
 
-// Tier is determined by Q1 (recent workout count) and Q2 (exercise status) only.
-const VALID_Q1 = ["none", "one", "two_three", "four_plus"];
-const VALID_Q2 = ["long_break", "inconsistent", "active_needs_plan"];
+// Shared allowed answer values. Single source of truth for validation schemas.
+export const Q1_VALUES = ["none", "one", "two_three", "four_plus"] as const;
+export const Q2_VALUES = ["long_break", "inconsistent", "active_needs_plan"] as const;
+// "no_rope" is the legacy value for "never" (kept accepted for older saved drafts).
+export const Q3_VALUES = ["never", "no_rope", "new", "short_bursts", "comfortable"] as const;
+export const Q4_VALUES = ["none", "limit_impact"] as const;
+export const Q5_VALUES = ["3", "4", "5", "6_7"] as const;
+export const EQUIPMENT_VALUES = [
+  "jump_rope",
+  "dumbbells",
+  "mat",
+  "rubber_flooring",
+  "none",
+] as const;
 
+/**
+ * True when a saved draft has every question answered.
+ * Equipment is only checked for at least one selection; weight is not validated here.
+ */
+export function isCompleteDraft(a: Answers): boolean {
+  const q1 = (Q1_VALUES as readonly string[]).includes(a.q1);
+  const q2 = (Q2_VALUES as readonly string[]).includes(a.q2);
+  const q3 = (Q3_VALUES as readonly string[]).includes(a.q3);
+  const q4 = a.q4.length === 1 && (Q4_VALUES as readonly string[]).includes(a.q4[0]);
+  const q5 = (Q5_VALUES as readonly string[]).includes(a.q5);
+  const equipment = a.equipment.length > 0;
+  return q1 && q2 && q3 && q4 && q5 && equipment;
+}
+
+// Tier is determined by Q1 (recent workout count) and Q2 (exercise status) only.
 export function deriveTier(a: Answers): Tier {
   const q1 = a.q1;
   const q2 = a.q2;
-  if (!VALID_Q1.includes(q1) || !VALID_Q2.includes(q2)) return "Restart";
+  if (
+    !(Q1_VALUES as readonly string[]).includes(q1) ||
+    !(Q2_VALUES as readonly string[]).includes(q2)
+  )
+    return "Restart";
   if (q1 === "none") return "Restart";
   if (q1 === "one") return q2 === "active_needs_plan" ? "Rebuild" : "Restart";
   if (q1 === "two_three") return "Rebuild";
