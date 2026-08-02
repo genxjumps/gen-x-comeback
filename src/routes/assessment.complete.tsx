@@ -220,7 +220,7 @@ function ResultsPage() {
             <div className="flex items-baseline justify-between gap-3">
               <h3 className="text-sm font-semibold">Day 1: {dayOne.title}</h3>
               <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
-                {dayOneComplete ? "Complete" : "Today"}
+                Today
               </span>
             </div>
             <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
@@ -230,7 +230,7 @@ function ResultsPage() {
             <Button
               asChild
               size="sm"
-              variant={dayOneComplete ? "outline" : "default"}
+              variant="default"
               className="mt-3 w-full sm:w-auto"
             >
               <Link
@@ -238,7 +238,7 @@ function ResultsPage() {
                   ? { to: "/your-plan/day/$day" as const, params: { day: "1" } }
                   : { to: "/preview/w01" as const })}
               >
-                {dayOneComplete ? "Review Day 1 Workout" : "Start Day 1 Workout"}
+                Start Day 1 Workout
               </Link>
             </Button>
 
