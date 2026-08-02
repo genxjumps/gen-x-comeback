@@ -67,14 +67,6 @@ async function listCompletedDays(leadPlanId: string): Promise<number[]> {
   return (data ?? []).map((r) => r.day_number);
 }
 
-export const getPlanProgress = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
-  .handler(async ({ data }): Promise<ProgressResult> => {
-    const leadPlanId = await resolveLeadIdByToken(data.token);
-    if (!leadPlanId) return { ok: false };
-    return { ok: true, completedDays: await listCompletedDays(leadPlanId) };
-  });
-
 /**
  * Authoritative Day 1 brief: only the small guidance fields the page needs,
  * derived server-side from the saved assessment. Never from browser state.
