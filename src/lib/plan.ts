@@ -230,7 +230,6 @@ export function buildPlan(a: Answers): Plan {
     return { day, title: slot };
   });
 
-
   return {
     tier,
     days,
