@@ -84,7 +84,6 @@ function ResultsPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [recognized, setRecognized] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
-  const [completedDays, setCompletedDays] = useState<number[]>([]);
 
   useEffect(() => {
     let cancelled = false;
