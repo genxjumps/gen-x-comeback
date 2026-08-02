@@ -108,7 +108,7 @@ function Index() {
 
       <div className="mt-8">
         <Button asChild size="lg" className="w-full sm:w-auto">
-          <Link to="/assessment/start">Build My 7-Day Plan</Link>
+          <Link to={ctaTo}>{ctaLabel}</Link>
         </Button>
         <p className="mt-3 text-xs text-muted-foreground">
           Answer a few short questions. Get your plan and open Day 1 immediately.
