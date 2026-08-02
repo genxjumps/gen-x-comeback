@@ -59,6 +59,31 @@ function Index() {
     }
   }, []);
 
+  const verifyToken = useServerFn(verifyAccessToken);
+  const [hasPlan, setHasPlan] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const token = readStoredToken();
+    if (!token) return;
+    void (async () => {
+      try {
+        const result = await verifyToken({ data: { token } });
+        if (!cancelled && result.ok) setHasPlan(true);
+      } catch {
+        // leave default CTA
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [verifyToken]);
+
+  const ctaLabel = hasPlan ? "Continue My Plan" : "Build My 7-Day Plan";
+  const ctaTo = hasPlan ? "/your-plan" : "/assessment/start";
+
+
+
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
