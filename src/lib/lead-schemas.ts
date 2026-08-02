@@ -11,6 +11,7 @@ import {
   Q5_VALUES,
 } from "@/lib/plan";
 
+// eslint-disable-next-line no-control-regex -- intentionally reject ASCII control characters in lead names
 const NAME_RE = /^[^<>&"`\u0000-\u001f\u007f]{1,60}$/;
 
 export const answersSchema = z
