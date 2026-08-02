@@ -143,8 +143,6 @@ function ResultsPage() {
   const rest = plan.days.slice(1);
   const nameOk = firstName.trim().length > 0;
   const emailOk = EMAIL_RE.test(email.trim());
-  const dayOneComplete = completedDays.includes(1);
-  const currentDay = unlocked && dayOneComplete ? 2 : 1;
 
 
   return (
