@@ -96,13 +96,6 @@ function ResultsPage() {
     }
     setAnswers(a);
 
-    // The old boolean marker never unlocks anything on its own.
-    try {
-      window.localStorage.removeItem(LEGACY_ACCESS_MARKER_KEY);
-    } catch {
-      /* ignore storage errors */
-    }
-
     const recoveryToken = takeRecoveryTokenFromUrl();
     const token = recoveryToken ?? readStoredToken();
     if (!token) {
