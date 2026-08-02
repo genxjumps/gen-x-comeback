@@ -1,6 +1,4 @@
-// Shared (client-safe) constants, schemas, and snapshot helpers for lead capture.
-import { z } from "zod";
-
+// Shared (client-safe) constants, types, and snapshot helpers for lead capture.
 import { buildPlan, type Answers, type Plan } from "@/lib/plan";
 
 export const CONSENT_VERSION = "v1";
@@ -19,14 +17,12 @@ export const ACCESS_TOKEN_STORAGE_KEY = "gxj_plan_token_v1";
 /** Opaque token: 43-char base64url of 32 random bytes. */
 export const RAW_TOKEN_RE = /^[A-Za-z0-9_-]{43}$/;
 
-
 export type VerifyAccessResult = { ok: true; firstName: string } | { ok: false };
 
 export const TOTAL_ASSIGNMENTS = 7;
 
-
-
 export type ProgressResult = { ok: true; completedDays: number[] } | { ok: false };
+
 
 /**
  * Minimal server-derived inputs for Day 1 cardio guidance.
