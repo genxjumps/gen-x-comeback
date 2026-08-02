@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
-  answersSchema,
   cardioGuidance,
   ropeLevelFromExperience,
   type CardioContext,
 } from "@/lib/lead-plan";
+import { answersSchema } from "@/lib/lead-schemas";
 import { readAnswers } from "@/lib/plan";
 import {
   W01_APPROACH,
