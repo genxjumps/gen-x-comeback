@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -31,10 +31,30 @@ const options = [
   { label: "No", value: "no" },
 ];
 
+const ELIGIBILITY_STORAGE_KEY = "gxj_eligibility_answer_v1";
+
 function BeforeYouStart() {
   const navigate = useNavigate();
   const [answer, setAnswer] = useState("");
   const [ineligible, setIneligible] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(ELIGIBILITY_STORAGE_KEY);
+      if (stored && options.some((o) => o.value === stored)) setAnswer(stored);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const onAnswerChange = (value: string) => {
+    setAnswer(value);
+    try {
+      window.localStorage.setItem(ELIGIBILITY_STORAGE_KEY, value);
+    } catch {
+      // ignore
+    }
+  };
 
   const onContinue = () => {
     if (answer === "no") {
@@ -80,7 +100,7 @@ function BeforeYouStart() {
               up from the floor, and performing simple bodyweight movements?
             </h2>
             <div className="mt-3">
-              <RadioGroup value={answer} onValueChange={setAnswer} className="gap-2">
+              <RadioGroup value={answer} onValueChange={onAnswerChange} className="gap-2">
                 {options.map((o) => (
                   <Label
                     key={o.value}

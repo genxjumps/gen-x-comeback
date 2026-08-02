@@ -1,8 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { readStoredToken } from "@/components/plan-access";
+import { verifyAccessToken } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,6 +59,31 @@ function Index() {
     }
   }, []);
 
+  const verifyToken = useServerFn(verifyAccessToken);
+  const [hasPlan, setHasPlan] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const token = readStoredToken();
+    if (!token) return;
+    void (async () => {
+      try {
+        const result = await verifyToken({ data: { token } });
+        if (!cancelled && result.ok) setHasPlan(true);
+      } catch {
+        // leave default CTA
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [verifyToken]);
+
+  const ctaLabel = hasPlan ? "Continue My Plan" : "Build My 7-Day Plan";
+  const ctaTo = hasPlan ? "/your-plan" : "/assessment/start";
+
+
+
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
@@ -80,7 +108,7 @@ function Index() {
 
       <div className="mt-8">
         <Button asChild size="lg" className="w-full sm:w-auto">
-          <Link to="/assessment/start">Build My 7-Day Plan</Link>
+          <Link to={ctaTo}>{ctaLabel}</Link>
         </Button>
         <p className="mt-3 text-xs text-muted-foreground">
           Answer a few short questions. Get your plan and open Day 1 immediately.
@@ -114,7 +142,7 @@ function Index() {
 
       <div className="mt-10">
         <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-          <Link to="/assessment/start">Build My 7-Day Plan</Link>
+          <Link to={ctaTo}>{ctaLabel}</Link>
         </Button>
       </div>
     </div>
