@@ -9,6 +9,7 @@ export const WORKOUT_VIDEOS: Record<string, string> = {
   W03: "https://customer-cvsfidz4ao4uk9i5.cloudflarestream.com/42c3d0fcca85e9bf8f242c20affe97bc/iframe?poster=https%3A%2F%2Fcustomer-cvsfidz4ao4uk9i5.cloudflarestream.com%2F42c3d0fcca85e9bf8f242c20affe97bc%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600",
   W04: "https://customer-cvsfidz4ao4uk9i5.cloudflarestream.com/2571c872aa65a66a95970585695aaf0f/iframe?poster=https%3A%2F%2Fcustomer-cvsfidz4ao4uk9i5.cloudflarestream.com%2F2571c872aa65a66a95970585695aaf0f%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600",
   W05: "https://customer-cvsfidz4ao4uk9i5.cloudflarestream.com/dd189928fcb7c1684dcb74a827142ee9/iframe?poster=https%3A%2F%2Fcustomer-cvsfidz4ao4uk9i5.cloudflarestream.com%2Fdd189928fcb7c1684dcb74a827142ee9%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600",
+  W06: "https://customer-cvsfidz4ao4uk9i5.cloudflarestream.com/4589509d8df24de3cf7b14e33d7e87e8/iframe?poster=https%3A%2F%2Fcustomer-cvsfidz4ao4uk9i5.cloudflarestream.com%2F4589509d8df24de3cf7b14e33d7e87e8%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600",
 };
 
 /** Real iframe src for a workout code, or null when no asset is connected. */
