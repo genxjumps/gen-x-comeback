@@ -19,6 +19,7 @@ import {
   regeneratePlanWithToken,
   saveLeadPlan,
 } from "@/lib/lead.functions";
+import { readStoredToken } from "@/components/plan-access";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
@@ -52,14 +53,6 @@ function isCompleteDraft(a: Answers): boolean {
   return q1 && q2 && q3 && q4 && q5 && equipment;
 }
 
-function readStoredToken(): string | null {
-  try {
-    const v = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-    return v && RAW_TOKEN_RE.test(v) ? v : null;
-  } catch {
-    return null;
-  }
-}
 
 /** Reads a one-time `?access=` recovery token and strips it from the visible URL. */
 function takeRecoveryTokenFromUrl(): string | null {
