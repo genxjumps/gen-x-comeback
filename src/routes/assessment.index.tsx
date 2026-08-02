@@ -47,8 +47,6 @@ export const Route = createFileRoute("/assessment/")({
   component: Assessment,
 });
 
-
-
 const q1Options = [
   { label: "None", value: Q1_VALUES[0] },
   { label: "1 workout", value: Q1_VALUES[1] },
