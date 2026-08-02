@@ -15,7 +15,6 @@ import {
   TOTAL_ASSIGNMENTS,
 } from "@/lib/lead-plan";
 import {
-  getPlanProgress,
   regeneratePlanWithToken,
   saveLeadPlan,
 } from "@/lib/lead.functions";
@@ -76,7 +75,6 @@ function ResultsPage() {
   const navigate = useNavigate();
   const save = useServerFn(saveLeadPlan);
   const regenerate = useServerFn(regeneratePlanWithToken);
-  const loadProgress = useServerFn(getPlanProgress);
 
   const [answers, setAnswers] = useState<Answers | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -125,8 +123,6 @@ function ResultsPage() {
           }
           setRecognized(true);
           setUnlocked(true);
-          const progress = await loadProgress({ data: { token } });
-          if (!cancelled && progress.ok) setCompletedDays(progress.completedDays);
           // Latest answers are processed and saved: the private hub is the destination.
           if (!cancelled) navigate({ to: "/your-plan", replace: true });
         } else if (!recoveryToken) {
@@ -146,7 +142,7 @@ function ResultsPage() {
     return () => {
       cancelled = true;
     };
-  }, [navigate, regenerate, loadProgress]);
+  }, [navigate, regenerate]);
 
 
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
