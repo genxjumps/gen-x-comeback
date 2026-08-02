@@ -47,7 +47,7 @@ export const Route = createFileRoute("/assessment/")({
   component: Assessment,
 });
 
-const STORAGE_KEY = ASSESSMENT_STORAGE_KEY;
+
 
 const q1Options = [
   { label: "None", value: Q1_VALUES[0] },
