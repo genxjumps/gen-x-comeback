@@ -13,7 +13,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { migrateQ4 } from "@/lib/plan";
+import {
+  ASSESSMENT_STORAGE_KEY,
+  EQUIPMENT_VALUES,
+  Q1_VALUES,
+  Q2_VALUES,
+  Q3_VALUES,
+  Q4_VALUES,
+  Q5_VALUES,
+  WEIGHT_BOUNDS,
+  emptyAnswers,
+  migrateQ4,
+  type Answers,
+} from "@/lib/plan";
 
 export const Route = createFileRoute("/assessment/")({
   head: () => ({
