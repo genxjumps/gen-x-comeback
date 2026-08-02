@@ -10,7 +10,6 @@ import { buildPlan, readAnswers, type Answers } from "@/lib/plan";
 import {
   ACCESS_TOKEN_STORAGE_KEY,
   CONSENT_COPY,
-  LEGACY_ACCESS_MARKER_KEY,
   RAW_TOKEN_RE,
   TOTAL_ASSIGNMENTS,
 } from "@/lib/lead-plan";
