@@ -15,8 +15,6 @@ export const PROTEIN_LOGIC_VERSION = "protein-v1";
 
 /** Versioned localStorage key holding the raw opaque access token. */
 export const ACCESS_TOKEN_STORAGE_KEY = "gxj_plan_token_v1";
-/** Legacy boolean marker. Kept only so it can be cleaned up; it never unlocks anything. */
-export const LEGACY_ACCESS_MARKER_KEY = "gxj_plan_access_v1";
 
 const NAME_RE = /^[^<>&"`\u0000-\u001f\u007f]{1,60}$/;
 
