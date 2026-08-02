@@ -141,14 +141,20 @@ export function workoutDays(a: Answers): number {
   return Number.isFinite(n) && n >= 3 && n <= 5 ? n : 3;
 }
 
+// Accepted current-weight ranges, shared by the assessment form and protein math.
+export const WEIGHT_BOUNDS = {
+  lb: { min: 70, max: 700 },
+  kg: { min: 32, max: 318 },
+} as const;
+
 // Protein: 1.0 g per lb, 2.20462 g per kg of current bodyweight, rounded to nearest 5 g.
 export function proteinTarget(a: Answers): number | null {
   const raw = a.weight.trim();
   if (raw === "") return null;
   const n = Number(raw);
   if (!Number.isFinite(n) || n <= 0) return null;
-  if (a.unit === "lb" && (n < 70 || n > 700)) return null;
-  if (a.unit === "kg" && (n < 32 || n > 318)) return null;
+  if (a.unit === "lb" && (n < WEIGHT_BOUNDS.lb.min || n > WEIGHT_BOUNDS.lb.max)) return null;
+  if (a.unit === "kg" && (n < WEIGHT_BOUNDS.kg.min || n > WEIGHT_BOUNDS.kg.max)) return null;
   const grams = a.unit === "lb" ? n * 1.0 : n * 2.20462;
   return Math.round(grams / 5) * 5;
 }
