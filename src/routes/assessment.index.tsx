@@ -47,7 +47,7 @@ export const Route = createFileRoute("/assessment/")({
   component: Assessment,
 });
 
-const STORAGE_KEY = ASSESSMENT_STORAGE_KEY;
+
 
 const q1Options = [
   { label: "None", value: Q1_VALUES[0] },
@@ -164,7 +164,7 @@ function Assessment() {
 
   useEffect(() => {
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const raw = window.localStorage.getItem(ASSESSMENT_STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<Answers> & { step?: number };
         const { step: _savedStep, ...savedAnswers } = parsed;
@@ -189,7 +189,7 @@ function Assessment() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...answers, step }));
+      window.localStorage.setItem(ASSESSMENT_STORAGE_KEY, JSON.stringify({ ...answers, step }));
     } catch {
       /* storage unavailable */
     }
