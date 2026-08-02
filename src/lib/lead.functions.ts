@@ -67,7 +67,6 @@ async function listCompletedDays(leadPlanId: string): Promise<number[]> {
   return (data ?? []).map((r) => r.day_number);
 }
 
-
 /**
  * Authoritative Day 1 brief: only the small guidance fields the page needs,
  * derived server-side from the saved assessment. Never from browser state.
