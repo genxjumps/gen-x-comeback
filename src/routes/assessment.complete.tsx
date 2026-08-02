@@ -254,11 +254,6 @@ function ResultsPage() {
                 >
                   Day {d.day}: {d.title}
                 </h3>
-                {unlocked && d.day === currentDay ? (
-                  <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
-                    Up Next
-                  </span>
-                ) : null}
               </div>
               {d.optional ? (
                 <p className="mt-1 text-xs text-muted-foreground">Optional: Active Recovery</p>
