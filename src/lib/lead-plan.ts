@@ -225,7 +225,6 @@ export type PlanHubData = {
     dumbbells: boolean;
     cushionedSurface: boolean;
     impactLimited: boolean;
-    floorLimited: boolean;
   };
   days: PlanDayView[];
   completedDays: number[];
