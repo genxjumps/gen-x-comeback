@@ -14,6 +14,237 @@ export type Database = {
   }
   public: {
     Tables: {
+      canonical_events: {
+        Row: {
+          event_id: string
+          event_name: string
+          event_version: string
+          job_id: string | null
+          lead_plan_id: string | null
+          occurred_at: string
+          plan_version_id: string | null
+          source: string | null
+          submission_id: string | null
+        }
+        Insert: {
+          event_id?: string
+          event_name: string
+          event_version?: string
+          job_id?: string | null
+          lead_plan_id?: string | null
+          occurred_at?: string
+          plan_version_id?: string | null
+          source?: string | null
+          submission_id?: string | null
+        }
+        Update: {
+          event_id?: string
+          event_name?: string
+          event_version?: string
+          job_id?: string | null
+          lead_plan_id?: string | null
+          occurred_at?: string
+          plan_version_id?: string | null
+          source?: string | null
+          submission_id?: string | null
+        }
+        Relationships: []
+      }
+      email_jobs: {
+        Row: {
+          alerted_stale_at: string | null
+          attempt_count: number
+          canceled_at: string | null
+          created_at: string
+          delivered_at: string | null
+          delivery_status: Database["public"]["Enums"]["email_delivery_status"]
+          eligible_at: string
+          idempotency_key: string
+          job_id: string
+          job_type: string
+          job_version: string
+          last_error_at: string | null
+          last_error_code: string | null
+          lead_plan_id: string
+          lease_expires_at: string | null
+          locked_at: string | null
+          next_attempt_at: string | null
+          plan_version_id: string
+          provider_accepted_at: string | null
+          provider_key: string | null
+          provider_message_id: string | null
+          source_event_id: string | null
+          status: Database["public"]["Enums"]["email_job_status"]
+          suppression_reason: string | null
+          template_version: string
+          updated_at: string
+        }
+        Insert: {
+          alerted_stale_at?: string | null
+          attempt_count?: number
+          canceled_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivery_status?: Database["public"]["Enums"]["email_delivery_status"]
+          eligible_at?: string
+          idempotency_key: string
+          job_id?: string
+          job_type: string
+          job_version?: string
+          last_error_at?: string | null
+          last_error_code?: string | null
+          lead_plan_id: string
+          lease_expires_at?: string | null
+          locked_at?: string | null
+          next_attempt_at?: string | null
+          plan_version_id: string
+          provider_accepted_at?: string | null
+          provider_key?: string | null
+          provider_message_id?: string | null
+          source_event_id?: string | null
+          status?: Database["public"]["Enums"]["email_job_status"]
+          suppression_reason?: string | null
+          template_version: string
+          updated_at?: string
+        }
+        Update: {
+          alerted_stale_at?: string | null
+          attempt_count?: number
+          canceled_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivery_status?: Database["public"]["Enums"]["email_delivery_status"]
+          eligible_at?: string
+          idempotency_key?: string
+          job_id?: string
+          job_type?: string
+          job_version?: string
+          last_error_at?: string | null
+          last_error_code?: string | null
+          lead_plan_id?: string
+          lease_expires_at?: string | null
+          locked_at?: string | null
+          next_attempt_at?: string | null
+          plan_version_id?: string
+          provider_accepted_at?: string | null
+          provider_key?: string | null
+          provider_message_id?: string | null
+          source_event_id?: string | null
+          status?: Database["public"]["Enums"]["email_job_status"]
+          suppression_reason?: string | null
+          template_version?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_jobs_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: false
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_preference_credentials: {
+        Row: {
+          credential_id: string
+          issued_at: string
+          lead_plan_id: string
+          purpose: string
+          revoked_at: string | null
+          token_hash: string
+        }
+        Insert: {
+          credential_id?: string
+          issued_at?: string
+          lead_plan_id: string
+          purpose?: string
+          revoked_at?: string | null
+          token_hash: string
+        }
+        Update: {
+          credential_id?: string
+          issued_at?: string
+          lead_plan_id?: string
+          purpose?: string
+          revoked_at?: string | null
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_preference_credentials_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: true
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_provider_events: {
+        Row: {
+          event_type: string
+          id: string
+          job_id: string | null
+          occurred_at: string | null
+          provider_event_id: string
+          provider_key: string
+          provider_message_id: string | null
+          received_at: string
+        }
+        Insert: {
+          event_type: string
+          id?: string
+          job_id?: string | null
+          occurred_at?: string | null
+          provider_event_id: string
+          provider_key: string
+          provider_message_id?: string | null
+          received_at?: string
+        }
+        Update: {
+          event_type?: string
+          id?: string
+          job_id?: string | null
+          occurred_at?: string | null
+          provider_event_id?: string
+          provider_key?: string
+          provider_message_id?: string | null
+          received_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_provider_events_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "email_jobs"
+            referencedColumns: ["job_id"]
+          },
+        ]
+      }
+      email_suppressions: {
+        Row: {
+          created_at: string
+          email_normalized: string
+          id: string
+          reason: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          email_normalized: string
+          id?: string
+          reason: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          email_normalized?: string
+          id?: string
+          reason?: string
+          source?: string
+        }
+        Relationships: []
+      }
       lead_plan_day_completions: {
         Row: {
           completed_at: string
@@ -58,11 +289,17 @@ export type Database = {
           consent_granted: boolean
           consent_version: string
           created_at: string
+          email_last_engaged_at: string | null
           email_normalized: string
           email_original: string
+          email_suppressed_at: string | null
+          email_suppression_reason: string | null
+          email_verified_at: string | null
           first_name: string
           id: string
+          marketing_unsubscribed_at: string | null
           plan_json: Json
+          plan_version_id: string
           updated_at: string
         }
         Insert: {
@@ -73,11 +310,17 @@ export type Database = {
           consent_granted: boolean
           consent_version: string
           created_at?: string
+          email_last_engaged_at?: string | null
           email_normalized: string
           email_original: string
+          email_suppressed_at?: string | null
+          email_suppression_reason?: string | null
+          email_verified_at?: string | null
           first_name: string
           id?: string
+          marketing_unsubscribed_at?: string | null
           plan_json: Json
+          plan_version_id?: string
           updated_at?: string
         }
         Update: {
@@ -88,24 +331,307 @@ export type Database = {
           consent_granted?: boolean
           consent_version?: string
           created_at?: string
+          email_last_engaged_at?: string | null
           email_normalized?: string
           email_original?: string
+          email_suppressed_at?: string | null
+          email_suppression_reason?: string | null
+          email_verified_at?: string | null
           first_name?: string
           id?: string
+          marketing_unsubscribed_at?: string | null
           plan_json?: Json
+          plan_version_id?: string
           updated_at?: string
         }
         Relationships: []
+      }
+      operational_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          details: Json
+          id: string
+          job_id: string | null
+          lead_plan_id: string | null
+          resolved_at: string | null
+          severity: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          details?: Json
+          id?: string
+          job_id?: string | null
+          lead_plan_id?: string | null
+          resolved_at?: string | null
+          severity?: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          job_id?: string | null
+          lead_plan_id?: string | null
+          resolved_at?: string | null
+          severity?: string
+        }
+        Relationships: []
+      }
+      plan_access_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          last_seen_at: string | null
+          lead_plan_id: string
+          plan_version_id: string
+          revoked_at: string | null
+          token_hash: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string | null
+          lead_plan_id: string
+          plan_version_id: string
+          revoked_at?: string | null
+          token_hash: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_seen_at?: string | null
+          lead_plan_id?: string
+          plan_version_id?: string
+          revoked_at?: string | null
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_access_sessions_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: false
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_return_tokens: {
+        Row: {
+          expires_at: string
+          issued_at: string
+          last_used_at: string | null
+          lead_plan_id: string
+          plan_version_id: string
+          purpose: string
+          revoked_at: string | null
+          token_hash: string
+          token_id: string
+          use_count: number
+        }
+        Insert: {
+          expires_at: string
+          issued_at?: string
+          last_used_at?: string | null
+          lead_plan_id: string
+          plan_version_id: string
+          purpose?: string
+          revoked_at?: string | null
+          token_hash: string
+          token_id?: string
+          use_count?: number
+        }
+        Update: {
+          expires_at?: string
+          issued_at?: string
+          last_used_at?: string | null
+          lead_plan_id?: string
+          plan_version_id?: string
+          purpose?: string
+          revoked_at?: string | null
+          token_hash?: string
+          token_id?: string
+          use_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_return_tokens_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: false
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_submissions: {
+        Row: {
+          created_at: string
+          job_id: string | null
+          lead_plan_id: string
+          plan_version_id: string
+          source: string
+          submission_id: string
+        }
+        Insert: {
+          created_at?: string
+          job_id?: string | null
+          lead_plan_id: string
+          plan_version_id: string
+          source: string
+          submission_id: string
+        }
+        Update: {
+          created_at?: string
+          job_id?: string | null
+          lead_plan_id?: string
+          plan_version_id?: string
+          source?: string
+          submission_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_submissions_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: false
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      return_link_sessions: {
+        Row: {
+          expires_at: string
+          issued_at: string
+          last_seen_at: string | null
+          lead_plan_id: string
+          plan_version_id: string
+          revoked_at: string | null
+          session_id: string
+          session_token_hash: string
+          token_id: string | null
+        }
+        Insert: {
+          expires_at: string
+          issued_at?: string
+          last_seen_at?: string | null
+          lead_plan_id: string
+          plan_version_id: string
+          revoked_at?: string | null
+          session_id?: string
+          session_token_hash: string
+          token_id?: string | null
+        }
+        Update: {
+          expires_at?: string
+          issued_at?: string
+          last_seen_at?: string | null
+          lead_plan_id?: string
+          plan_version_id?: string
+          revoked_at?: string | null
+          session_id?: string
+          session_token_hash?: string
+          token_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "return_link_sessions_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: false
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "return_link_sessions_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "plan_return_tokens"
+            referencedColumns: ["token_id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_email_jobs: {
+        Args: { p_job_type: string; p_lease_seconds?: number; p_limit?: number }
+        Returns: {
+          alerted_stale_at: string | null
+          attempt_count: number
+          canceled_at: string | null
+          created_at: string
+          delivered_at: string | null
+          delivery_status: Database["public"]["Enums"]["email_delivery_status"]
+          eligible_at: string
+          idempotency_key: string
+          job_id: string
+          job_type: string
+          job_version: string
+          last_error_at: string | null
+          last_error_code: string | null
+          lead_plan_id: string
+          lease_expires_at: string | null
+          locked_at: string | null
+          next_attempt_at: string | null
+          plan_version_id: string
+          provider_accepted_at: string | null
+          provider_key: string | null
+          provider_message_id: string | null
+          source_event_id: string | null
+          status: Database["public"]["Enums"]["email_job_status"]
+          suppression_reason: string | null
+          template_version: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "email_jobs"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      commit_plan_version: {
+        Args: {
+          p_assessment: Json
+          p_changed?: boolean
+          p_consent_copy?: string
+          p_consent_version?: string
+          p_email_normalized?: string
+          p_email_original?: string
+          p_first_name?: string
+          p_lead_plan_id?: string
+          p_plan: Json
+          p_preferences_token_hash?: string
+          p_session_token_hash: string
+          p_submission_id: string
+        }
+        Returns: {
+          first_name: string
+          job_id: string
+          lead_plan_id: string
+          plan_version_id: string
+          replayed: boolean
+          source: string
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      email_delivery_status:
+        | "pending"
+        | "delivered"
+        | "delayed"
+        | "bounced"
+        | "complained"
+      email_job_status:
+        | "pending"
+        | "processing"
+        | "retry_scheduled"
+        | "provider_accepted"
+        | "failed_permanent"
+        | "suppressed"
+        | "canceled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -232,6 +758,23 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      email_delivery_status: [
+        "pending",
+        "delivered",
+        "delayed",
+        "bounced",
+        "complained",
+      ],
+      email_job_status: [
+        "pending",
+        "processing",
+        "retry_scheduled",
+        "provider_accepted",
+        "failed_permanent",
+        "suppressed",
+        "canceled",
+      ],
+    },
   },
 } as const
