@@ -42,7 +42,9 @@ export function readEmailConfig(): EmailConfig {
   };
 }
 
-export type SendingGate = { enabled: true; config: EmailConfig } | { enabled: false; missing: string[] };
+export type SendingGate =
+  | { enabled: true; config: EmailConfig }
+  | { enabled: false; missing: string[] };
 
 /**
  * Every prerequisite in the contract's release gate must be present before a

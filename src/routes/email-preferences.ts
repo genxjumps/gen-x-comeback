@@ -112,7 +112,8 @@ export const Route = createFileRoute("/email-preferences")({
           .update({ marketing_unsubscribed_at: action === "unsubscribe" ? nowIso : null })
           .eq("id", leadPlanId);
         await supabaseAdmin.from("canonical_events").insert({
-          event_name: action === "unsubscribe" ? "marketing_unsubscribed" : "marketing_resubscribed",
+          event_name:
+            action === "unsubscribe" ? "marketing_unsubscribed" : "marketing_resubscribed",
           lead_plan_id: leadPlanId,
           occurred_at: nowIso,
         });

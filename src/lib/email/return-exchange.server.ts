@@ -3,9 +3,7 @@
 import { RAW_TOKEN_RE, generateAccessToken, hashAccessToken } from "@/lib/lead-plan";
 import { RETURN_SESSION_TTL_MS } from "@/lib/email/types";
 
-export type ExchangeResult =
-  | { ok: true; sessionToken: string; expiresAt: Date }
-  | { ok: false };
+export type ExchangeResult = { ok: true; sessionToken: string; expiresAt: Date } | { ok: false };
 
 /**
  * Verifies an opaque return token, refreshes the authorized session, records

@@ -118,7 +118,8 @@ export function createMemoryStore(now: () => Date): MemoryStore {
       const job = jobs.get(jobId);
       if (!job) return false;
       // Fencing: only the current lease owner may write a terminal result.
-      if (job.status !== "processing" || !claimToken || job.claim_token !== claimToken) return false;
+      if (job.status !== "processing" || !claimToken || job.claim_token !== claimToken)
+        return false;
 
       Object.assign(job, patch, {
         status,
@@ -172,7 +173,12 @@ export function createMemoryStore(now: () => Date): MemoryStore {
 
       for (const event of pending) {
         const kind = event.event_kind;
-        if (kind === "delivered" || kind === "delayed" || kind === "bounced" || kind === "complained") {
+        if (
+          kind === "delivered" ||
+          kind === "delayed" ||
+          kind === "bounced" ||
+          kind === "complained"
+        ) {
           if (await store.applyDeliveryEvent(jobId, kind, event.occurred_at)) applied += 1;
         }
         event.job_id = jobId;

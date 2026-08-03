@@ -133,7 +133,9 @@ describe("idempotency horizon", () => {
     expect(job.status).toBe("failed_permanent");
     expect(job.manual_review_at).toBe(FIXED_NOW.toISOString());
     expect(job.last_error_code).toBe("idempotency_horizon_exceeded");
-    expect(store.alerts.some((a) => a.alert_type === "plan_ready_manual_review_required")).toBe(true);
+    expect(store.alerts.some((a) => a.alert_type === "plan_ready_manual_review_required")).toBe(
+      true,
+    );
   });
 
   it("still sends a job created inside the horizon", async () => {
@@ -174,7 +176,9 @@ describe("early provider events", () => {
   it("never regresses a terminal delivery state with a late event", async () => {
     const store = seed();
     await dispatchPlanReadyJobs(makeDeps(store, scriptedAdapter([ACCEPTED]).adapter));
-    expect(await store.applyDeliveryEvent("job-1", "delivered", FIXED_NOW.toISOString())).toBe(true);
+    expect(await store.applyDeliveryEvent("job-1", "delivered", FIXED_NOW.toISOString())).toBe(
+      true,
+    );
     // A stale delayed event after delivery is rejected outright.
     expect(await store.applyDeliveryEvent("job-1", "delayed", FIXED_NOW.toISOString())).toBe(false);
     expect(store.jobs.get("job-1")?.delivery_status).toBe("delivered");
@@ -184,7 +188,10 @@ describe("early provider events", () => {
 type Handler = (ctx: { request: Request }) => Promise<Response>;
 
 async function getHandler(path: "return" | "email-preferences"): Promise<Handler> {
-  const mod = path === "return" ? await import("@/routes/return") : await import("@/routes/email-preferences");
+  const mod =
+    path === "return"
+      ? await import("@/routes/return")
+      : await import("@/routes/email-preferences");
   const options = (mod.Route as unknown as { options: Record<string, unknown> }).options;
   const server = options["server"] as { handlers: Record<string, Handler> };
   return server.handlers["GET"]!;

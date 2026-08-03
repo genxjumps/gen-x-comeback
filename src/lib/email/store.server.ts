@@ -108,7 +108,12 @@ export async function createSupabaseEmailStore(): Promise<EmailStore> {
       let applied = 0;
       for (const row of data ?? []) {
         const kind = row.event_kind;
-        if (kind === "delivered" || kind === "delayed" || kind === "bounced" || kind === "complained") {
+        if (
+          kind === "delivered" ||
+          kind === "delayed" ||
+          kind === "bounced" ||
+          kind === "complained"
+        ) {
           const ok = await store.applyDeliveryEvent(jobId, kind, row.occurred_at);
           if (ok) applied += 1;
         }

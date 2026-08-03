@@ -113,12 +113,14 @@ export async function handleProviderWebhook(
       .limit(1);
     const emailNormalized = leads?.[0]?.email_normalized;
     if (emailNormalized) {
-      await supabaseAdmin
-        .from("email_suppressions")
-        .upsert(
-          { email_normalized: emailNormalized, reason: event.suppression, source: "provider_webhook" },
-          { onConflict: "email_normalized,reason" },
-        );
+      await supabaseAdmin.from("email_suppressions").upsert(
+        {
+          email_normalized: emailNormalized,
+          reason: event.suppression,
+          source: "provider_webhook",
+        },
+        { onConflict: "email_normalized,reason" },
+      );
     }
     // Safety suppression blocks unsafe sending; plan access is never removed.
     await supabaseAdmin
