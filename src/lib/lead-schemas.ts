@@ -63,7 +63,7 @@ const submissionIdSchema = z.string().uuid("Invalid submission id");
 export const leadInputSchema = z.object({
   submissionId: submissionIdSchema,
   sessionTokenHash: tokenHashSchema,
-  preferencesTokenHash: tokenHashSchema,
+  
   firstName: z
     .string()
     .transform((v) => v.trim())
