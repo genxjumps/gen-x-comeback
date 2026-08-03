@@ -42,7 +42,6 @@ function makeDeps(
   adapter: EmailAdapter,
   now: () => Date = () => FIXED_NOW,
 ): DispatchDeps {
-  let counter = 0;
   return {
     store,
     adapter,
@@ -51,10 +50,7 @@ function makeDeps(
     fromEmail: "todd@notify.genxjumps.com",
     fromName: "Todd from Gen X Jumps",
     replyTo: "todd@genxjumps.com",
-    generateToken: () => {
-      counter += 1;
-      return `${counter}`.padStart(64, "a");
-    },
+    deriveCredential: (purpose, planVersionId) => `cred:${purpose}:${planVersionId}`,
     hash: async (raw) => `hash:${raw}`,
   };
 }
@@ -199,12 +195,15 @@ describe("Plan Ready acceptance gates", () => {
 
     // A held lease prevents a second worker from claiming the same job.
     const leased = seed();
-    leased.jobs.get("job-1")!.lease_expires_at = new Date(FIXED_NOW.getTime() + 60_000).toISOString();
+    const leasedJob = leased.jobs.get("job-1")!;
+    leasedJob.status = "processing";
+    leasedJob.lease_expires_at = new Date(FIXED_NOW.getTime() + 60_000).toISOString();
     const blocked = scriptedAdapter([{ outcome: "accepted", providerKey: "fake", providerMessageId: "x", acceptedAt: "" }]);
     expect((await dispatchPlanReadyJobs(makeDeps(leased, blocked.adapter))).claimed).toBe(0);
 
     // A pending job older than the stale window raises exactly one alert.
     const stale = seed();
+    stale.jobs.get("job-1")!.created_at = new Date(FIXED_NOW.getTime() - 600_000).toISOString();
     const alerts = await raiseStalePlanReadyAlerts(makeDeps(stale, blocked.adapter));
     expect(alerts).toBe(1);
     expect(await raiseStalePlanReadyAlerts(makeDeps(stale, blocked.adapter))).toBe(0);

@@ -19,6 +19,11 @@ function shell(body: string): Response {
       headers: {
         "content-type": "text/html; charset=utf-8",
         "cache-control": "no-store",
+        "content-security-policy":
+          "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+
         "referrer-policy": "no-referrer",
         "x-robots-tag": "noindex, nofollow",
       },
@@ -58,6 +63,11 @@ export const Route = createFileRoute("/return")({
       },
 
       POST: async ({ request }) => {
+        // Best-effort throttle so an exchange endpoint cannot be brute forced.
+        const { callerBucketKey, consumeRateLimit } = await import("@/lib/email/rate-limit.server");
+        const allowed = await consumeRateLimit(callerBucketKey("return_post", request), 300, 20);
+        if (!allowed.allowed) return genericRecovery();
+
         const form = await request.formData();
         const raw = form.get("token");
         const token = typeof raw === "string" ? raw : null;

@@ -9,21 +9,21 @@ import type {
   OperationalAlertInput,
 } from "@/lib/email/types";
 
+/**
+ * Fields a fenced terminal transition may set. Status, lease release, and the
+ * claim-token check are handled by the transition itself.
+ */
 export type EmailJobPatch = {
-  status?: EmailJobStatus;
-  delivery_status?: EmailDeliveryStatus;
   next_attempt_at?: string | null;
-  locked_at?: string | null;
-  lease_expires_at?: string | null;
   provider_key?: string | null;
   provider_message_id?: string | null;
+  provider_accepted_at?: string | null;
   last_error_code?: string | null;
   last_error_at?: string | null;
-  provider_accepted_at?: string | null;
-  delivered_at?: string | null;
-  canceled_at?: string | null;
   suppression_reason?: string | null;
-  alerted_stale_at?: string | null;
+  canceled_at?: string | null;
+  manual_review_at?: string | null;
+  first_provider_attempt_at?: string | null;
 };
 
 export type ReturnTokenInsert = {
@@ -40,11 +40,31 @@ export type EmailStore = {
   suppressionReason(emailNormalized: string): Promise<string | null>;
   insertReturnToken(token: ReturnTokenInsert): Promise<void>;
   upsertPreferenceCredential(leadPlanId: string, tokenHash: string): Promise<void>;
-  updateJob(jobId: string, patch: EmailJobPatch): Promise<void>;
+  /**
+   * Fenced terminal transition. Returns false when the claim token no longer
+   * matches, meaning another worker owns the job and this result is discarded.
+   */
+  finishJob(
+    jobId: string,
+    claimToken: string | null,
+    status: EmailJobStatus,
+    patch: EmailJobPatch,
+    eventName?: string | null,
+  ): Promise<boolean>;
+  /** Transactional, rank-guarded delivery transition. */
+  applyDeliveryEvent(
+    jobId: string,
+    kind: EmailDeliveryStatus,
+    occurredAt: string | null,
+  ): Promise<boolean>;
+  /** Applies provider events that arrived before the job knew its message id. */
+  reconcileProviderEvents(input: {
+    jobId: string;
+    providerKey: string;
+    providerMessageId: string;
+  }): Promise<number>;
   recordEvent(event: CanonicalEventInput): Promise<void>;
   recordAlert(alert: OperationalAlertInput): Promise<void>;
-  listStaleJobs(
-    jobType: string,
-    createdBeforeIso: string,
-  ): Promise<Array<{ job_id: string; lead_plan_id: string; created_at: string }>>;
+  /** Raises one stale alert per overdue job, atomically marking it alerted. */
+  raiseStaleAlerts(jobType: string, createdBeforeIso: string): Promise<number>;
 };

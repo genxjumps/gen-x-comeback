@@ -3,8 +3,13 @@
 import { createFakeAdapter, createResendAdapter } from "@/lib/email/adapters.server";
 import { evaluateSendingGate, readEmailConfig, resolveAppOrigin } from "@/lib/email/config.server";
 import { createSupabaseEmailStore } from "@/lib/email/store.server";
+import {
+  EMAIL_TOKEN_SECRET_ENV,
+  deriveEmailCredential,
+  readEmailTokenSecret,
+} from "@/lib/email/credentials.server";
 import type { DispatchDeps } from "@/lib/email/dispatch";
-import { generateAccessToken, hashAccessToken } from "@/lib/lead-plan";
+import { hashAccessToken } from "@/lib/lead-plan";
 import type { EmailAdapter } from "@/lib/email/types";
 
 export type RuntimeDeps =
@@ -14,7 +19,16 @@ export type RuntimeDeps =
 export async function buildDispatchDeps(): Promise<RuntimeDeps> {
   const config = readEmailConfig();
   const gate = evaluateSendingGate(config);
-  if (!gate.enabled) return { enabled: false, missing: gate.missing };
+  const tokenSecret = readEmailTokenSecret();
+
+  // Without the derivation key, retries could not reproduce the same links.
+  if (!gate.enabled || !tokenSecret) {
+    const missing = gate.enabled ? [] : gate.missing;
+    return {
+      enabled: false,
+      missing: tokenSecret ? missing : [...missing, EMAIL_TOKEN_SECRET_ENV],
+    };
+  }
 
   const adapter: EmailAdapter =
     config.providerKey === "fake"
@@ -31,7 +45,8 @@ export async function buildDispatchDeps(): Promise<RuntimeDeps> {
       fromEmail: config.fromEmail as string,
       fromName: config.fromName,
       replyTo: config.replyTo as string,
-      generateToken: generateAccessToken,
+      deriveCredential: (purpose, planVersionId) =>
+        deriveEmailCredential(tokenSecret, purpose, planVersionId),
       hash: hashAccessToken,
     },
   };

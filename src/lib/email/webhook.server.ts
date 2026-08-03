@@ -1,6 +1,5 @@
 // Signed provider webhook reconciliation. Idempotent and out-of-order safe.
 import {
-  canApplyDeliveryTransition,
   mapProviderEvent,
   verifyWebhookSignature,
   type SignatureHeaders,
@@ -31,58 +30,80 @@ export async function handleProviderWebhook(
   const event = mapProviderEvent(payload);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const nowIso = new Date().toISOString();
+  const terminalKind =
+    event.kind === "delivered" ||
+    event.kind === "delayed" ||
+    event.kind === "bounced" ||
+    event.kind === "complained"
+      ? event.kind
+      : null;
 
-  // Duplicate deliveries are dropped by the unique provider event id.
-  const { error: insertError } = await supabaseAdmin.from("email_provider_events").insert({
-    provider_key: providerKey,
-    provider_event_id: headers.id ?? `${providerKey}:${nowIso}`,
-    event_type: String((payload as { type?: unknown }).type ?? "unknown"),
-    provider_message_id: event.providerMessageId,
-    occurred_at: event.occurredAt,
-  });
+  // Duplicate deliveries are dropped by the unique provider event id. The row is
+  // recorded before any state change so an event that arrives before the job
+  // knows its provider message id can still be reconciled later.
+  const { data: inserted, error: insertError } = await supabaseAdmin
+    .from("email_provider_events")
+    .insert({
+      provider_key: providerKey,
+      provider_event_id: headers.id ?? `${providerKey}:${nowIso}`,
+      event_type: String((payload as { type?: unknown }).type ?? "unknown"),
+      event_kind: event.kind,
+      suppression: event.suppression,
+      provider_message_id: event.providerMessageId,
+      occurred_at: event.occurredAt,
+    })
+    .select("id")
+    .limit(1);
   if (insertError) {
     if (insertError.code === "23505" || /duplicate key/i.test(insertError.message)) {
       return { status: 200, body: "duplicate", applied: false };
     }
     throw new Error(insertError.message);
   }
+  const eventRowId = inserted?.[0]?.id ?? null;
 
-  if (event.kind === "ignored" || event.kind === "reporting" || !event.providerMessageId) {
+  async function closeEventRow(jobId: string | null, reconciled: boolean): Promise<void> {
+    if (!eventRowId) return;
+    await supabaseAdmin
+      .from("email_provider_events")
+      .update({
+        ...(jobId ? { job_id: jobId, matched_at: nowIso } : {}),
+        ...(reconciled ? { reconciled_at: nowIso } : {}),
+      })
+      .eq("id", eventRowId);
+  }
+
+  if (!terminalKind || !event.providerMessageId) {
+    // Reporting-only and unknown events never change plan or delivery state.
+    await closeEventRow(null, true);
     return { status: 200, body: "recorded", applied: false };
   }
 
   const { data: jobs, error } = await supabaseAdmin
     .from("email_jobs")
-    .select("job_id, lead_plan_id, plan_version_id, delivery_status")
+    .select("job_id, lead_plan_id")
     .eq("provider_key", providerKey)
     .eq("provider_message_id", event.providerMessageId)
     .limit(1);
   if (error) throw new Error(error.message);
   const job = jobs?.[0];
+
+  // Early event: the accepting attempt has not written its message id yet. The
+  // row stays unreconciled and the dispatcher applies it on acceptance.
   if (!job) return { status: 200, body: "unmatched", applied: false };
 
-  if (!canApplyDeliveryTransition(job.delivery_status, event.kind)) {
-    return { status: 200, body: "stale", applied: false };
-  }
-
-  await supabaseAdmin
-    .from("email_jobs")
-    .update({
-      delivery_status: event.kind,
-      ...(event.kind === "delivered" ? { delivered_at: event.occurredAt ?? nowIso } : {}),
-      updated_at: nowIso,
-    })
-    .eq("job_id", job.job_id);
-
-  if (event.kind === "delivered") {
-    await supabaseAdmin.from("canonical_events").insert({
-      event_name: "email_plan_ready_delivered",
-      lead_plan_id: job.lead_plan_id,
-      plan_version_id: job.plan_version_id,
-      job_id: job.job_id,
-      occurred_at: event.occurredAt ?? nowIso,
-    });
-  }
+  // One transaction performs the rank guard, the state change, and the
+  // delivered canonical event, so a late or duplicate event cannot regress it.
+  const { data: applied, error: applyError } = await supabaseAdmin.rpc(
+    "apply_email_delivery_event",
+    {
+      p_job_id: job.job_id,
+      p_kind: terminalKind,
+      ...(event.occurredAt ? { p_occurred_at: event.occurredAt } : {}),
+    },
+  );
+  if (applyError) throw new Error(applyError.message);
+  await closeEventRow(job.job_id, true);
 
   if (event.suppression) {
     const { data: leads } = await supabaseAdmin
@@ -106,5 +127,6 @@ export async function handleProviderWebhook(
       .eq("id", job.lead_plan_id);
   }
 
+  if (applied !== true) return { status: 200, body: "stale", applied: false };
   return { status: 200, body: "applied", applied: true };
 }
