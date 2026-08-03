@@ -34,7 +34,7 @@ export const Route = createFileRoute("/your-plan/")({
   component: PlanHubPage,
 });
 
-const ROW_CLASS = "block p-4 hover:bg-muted/60";
+const ROW_CLASS = "block px-4 py-2.5 hover:bg-muted/60";
 
 function RowLink({ day, children }: { day: number; children: ReactNode }) {
   if (day === 1) {
