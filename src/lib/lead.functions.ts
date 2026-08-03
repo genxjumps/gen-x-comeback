@@ -143,7 +143,6 @@ export const completePlanDay = createServerFn({ method: "POST" })
       .upsert(
         {
           lead_plan_id: access.leadPlanId,
-          plan_version_id: access.planVersionId,
           day_number: data.day,
         },
         { onConflict: "lead_plan_id,day_number", ignoreDuplicates: true },
