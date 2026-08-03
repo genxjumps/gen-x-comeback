@@ -310,12 +310,11 @@ function ResultsPage() {
               setError(null);
               try {
                 const access = await mintCredential();
-                const preferences = await mintCredential();
                 await save({
                   data: {
                     submissionId: getSubmissionId(answers),
                     sessionTokenHash: access.hash,
-                    preferencesTokenHash: preferences.hash,
+
                     firstName: firstName.trim(),
                     email: email.trim(),
                     consentGranted: true as const,
