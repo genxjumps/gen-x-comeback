@@ -48,17 +48,27 @@ export type Database = {
           source?: string | null
           submission_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "canonical_events_lead_plan_fk"
+            columns: ["lead_plan_id"]
+            isOneToOne: false
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_jobs: {
         Row: {
           alerted_stale_at: string | null
           attempt_count: number
           canceled_at: string | null
+          claim_token: string | null
           created_at: string
           delivered_at: string | null
           delivery_status: Database["public"]["Enums"]["email_delivery_status"]
           eligible_at: string
+          first_provider_attempt_at: string | null
           idempotency_key: string
           job_id: string
           job_type: string
@@ -68,6 +78,7 @@ export type Database = {
           lead_plan_id: string
           lease_expires_at: string | null
           locked_at: string | null
+          manual_review_at: string | null
           next_attempt_at: string | null
           plan_version_id: string
           provider_accepted_at: string | null
@@ -83,10 +94,12 @@ export type Database = {
           alerted_stale_at?: string | null
           attempt_count?: number
           canceled_at?: string | null
+          claim_token?: string | null
           created_at?: string
           delivered_at?: string | null
           delivery_status?: Database["public"]["Enums"]["email_delivery_status"]
           eligible_at?: string
+          first_provider_attempt_at?: string | null
           idempotency_key: string
           job_id?: string
           job_type: string
@@ -96,6 +109,7 @@ export type Database = {
           lead_plan_id: string
           lease_expires_at?: string | null
           locked_at?: string | null
+          manual_review_at?: string | null
           next_attempt_at?: string | null
           plan_version_id: string
           provider_accepted_at?: string | null
@@ -111,10 +125,12 @@ export type Database = {
           alerted_stale_at?: string | null
           attempt_count?: number
           canceled_at?: string | null
+          claim_token?: string | null
           created_at?: string
           delivered_at?: string | null
           delivery_status?: Database["public"]["Enums"]["email_delivery_status"]
           eligible_at?: string
+          first_provider_attempt_at?: string | null
           idempotency_key?: string
           job_id?: string
           job_type?: string
@@ -124,6 +140,7 @@ export type Database = {
           lead_plan_id?: string
           lease_expires_at?: string | null
           locked_at?: string | null
+          manual_review_at?: string | null
           next_attempt_at?: string | null
           plan_version_id?: string
           provider_accepted_at?: string | null
@@ -182,34 +199,46 @@ export type Database = {
       }
       email_provider_events: {
         Row: {
+          event_kind: string | null
           event_type: string
           id: string
           job_id: string | null
+          matched_at: string | null
           occurred_at: string | null
           provider_event_id: string
           provider_key: string
           provider_message_id: string | null
           received_at: string
+          reconciled_at: string | null
+          suppression: string | null
         }
         Insert: {
+          event_kind?: string | null
           event_type: string
           id?: string
           job_id?: string | null
+          matched_at?: string | null
           occurred_at?: string | null
           provider_event_id: string
           provider_key: string
           provider_message_id?: string | null
           received_at?: string
+          reconciled_at?: string | null
+          suppression?: string | null
         }
         Update: {
+          event_kind?: string | null
           event_type?: string
           id?: string
           job_id?: string | null
+          matched_at?: string | null
           occurred_at?: string | null
           provider_event_id?: string
           provider_key?: string
           provider_message_id?: string | null
           received_at?: string
+          reconciled_at?: string | null
+          suppression?: string | null
         }
         Relationships: [
           {
@@ -377,7 +406,15 @@ export type Database = {
           resolved_at?: string | null
           severity?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "operational_alerts_job_fk"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "email_jobs"
+            referencedColumns: ["job_id"]
+          },
+        ]
       }
       plan_access_sessions: {
         Row: {
@@ -421,6 +458,7 @@ export type Database = {
         Row: {
           expires_at: string
           issued_at: string
+          job_id: string | null
           last_used_at: string | null
           lead_plan_id: string
           plan_version_id: string
@@ -433,6 +471,7 @@ export type Database = {
         Insert: {
           expires_at: string
           issued_at?: string
+          job_id?: string | null
           last_used_at?: string | null
           lead_plan_id: string
           plan_version_id: string
@@ -445,6 +484,7 @@ export type Database = {
         Update: {
           expires_at?: string
           issued_at?: string
+          job_id?: string | null
           last_used_at?: string | null
           lead_plan_id?: string
           plan_version_id?: string
@@ -455,6 +495,13 @@ export type Database = {
           use_count?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "plan_return_tokens_job_fk"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "email_jobs"
+            referencedColumns: ["job_id"]
+          },
           {
             foreignKeyName: "plan_return_tokens_lead_plan_id_fkey"
             columns: ["lead_plan_id"]
@@ -467,25 +514,34 @@ export type Database = {
       plan_submissions: {
         Row: {
           created_at: string
+          email_normalized: string | null
           job_id: string | null
           lead_plan_id: string
           plan_version_id: string
+          request_fingerprint: string | null
+          session_token_hash: string | null
           source: string
           submission_id: string
         }
         Insert: {
           created_at?: string
+          email_normalized?: string | null
           job_id?: string | null
           lead_plan_id: string
           plan_version_id: string
+          request_fingerprint?: string | null
+          session_token_hash?: string | null
           source: string
           submission_id: string
         }
         Update: {
           created_at?: string
+          email_normalized?: string | null
           job_id?: string | null
           lead_plan_id?: string
           plan_version_id?: string
+          request_fingerprint?: string | null
+          session_token_hash?: string | null
           source?: string
           submission_id?: string
         }
@@ -498,6 +554,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      rate_limit_counters: {
+        Row: {
+          attempts: number
+          bucket_key: string
+          updated_at: string
+          window_start: string
+        }
+        Insert: {
+          attempts?: number
+          bucket_key: string
+          updated_at?: string
+          window_start: string
+        }
+        Update: {
+          attempts?: number
+          bucket_key?: string
+          updated_at?: string
+          window_start?: string
+        }
+        Relationships: []
       }
       return_link_sessions: {
         Row: {
@@ -555,16 +632,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_email_delivery_event: {
+        Args: {
+          p_job_id: string
+          p_kind: Database["public"]["Enums"]["email_delivery_status"]
+          p_occurred_at?: string
+        }
+        Returns: boolean
+      }
       claim_email_jobs: {
         Args: { p_job_type: string; p_lease_seconds?: number; p_limit?: number }
         Returns: {
           alerted_stale_at: string | null
           attempt_count: number
           canceled_at: string | null
+          claim_token: string | null
           created_at: string
           delivered_at: string | null
           delivery_status: Database["public"]["Enums"]["email_delivery_status"]
           eligible_at: string
+          first_provider_attempt_at: string | null
           idempotency_key: string
           job_id: string
           job_type: string
@@ -574,6 +661,7 @@ export type Database = {
           lead_plan_id: string
           lease_expires_at: string | null
           locked_at: string | null
+          manual_review_at: string | null
           next_attempt_at: string | null
           plan_version_id: string
           provider_accepted_at: string | null
@@ -595,7 +683,6 @@ export type Database = {
       commit_plan_version: {
         Args: {
           p_assessment: Json
-          p_changed?: boolean
           p_consent_copy?: string
           p_consent_version?: string
           p_email_normalized?: string
@@ -603,7 +690,7 @@ export type Database = {
           p_first_name?: string
           p_lead_plan_id?: string
           p_plan: Json
-          p_preferences_token_hash?: string
+          p_request_fingerprint: string
           p_session_token_hash: string
           p_submission_id: string
         }
@@ -611,10 +698,33 @@ export type Database = {
           first_name: string
           job_id: string
           lead_plan_id: string
+          outcome: string
           plan_version_id: string
           replayed: boolean
           source: string
         }[]
+      }
+      consume_rate_limit: {
+        Args: { p_bucket: string; p_limit: number; p_window_seconds: number }
+        Returns: boolean
+      }
+      email_delivery_rank: {
+        Args: { p_status: Database["public"]["Enums"]["email_delivery_status"] }
+        Returns: number
+      }
+      finish_email_job: {
+        Args: {
+          p_claim_token: string
+          p_event_name?: string
+          p_job_id: string
+          p_patch?: Json
+          p_status: Database["public"]["Enums"]["email_job_status"]
+        }
+        Returns: boolean
+      }
+      raise_stale_email_job_alerts: {
+        Args: { p_cutoff: string; p_job_type: string }
+        Returns: number
       }
     }
     Enums: {
@@ -632,6 +742,7 @@ export type Database = {
         | "failed_permanent"
         | "suppressed"
         | "canceled"
+        | "manual_review"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -774,6 +885,7 @@ export const Constants = {
         "failed_permanent",
         "suppressed",
         "canceled",
+        "manual_review",
       ],
     },
   },
