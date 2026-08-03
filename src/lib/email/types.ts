@@ -1,0 +1,122 @@
+// Client-safe shared types for the Plan Ready (plan_ready_v1) email pipeline.
+
+export const PLAN_READY_JOB_TYPE = "plan_ready";
+export const PLAN_READY_JOB_VERSION = "v1";
+export const PLAN_READY_TEMPLATE_VERSION = "plan_ready_v1";
+
+/** Contract retry schedule: delays after each preceding transient failure. */
+export const RETRY_DELAYS_MS = [
+  60_000, // 1 minute
+  300_000, // 5 minutes
+  1_800_000, // 30 minutes
+  7_200_000, // 2 hours
+  43_200_000, // 12 hours
+] as const;
+
+/** Initial attempt plus five retries. */
+export const MAX_ATTEMPTS = 6;
+
+/** Return tokens are reusable for 30 days from issuance. */
+export const RETURN_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+/** A completed exchange session lasts as long as the token that created it. */
+export const RETURN_SESSION_TTL_MS = RETURN_TOKEN_TTL_MS;
+
+/** A pending job older than five minutes raises an operational alert. */
+export const STALE_PENDING_MS = 5 * 60 * 1000;
+
+export const RETURN_SESSION_COOKIE = "return_link_session";
+
+export type EmailJobStatus =
+  | "pending"
+  | "processing"
+  | "retry_scheduled"
+  | "provider_accepted"
+  | "failed_permanent"
+  | "suppressed"
+  | "canceled";
+
+export type EmailDeliveryStatus = "pending" | "delivered" | "delayed" | "bounced" | "complained";
+
+export type EmailJobRow = {
+  job_id: string;
+  job_type: string;
+  job_version: string;
+  template_version: string;
+  lead_plan_id: string;
+  plan_version_id: string;
+  source_event_id: string | null;
+  idempotency_key: string;
+  status: EmailJobStatus;
+  delivery_status: EmailDeliveryStatus;
+  attempt_count: number;
+  next_attempt_at: string | null;
+  locked_at: string | null;
+  lease_expires_at: string | null;
+  provider_key: string | null;
+  provider_message_id: string | null;
+  created_at: string;
+};
+
+export type LeadRow = {
+  id: string;
+  plan_version_id: string;
+  first_name: string;
+  email_original: string;
+  email_normalized: string;
+  email_suppressed_at: string | null;
+  email_suppression_reason: string | null;
+};
+
+export type CanonicalEventInput = {
+  event_name: string;
+  lead_plan_id?: string | null;
+  plan_version_id?: string | null;
+  submission_id?: string | null;
+  job_id?: string | null;
+  source?: string | null;
+  occurred_at?: string;
+};
+
+export type OperationalAlertInput = {
+  alert_type: string;
+  severity?: "info" | "warning" | "critical";
+  job_id?: string | null;
+  lead_plan_id?: string | null;
+  details?: Record<string, string | number | boolean | null>;
+};
+
+/**
+ * Provider-neutral send request. Only contract-approved fields are present:
+ * no normalized-email key, assessment, weight, protein, plan, or progress data.
+ */
+export type EmailSendRequest = {
+  to: string;
+  fromEmail: string;
+  fromName: string;
+  replyTo: string;
+  subject: string;
+  previewText: string;
+  html: string;
+  text: string;
+  idempotencyKey: string;
+  /** Opaque correlation id (the job id). Never a database row of user data. */
+  correlationId: string;
+  /** Provider click tracking must stay disabled for the secure CTA. */
+  disableClickTracking: true;
+};
+
+export type EmailSendResult =
+  | { outcome: "accepted"; providerKey: string; providerMessageId: string; acceptedAt: string }
+  | { outcome: "transient"; errorCode: string }
+  | { outcome: "permanent"; errorCode: string }
+  | { outcome: "ambiguous"; errorCode: string };
+
+export type EmailAdapter = {
+  key: string;
+  send: (request: EmailSendRequest) => Promise<EmailSendResult>;
+  /** Reconciliation path for ambiguous timeouts using the stable idempotency key. */
+  lookupByIdempotencyKey?: (
+    idempotencyKey: string,
+  ) => Promise<{ providerMessageId: string; acceptedAt: string } | null>;
+};

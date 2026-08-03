@@ -58,11 +58,9 @@ function PlanHubPage() {
 
   useEffect(() => {
     let cancelled = false;
+    // A missing local token is still valid: an authorized return-link session
+    // cookie from the emailed link can carry access on another browser.
     const token = readStoredToken();
-    if (!token) {
-      setStatus("denied");
-      return;
-    }
     void (async () => {
       try {
         const result = await loadHub({ data: { token } });

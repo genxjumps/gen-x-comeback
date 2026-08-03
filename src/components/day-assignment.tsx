@@ -82,11 +82,9 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
     let cancelled = false;
     setStatus("checking");
     setBrief(null);
+    // A missing local token is still valid: an authorized return-link session
+    // cookie from the emailed link can carry access on another browser.
     const stored = readStoredToken();
-    if (!stored) {
-      setStatus("denied");
-      return;
-    }
     void (async () => {
       try {
         const result = await loadBrief({ data: { token: stored, day: dayNumber } });
@@ -120,7 +118,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
     : false;
 
   async function markComplete() {
-    if (!token || marking || completed || !priorDone) return;
+    if (status !== "allowed" || marking || completed || !priorDone) return;
     setMarking(true);
     setMarkError(null);
     try {

@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ReturnRouteImport } from './routes/return'
 import { Route as JumpRopesRouteImport } from './routes/jump-ropes'
+import { Route as EmailPreferencesRouteImport } from './routes/email-preferences'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
@@ -18,15 +20,27 @@ import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
+import { Route as ApiPublicEmailWebhookRouteImport } from './routes/api/public/email/webhook'
+import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReturnRoute = ReturnRouteImport.update({
+  id: '/return',
+  path: '/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JumpRopesRoute = JumpRopesRouteImport.update({
   id: '/jump-ropes',
   path: '/jump-ropes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailPreferencesRoute = EmailPreferencesRouteImport.update({
+  id: '/email-preferences',
+  path: '/email-preferences',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -64,10 +78,22 @@ const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
   path: '/your-plan/day/$day',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEmailWebhookRoute = ApiPublicEmailWebhookRouteImport.update({
+  id: '/api/public/email/webhook',
+  path: '/api/public/email/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicEmailDispatchRoute = ApiPublicEmailDispatchRouteImport.update({
+  id: '/api/public/email/dispatch',
+  path: '/api/public/email/dispatch',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -75,10 +101,14 @@ export interface FileRoutesByFullPath {
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
+  '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -86,11 +116,15 @@ export interface FileRoutesByTo {
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
+  '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -98,12 +132,16 @@ export interface FileRoutesById {
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
+  '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/email-preferences'
     | '/jump-ropes'
+    | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
@@ -111,10 +149,14 @@ export interface FileRouteTypes {
     | '/assessment/'
     | '/your-plan/'
     | '/your-plan/day/$day'
+    | '/api/public/email/dispatch'
+    | '/api/public/email/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/email-preferences'
     | '/jump-ropes'
+    | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
@@ -122,10 +164,14 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/your-plan'
     | '/your-plan/day/$day'
+    | '/api/public/email/dispatch'
+    | '/api/public/email/webhook'
   id:
     | '__root__'
     | '/'
+    | '/email-preferences'
     | '/jump-ropes'
+    | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
@@ -133,11 +179,15 @@ export interface FileRouteTypes {
     | '/assessment/'
     | '/your-plan/'
     | '/your-plan/day/$day'
+    | '/api/public/email/dispatch'
+    | '/api/public/email/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmailPreferencesRoute: typeof EmailPreferencesRoute
   JumpRopesRoute: typeof JumpRopesRoute
+  ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentStartRoute: typeof AssessmentStartRoute
@@ -145,6 +195,8 @@ export interface RootRouteChildren {
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
+  ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
+  ApiPublicEmailWebhookRoute: typeof ApiPublicEmailWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -156,11 +208,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/return': {
+      id: '/return'
+      path: '/return'
+      fullPath: '/return'
+      preLoaderRoute: typeof ReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jump-ropes': {
       id: '/jump-ropes'
       path: '/jump-ropes'
       fullPath: '/jump-ropes'
       preLoaderRoute: typeof JumpRopesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-preferences': {
+      id: '/email-preferences'
+      path: '/email-preferences'
+      fullPath: '/email-preferences'
+      preLoaderRoute: typeof EmailPreferencesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -212,12 +278,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof YourPlanDayDayRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/email/webhook': {
+      id: '/api/public/email/webhook'
+      path: '/api/public/email/webhook'
+      fullPath: '/api/public/email/webhook'
+      preLoaderRoute: typeof ApiPublicEmailWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/email/dispatch': {
+      id: '/api/public/email/dispatch'
+      path: '/api/public/email/dispatch'
+      fullPath: '/api/public/email/dispatch'
+      preLoaderRoute: typeof ApiPublicEmailDispatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmailPreferencesRoute: EmailPreferencesRoute,
   JumpRopesRoute: JumpRopesRoute,
+  ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentStartRoute: AssessmentStartRoute,
@@ -225,17 +307,9 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,
+  ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
+  ApiPublicEmailWebhookRoute: ApiPublicEmailWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

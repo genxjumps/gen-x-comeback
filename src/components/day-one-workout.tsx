@@ -28,11 +28,9 @@ export function DayOneWorkout() {
 
   useEffect(() => {
     let cancelled = false;
+    // A missing local token is still valid: an authorized return-link session
+    // cookie from the emailed link can carry access on another browser.
     const stored = readStoredToken();
-    if (!stored) {
-      setStatus("denied");
-      return;
-    }
     void (async () => {
       try {
         const result = await loadBrief({ data: { token: stored } });
@@ -55,7 +53,7 @@ export function DayOneWorkout() {
   }, [loadBrief]);
 
   async function markComplete() {
-    if (!token || marking || completed) return;
+    if (status !== "allowed" || marking || completed) return;
     setMarking(true);
     setMarkError(null);
     try {
