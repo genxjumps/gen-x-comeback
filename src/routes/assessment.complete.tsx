@@ -16,6 +16,7 @@ import {
   regeneratePlanWithToken,
   saveLeadPlan,
 } from "@/lib/lead.functions";
+import { getSubmissionId, mintCredential } from "@/lib/plan-submission";
 import { readStoredToken } from "@/components/plan-access";
 
 export const Route = createFileRoute("/assessment/complete")({
