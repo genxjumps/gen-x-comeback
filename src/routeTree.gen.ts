@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ReturnRouteImport } from './routes/return'
 import { Route as JumpRopesRouteImport } from './routes/jump-ropes'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
@@ -22,6 +23,11 @@ import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReturnRoute = ReturnRouteImport.update({
+  id: '/return',
+  path: '/return',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JumpRopesRoute = JumpRopesRouteImport.update({
@@ -68,6 +74,7 @@ const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/jump-ropes'
+    | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/jump-ropes'
+    | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/jump-ropes'
+    | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   JumpRopesRoute: typeof JumpRopesRoute
+  ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentStartRoute: typeof AssessmentStartRoute
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/return': {
+      id: '/return'
+      path: '/return'
+      fullPath: '/return'
+      preLoaderRoute: typeof ReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jump-ropes': {
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   JumpRopesRoute: JumpRopesRoute,
+  ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentStartRoute: AssessmentStartRoute,
