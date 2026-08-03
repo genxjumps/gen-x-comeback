@@ -34,7 +34,7 @@ export const Route = createFileRoute("/your-plan/")({
   component: PlanHubPage,
 });
 
-const ROW_CLASS = "block p-4 hover:bg-muted/60";
+const ROW_CLASS = "block px-4 py-2.5 hover:bg-muted/60";
 
 function RowLink({ day, children }: { day: number; children: ReactNode }) {
   if (day === 1) {
@@ -203,24 +203,9 @@ function PlanHubPage() {
                       {status}
                     </span>
                   </div>
-                  <p className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">
-                    {assignmentKind(d)}
-                  </p>
-                  {d.description ? (
-                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                      {d.description}
-                    </p>
-                  ) : null}
-                  {d.minutes ? (
-                    <p className="mt-2 text-xs text-muted-foreground">About {d.minutes} minutes</p>
-                  ) : null}
-                  {d.optional ? (
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      Optional Active Recovery available: {d.optional.title}
-                    </p>
-                  ) : null}
                 </RowLink>
               </li>
+
             );
           })}
         </ul>

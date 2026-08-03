@@ -211,22 +211,18 @@ function ResultsPage() {
       {/* Days */}
       <section className="mt-8">
         <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
-          <li className="bg-card p-4">
+          <li className="bg-card px-4 py-2.5">
             <div className="flex items-baseline justify-between gap-3">
               <h3 className="text-sm font-semibold">Day 1: {dayOne.title}</h3>
               <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
                 Today
               </span>
             </div>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-              {dayOne.description}
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">About 15 minutes</p>
             <Button
               asChild
               size="sm"
               variant="default"
-              className="mt-3 w-full sm:w-auto"
+              className="mt-2 w-full sm:w-auto"
             >
               <Link
                 {...(unlocked
@@ -236,11 +232,10 @@ function ResultsPage() {
                 Start Day 1 Workout
               </Link>
             </Button>
-
           </li>
 
           {rest.map((d) => (
-            <li key={d.day} className={unlocked ? "bg-card px-4 py-2.5" : "bg-muted/30 px-4 py-2.5"}>
+            <li key={d.day} className={unlocked ? "bg-card px-4 py-2" : "bg-muted/30 px-4 py-2"}>
               <div className="flex items-baseline justify-between gap-3">
                 <h3
                   className={
@@ -250,9 +245,6 @@ function ResultsPage() {
                   Day {d.day}: {d.title}
                 </h3>
               </div>
-              {d.optional ? (
-                <p className="mt-1 text-xs text-muted-foreground">Optional: Active Recovery</p>
-              ) : null}
             </li>
           ))}
         </ul>
