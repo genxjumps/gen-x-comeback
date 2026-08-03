@@ -122,7 +122,8 @@ describe("/return method semantics", () => {
     expect(html).toContain('<button type="submit"');
     expect(html).not.toMatch(/<script/i);
     expect(html).not.toMatch(/\.submit\(\)/);
-    expect(html).not.toMatch(/on[a-z]+=/i);
+    // No inline event handlers (onclick=, onload=, ...) anywhere in the markup.
+    expect(html).not.toMatch(/\son[a-z]+\s*=/i);
   });
 
   it("POST is the only method that invokes the token exchange", async () => {
