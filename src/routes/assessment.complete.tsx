@@ -303,8 +303,13 @@ function ResultsPage() {
               setSaving(true);
               setError(null);
               try {
-                const result = await save({
+                const access = await mintCredential();
+                const preferences = await mintCredential();
+                await save({
                   data: {
+                    submissionId: getSubmissionId(answers),
+                    sessionTokenHash: access.hash,
+                    preferencesTokenHash: preferences.hash,
                     firstName: firstName.trim(),
                     email: email.trim(),
                     consentGranted: true as const,
@@ -312,7 +317,7 @@ function ResultsPage() {
                   },
                 });
                 try {
-                  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, result.accessToken);
+                  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, access.raw);
                 } catch {
                   /* ignore storage errors */
                 }
