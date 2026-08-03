@@ -53,7 +53,7 @@ export function DayOneWorkout() {
   }, [loadBrief]);
 
   async function markComplete() {
-    if (!token || marking || completed) return;
+    if (status !== "allowed" || marking || completed) return;
     setMarking(true);
     setMarkError(null);
     try {
