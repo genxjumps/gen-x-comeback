@@ -146,10 +146,12 @@ describe("Plan Ready acceptance gates", () => {
       expect(rendered.text).not.toMatch(pattern);
     }
 
-    // Unsafe personalization falls back safely.
-    expect(sanitizeFirstName("  <script>  ")).toBeNull();
+    // Unsafe personalization is stripped of markup, and an unusable name falls back.
+    expect(sanitizeFirstName("  <script>  ")).toBe("script");
+    expect(sanitizeFirstName("   ")).toBeNull();
+    expect(sanitizeFirstName("<>&\"'`")).toBeNull();
     const fallback = renderPlanReady({
-      firstName: "<script>",
+      firstName: "   ",
       returnUrl: "https://app.genxjumps.com/return?token=abc",
       preferencesUrl: "https://app.genxjumps.com/email-preferences?c=def",
     });
