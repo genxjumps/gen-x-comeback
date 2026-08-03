@@ -1,42 +1,88 @@
-# Gen X Comeback
+# Gen X Jumps 7-Day Plan App
 
-Create a new private Gen X Jumps PWA project. This is checkpoint 1 only - do not build the assessment, database, routing, email, authentication, progress tracking, or later features yet.
+This repository contains the mobile-first Gen X Jumps app that builds and delivers a personalized seven-day workout and protein plan.
 
-Build a mobile-first grayscale functional shell with:
-- A simple top-level app layout
-- A public entry page for the free 7-day fitness comeback offer
-- Clear copy that this is a personalized workout and protein plan for Gen X adults who want to lose fat, rebuild fitness, and get moving again
-- A primary CTA labeled "Build My 7-Day Plan"
-- A placeholder route for the assessment that only displays "Assessment coming in checkpoint 2"
-- Responsive behavior for current iPhone Safari, Android Chrome, desktop Chrome, desktop Edge, and macOS Safari
+The repository and Lovable project still use the historical working name `Gen X Comeback`. That is a project slug, not a locked public product title.
 
-Important constraints:
-- Use React, TypeScript, Tailwind, and shadcn/ui
-- Keep the interface intentionally grayscale and wireframe-quality
-- Do not invent or lock a final product title beyond generic working copy
-- Do not add fake dashboards, community, store, coaching, notifications, login, or other future UI
-- Make only this checkpoint visible and testable in preview
-- At the end, summarize exactly what was built, what remains temporary, and what was deliberately excluded.
+## Current status
 
-This project was built with [Lovable](https://lovable.dev).
+The core seven-day plan experience is implemented and connected to Lovable Cloud. The Plan Ready email foundation is also implemented, but outbound email remains intentionally fail-closed until the remaining provider configuration and end-to-end acceptance checks pass.
 
-**Live app**: https://gen-x-comeback.lovable.app
+### Implemented app experience
 
-## Build with Lovable
+- Public offer and entry screen
+- Multi-step fitness assessment
+- Personalized results preview
+- Lead capture and consent after the schedule preview
+- Transactional persistence of the lead, assessment, consent, and current plan
+- Deterministic workout and recovery-day assignments
+- Immediate Day 1 access after a successful save
+- Days 2-7 plan access and workout-day routes
+- Saved-plan return access without requiring a password
+- Plan progress and day-completion behavior
+- Guided workout video delivery
+- Post-plan jump-rope recommendation page
+- Responsive mobile and desktop layouts
+- PWA manifest and installable-app foundation
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/9882f922-c17b-4fca-bd5b-48b9548e5322).
+### Implemented Plan Ready email foundation
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- App-owned durable outbox
+- Idempotent Plan Ready job creation
+- Job leasing, retry handling, and stale-job alerts
+- Replaceable delivery-provider adapter with Resend support
+- Secure, purpose-limited return tokens
+- Deliberate **Open My Plan** confirmation before a saved plan is activated
+- Signed provider-webhook verification and event reconciliation
+- Bounce and complaint suppression
+- App-owned email preferences
+- A release gate that blocks provider calls unless every required setting and acceptance flag is present
 
-## Development
+Only Plan Ready is currently implemented for delivery. The remaining approved lifecycle emails and user-requested recovery email are later checkpoints. Broadcasts, newsletters, and promotional campaigns are outside the current app-email scope.
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Architecture
+
+- **Frontend and server:** React 19, TypeScript, TanStack Start, and TanStack Router
+- **UI:** Tailwind CSS 4 with Radix/shadcn-style components
+- **Backend:** Lovable Cloud with PostgreSQL/Supabase-compatible services
+- **Email transport:** Resend, used only as a replaceable delivery pipe
+- **Testing:** Vitest
+- **Hosting and project control:** Lovable
+- **Version history:** GitHub, synchronized with the connected Lovable project
+
+The app database is authoritative for plans, consent, email eligibility, job state, suppression, and send history. Email delivery must never control product access.
+
+## Email release safety
+
+Real sending must stay disabled until domain authentication, sender configuration, webhook signing, dispatch authorization, safe preflight, email preview, return-flow inspection, and staging acceptance are complete.
+
+Do not enable outbound sending merely because a provider API key exists. The server-side sending gate must report every prerequisite satisfied before any real provider attempt is allowed.
+
+## Local development
+
+[Bun](https://bun.sh/) is recommended because this repository includes a Bun lockfile.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+git clone https://github.com/genxjumps/gen-x-comeback.git
+cd gen-x-comeback
+bun install
+bun run dev
 ```
+
+Run the verification commands before committing application changes:
+
+```sh
+bun run test
+bunx tsc --noEmit
+bun run lint
+bun run build
+```
+
+Keep server credentials and signing secrets out of source control.
+
+## Lovable
+
+- **Live app:** https://gen-x-comeback.lovable.app
+- **Lovable editor:** https://lovable.dev/projects/9882f922-c17b-4fca-bd5b-48b9548e5322
+
+Changes pushed to the connected `main` branch synchronize back to Lovable. Avoid force pushes, rebases, amendments, or squashes that rewrite published history.
