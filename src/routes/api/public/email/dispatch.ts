@@ -54,9 +54,8 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           );
         }
 
-        const { dispatchPlanReadyJobs, raiseStalePlanReadyAlerts } = await import(
-          "@/lib/email/dispatch"
-        );
+        const { dispatchPlanReadyJobs, raiseStalePlanReadyAlerts } =
+          await import("@/lib/email/dispatch");
         const summary = await dispatchPlanReadyJobs(runtime.deps, { limit: 25 });
         const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
 

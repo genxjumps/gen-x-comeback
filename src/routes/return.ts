@@ -57,7 +57,6 @@ export const Route = createFileRoute("/return")({
         );
       },
 
-
       POST: async ({ request }) => {
         const form = await request.formData();
         const raw = form.get("token");
@@ -67,10 +66,7 @@ export const Route = createFileRoute("/return")({
         const result = await exchangeReturnToken(token);
         if (!result.ok) return genericRecovery();
 
-        const maxAge = Math.max(
-          0,
-          Math.floor((result.expiresAt.getTime() - Date.now()) / 1000),
-        );
+        const maxAge = Math.max(0, Math.floor((result.expiresAt.getTime() - Date.now()) / 1000));
         // 303 to a clean URL so the bearer token is gone before the app loads.
         return new Response(null, {
           status: 303,
