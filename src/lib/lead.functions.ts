@@ -152,11 +152,22 @@ export const completePlanDay = createServerFn({ method: "POST" })
     return { ok: true, completedDays: await listCompletedDays(access.leadPlanId) };
   });
 
+/**
+ * Server-computed fingerprint of the full normalized lead-capture request.
+ * The database binds a submission id to this value, so reusing a submission id
+ * with any different request is rejected as a conflict.
+ */
+async function requestFingerprint(parts: Array<string | null>): Promise<string> {
+  const { createHash } = await import("node:crypto");
+  return createHash("sha256").update(parts.map((p) => p ?? "").join("\u0000")).digest("hex");
+}
+
 export const saveLeadPlan = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => leadInputSchema.parse(data))
   .handler(async ({ data }): Promise<SaveLeadPlanResult> => {
     const answers = data.assessment as Answers;
     const { plan, snapshot } = planFromAnswers(answers);
+    const emailNormalized = data.email.toLowerCase();
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // One transaction: plan version, same-browser access, canonical event, and
@@ -164,20 +175,28 @@ export const saveLeadPlan = createServerFn({ method: "POST" })
     const { data: rows, error } = await supabaseAdmin.rpc("commit_plan_version", {
       p_submission_id: data.submissionId,
       p_session_token_hash: data.sessionTokenHash,
-      p_preferences_token_hash: data.preferencesTokenHash,
-      p_email_normalized: data.email.toLowerCase(),
+      p_request_fingerprint: await requestFingerprint([
+        "save",
+        emailNormalized,
+        data.firstName,
+        JSON.stringify(answers),
+      ]),
+      p_email_normalized: emailNormalized,
       p_email_original: data.email,
       p_first_name: data.firstName,
       p_consent_copy: CONSENT_COPY,
       p_consent_version: CONSENT_VERSION,
       p_assessment: JSON.parse(JSON.stringify(answers)),
       p_plan: JSON.parse(JSON.stringify(snapshot)),
-      p_changed: true,
     });
     if (error) throw new Error(error.message);
 
     const result = rows?.[0];
     if (!result) throw new Error("Plan commit returned no result");
+    // A conflicting or stale replay authorizes nothing and discloses nothing.
+    if (result.outcome === "conflict" || result.outcome === "stale_replay") {
+      throw new Error("Submission conflict");
+    }
 
     return { firstName: result.first_name, plan, replayed: result.replayed };
   });
@@ -197,6 +216,11 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
     const { data: rows, error } = await supabaseAdmin.rpc("commit_plan_version", {
       p_submission_id: data.submissionId,
       p_session_token_hash: data.sessionTokenHash,
+      p_request_fingerprint: await requestFingerprint([
+        "regenerate",
+        access.leadPlanId,
+        JSON.stringify(answers),
+      ]),
       p_lead_plan_id: access.leadPlanId,
       p_assessment: JSON.parse(JSON.stringify(answers)),
       p_plan: JSON.parse(JSON.stringify(snapshot)),
@@ -205,9 +229,11 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
 
     const result = rows?.[0];
     if (!result) return { ok: false };
+    if (result.outcome === "conflict" || result.outcome === "stale_replay") return { ok: false };
 
     return { ok: true, firstName: result.first_name, plan };
   });
+
 
 export const getPlanHub = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
