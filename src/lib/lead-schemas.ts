@@ -45,7 +45,25 @@ export const answersSchema = z
     }
   });
 
+/**
+ * Access token supplied by the same browser. Optional because an authorized
+ * cross-device return-link session cookie can carry access instead.
+ */
+const optionalTokenSchema = z
+  .string()
+  .refine((v) => RAW_TOKEN_RE.test(v), "Invalid token")
+  .nullish();
+
+/** SHA-256 hex digest of a client-generated same-browser access token. */
+const tokenHashSchema = z.string().regex(/^[a-f0-9]{64}$/, "Invalid token hash");
+
+/** Required client-generated idempotency key for an exact submit replay. */
+const submissionIdSchema = z.string().uuid("Invalid submission id");
+
 export const leadInputSchema = z.object({
+  submissionId: submissionIdSchema,
+  sessionTokenHash: tokenHashSchema,
+  preferencesTokenHash: tokenHashSchema,
   firstName: z
     .string()
     .transform((v) => v.trim())
@@ -59,23 +77,25 @@ export const leadInputSchema = z.object({
 });
 
 export const regenerateInputSchema = z.object({
-  token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
+  submissionId: submissionIdSchema,
+  sessionTokenHash: tokenHashSchema,
+  token: optionalTokenSchema,
   assessment: answersSchema,
 });
 
 export const tokenOnlyInputSchema = z.object({
-  token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
+  token: optionalTokenSchema,
 });
 
 /** Valid plan day number: 1 through 7 only. */
 export const planDaySchema = z.number().int().min(1).max(TOTAL_ASSIGNMENTS);
 
 export const completeDayInputSchema = z.object({
-  token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
+  token: optionalTokenSchema,
   day: planDaySchema,
 });
 
 export const dayBriefInputSchema = z.object({
-  token: z.string().refine((v) => RAW_TOKEN_RE.test(v), "Invalid token"),
+  token: optionalTokenSchema,
   day: planDaySchema,
 });
