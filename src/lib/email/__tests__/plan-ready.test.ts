@@ -1,9 +1,14 @@
 // Automated acceptance tests for the Plan Ready contract release gate.
 // Each test name maps 1:1 to a numbered acceptance test in the contract.
 // Deterministic: fixed clock, fake provider, in-memory store.
+import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
 
-import { dispatchPlanReadyJobs, raiseStalePlanReadyAlerts, type DispatchDeps } from "@/lib/email/dispatch";
+import {
+  dispatchPlanReadyJobs,
+  raiseStalePlanReadyAlerts,
+  type DispatchDeps,
+} from "@/lib/email/dispatch";
 import {
   PROHIBITED_TEMPLATE_PATTERNS,
   PLAN_READY_CTA_LABEL,
@@ -16,12 +21,20 @@ import {
   mapProviderEvent,
   verifyWebhookSignature,
 } from "@/lib/email/webhook-signature";
-import { MAX_ATTEMPTS, RETRY_DELAYS_MS, type EmailAdapter, type EmailSendResult } from "@/lib/email/types";
+import {
+  MAX_ATTEMPTS,
+  RETRY_DELAYS_MS,
+  type EmailAdapter,
+  type EmailSendResult,
+} from "@/lib/email/types";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
 
 const FIXED_NOW = new Date("2026-02-01T12:00:00.000Z");
 
-function scriptedAdapter(results: EmailSendResult[], lookup?: EmailAdapter["lookupByIdempotencyKey"]) {
+function scriptedAdapter(
+  results: EmailSendResult[],
+  lookup?: EmailAdapter["lookupByIdempotencyKey"],
+) {
   const sent: Array<Parameters<EmailAdapter["send"]>[0]> = [];
   let index = 0;
   const adapter: EmailAdapter = {
@@ -42,7 +55,6 @@ function makeDeps(
   adapter: EmailAdapter,
   now: () => Date = () => FIXED_NOW,
 ): DispatchDeps {
-  let counter = 0;
   return {
     store,
     adapter,
@@ -51,10 +63,7 @@ function makeDeps(
     fromEmail: "todd@notify.genxjumps.com",
     fromName: "Todd from Gen X Jumps",
     replyTo: "todd@genxjumps.com",
-    generateToken: () => {
-      counter += 1;
-      return `${counter}`.padStart(64, "a");
-    },
+    deriveCredential: (purpose, planVersionId) => `cred:${purpose}:${planVersionId}`,
     hash: async (raw) => `hash:${raw}`,
   };
 }
@@ -85,7 +94,12 @@ describe("Plan Ready acceptance gates", () => {
   it("Acceptance 1: a claimed Plan Ready job sends once and records provider acceptance", async () => {
     const store = seed();
     const { adapter, sent } = scriptedAdapter([
-      { outcome: "accepted", providerKey: "fake", providerMessageId: "pm_1", acceptedAt: FIXED_NOW.toISOString() },
+      {
+        outcome: "accepted",
+        providerKey: "fake",
+        providerMessageId: "pm_1",
+        acceptedAt: FIXED_NOW.toISOString(),
+      },
     ]);
     const summary = await dispatchPlanReadyJobs(makeDeps(store, adapter));
 
@@ -100,7 +114,12 @@ describe("Plan Ready acceptance gates", () => {
   it("Acceptance 2: a second dispatch pass reuses the stable idempotency key and does not resend an accepted job", async () => {
     const store = seed();
     const { adapter, sent } = scriptedAdapter([
-      { outcome: "accepted", providerKey: "fake", providerMessageId: "pm_1", acceptedAt: FIXED_NOW.toISOString() },
+      {
+        outcome: "accepted",
+        providerKey: "fake",
+        providerMessageId: "pm_1",
+        acceptedAt: FIXED_NOW.toISOString(),
+      },
     ]);
     const deps = makeDeps(store, adapter);
     await dispatchPlanReadyJobs(deps);
@@ -115,7 +134,12 @@ describe("Plan Ready acceptance gates", () => {
     const store = seed();
     store.leads.set("lead-1", makeLead({ plan_version_id: "version-2" }));
     const { adapter, sent } = scriptedAdapter([
-      { outcome: "accepted", providerKey: "fake", providerMessageId: "pm_1", acceptedAt: FIXED_NOW.toISOString() },
+      {
+        outcome: "accepted",
+        providerKey: "fake",
+        providerMessageId: "pm_1",
+        acceptedAt: FIXED_NOW.toISOString(),
+      },
     ]);
     await dispatchPlanReadyJobs(makeDeps(store, adapter));
 
@@ -167,7 +191,9 @@ describe("Plan Ready acceptance gates", () => {
     await dispatchPlanReadyJobs(deps);
     const job = store.jobs.get("job-1")!;
     expect(job.status).toBe("retry_scheduled");
-    expect(job.next_attempt_at).toBe(new Date(FIXED_NOW.getTime() + RETRY_DELAYS_MS[0]).toISOString());
+    expect(job.next_attempt_at).toBe(
+      new Date(FIXED_NOW.getTime() + RETRY_DELAYS_MS[0]).toISOString(),
+    );
 
     // Exhausting the schedule ends terminally instead of looping.
     job.attempt_count = MAX_ATTEMPTS - 1;
@@ -186,10 +212,13 @@ describe("Plan Ready acceptance gates", () => {
 
   it("Acceptance 6: an ambiguous timeout reconciles instead of duplicating, and a stale pending job alerts", async () => {
     const store = seed();
-    const { adapter, sent } = scriptedAdapter([{ outcome: "ambiguous", errorCode: "timeout" }], async (key) => ({
-      providerMessageId: `pm_for_${key}`,
-      acceptedAt: FIXED_NOW.toISOString(),
-    }));
+    const { adapter, sent } = scriptedAdapter(
+      [{ outcome: "ambiguous", errorCode: "timeout" }],
+      async (key) => ({
+        providerMessageId: `pm_for_${key}`,
+        acceptedAt: FIXED_NOW.toISOString(),
+      }),
+    );
     await dispatchPlanReadyJobs(makeDeps(store, adapter));
 
     expect(sent).toHaveLength(1);
@@ -199,12 +228,17 @@ describe("Plan Ready acceptance gates", () => {
 
     // A held lease prevents a second worker from claiming the same job.
     const leased = seed();
-    leased.jobs.get("job-1")!.lease_expires_at = new Date(FIXED_NOW.getTime() + 60_000).toISOString();
-    const blocked = scriptedAdapter([{ outcome: "accepted", providerKey: "fake", providerMessageId: "x", acceptedAt: "" }]);
+    const leasedJob = leased.jobs.get("job-1")!;
+    leasedJob.status = "processing";
+    leasedJob.lease_expires_at = new Date(FIXED_NOW.getTime() + 60_000).toISOString();
+    const blocked = scriptedAdapter([
+      { outcome: "accepted", providerKey: "fake", providerMessageId: "x", acceptedAt: "" },
+    ]);
     expect((await dispatchPlanReadyJobs(makeDeps(leased, blocked.adapter))).claimed).toBe(0);
 
     // A pending job older than the stale window raises exactly one alert.
     const stale = seed();
+    stale.jobs.get("job-1")!.created_at = new Date(FIXED_NOW.getTime() - 600_000).toISOString();
     const alerts = await raiseStalePlanReadyAlerts(makeDeps(stale, blocked.adapter));
     expect(alerts).toBe(1);
     expect(await raiseStalePlanReadyAlerts(makeDeps(stale, blocked.adapter))).toBe(0);
@@ -213,7 +247,12 @@ describe("Plan Ready acceptance gates", () => {
   it("Acceptance 7: a sent link issues a hashed 30-day return token bound to the current plan version", async () => {
     const store = seed();
     const { adapter, sent } = scriptedAdapter([
-      { outcome: "accepted", providerKey: "fake", providerMessageId: "pm_1", acceptedAt: FIXED_NOW.toISOString() },
+      {
+        outcome: "accepted",
+        providerKey: "fake",
+        providerMessageId: "pm_1",
+        acceptedAt: FIXED_NOW.toISOString(),
+      },
     ]);
     await dispatchPlanReadyJobs(makeDeps(store, adapter));
 
@@ -238,8 +277,12 @@ describe("Plan Ready acceptance gates", () => {
   });
 
   it("Acceptance 9: scanner opens and provider click events are reporting only and never verify", () => {
-    expect(mapProviderEvent({ type: "email.opened", data: { email_id: "pm_1" } }).kind).toBe("reporting");
-    expect(mapProviderEvent({ type: "email.clicked", data: { email_id: "pm_1" } }).kind).toBe("reporting");
+    expect(mapProviderEvent({ type: "email.opened", data: { email_id: "pm_1" } }).kind).toBe(
+      "reporting",
+    );
+    expect(mapProviderEvent({ type: "email.clicked", data: { email_id: "pm_1" } }).kind).toBe(
+      "reporting",
+    );
     expect(mapProviderEvent({ type: "email.opened", data: {} }).suppression).toBeNull();
     // Only a deliberate server-side exchange can verify, which requires a POST.
     expect(mapProviderEvent({ type: "email.something_else" }).kind).toBe("ignored");
@@ -249,7 +292,12 @@ describe("Plan Ready acceptance gates", () => {
     const store = seed();
     store.suppressions.set("reader@example.com", "hard_bounce");
     const { adapter, sent } = scriptedAdapter([
-      { outcome: "accepted", providerKey: "fake", providerMessageId: "pm_1", acceptedAt: FIXED_NOW.toISOString() },
+      {
+        outcome: "accepted",
+        providerKey: "fake",
+        providerMessageId: "pm_1",
+        acceptedAt: FIXED_NOW.toISOString(),
+      },
     ]);
     await dispatchPlanReadyJobs(makeDeps(store, adapter));
 
@@ -259,14 +307,31 @@ describe("Plan Ready acceptance gates", () => {
     // The lead record itself is untouched, so plan access is retained.
     expect(store.leads.get("lead-1")?.plan_version_id).toBe("version-1");
 
-    expect(mapProviderEvent({ type: "email.bounced", data: { email_id: "x", bounce: { type: "Permanent" } } }).suppression).toBe("hard_bounce");
-    expect(mapProviderEvent({ type: "email.bounced", data: { email_id: "x", bounce: { type: "SoftBounce" } } }).suppression).toBeNull();
-    expect(mapProviderEvent({ type: "email.complained", data: { email_id: "x" } }).suppression).toBe("complaint");
+    expect(
+      mapProviderEvent({
+        type: "email.bounced",
+        data: { email_id: "x", bounce: { type: "Permanent" } },
+      }).suppression,
+    ).toBe("hard_bounce");
+    expect(
+      mapProviderEvent({
+        type: "email.bounced",
+        data: { email_id: "x", bounce: { type: "SoftBounce" } },
+      }).suppression,
+    ).toBeNull();
+    expect(
+      mapProviderEvent({ type: "email.complained", data: { email_id: "x" } }).suppression,
+    ).toBe("complaint");
 
     // Marketing unsubscribe is not a suppression source for this transactional job.
     const unsubscribed = seed();
     const ok = scriptedAdapter([
-      { outcome: "accepted", providerKey: "fake", providerMessageId: "pm_2", acceptedAt: FIXED_NOW.toISOString() },
+      {
+        outcome: "accepted",
+        providerKey: "fake",
+        providerMessageId: "pm_2",
+        acceptedAt: FIXED_NOW.toISOString(),
+      },
     ]);
     await dispatchPlanReadyJobs(makeDeps(unsubscribed, ok.adapter));
     expect(ok.sent).toHaveLength(1);
@@ -276,20 +341,35 @@ describe("Plan Ready acceptance gates", () => {
     const secret = "whsec_dGVzdHNlY3JldA==";
     const body = JSON.stringify({ type: "email.delivered", data: { email_id: "pm_1" } });
     const nowSeconds = 1_770_000_000;
-    const headers = { id: "msg_1", timestamp: String(nowSeconds), signature: null as string | null };
+    const headers = {
+      id: "msg_1",
+      timestamp: String(nowSeconds),
+      signature: null as string | null,
+    };
 
     expect(verifyWebhookSignature(secret, headers, body, nowSeconds)).toBe(false);
-    expect(verifyWebhookSignature(secret, { ...headers, signature: "v1,bogus" }, body, nowSeconds)).toBe(false);
-    expect(verifyWebhookSignature(null, { ...headers, signature: "v1,bogus" }, body, nowSeconds)).toBe(false);
+    expect(
+      verifyWebhookSignature(secret, { ...headers, signature: "v1,bogus" }, body, nowSeconds),
+    ).toBe(false);
+    expect(
+      verifyWebhookSignature(null, { ...headers, signature: "v1,bogus" }, body, nowSeconds),
+    ).toBe(false);
 
     // A correctly signed payload verifies, and a stale timestamp does not.
-    const crypto = require("node:crypto") as typeof import("node:crypto");
-    const expected = crypto
-      .createHmac("sha256", Buffer.from(secret.slice(6), "base64"))
+    const expected = createHmac("sha256", Buffer.from(secret.slice(6), "base64"))
       .update(`msg_1.${nowSeconds}.${body}`)
       .digest("base64");
-    expect(verifyWebhookSignature(secret, { ...headers, signature: `v1,${expected}` }, body, nowSeconds)).toBe(true);
-    expect(verifyWebhookSignature(secret, { ...headers, signature: `v1,${expected}` }, body, nowSeconds + 100_000)).toBe(false);
+    expect(
+      verifyWebhookSignature(secret, { ...headers, signature: `v1,${expected}` }, body, nowSeconds),
+    ).toBe(true);
+    expect(
+      verifyWebhookSignature(
+        secret,
+        { ...headers, signature: `v1,${expected}` },
+        body,
+        nowSeconds + 100_000,
+      ),
+    ).toBe(false);
 
     expect(canApplyDeliveryTransition("delivered", "delivered")).toBe(false);
     expect(canApplyDeliveryTransition("complained", "delivered")).toBe(false);
@@ -302,10 +382,19 @@ describe("Plan Ready acceptance gates", () => {
     const store = seed();
     store.jobs.set(
       "job-2",
-      makeJob({ job_id: "job-2", job_type: "start_day_1", idempotency_key: "start_day_1:version-1:v1" }),
+      makeJob({
+        job_id: "job-2",
+        job_type: "start_day_1",
+        idempotency_key: "start_day_1:version-1:v1",
+      }),
     );
     const { adapter, sent } = scriptedAdapter([
-      { outcome: "accepted", providerKey: "fake", providerMessageId: "pm_1", acceptedAt: FIXED_NOW.toISOString() },
+      {
+        outcome: "accepted",
+        providerKey: "fake",
+        providerMessageId: "pm_1",
+        acceptedAt: FIXED_NOW.toISOString(),
+      },
     ]);
     const summary = await dispatchPlanReadyJobs(makeDeps(store, adapter));
 
@@ -324,7 +413,9 @@ describe("Plan Ready acceptance gates", () => {
     // No image carries meaning: there are no <img> elements at all.
     expect(rendered.html).not.toMatch(/<img/i);
     // The CTA is a real anchor, so it is focusable and activatable by keyboard.
-    expect(rendered.html).toMatch(/<a href="https:\/\/app\.genxjumps\.com\/return\?token=abc"[^>]*>Open My Plan<\/a>/);
+    expect(rendered.html).toMatch(
+      /<a href="https:\/\/app\.genxjumps\.com\/return\?token=abc"[^>]*>Open My Plan<\/a>/,
+    );
     expect(rendered.html).toContain('role="presentation"');
     expect(rendered.html).toContain("max-width:560px");
     expect(rendered.text.trim().length).toBeGreaterThan(200);
@@ -355,7 +446,9 @@ describe("Plan Ready acceptance gates", () => {
     }
 
     // Click tracking must stay disabled for the secure CTA.
-    expect(evaluateSendingGate({ ...FULL_CONFIG, clickTrackingDisabled: false }).enabled).toBe(false);
+    expect(evaluateSendingGate({ ...FULL_CONFIG, clickTrackingDisabled: false }).enabled).toBe(
+      false,
+    );
     expect(evaluateSendingGate(FULL_CONFIG).enabled).toBe(true);
   });
 });

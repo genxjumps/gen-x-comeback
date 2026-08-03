@@ -30,7 +30,8 @@ export function createResendAdapter(apiKey: string, fetchImpl: typeof fetch = fe
 
         if (response.ok) {
           const payload = (await response.json()) as { id?: string };
-          if (!payload.id) return { outcome: "ambiguous", errorCode: "missing_provider_message_id" };
+          if (!payload.id)
+            return { outcome: "ambiguous", errorCode: "missing_provider_message_id" };
           return {
             outcome: "accepted",
             providerKey: "resend",

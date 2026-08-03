@@ -18,6 +18,11 @@ function shell(body: string): Response {
       headers: {
         "content-type": "text/html; charset=utf-8",
         "cache-control": "no-store",
+        "content-security-policy":
+          "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
+        "x-frame-options": "DENY",
+        "x-content-type-options": "nosniff",
+
         "referrer-policy": "no-referrer",
         "x-robots-tag": "noindex, nofollow",
       },
@@ -38,6 +43,12 @@ function generic(): Response {
 }
 
 /** Resolves the purpose-limited credential to a lead id, or null. */
+async function throttled(scope: string, request: Request): Promise<boolean> {
+  const { callerBucketKey, consumeRateLimit } = await import("@/lib/email/rate-limit.server");
+  const decision = await consumeRateLimit(callerBucketKey(scope, request), 300, 30);
+  return !decision.allowed;
+}
+
 async function resolveCredential(raw: string | null): Promise<string | null> {
   if (!raw || !RAW_TOKEN_RE.test(raw)) return null;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -55,6 +66,7 @@ export const Route = createFileRoute("/email-preferences")({
   server: {
     handlers: {
       GET: async ({ request }) => {
+        if (await throttled("prefs_get", request)) return generic();
         const credential = new URL(request.url).searchParams.get("c");
         const leadPlanId = await resolveCredential(credential);
         if (!leadPlanId) return generic();
@@ -86,6 +98,7 @@ export const Route = createFileRoute("/email-preferences")({
       },
 
       POST: async ({ request }) => {
+        if (await throttled("prefs_post", request)) return generic();
         const form = await request.formData();
         const credential = typeof form.get("c") === "string" ? (form.get("c") as string) : null;
         const action = form.get("action") === "resubscribe" ? "resubscribe" : "unsubscribe";
@@ -99,7 +112,8 @@ export const Route = createFileRoute("/email-preferences")({
           .update({ marketing_unsubscribed_at: action === "unsubscribe" ? nowIso : null })
           .eq("id", leadPlanId);
         await supabaseAdmin.from("canonical_events").insert({
-          event_name: action === "unsubscribe" ? "marketing_unsubscribed" : "marketing_resubscribed",
+          event_name:
+            action === "unsubscribe" ? "marketing_unsubscribed" : "marketing_resubscribed",
           lead_plan_id: leadPlanId,
           occurred_at: nowIso,
         });

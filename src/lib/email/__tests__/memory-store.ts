@@ -2,33 +2,61 @@
 import type { EmailJobPatch, EmailStore, ReturnTokenInsert } from "@/lib/email/store";
 import type {
   CanonicalEventInput,
+  EmailDeliveryStatus,
   EmailJobRow,
   LeadRow,
   OperationalAlertInput,
 } from "@/lib/email/types";
 
+export type StoredJob = EmailJobRow &
+  EmailJobPatch & {
+    delivered_at?: string | null;
+    alerted_stale_at?: string | null;
+  };
+
+export type ProviderEventRow = {
+  id: string;
+  provider_key: string;
+  provider_message_id: string | null;
+  event_kind: EmailDeliveryStatus | "reporting" | "ignored" | null;
+  occurred_at: string | null;
+  job_id: string | null;
+  reconciled_at: string | null;
+};
+
 export type MemoryStore = EmailStore & {
-  jobs: Map<string, EmailJobRow & EmailJobPatch>;
+  jobs: Map<string, StoredJob>;
   leads: Map<string, LeadRow>;
   suppressions: Map<string, string>;
   returnTokens: ReturnTokenInsert[];
   preferenceCredentials: Array<{ leadPlanId: string; tokenHash: string }>;
   events: CanonicalEventInput[];
   alerts: OperationalAlertInput[];
-  staleJobIds: string[];
+  providerEvents: ProviderEventRow[];
+  /** Simulates a lost lease: the next finishJob for this job id is fenced out. */
+  stealLease(jobId: string): void;
+};
+
+const DELIVERY_RANK: Record<EmailDeliveryStatus, number> = {
+  pending: 0,
+  delayed: 1,
+  delivered: 2,
+  bounced: 3,
+  complained: 4,
 };
 
 export function createMemoryStore(now: () => Date): MemoryStore {
-  const jobs = new Map<string, EmailJobRow & EmailJobPatch>();
+  const jobs = new Map<string, StoredJob>();
   const leads = new Map<string, LeadRow>();
   const suppressions = new Map<string, string>();
   const returnTokens: ReturnTokenInsert[] = [];
   const preferenceCredentials: Array<{ leadPlanId: string; tokenHash: string }> = [];
   const events: CanonicalEventInput[] = [];
   const alerts: OperationalAlertInput[] = [];
-  const staleJobIds: string[] = [];
+  const providerEvents: ProviderEventRow[] = [];
+  let claimCounter = 0;
 
-  return {
+  const store: MemoryStore = {
     jobs,
     leads,
     suppressions,
@@ -36,7 +64,12 @@ export function createMemoryStore(now: () => Date): MemoryStore {
     preferenceCredentials,
     events,
     alerts,
-    staleJobIds,
+    providerEvents,
+
+    stealLease(jobId) {
+      const job = jobs.get(jobId);
+      if (job) job.claim_token = `stolen-${jobId}`;
+    },
 
     async claimJobs(jobType, limit) {
       const nowIso = now().toISOString();
@@ -44,13 +77,17 @@ export function createMemoryStore(now: () => Date): MemoryStore {
       for (const job of jobs.values()) {
         if (claimed.length >= limit) break;
         if (job.job_type !== jobType) continue;
-        if (!["pending", "retry_scheduled"].includes(job.status)) continue;
+        if (!["pending", "retry_scheduled", "processing"].includes(job.status)) continue;
         if (job.next_attempt_at && job.next_attempt_at > nowIso) continue;
         // An unexpired lease means another worker owns the job.
-        if (job.lease_expires_at && job.lease_expires_at > nowIso) continue;
+        if (job.status === "processing" && job.lease_expires_at && job.lease_expires_at > nowIso) {
+          continue;
+        }
+        claimCounter += 1;
         job.attempt_count += 1;
         job.status = "processing";
         job.locked_at = nowIso;
+        job.claim_token = `claim-${claimCounter}`;
         job.lease_expires_at = new Date(now().getTime() + 120_000).toISOString();
         claimed.push({ ...(job as EmailJobRow) });
       }
@@ -66,16 +103,88 @@ export function createMemoryStore(now: () => Date): MemoryStore {
     },
 
     async insertReturnToken(token) {
-      returnTokens.push(token);
+      const existing = returnTokens.findIndex((t) => t.tokenHash === token.tokenHash);
+      if (existing >= 0) returnTokens[existing] = token;
+      else returnTokens.push(token);
     },
 
     async upsertPreferenceCredential(leadPlanId, tokenHash) {
-      preferenceCredentials.push({ leadPlanId, tokenHash });
+      const existing = preferenceCredentials.findIndex((c) => c.leadPlanId === leadPlanId);
+      if (existing >= 0) preferenceCredentials[existing] = { leadPlanId, tokenHash };
+      else preferenceCredentials.push({ leadPlanId, tokenHash });
     },
 
-    async updateJob(jobId, patch) {
+    async finishJob(jobId, claimToken, status, patch, eventName) {
       const job = jobs.get(jobId);
-      if (job) Object.assign(job, patch);
+      if (!job) return false;
+      // Fencing: only the current lease owner may write a terminal result.
+      if (job.status !== "processing" || !claimToken || job.claim_token !== claimToken)
+        return false;
+
+      Object.assign(job, patch, {
+        status,
+        locked_at: null,
+        lease_expires_at: null,
+        claim_token: null,
+        first_provider_attempt_at:
+          job.first_provider_attempt_at ?? patch.first_provider_attempt_at ?? null,
+      });
+
+      if (eventName) {
+        events.push({
+          event_name: eventName,
+          lead_plan_id: job.lead_plan_id,
+          plan_version_id: job.plan_version_id,
+          job_id: job.job_id,
+          occurred_at: now().toISOString(),
+        });
+      }
+      return true;
+    },
+
+    async applyDeliveryEvent(jobId, kind, occurredAt) {
+      const job = jobs.get(jobId);
+      if (!job) return false;
+      if (DELIVERY_RANK[kind] <= DELIVERY_RANK[job.delivery_status]) return false;
+      job.delivery_status = kind;
+      if (kind === "delivered") job.delivered_at = occurredAt ?? now().toISOString();
+      if (kind === "delivered") {
+        events.push({
+          event_name: "email_plan_ready_delivered",
+          lead_plan_id: job.lead_plan_id,
+          plan_version_id: job.plan_version_id,
+          job_id: job.job_id,
+          occurred_at: occurredAt ?? now().toISOString(),
+        });
+      }
+      return true;
+    },
+
+    async reconcileProviderEvents({ jobId, providerKey, providerMessageId }) {
+      let applied = 0;
+      const pending = providerEvents
+        .filter(
+          (e) =>
+            e.reconciled_at === null &&
+            e.provider_key === providerKey &&
+            e.provider_message_id === providerMessageId,
+        )
+        .sort((a, b) => String(a.occurred_at).localeCompare(String(b.occurred_at)));
+
+      for (const event of pending) {
+        const kind = event.event_kind;
+        if (
+          kind === "delivered" ||
+          kind === "delayed" ||
+          kind === "bounced" ||
+          kind === "complained"
+        ) {
+          if (await store.applyDeliveryEvent(jobId, kind, event.occurred_at)) applied += 1;
+        }
+        event.job_id = jobId;
+        event.reconciled_at = now().toISOString();
+      }
+      return applied;
     },
 
     async recordEvent(event) {
@@ -86,18 +195,28 @@ export function createMemoryStore(now: () => Date): MemoryStore {
       alerts.push(alert);
     },
 
-    async listStaleJobs(jobType, createdBeforeIso) {
-      return [...jobs.values()]
-        .filter(
-          (j) =>
-            j.job_type === jobType &&
-            j.created_at < createdBeforeIso &&
-            !j.alerted_stale_at &&
-            ["pending", "retry_scheduled", "processing"].includes(j.status),
-        )
-        .map((j) => ({ job_id: j.job_id, lead_plan_id: j.lead_plan_id, created_at: j.created_at }));
+    async raiseStaleAlerts(jobType, createdBeforeIso) {
+      let raised = 0;
+      for (const job of jobs.values()) {
+        if (job.job_type !== jobType) continue;
+        if (job.created_at >= createdBeforeIso) continue;
+        if (job.alerted_stale_at) continue;
+        if (!["pending", "processing", "retry_scheduled"].includes(job.status)) continue;
+        job.alerted_stale_at = now().toISOString();
+        alerts.push({
+          alert_type: "plan_ready_pending_too_long",
+          severity: "warning",
+          job_id: job.job_id,
+          lead_plan_id: job.lead_plan_id,
+          details: { created_at: job.created_at, job_status: job.status },
+        });
+        raised += 1;
+      }
+      return raised;
     },
   };
+
+  return store;
 }
 
 export function makeLead(overrides: Partial<LeadRow> = {}): LeadRow {
@@ -129,9 +248,12 @@ export function makeJob(overrides: Partial<EmailJobRow> = {}): EmailJobRow {
     next_attempt_at: null,
     locked_at: null,
     lease_expires_at: null,
+    claim_token: null,
+    first_provider_attempt_at: null,
+    manual_review_at: null,
     provider_key: null,
     provider_message_id: null,
-    created_at: "2026-01-01T00:00:00.000Z",
+    created_at: "2026-02-01T11:55:00.000Z",
     ...overrides,
   };
 }

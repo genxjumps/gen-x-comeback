@@ -22,6 +22,12 @@ export const RETURN_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 /** A completed exchange session lasts as long as the token that created it. */
 export const RETURN_SESSION_TTL_MS = RETURN_TOKEN_TTL_MS;
 
+/**
+ * Provider idempotency keys are only honored for a bounded period. Past this
+ * horizon a stalled job must not be retried blindly: it goes to manual review.
+ */
+export const IDEMPOTENCY_HORIZON_MS = 24 * 60 * 60 * 1000;
+
 /** A pending job older than five minutes raises an operational alert. */
 export const STALE_PENDING_MS = 5 * 60 * 1000;
 
@@ -53,6 +59,10 @@ export type EmailJobRow = {
   next_attempt_at: string | null;
   locked_at: string | null;
   lease_expires_at: string | null;
+  /** Lease fencing token issued by the claim RPC. Required to finish the job. */
+  claim_token: string | null;
+  first_provider_attempt_at: string | null;
+  manual_review_at: string | null;
   provider_key: string | null;
   provider_message_id: string | null;
   created_at: string;

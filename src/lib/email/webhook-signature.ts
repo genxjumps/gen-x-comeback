@@ -61,8 +61,7 @@ export function mapProviderEvent(payload: unknown): CanonicalWebhookEvent {
     data?: { email_id?: unknown; bounce?: { type?: unknown } };
   };
   const type = typeof event.type === "string" ? event.type : "";
-  const providerMessageId =
-    typeof event.data?.email_id === "string" ? event.data.email_id : null;
+  const providerMessageId = typeof event.data?.email_id === "string" ? event.data.email_id : null;
   const occurredAt = typeof event.created_at === "string" ? event.created_at : null;
   const base = { providerMessageId, occurredAt, suppression: null } as const;
 
