@@ -23,7 +23,6 @@ function shell(body: string): Response {
           "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
         "x-frame-options": "DENY",
         "x-content-type-options": "nosniff",
-
         "referrer-policy": "no-referrer",
         "x-robots-tag": "noindex, nofollow",
       },
