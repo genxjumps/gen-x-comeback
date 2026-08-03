@@ -42,19 +42,21 @@ function genericRecovery(): Response {
 export const Route = createFileRoute("/return")({
   server: {
     handlers: {
-      // A raw GET, prefetch, email-security scan, or provider click reaches only this.
+      // A raw GET, prefetch, email-security scan, or provider click reaches only
+      // this. Nothing is verified here and nothing submits on its own: the
+      // visitor must deliberately press the button.
       GET: async ({ request }) => {
         const token = new URL(request.url).searchParams.get("token") ?? "";
         return shell(
           `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">Opening Your Plan</h1>
-<p style="margin:0 0 1.5rem 0;color:#555555;">Continue to open your saved 7-day plan and your latest progress.</p>
+<p style="margin:0 0 1.5rem 0;color:#555555;">Press the button below to open your saved 7-day plan and your latest progress.</p>
 <form method="post" action="/return" id="return-form">
 <input type="hidden" name="token" value="${escapeAttr(token)}" />
 <button type="submit" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;border:0;border-radius:0.375rem;font-weight:600;font-size:1rem;cursor:pointer;">Open My Plan</button>
-</form>
-<script>document.getElementById('return-form').submit();</script>`,
+</form>`,
         );
       },
+
 
       POST: async ({ request }) => {
         const form = await request.formData();
