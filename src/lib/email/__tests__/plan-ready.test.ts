@@ -1,6 +1,7 @@
 // Automated acceptance tests for the Plan Ready contract release gate.
 // Each test name maps 1:1 to a numbered acceptance test in the contract.
 // Deterministic: fixed clock, fake provider, in-memory store.
+import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -355,9 +356,7 @@ describe("Plan Ready acceptance gates", () => {
     ).toBe(false);
 
     // A correctly signed payload verifies, and a stale timestamp does not.
-    const crypto = require("node:crypto") as typeof import("node:crypto");
-    const expected = crypto
-      .createHmac("sha256", Buffer.from(secret.slice(6), "base64"))
+    const expected = createHmac("sha256", Buffer.from(secret.slice(6), "base64"))
       .update(`msg_1.${nowSeconds}.${body}`)
       .digest("base64");
     expect(
