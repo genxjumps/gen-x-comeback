@@ -86,18 +86,23 @@ function ResultsPage() {
 
     const recoveryToken = takeRecoveryTokenFromUrl();
     const token = recoveryToken ?? readStoredToken();
-    if (!token) {
-      setCheckingAccess(false);
-      return;
-    }
 
     void (async () => {
       try {
-        const result = await regenerate({ data: { token, assessment: a } });
+        // A reassessment rotates same-browser access, so mint the next credential.
+        const next = await mintCredential();
+        const result = await regenerate({
+          data: {
+            submissionId: getSubmissionId(a),
+            sessionTokenHash: next.hash,
+            token,
+            assessment: a,
+          },
+        });
         if (cancelled) return;
         if (result.ok) {
           try {
-            window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, token);
+            window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, next.raw);
           } catch {
             /* ignore storage errors */
           }
@@ -105,7 +110,7 @@ function ResultsPage() {
           setUnlocked(true);
           // Latest answers are processed and saved: the private hub is the destination.
           if (!cancelled) navigate({ to: "/your-plan", replace: true });
-        } else if (!recoveryToken) {
+        } else if (!recoveryToken && token) {
           try {
             window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
           } catch {
