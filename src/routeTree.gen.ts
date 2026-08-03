@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReturnRouteImport } from './routes/return'
 import { Route as JumpRopesRouteImport } from './routes/jump-ropes'
+import { Route as EmailPreferencesRouteImport } from './routes/email-preferences'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
@@ -33,6 +34,11 @@ const ReturnRoute = ReturnRouteImport.update({
 const JumpRopesRoute = JumpRopesRouteImport.update({
   id: '/jump-ropes',
   path: '/jump-ropes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailPreferencesRoute = EmailPreferencesRouteImport.update({
+  id: '/email-preferences',
+  path: '/email-preferences',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -73,6 +79,7 @@ const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -98,6 +106,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/email-preferences'
     | '/jump-ropes'
     | '/return'
     | '/sitemap.xml'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/email-preferences'
     | '/jump-ropes'
     | '/return'
     | '/sitemap.xml'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/email-preferences'
     | '/jump-ropes'
     | '/return'
     | '/sitemap.xml'
@@ -149,6 +161,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmailPreferencesRoute: typeof EmailPreferencesRoute
   JumpRopesRoute: typeof JumpRopesRoute
   ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/jump-ropes'
       fullPath: '/jump-ropes'
       preLoaderRoute: typeof JumpRopesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email-preferences': {
+      id: '/email-preferences'
+      path: '/email-preferences'
+      fullPath: '/email-preferences'
+      preLoaderRoute: typeof EmailPreferencesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -237,6 +257,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmailPreferencesRoute: EmailPreferencesRoute,
   JumpRopesRoute: JumpRopesRoute,
   ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
