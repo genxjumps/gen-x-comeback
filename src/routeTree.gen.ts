@@ -20,6 +20,7 @@ import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
+import { Route as ApiPublicEmailWebhookRouteImport } from './routes/api/public/email/webhook'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -77,6 +78,11 @@ const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
   path: '/your-plan/day/$day',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEmailWebhookRoute = ApiPublicEmailWebhookRouteImport.update({
+  id: '/api/public/email/webhook',
+  path: '/api/public/email/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEmailDispatchRoute = ApiPublicEmailDispatchRouteImport.update({
   id: '/api/public/email/dispatch',
   path: '/api/public/email/dispatch',
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/your-plan/': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/your-plan': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/your-plan/': typeof YourPlanIndexRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/your-plan/'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
+    | '/api/public/email/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/your-plan'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
+    | '/api/public/email/webhook'
   id:
     | '__root__'
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/your-plan/'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
+    | '/api/public/email/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +196,7 @@ export interface RootRouteChildren {
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
+  ApiPublicEmailWebhookRoute: typeof ApiPublicEmailWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof YourPlanDayDayRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/email/webhook': {
+      id: '/api/public/email/webhook'
+      path: '/api/public/email/webhook'
+      fullPath: '/api/public/email/webhook'
+      preLoaderRoute: typeof ApiPublicEmailWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/email/dispatch': {
       id: '/api/public/email/dispatch'
       path: '/api/public/email/dispatch'
@@ -288,6 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   YourPlanIndexRoute: YourPlanIndexRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
+  ApiPublicEmailWebhookRoute: ApiPublicEmailWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
