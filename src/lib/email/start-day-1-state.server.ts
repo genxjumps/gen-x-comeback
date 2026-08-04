@@ -32,6 +32,18 @@ function str(row: Row | undefined, key: string): string | null {
 }
 
 /**
+ * Syntactic deliverability check for a persisted recipient address.
+ * The address itself is never returned, logged, or included in state.
+ */
+const EMAIL_PATTERN = /^[^\s@,;:<>"()[\]\\]+@[^\s@.,;:<>"()[\]\\]+(\.[^\s@.,;:<>"()[\]\\]+)+$/;
+
+function isValidRecipient(value: string | null): boolean {
+  if (!value) return false;
+  const trimmed = value.trim();
+  return trimmed.length > 0 && trimmed.length <= 254 && EMAIL_PATTERN.test(trimmed);
+}
+
+/**
  * Loads the authoritative persisted state for one claimed Start Day 1 job.
  * Accepts an injected client for tests; defaults to the service-role client.
  */
@@ -85,6 +97,8 @@ export async function loadStartDayOneState(
         .from("email_jobs")
         .select("job_type, provider_accepted_at")
         .eq("lead_plan_id", job.lead_plan_id)
+        // Caps are per plan version: reassessment history must not carry over.
+        .eq("plan_version_id", job.plan_version_id)
         .eq("status", "provider_accepted")
         .order("provider_accepted_at", { ascending: false })
         .limit(100),
@@ -122,7 +136,7 @@ export async function loadStartDayOneState(
   return {
     job,
     currentPlanVersionId: str(leadRow, "plan_version_id"),
-    hasRecipient: Boolean(recipient),
+    hasRecipient: isValidRecipient(recipient),
     marketingUnsubscribedAt: str(leadRow, "marketing_unsubscribed_at"),
     emailSuppressedAt: str(leadRow, "email_suppressed_at"),
     suppressionListed: suppressions.length > 0,
