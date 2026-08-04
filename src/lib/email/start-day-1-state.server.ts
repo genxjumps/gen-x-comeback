@@ -48,7 +48,9 @@ export async function loadStartDayOneState(
     rows(
       db
         .from("lead_plans")
-        .select("id, plan_version_id, email_original, marketing_unsubscribed_at, email_suppressed_at")
+        .select(
+          "id, plan_version_id, email_original, email_normalized, marketing_unsubscribed_at, email_suppressed_at",
+        )
         .eq("id", job.lead_plan_id)
         .limit(1),
     ),
