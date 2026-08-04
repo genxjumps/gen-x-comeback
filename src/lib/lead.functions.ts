@@ -14,6 +14,7 @@ import {
   type ProgressResult,
   type RegenerateResult,
   type SaveLeadPlanResult,
+  type StartDayOneResult,
   type VerifyAccessResult,
 } from "@/lib/lead-plan";
 import {
@@ -124,6 +125,20 @@ export const getDayBrief = createServerFn({ method: "POST" })
     };
   });
 
+/**
+ * Deliberate Day 1 activation boundary. Passive page loads and return-link
+ * exchanges never invoke this POST action.
+ */
+export const startDayOne = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
+  .handler(async ({ data }): Promise<StartDayOneResult> => {
+    const access = await authorize(data.token);
+    if (!access) return { ok: false };
+
+    const { recordDayOneStart } = await import("@/lib/day-one-start.server");
+    return recordDayOneStart(access.leadPlanId, access.planVersionId);
+  });
+
 export const completePlanDay = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => completeDayInputSchema.parse(data))
   .handler(async ({ data }): Promise<ProgressResult> => {
@@ -135,6 +150,15 @@ export const completePlanDay = createServerFn({ method: "POST" })
     const already = await listCompletedDays(access.leadPlanId);
     for (let d = 1; d < data.day; d += 1) {
       if (!already.includes(d)) return { ok: false };
+    }
+
+    // A deliberate Day 1 completion proves activation, but passive access to
+    // the workout page does not. Establish the idempotent start before saving
+    // the completion so email rendering can never see "unstarted" afterward.
+    if (data.day === 1 && !already.includes(1)) {
+      const { recordDayOneStart } = await import("@/lib/day-one-start.server");
+      const started = await recordDayOneStart(access.leadPlanId, access.planVersionId);
+      if (!started.ok) return { ok: false };
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
