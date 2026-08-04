@@ -273,5 +273,49 @@ describe("Start Day 1 authoritative state loader", () => {
     for (const call of calls) {
       expect(call.columns).not.toMatch(/assessment_json|plan_json|access_token_hash|first_name/);
     }
+
+    // Lifecycle cap query is scoped to the exact current plan version.
+    const lifecycle = calls.find(
+      (call) => call.table === "email_jobs" && call.columns.includes("job_type"),
+    );
+    expect(lifecycle?.filters).toEqual(
+      expect.arrayContaining([
+        ["lead_plan_id", LEAD],
+        ["plan_version_id", VERSION],
+      ]),
+    );
+  });
+
+  it("treats an invalid persisted recipient as missing and cancels", async () => {
+    const calls: Call[] = [];
+    const client = fakeClient(
+      {
+        lead_plans: [
+          {
+            id: LEAD,
+            plan_version_id: VERSION,
+            email_original: "not-an-email",
+            email_normalized: "not-an-email",
+            marketing_unsubscribed_at: null,
+            email_suppressed_at: null,
+          },
+        ],
+        lead_plan_day_starts: [],
+        lead_plan_day_completions: [],
+        email_jobs: [],
+        email_suppressions: [],
+      },
+      calls,
+    );
+
+    const loaded = await loadStartDayOneState(job, client);
+    expect(loaded.hasRecipient).toBe(false);
+
+    expect(resolveStartDayOne(loaded, AFTER_FLOOR)).toEqual({
+      action: "CANCEL",
+      reason: "recipient_missing",
+      disposition: "cancel",
+    });
   });
 });
+
