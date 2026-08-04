@@ -23,6 +23,7 @@ export const TOTAL_ASSIGNMENTS = 7;
 
 export type ProgressResult = { ok: true; completedDays: number[] } | { ok: false };
 
+export type StartDayOneResult = { ok: true; startedAt: string; newlyStarted: boolean } | { ok: false };
 
 /**
  * Minimal server-derived inputs for Day 1 cardio guidance.

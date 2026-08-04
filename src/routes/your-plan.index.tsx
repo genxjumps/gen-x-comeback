@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied, readStoredToken } from "@/components/plan-access";
@@ -9,7 +9,7 @@ import {
   currentAssignmentDay,
   type PlanHubData,
 } from "@/lib/lead-plan";
-import { getPlanHub } from "@/lib/lead.functions";
+import { getPlanHub, startDayOne } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/your-plan/")({
   head: () => ({
@@ -52,9 +52,13 @@ function RowLink({ day, children }: { day: number; children: ReactNode }) {
 }
 
 function PlanHubPage() {
+  const navigate = useNavigate();
   const loadHub = useServerFn(getPlanHub);
+  const recordDayOneStart = useServerFn(startDayOne);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
   const [hub, setHub] = useState<PlanHubData | null>(null);
+  const [startingDayOne, setStartingDayOne] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -96,6 +100,24 @@ function PlanHubPage() {
   const current = currentAssignmentDay(hub.days, hub.completedDays);
   const currentEntry = current ? hub.days.find((d) => d.day === current) : null;
   const pct = Math.round((completedCount / TOTAL_ASSIGNMENTS) * 100);
+
+  async function openDayOne() {
+    if (startingDayOne) return;
+    setStartingDayOne(true);
+    setStartError(null);
+    try {
+      const result = await recordDayOneStart({ data: { token: readStoredToken() } });
+      if (!result.ok) {
+        setStartError("We could not start Day 1. Refresh your plan and try again.");
+        return;
+      }
+      await navigate({ to: "/your-plan/day/$day", params: { day: "1" } });
+    } catch {
+      setStartError("We could not start Day 1. Try again.");
+    } finally {
+      setStartingDayOne(false);
+    }
+  }
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
@@ -162,8 +184,13 @@ function PlanHubPage() {
               </div>
             ) : null}
             {currentEntry.day === 1 ? (
-              <Button asChild size="lg" className="mt-4 w-full sm:w-auto">
-                <Link to="/your-plan/day/$day" params={{ day: "1" }}>Start Day 1</Link>
+              <Button
+                size="lg"
+                className="mt-4 w-full sm:w-auto"
+                disabled={startingDayOne}
+                onClick={openDayOne}
+              >
+                {startingDayOne ? "Starting..." : "Start Day 1"}
               </Button>
             ) : (
               <Button asChild size="lg" className="mt-4 w-full sm:w-auto">
@@ -172,6 +199,11 @@ function PlanHubPage() {
                 </Link>
               </Button>
             )}
+            {startError ? (
+              <p role="alert" className="mt-2 text-xs font-medium leading-relaxed">
+                {startError}
+              </p>
+            ) : null}
           </>
         ) : (
           <>

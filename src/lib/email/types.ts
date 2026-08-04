@@ -1,8 +1,13 @@
-// Client-safe shared types for the Plan Ready (plan_ready_v1) email pipeline.
+// Client-safe shared types for the versioned lifecycle email pipeline.
 
 export const PLAN_READY_JOB_TYPE = "plan_ready";
 export const PLAN_READY_JOB_VERSION = "v1";
 export const PLAN_READY_TEMPLATE_VERSION = "plan_ready_v1";
+
+export const START_DAY_1_JOB_TYPE = "start_day_1";
+export const START_DAY_1_JOB_VERSION = "v1";
+export const START_DAY_1_TEMPLATE_VERSION = "start_day_1_v1";
+export const START_DAY_1_ELIGIBILITY_DELAY_MS = 24 * 60 * 60 * 1000;
 
 /** Contract retry schedule: delays after each preceding transient failure. */
 export const RETRY_DELAYS_MS = [
