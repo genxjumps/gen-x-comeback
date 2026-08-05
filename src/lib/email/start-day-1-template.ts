@@ -2,11 +2,11 @@
 // resolver actions. Pure and deterministic: no IO, no environment reads, no
 // database access, no provider calls, no request or URL reads. Inputs are
 // never mutated. A CANCEL resolution is never renderable.
-import { sanitizeFirstName } from "@/lib/email/plan-ready-template";
+import { PLAN_READY_FOOTER, sanitizeFirstName } from "@/lib/email/plan-ready-template";
 import type { StartDayOneResolution } from "@/lib/email/start-day-1-resolver";
 
-export const START_DAY_1_FOOTER =
-  "You received this because you requested a personalized 7-Day Comeback Plan from Gen X Jumps.";
+/** App-owned footer, shared verbatim with Plan Ready. */
+export const START_DAY_1_FOOTER = PLAN_READY_FOOTER;
 
 export const START_DAY_1_GREETING_FALLBACK = "Hey there,";
 
@@ -36,7 +36,7 @@ export type StartDayOneRendered = {
   text: string;
   /** Sanitized greeting name, or null when the fallback greeting is used. */
   personalizedName: string | null;
-  variant: StartDayOneRenderVariant;
+  renderVariant: StartDayOneRenderVariant;
   ctaLabel: string;
 };
 
@@ -154,5 +154,13 @@ ${bodyHtml}
 </table>
 </body></html>`;
 
-  return { subject, previewText, html, text, personalizedName: name, variant, ctaLabel };
+  return {
+    subject,
+    previewText,
+    html,
+    text,
+    personalizedName: name,
+    renderVariant: variant,
+    ctaLabel,
+  };
 }

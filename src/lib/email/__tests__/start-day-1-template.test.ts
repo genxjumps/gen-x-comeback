@@ -67,7 +67,7 @@ describe("Start Day 1 template - START variant", () => {
     expect(rendered.subject).toBe("Dana, Day 1: Full Body Flush & Fire");
     expect(rendered.previewText).toBe(START_DAY_1_START_PREVIEW_TEXT);
     expect(rendered.previewText).toBe("Your first workout is waiting.");
-    expect(rendered.variant).toBe("start");
+    expect(rendered.renderVariant).toBe("start");
     expect(rendered.ctaLabel).toBe(START_DAY_1_START_CTA_LABEL);
     expect(rendered.ctaLabel).toBe("Start Day 1");
     expect(startDayOneBodyParagraphs("start", "Hey Dana,")).toEqual(START_BODY);
@@ -102,7 +102,7 @@ describe("Start Day 1 template - RESUME variant", () => {
     expect(rendered.subject).toBe("Dana, finish Day 1: Full Body Flush & Fire");
     expect(rendered.previewText).toBe(START_DAY_1_RESUME_PREVIEW_TEXT);
     expect(rendered.previewText).toBe("Pick up where you left off.");
-    expect(rendered.variant).toBe("resume");
+    expect(rendered.renderVariant).toBe("resume");
     expect(rendered.ctaLabel).toBe(START_DAY_1_RESUME_CTA_LABEL);
     expect(rendered.ctaLabel).toBe("Resume Day 1");
     expect(startDayOneBodyParagraphs("resume", "Hey Dana,")).toEqual(RESUME_BODY);
@@ -231,9 +231,9 @@ describe("Start Day 1 template - link, footer, and data limits", () => {
         "html",
         "personalizedName",
         "previewText",
+        "renderVariant",
         "subject",
         "text",
-        "variant",
       ]);
       for (const pattern of PROHIBITED_TEMPLATE_PATTERNS) {
         expect(rendered.html).not.toMatch(pattern);
