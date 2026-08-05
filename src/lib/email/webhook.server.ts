@@ -4,6 +4,8 @@ import {
   verifyWebhookSignature,
   type SignatureHeaders,
 } from "@/lib/email/webhook-signature";
+import { deliveredEventName } from "@/lib/email/event-names";
+import { PLAN_READY_JOB_TYPE } from "@/lib/email/types";
 
 export type WebhookHandleResult =
   | { status: 401; body: string }
@@ -81,7 +83,7 @@ export async function handleProviderWebhook(
 
   const { data: jobs, error } = await supabaseAdmin
     .from("email_jobs")
-    .select("job_id, lead_plan_id")
+    .select("job_id, job_type, lead_plan_id")
     .eq("provider_key", providerKey)
     .eq("provider_message_id", event.providerMessageId)
     .limit(1);
@@ -104,6 +106,20 @@ export async function handleProviderWebhook(
   );
   if (applyError) throw new Error(applyError.message);
   await closeEventRow(job.job_id, true);
+
+  // The shared delivery transition emits the Plan Ready name; every other job
+  // type owns its own canonical namespace, derived from trusted job state only.
+  if (applied === true && terminalKind === "delivered") {
+    const expected = deliveredEventName(job.job_type);
+    const planReadyName = deliveredEventName(PLAN_READY_JOB_TYPE);
+    if (expected && planReadyName && expected !== planReadyName) {
+      await supabaseAdmin
+        .from("canonical_events")
+        .update({ event_name: expected })
+        .eq("job_id", job.job_id)
+        .eq("event_name", planReadyName);
+    }
+  }
 
   if (event.suppression) {
     const { data: leads } = await supabaseAdmin

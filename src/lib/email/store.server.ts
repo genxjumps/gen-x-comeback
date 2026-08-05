@@ -53,6 +53,8 @@ export async function createSupabaseEmailStore(): Promise<EmailStore> {
           issued_at: token.issuedAt,
           expires_at: token.expiresAt,
           revoked_at: null,
+          // Trusted job association; Plan Ready tokens keep the general destination.
+          job_id: token.jobId ?? null,
         },
         { onConflict: "token_hash" },
       );

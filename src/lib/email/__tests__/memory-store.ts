@@ -1,5 +1,6 @@
 // Deterministic in-memory EmailStore for acceptance tests. No database, no clock.
 import type { EmailJobPatch, EmailStore, ReturnTokenInsert } from "@/lib/email/store";
+import { deliveredEventName } from "@/lib/email/event-names";
 import type {
   CanonicalEventInput,
   EmailDeliveryStatus,
@@ -148,9 +149,10 @@ export function createMemoryStore(now: () => Date): MemoryStore {
       if (DELIVERY_RANK[kind] <= DELIVERY_RANK[job.delivery_status]) return false;
       job.delivery_status = kind;
       if (kind === "delivered") job.delivered_at = occurredAt ?? now().toISOString();
-      if (kind === "delivered") {
+      const deliveredName = deliveredEventName(job.job_type);
+      if (kind === "delivered" && deliveredName) {
         events.push({
-          event_name: "email_plan_ready_delivered",
+          event_name: deliveredName,
           lead_plan_id: job.lead_plan_id,
           plan_version_id: job.plan_version_id,
           job_id: job.job_id,
@@ -204,7 +206,7 @@ export function createMemoryStore(now: () => Date): MemoryStore {
         if (!["pending", "processing", "retry_scheduled"].includes(job.status)) continue;
         job.alerted_stale_at = now().toISOString();
         alerts.push({
-          alert_type: "plan_ready_pending_too_long",
+          alert_type: `${job.job_type}_pending_too_long`,
           severity: "warning",
           job_id: job.job_id,
           lead_plan_id: job.lead_plan_id,
@@ -233,6 +235,7 @@ export function makeLead(overrides: Partial<LeadRow> = {}): LeadRow {
 }
 
 export function makeJob(overrides: Partial<EmailJobRow> = {}): EmailJobRow {
+  const createdAt = overrides.created_at ?? "2026-02-01T11:55:00.000Z";
   return {
     job_id: "job-1",
     job_type: "plan_ready",
@@ -242,6 +245,7 @@ export function makeJob(overrides: Partial<EmailJobRow> = {}): EmailJobRow {
     plan_version_id: "version-1",
     source_event_id: "event-1",
     idempotency_key: "plan_ready:version-1:v1",
+    eligible_at: createdAt,
     status: "pending",
     delivery_status: "pending",
     attempt_count: 0,
@@ -253,7 +257,7 @@ export function makeJob(overrides: Partial<EmailJobRow> = {}): EmailJobRow {
     manual_review_at: null,
     provider_key: null,
     provider_message_id: null,
-    created_at: "2026-02-01T11:55:00.000Z",
+    created_at: createdAt,
     ...overrides,
   };
 }

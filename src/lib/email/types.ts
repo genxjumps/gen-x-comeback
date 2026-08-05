@@ -58,6 +58,8 @@ export type EmailJobRow = {
   plan_version_id: string;
   source_event_id: string | null;
   idempotency_key: string;
+  /** Earliest time this job may be attempted (plan creation plus any delay). */
+  eligible_at: string;
   status: EmailJobStatus;
   delivery_status: EmailDeliveryStatus;
   attempt_count: number;
