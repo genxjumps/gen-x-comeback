@@ -166,12 +166,15 @@ export const completePlanDay = createServerFn({ method: "POST" })
     // records the milestone, and creates exactly one Halfway outbox job. No
     // provider call happens here.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.rpc("complete_plan_day_atomic", {
+    const { data: applied, error } = await supabaseAdmin.rpc("complete_plan_day_atomic", {
       p_lead_plan_id: access.leadPlanId,
       p_plan_version_id: access.planVersionId,
       p_day_number: data.day,
     });
     if (error) throw new Error(error.message);
+    // No row means the transaction refused the request: a replaced plan version,
+    // a day that is not a top-level required assignment, or out-of-order progress.
+    if (!Array.isArray(applied) || applied.length === 0) return { ok: false };
 
     return { ok: true, completedDays: await listCompletedDays(access.leadPlanId) };
   });
