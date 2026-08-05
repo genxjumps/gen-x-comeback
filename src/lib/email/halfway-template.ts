@@ -9,11 +9,30 @@ export const HALFWAY_FOOTER = PLAN_READY_FOOTER;
 
 export const HALFWAY_GREETING_FALLBACK = "Hey there,";
 
-export const HALFWAY_PREVIEW_TEXT = "Three days left. Keep the momentum.";
+export const HALFWAY_PREVIEW_TEXT = "Keep going. Your comeback is already taking shape.";
 
-export const HALFWAY_FALLBACK_SUBJECT = "You are halfway through your 7-Day Comeback Plan";
+export const HALFWAY_FALLBACK_SUBJECT = "You're building real momentum";
 
 export const HALFWAY_CTA_LABEL = "Continue My Plan";
+
+/** Ordered approved body paragraphs, greeting/CTA/close excluded. */
+export const HALFWAY_BODY_PARAGRAPHS = [
+  "You've already completed several workouts.",
+  "That's more than most people ever do.",
+  "You're building strength, improving your conditioning, and proving you can stay consistent.",
+  "Keep showing up. The finish line is getting closer.",
+] as const;
+
+export const HALFWAY_SIGN_OFF = ["Move or Rust.", "Todd", "Gen X Jumps"] as const;
+
+/** Visually secondary recovery line placed before the standard footer. */
+export const HALFWAY_RECOVERY_LINE_PREFIX = "Lost access to your plan?";
+export const HALFWAY_RECOVERY_LINK_TEXT = "Recover it here";
+export const HALFWAY_RECOVERY_LINE_SUFFIX = "and pick up where you left off.";
+export const HALFWAY_RECOVERY_LINE = `${HALFWAY_RECOVERY_LINE_PREFIX} ${HALFWAY_RECOVERY_LINK_TEXT} ${HALFWAY_RECOVERY_LINE_SUFFIX}`;
+
+/** Token-free recovery path. The route itself is intentionally not implemented here. */
+export const HALFWAY_RECOVERY_PATH = "/recover";
 
 export type HalfwayRenderInput = {
   firstName: string | null | undefined;
@@ -21,6 +40,8 @@ export type HalfwayRenderInput = {
   returnUrl: string;
   /** Absolute purpose-limited email-preferences URL on the app origin. */
   preferencesUrl: string;
+  /** Absolute app origin used to build the token-free /recover URL. */
+  appOrigin?: string;
 };
 
 export type HalfwayRendered = {
@@ -31,6 +52,8 @@ export type HalfwayRendered = {
   /** Sanitized greeting name, or null when the fallback greeting is used. */
   personalizedName: string | null;
   ctaLabel: string;
+  /** Absolute token-free recovery URL used in both HTML and plain text. */
+  recoveryUrl: string;
 };
 
 function escapeHtml(value: string): string {
@@ -42,22 +65,21 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
-/** Ordered body paragraphs, CTA excluded. */
-export function halfwayBodyParagraphs(greeting: string): string[] {
-  return [
-    greeting,
-    "You are four days into your 7-Day Comeback Plan.",
-    "That is the part most people never get to.",
-    "Three days left.",
-    "Keep the momentum going. Open your plan and take the next day exactly as it is written. Work hard, rest when needed, and scale things when you need to.",
-    "You are closer to the finish than the start.",
-  ];
+function subjectFor(name: string | null): string {
+  return name ? `${name}, you're building real momentum` : HALFWAY_FALLBACK_SUBJECT;
 }
 
-const SIGN_OFF = ["Move or Rust.", "Todd", "Gen X Jumps"] as const;
-
-function subjectFor(name: string | null): string {
-  return name ? `${name}, you are halfway there` : HALFWAY_FALLBACK_SUBJECT;
+/**
+ * Derives the token-free absolute recovery URL from an absolute app origin.
+ * No credential, token, identifier, or query string is ever appended.
+ */
+function recoveryUrlFor(returnUrl: string, appOrigin?: string): string {
+  if (appOrigin) return `${appOrigin.replace(/\/+$/, "")}${HALFWAY_RECOVERY_PATH}`;
+  try {
+    return `${new URL(returnUrl).origin}${HALFWAY_RECOVERY_PATH}`;
+  } catch {
+    return HALFWAY_RECOVERY_PATH;
+  }
 }
 
 /**
@@ -76,15 +98,18 @@ export function renderHalfway(
   const ctaLabel = HALFWAY_CTA_LABEL;
   const subject = subjectFor(name);
 
-  const paragraphs = halfwayBodyParagraphs(greeting);
   const returnUrl = input.returnUrl;
   const preferencesUrl = input.preferencesUrl;
+  const recoveryUrl = recoveryUrlFor(returnUrl, input.appOrigin);
+  const paragraphs = [greeting, ...HALFWAY_BODY_PARAGRAPHS];
 
   const text = [
     ...paragraphs.flatMap((paragraph) => [paragraph, ""]),
     `${ctaLabel}: ${returnUrl}`,
     "",
-    ...SIGN_OFF.flatMap((line, index) => (index === 0 ? [line, ""] : [line])),
+    ...HALFWAY_SIGN_OFF.flatMap((line, index) => (index === 0 ? [line, ""] : [line])),
+    "",
+    `${HALFWAY_RECOVERY_LINE} ${recoveryUrl}`,
     "",
     "---",
     HALFWAY_FOOTER,
@@ -116,6 +141,7 @@ ${bodyHtml}
 <p style="margin:0 0 16px 0;">Move or Rust.</p>
 <p style="margin:0 0 24px 0;">Todd<br />Gen X Jumps</p>
 <p style="margin:0 0 8px 0;font-size:13px;color:#555555;">Or open this link directly:<br /><a href="${escapeHtml(returnUrl)}" style="color:#555555;">${escapeHtml(returnUrl)}</a></p>
+<p style="margin:0 0 8px 0;font-size:13px;color:#666666;">${escapeHtml(HALFWAY_RECOVERY_LINE_PREFIX)} <a href="${escapeHtml(recoveryUrl)}" style="color:#666666;">${escapeHtml(HALFWAY_RECOVERY_LINK_TEXT)}</a> ${escapeHtml(HALFWAY_RECOVERY_LINE_SUFFIX)}</p>
 <hr style="border:none;border-top:1px solid #dddddd;margin:24px 0;" />
 <p style="margin:0 0 8px 0;font-size:12px;color:#666666;">${escapeHtml(HALFWAY_FOOTER)}</p>
 <p style="margin:0;font-size:12px;color:#666666;"><a href="${escapeHtml(preferencesUrl)}" style="color:#666666;">Manage email preferences</a></p>
@@ -132,5 +158,6 @@ ${bodyHtml}
     text,
     personalizedName: name,
     ctaLabel,
+    recoveryUrl,
   };
 }
