@@ -9,6 +9,18 @@ export const START_DAY_1_JOB_VERSION = "v1";
 export const START_DAY_1_TEMPLATE_VERSION = "start_day_1_v1";
 export const START_DAY_1_ELIGIBILITY_DELAY_MS = 24 * 60 * 60 * 1000;
 
+export const HALFWAY_JOB_TYPE = "halfway";
+export const HALFWAY_JOB_VERSION = "v1";
+export const HALFWAY_TEMPLATE_VERSION = "halfway_v1";
+
+/** The Halfway job is created on the transition to this many completions. */
+export const HALFWAY_TRIGGER_COMPLETIONS = 4;
+
+/** Inclusive required-completion window in which Halfway is still sendable. */
+export const HALFWAY_MIN_COMPLETIONS = 4;
+export const HALFWAY_MAX_COMPLETIONS = 6;
+
+
 /** Contract retry schedule: delays after each preceding transient failure. */
 export const RETRY_DELAYS_MS = [
   60_000, // 1 minute

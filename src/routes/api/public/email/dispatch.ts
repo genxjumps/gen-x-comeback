@@ -54,10 +54,23 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           );
         }
 
-        const { dispatchPlanReadyJobs, dispatchStartDayOneJobs, raiseStalePlanReadyAlerts } =
-          await import("@/lib/email/dispatch");
+        const {
+          dispatchPlanReadyJobs,
+          dispatchHalfwayJobs,
+          dispatchStartDayOneJobs,
+          raiseStalePlanReadyAlerts,
+        } = await import("@/lib/email/dispatch");
         const summary = await dispatchPlanReadyJobs(runtime.deps, { limit: 25 });
         const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
+
+        // Lifecycle priority: Plan Completed (not yet implemented), then
+        // Halfway, then Start Day 1. Higher priority runs first so it consumes
+        // the shared 24-hour lifecycle gap.
+        const { loadHalfwayState } = await import("@/lib/email/halfway-state.server");
+        const halfway = await dispatchHalfwayJobs(
+          { ...runtime.deps, loadHalfwayState: (job) => loadHalfwayState(job) },
+          { limit: 25 },
+        );
 
         // Start Day 1 shares the runtime, store, lease claim, and adapter. Its
         // authoritative read-only state loader is injected here.
@@ -71,8 +84,10 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           sending_enabled: true,
           ...summary,
           stale_alerts: staleAlerts,
+          halfway,
           start_day_1: startDayOne,
         });
+
       },
     },
   },

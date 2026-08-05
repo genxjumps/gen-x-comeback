@@ -161,17 +161,18 @@ export const completePlanDay = createServerFn({ method: "POST" })
       if (!started.ok) return { ok: false };
     }
 
+    // One transaction records the completion and, on the authoritative
+    // transition from 3 to 4 required completions, resets the inactivity clock,
+    // records the milestone, and creates exactly one Halfway outbox job. No
+    // provider call happens here.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
-      .from("lead_plan_day_completions")
-      .upsert(
-        {
-          lead_plan_id: access.leadPlanId,
-          day_number: data.day,
-        },
-        { onConflict: "lead_plan_id,day_number", ignoreDuplicates: true },
-      );
+    const { error } = await supabaseAdmin.rpc("complete_plan_day_atomic", {
+      p_lead_plan_id: access.leadPlanId,
+      p_plan_version_id: access.planVersionId,
+      p_day_number: data.day,
+    });
     if (error) throw new Error(error.message);
+
 
     return { ok: true, completedDays: await listCompletedDays(access.leadPlanId) };
   });

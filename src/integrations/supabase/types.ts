@@ -704,6 +704,18 @@ export type Database = {
           source: string
         }[]
       }
+      complete_plan_day_atomic: {
+        Args: {
+          p_day_number: number
+          p_lead_plan_id: string
+          p_plan_version_id: string
+        }
+        Returns: {
+          halfway_job_id: string
+          halfway_queued: boolean
+          required_completions: number
+        }[]
+      }
       consume_rate_limit: {
         Args: { p_bucket: string; p_limit: number; p_window_seconds: number }
         Returns: boolean

@@ -3,7 +3,7 @@
 // Each job type owns one canonical event namespace. Naming is derived from the
 // trusted job type only, never from provider payloads or client input, and no
 // personal or private state is ever part of an event name.
-import { PLAN_READY_JOB_TYPE, START_DAY_1_JOB_TYPE } from "@/lib/email/types";
+import { HALFWAY_JOB_TYPE, PLAN_READY_JOB_TYPE, START_DAY_1_JOB_TYPE } from "@/lib/email/types";
 
 /** Terminal or transitional outcomes that may emit a canonical event. */
 export type LifecycleEventOutcome =
@@ -18,7 +18,9 @@ export type LifecycleEventOutcome =
 const PREFIXES: Record<string, string> = {
   [PLAN_READY_JOB_TYPE]: "email_plan_ready",
   [START_DAY_1_JOB_TYPE]: "email_start_day_1",
+  [HALFWAY_JOB_TYPE]: "email_halfway",
 };
+
 
 /**
  * Outcomes that do not emit a canonical event for a given job type.
