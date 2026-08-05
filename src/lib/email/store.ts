@@ -32,6 +32,11 @@ export type ReturnTokenInsert = {
   tokenHash: string;
   issuedAt: string;
   expiresAt: string;
+  /**
+   * Originating email job. Persisted so the trusted return-destination code can
+   * recognize a start_day_1_v1 token. Absent for general plan-access tokens.
+   */
+  jobId?: string;
 };
 
 export type EmailStore = {

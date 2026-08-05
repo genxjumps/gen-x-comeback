@@ -1,18 +1,28 @@
-// Durable Plan Ready dispatcher. Deterministic and injectable: no environment
-// reads, no direct database access, no provider imports.
+// Durable lifecycle email dispatcher. Deterministic and injectable: no
+// environment reads, no direct database access, no provider imports.
 import {
   IDEMPOTENCY_HORIZON_MS,
   MAX_ATTEMPTS,
   PLAN_READY_JOB_TYPE,
   RETRY_DELAYS_MS,
   RETURN_TOKEN_TTL_MS,
+  START_DAY_1_JOB_TYPE,
   STALE_PENDING_MS,
   type EmailAdapter,
   type EmailJobRow,
   type EmailJobStatus,
+  type EmailSendRequest,
+  type LeadRow,
 } from "@/lib/email/types";
 import type { EmailJobPatch, EmailStore } from "@/lib/email/store";
+import { lifecycleEventName, type LifecycleEventOutcome } from "@/lib/email/event-names";
 import { renderPlanReady } from "@/lib/email/plan-ready-template";
+import { renderStartDayOne } from "@/lib/email/start-day-1-template";
+import {
+  resolveStartDayOne,
+  type StartDayOneJob,
+  type StartDayOneState,
+} from "@/lib/email/start-day-1-resolver";
 
 export type DispatchDeps = {
   store: EmailStore;
@@ -30,6 +40,11 @@ export type DispatchDeps = {
   hash: (raw: string) => Promise<string>;
 };
 
+/** Start Day 1 additionally needs the authoritative read-only state loader. */
+export type StartDayOneDispatchDeps = DispatchDeps & {
+  loadStartDayOneState: (job: StartDayOneJob) => Promise<StartDayOneState>;
+};
+
 export type JobOutcome =
   | "provider_accepted"
   | "retry_scheduled"
@@ -37,6 +52,7 @@ export type JobOutcome =
   | "suppressed"
   | "canceled"
   | "manual_review"
+  | "deferred"
   | "lost_lease";
 
 export type DispatchSummary = {
@@ -52,19 +68,29 @@ function preferencesUrl(appOrigin: string, token: string): string {
   return `${appOrigin}/email-preferences?c=${token}`;
 }
 
-const OUTCOME_STATUS: Record<
-  Exclude<JobOutcome, "lost_lease">,
-  { status: EmailJobStatus; event: string | null }
-> = {
-  provider_accepted: {
-    status: "provider_accepted",
-    event: "email_plan_ready_provider_accepted",
-  },
-  retry_scheduled: { status: "retry_scheduled", event: "email_plan_ready_retry_scheduled" },
-  failed_permanent: { status: "failed_permanent", event: "email_plan_ready_failed_permanent" },
-  suppressed: { status: "suppressed", event: "email_plan_ready_suppressed" },
-  canceled: { status: "canceled", event: null },
-  manual_review: { status: "failed_permanent", event: "email_plan_ready_manual_review" },
+type TerminalOutcome = Exclude<JobOutcome, "lost_lease">;
+
+const OUTCOME_STATUS: Record<TerminalOutcome, EmailJobStatus> = {
+  provider_accepted: "provider_accepted",
+  retry_scheduled: "retry_scheduled",
+  failed_permanent: "failed_permanent",
+  suppressed: "suppressed",
+  canceled: "canceled",
+  // A manual-review job is not retried; it is parked as a permanent failure.
+  manual_review: "failed_permanent",
+  // A deferral keeps the job claimable at the resolver-approved time.
+  deferred: "retry_scheduled",
+};
+
+const OUTCOME_EVENT: Record<TerminalOutcome, LifecycleEventOutcome | null> = {
+  provider_accepted: "provider_accepted",
+  retry_scheduled: "retry_scheduled",
+  failed_permanent: "failed_permanent",
+  suppressed: "suppressed",
+  canceled: "canceled",
+  manual_review: "manual_review",
+  // Not a real transient retry: emitting one would be a false event.
+  deferred: null,
 };
 
 type FinishExtra = {
@@ -74,6 +100,8 @@ type FinishExtra = {
   acceptedAt?: string;
   reason?: string;
   attemptedAt?: string;
+  /** Resolver-approved next eligibility time for a deferral. */
+  eligibleAt?: string;
 };
 
 /**
@@ -83,11 +111,13 @@ type FinishExtra = {
 async function finish(
   deps: DispatchDeps,
   job: EmailJobRow,
-  outcome: Exclude<JobOutcome, "lost_lease">,
+  outcome: TerminalOutcome,
   extra: FinishExtra,
 ): Promise<{ jobId: string; outcome: JobOutcome; errorCode?: string }> {
   const nowIso = deps.now().toISOString();
-  const mapped = OUTCOME_STATUS[outcome];
+  const status = OUTCOME_STATUS[outcome];
+  const eventOutcome = OUTCOME_EVENT[outcome];
+  const eventName = eventOutcome ? lifecycleEventName(job.job_type, eventOutcome) : null;
   const patch: EmailJobPatch = {};
 
   if (extra.attemptedAt) patch.first_provider_attempt_at = extra.attemptedAt;
@@ -102,6 +132,8 @@ async function finish(
     patch.next_attempt_at = new Date(deps.now().getTime() + delay).toISOString();
     patch.last_error_code = extra.errorCode ?? null;
     patch.last_error_at = nowIso;
+  } else if (outcome === "deferred") {
+    patch.next_attempt_at = extra.eligibleAt ?? nowIso;
   } else if (outcome === "failed_permanent" || outcome === "manual_review") {
     patch.next_attempt_at = null;
     patch.last_error_code = extra.errorCode ?? null;
@@ -115,18 +147,12 @@ async function finish(
     patch.canceled_at = nowIso;
   }
 
-  const fenced = await deps.store.finishJob(
-    job.job_id,
-    job.claim_token,
-    mapped.status,
-    patch,
-    mapped.event,
-  );
+  const fenced = await deps.store.finishJob(job.job_id, job.claim_token, status, patch, eventName);
   if (!fenced) return { jobId: job.job_id, outcome: "lost_lease" };
 
   if (outcome === "failed_permanent") {
     await deps.store.recordAlert({
-      alert_type: "plan_ready_failed_permanent",
+      alert_type: `${job.job_type}_failed_permanent`,
       severity: "critical",
       job_id: job.job_id,
       lead_plan_id: job.lead_plan_id,
@@ -134,7 +160,7 @@ async function finish(
     });
   } else if (outcome === "manual_review") {
     await deps.store.recordAlert({
-      alert_type: "plan_ready_manual_review_required",
+      alert_type: `${job.job_type}_manual_review_required`,
       severity: "critical",
       job_id: job.job_id,
       lead_plan_id: job.lead_plan_id,
@@ -159,6 +185,102 @@ async function finish(
   return extra.errorCode
     ? { jobId: job.job_id, outcome, errorCode: extra.errorCode }
     : { jobId: job.job_id, outcome };
+}
+
+/** Shared guards that apply to every lifecycle job before a provider attempt. */
+async function guardCommon(
+  deps: DispatchDeps,
+  job: EmailJobRow,
+): Promise<{ jobId: string; outcome: JobOutcome; errorCode?: string } | null> {
+  if (job.attempt_count > MAX_ATTEMPTS) {
+    return finish(deps, job, "failed_permanent", { errorCode: "max_attempts_exceeded" });
+  }
+
+  // Past the provider's idempotency horizon a fresh attempt could duplicate a
+  // send that already happened. A human decides instead. The horizon runs from
+  // when the job first became attemptable, so a deliberately delayed job (Start
+  // Day 1 waits 24 hours) is not parked for its own scheduled delay. Plan Ready
+  // is unaffected: its eligibility equals its creation time.
+  const horizonFrom = Math.max(
+    new Date(job.created_at).getTime(),
+    new Date(job.eligible_at).getTime(),
+  );
+  if (deps.now().getTime() - horizonFrom > IDEMPOTENCY_HORIZON_MS) {
+    return finish(deps, job, "manual_review", { errorCode: "idempotency_horizon_exceeded" });
+  }
+
+  return null;
+}
+
+/** Issues the approved opaque credentials and returns their absolute URLs. */
+async function issueCredentials(
+  deps: DispatchDeps,
+  job: EmailJobRow,
+  lead: LeadRow,
+  associateJob: boolean,
+): Promise<{ returnUrl: string; preferencesUrl: string }> {
+  const issuedAt = deps.now();
+  const rawReturnToken = deps.deriveCredential("open_plan", lead.plan_version_id);
+  const rawPreferencesToken = deps.deriveCredential("email_preferences", lead.plan_version_id);
+
+  await deps.store.insertReturnToken({
+    leadPlanId: lead.id,
+    planVersionId: lead.plan_version_id,
+    tokenHash: await deps.hash(rawReturnToken),
+    issuedAt: issuedAt.toISOString(),
+    expiresAt: new Date(issuedAt.getTime() + RETURN_TOKEN_TTL_MS).toISOString(),
+    ...(associateJob ? { jobId: job.job_id } : {}),
+  });
+  await deps.store.upsertPreferenceCredential(lead.id, await deps.hash(rawPreferencesToken));
+
+  return {
+    returnUrl: returnUrl(deps.appOrigin, rawReturnToken),
+    preferencesUrl: preferencesUrl(deps.appOrigin, rawPreferencesToken),
+  };
+}
+
+/** Performs exactly one provider attempt and applies the resulting transition. */
+async function attemptSend(
+  deps: DispatchDeps,
+  job: EmailJobRow,
+  request: EmailSendRequest,
+): Promise<{ jobId: string; outcome: JobOutcome; errorCode?: string }> {
+  const attemptedAt = deps.now().toISOString();
+  const result = await deps.adapter.send(request);
+
+  if (result.outcome === "accepted") {
+    return finish(deps, job, "provider_accepted", {
+      providerKey: result.providerKey,
+      providerMessageId: result.providerMessageId,
+      acceptedAt: result.acceptedAt,
+      attemptedAt,
+    });
+  }
+
+  if (result.outcome === "ambiguous") {
+    // The provider may already hold this exact idempotency key.
+    const reconciled = deps.adapter.lookupByIdempotencyKey
+      ? await deps.adapter.lookupByIdempotencyKey(job.idempotency_key)
+      : null;
+    if (reconciled) {
+      return finish(deps, job, "provider_accepted", {
+        providerKey: deps.adapter.key,
+        providerMessageId: reconciled.providerMessageId,
+        acceptedAt: reconciled.acceptedAt,
+        attemptedAt,
+      });
+    }
+  }
+
+  if (result.outcome === "permanent") {
+    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode, attemptedAt });
+  }
+
+  // Transient or unreconciled ambiguous failure.
+  if (job.attempt_count >= MAX_ATTEMPTS) {
+    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode, attemptedAt });
+  }
+  return finish(deps, job, "retry_scheduled", { errorCode: result.errorCode, attemptedAt });
 }
 
 /** Claims due Plan Ready jobs, rechecks eligibility, and performs one attempt each. */
@@ -190,102 +312,122 @@ export async function dispatchPlanReadyJobs(
       continue;
     }
 
-    if (job.attempt_count > MAX_ATTEMPTS) {
-      outcomes.push(
-        await finish(deps, job, "failed_permanent", { errorCode: "max_attempts_exceeded" }),
-      );
+    const guarded = await guardCommon(deps, job);
+    if (guarded) {
+      outcomes.push(guarded);
       continue;
     }
 
-    // Past the provider's idempotency horizon a fresh attempt could duplicate a
-    // send that already happened. A human decides instead.
-    if (deps.now().getTime() - new Date(job.created_at).getTime() > IDEMPOTENCY_HORIZON_MS) {
-      outcomes.push(
-        await finish(deps, job, "manual_review", { errorCode: "idempotency_horizon_exceeded" }),
-      );
-      continue;
-    }
-
-    const issuedAt = deps.now();
-    const rawReturnToken = deps.deriveCredential("open_plan", lead.plan_version_id);
-    const rawPreferencesToken = deps.deriveCredential("email_preferences", lead.plan_version_id);
-    await deps.store.insertReturnToken({
-      leadPlanId: lead.id,
-      planVersionId: lead.plan_version_id,
-      tokenHash: await deps.hash(rawReturnToken),
-      issuedAt: issuedAt.toISOString(),
-      expiresAt: new Date(issuedAt.getTime() + RETURN_TOKEN_TTL_MS).toISOString(),
-    });
-    await deps.store.upsertPreferenceCredential(lead.id, await deps.hash(rawPreferencesToken));
-
+    const urls = await issueCredentials(deps, job, lead, false);
     const rendered = renderPlanReady({
       firstName: lead.first_name,
-      returnUrl: returnUrl(deps.appOrigin, rawReturnToken),
-      preferencesUrl: preferencesUrl(deps.appOrigin, rawPreferencesToken),
+      returnUrl: urls.returnUrl,
+      preferencesUrl: urls.preferencesUrl,
     });
 
-    const attemptedAt = deps.now().toISOString();
-    const result = await deps.adapter.send({
-      to: lead.email_original,
-      fromEmail: deps.fromEmail,
-      fromName: deps.fromName,
-      replyTo: deps.replyTo,
-      subject: rendered.subject,
-      previewText: rendered.previewText,
-      html: rendered.html,
-      text: rendered.text,
-      idempotencyKey: job.idempotency_key,
-      correlationId: job.job_id,
-      disableClickTracking: true,
+    outcomes.push(
+      await attemptSend(deps, job, {
+        to: lead.email_original,
+        fromEmail: deps.fromEmail,
+        fromName: deps.fromName,
+        replyTo: deps.replyTo,
+        subject: rendered.subject,
+        previewText: rendered.previewText,
+        html: rendered.html,
+        text: rendered.text,
+        idempotencyKey: job.idempotency_key,
+        correlationId: job.job_id,
+        disableClickTracking: true,
+      }),
+    );
+  }
+
+  return { claimed: jobs.length, outcomes };
+}
+
+/**
+ * Claims due Start Day 1 jobs and, immediately before each provider attempt,
+ * re-resolves authoritative state. A CANCEL resolution never renders, never
+ * derives a credential, never builds a payload, and never calls the provider.
+ */
+export async function dispatchStartDayOneJobs(
+  deps: StartDayOneDispatchDeps,
+  options?: { limit?: number; leaseSeconds?: number },
+): Promise<DispatchSummary> {
+  const jobs = await deps.store.claimJobs(
+    START_DAY_1_JOB_TYPE,
+    options?.limit ?? 10,
+    options?.leaseSeconds ?? 120,
+  );
+  const outcomes: DispatchSummary["outcomes"] = [];
+
+  for (const job of jobs) {
+    const state = await deps.loadStartDayOneState({
+      job_id: job.job_id,
+      job_type: job.job_type,
+      job_version: job.job_version,
+      template_version: job.template_version,
+      lead_plan_id: job.lead_plan_id,
+      plan_version_id: job.plan_version_id,
+      eligible_at: job.eligible_at,
     });
+    const resolution = resolveStartDayOne(state, deps.now());
 
-    if (result.outcome === "accepted") {
-      outcomes.push(
-        await finish(deps, job, "provider_accepted", {
-          providerKey: result.providerKey,
-          providerMessageId: result.providerMessageId,
-          acceptedAt: result.acceptedAt,
-          attemptedAt,
-        }),
-      );
-      continue;
-    }
-
-    if (result.outcome === "ambiguous") {
-      // The provider may already hold this exact idempotency key.
-      const reconciled = deps.adapter.lookupByIdempotencyKey
-        ? await deps.adapter.lookupByIdempotencyKey(job.idempotency_key)
-        : null;
-      if (reconciled) {
+    if (resolution.action === "CANCEL") {
+      if (resolution.disposition === "defer") {
         outcomes.push(
-          await finish(deps, job, "provider_accepted", {
-            providerKey: deps.adapter.key,
-            providerMessageId: reconciled.providerMessageId,
-            acceptedAt: reconciled.acceptedAt,
-            attemptedAt,
+          await finish(deps, job, "deferred", {
+            ...(resolution.eligibleAt ? { eligibleAt: resolution.eligibleAt } : {}),
           }),
         );
-        continue;
+      } else if (resolution.disposition === "suppress") {
+        outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
+      } else {
+        outcomes.push(await finish(deps, job, "canceled", {}));
       }
-    }
-
-    if (result.outcome === "permanent") {
-      outcomes.push(
-        await finish(deps, job, "failed_permanent", { errorCode: result.errorCode, attemptedAt }),
-      );
       continue;
     }
 
-    // Transient or unreconciled ambiguous failure.
-    if (job.attempt_count >= MAX_ATTEMPTS) {
-      outcomes.push(
-        await finish(deps, job, "failed_permanent", { errorCode: result.errorCode, attemptedAt }),
-      );
-    } else {
-      outcomes.push(
-        await finish(deps, job, "retry_scheduled", { errorCode: result.errorCode, attemptedAt }),
-      );
+    const lead = await deps.store.getLead(job.lead_plan_id);
+    if (!lead || lead.plan_version_id !== job.plan_version_id) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
     }
+
+    const guarded = await guardCommon(deps, job);
+    if (guarded) {
+      outcomes.push(guarded);
+      continue;
+    }
+
+    // The return token is associated with this job so the trusted destination
+    // code recognizes start_day_1_v1 and opens Day 1.
+    const urls = await issueCredentials(deps, job, lead, true);
+    const rendered = renderStartDayOne(resolution, {
+      firstName: lead.first_name,
+      returnUrl: urls.returnUrl,
+      preferencesUrl: urls.preferencesUrl,
+    });
+    if (!rendered) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    outcomes.push(
+      await attemptSend(deps, job, {
+        to: lead.email_original,
+        fromEmail: deps.fromEmail,
+        fromName: deps.fromName,
+        replyTo: deps.replyTo,
+        subject: rendered.subject,
+        previewText: rendered.previewText,
+        html: rendered.html,
+        text: rendered.text,
+        idempotencyKey: job.idempotency_key,
+        correlationId: job.job_id,
+        disableClickTracking: true,
+      }),
+    );
   }
 
   return { claimed: jobs.length, outcomes };

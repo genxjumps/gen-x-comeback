@@ -54,12 +54,25 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           );
         }
 
-        const { dispatchPlanReadyJobs, raiseStalePlanReadyAlerts } =
+        const { dispatchPlanReadyJobs, dispatchStartDayOneJobs, raiseStalePlanReadyAlerts } =
           await import("@/lib/email/dispatch");
         const summary = await dispatchPlanReadyJobs(runtime.deps, { limit: 25 });
         const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
 
-        return Response.json({ sending_enabled: true, ...summary, stale_alerts: staleAlerts });
+        // Start Day 1 shares the runtime, store, lease claim, and adapter. Its
+        // authoritative read-only state loader is injected here.
+        const { loadStartDayOneState } = await import("@/lib/email/start-day-1-state.server");
+        const startDayOne = await dispatchStartDayOneJobs(
+          { ...runtime.deps, loadStartDayOneState: (job) => loadStartDayOneState(job) },
+          { limit: 25 },
+        );
+
+        return Response.json({
+          sending_enabled: true,
+          ...summary,
+          stale_alerts: staleAlerts,
+          start_day_1: startDayOne,
+        });
       },
     },
   },
