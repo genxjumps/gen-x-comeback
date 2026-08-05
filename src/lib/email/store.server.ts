@@ -85,6 +85,28 @@ export async function createSupabaseEmailStore(): Promise<EmailStore> {
       return data === true;
     },
 
+    async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {
+      // Compare-and-set on (job_id, claim_token, status): a worker that lost its
+      // lease cannot rewrite the owner's job. No canonical event is written.
+      const { data, error } = await supabaseAdmin
+        .from("email_jobs")
+        .update({
+          status: "retry_scheduled",
+          next_attempt_at: nextAttemptAt,
+          attempt_count: restoredAttemptCount,
+          claim_token: null,
+          locked_at: null,
+          lease_expires_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("job_id", jobId)
+        .eq("claim_token", claimToken as string)
+        .eq("status", "processing")
+        .select("job_id");
+      if (error) throw new Error(error.message);
+      return (data?.length ?? 0) > 0;
+    },
+
     async applyDeliveryEvent(jobId, kind, occurredAt) {
       const { data, error } = await supabaseAdmin.rpc("apply_email_delivery_event", {
         p_job_id: jobId,

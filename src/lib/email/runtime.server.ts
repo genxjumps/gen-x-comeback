@@ -45,8 +45,8 @@ export async function buildDispatchDeps(): Promise<RuntimeDeps> {
       fromEmail: config.fromEmail as string,
       fromName: config.fromName,
       replyTo: config.replyTo as string,
-      deriveCredential: (purpose, planVersionId) =>
-        deriveEmailCredential(tokenSecret, purpose, planVersionId),
+      deriveCredential: (purpose, planVersionId, scope) =>
+        deriveEmailCredential(tokenSecret, purpose, planVersionId, scope),
       hash: hashAccessToken,
     },
   };

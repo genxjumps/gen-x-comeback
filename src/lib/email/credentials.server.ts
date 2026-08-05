@@ -20,10 +20,19 @@ export function deriveEmailCredential(
   secret: string,
   purpose: CredentialPurpose,
   planVersionId: string,
+  /**
+   * Optional opaque logical-job scope. Job-associated `open_plan` credentials
+   * must be unique per logical job, otherwise two lifecycle emails for one plan
+   * version would derive the same token hash and the later insert would
+   * overwrite the earlier job association. Preference credentials stay
+   * plan-scoped and never pass a scope.
+   */
+  scope?: string,
 ): string {
-  return createHmac("sha256", secret)
-    .update(`gxj:v1:${purpose}:${planVersionId}`, "utf8")
-    .digest("base64url");
+  const input = scope
+    ? `gxj:v1:${purpose}:${planVersionId}:job:${scope}`
+    : `gxj:v1:${purpose}:${planVersionId}`;
+  return createHmac("sha256", secret).update(input, "utf8").digest("base64url");
 }
 
 export function readEmailTokenSecret(): string | null {
