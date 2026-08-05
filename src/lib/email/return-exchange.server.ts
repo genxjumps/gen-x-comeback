@@ -53,19 +53,29 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
   // A replaced plan version must never be restored by an old link.
   if (lead.plan_version_id !== token.plan_version_id) return { ok: false };
 
-  // Destination comes only from the trusted originating job, never from input.
+  // Destination comes only from trusted server-side state, never from input.
   let destination = DEFAULT_RETURN_DESTINATION;
   if (token.job_id) {
     const { data: jobs, error: jobError } = await supabaseAdmin
       .from("email_jobs")
-      .select("job_type, template_version")
+      .select("job_type, template_version, lead_plan_id, plan_version_id")
       .eq("job_id", token.job_id)
       .limit(1);
     if (jobError) throw new Error(jobError.message);
     const job = jobs?.[0];
-    destination = resolveReturnDestination(
-      job ? { jobType: job.job_type, templateVersion: job.template_version } : null,
-    );
+    destination = resolveReturnDestination({
+      purpose: token.purpose,
+      leadPlanId: lead.id,
+      planVersionId: lead.plan_version_id,
+      job: job
+        ? {
+            jobType: job.job_type,
+            templateVersion: job.template_version,
+            leadPlanId: job.lead_plan_id,
+            planVersionId: job.plan_version_id,
+          }
+        : null,
+    });
   }
 
   const sessionToken = generateAccessToken();
