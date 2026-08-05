@@ -326,7 +326,6 @@ describe("R9 four required completions is send-eligible", () => {
     expect(result).toMatchObject({
       action: "CANCEL",
       reason: "progress_window_not_reached",
-      disposition: "cancel",
     });
   });
 });
@@ -344,7 +343,7 @@ describe("R10 five and six required completions stay send-eligible", () => {
         eligibleState(job, { requiredCompletions: 7, totalRequiredAssignments: 8 }),
         NOW,
       ),
-    ).toMatchObject({ reason: "progress_window_passed", disposition: "cancel" });
+    ).toMatchObject({ action: "CANCEL", reason: "progress_window_passed" });
   });
 });
 
@@ -362,7 +361,6 @@ describe("R11 an authoritatively complete plan cancels", () => {
     expect(result).toMatchObject({
       action: "CANCEL",
       reason: "plan_completed",
-      disposition: "cancel",
     });
   });
 
@@ -394,7 +392,7 @@ describe("R12 Plan Completed control always wins with no timestamp tie-breaker",
       NOW,
     );
     expect(withOldControl).toEqual(withNewControl);
-    expect(withOldControl).toMatchObject({ reason: "plan_completed", disposition: "cancel" });
+    expect(withOldControl).toMatchObject({ action: "CANCEL", reason: "plan_completed" });
   });
 
   it("takes precedence over the deferral reasons below it", () => {
@@ -404,7 +402,7 @@ describe("R12 Plan Completed control always wins with no timestamp tie-breaker",
         eligibleState(job, { planCompletedControl: true, planReadyAcceptedAt: null }),
         NOW,
       ),
-    ).toMatchObject({ reason: "plan_completed", disposition: "cancel" });
+    ).toMatchObject({ action: "CANCEL", reason: "plan_completed" });
   });
 });
 
@@ -413,7 +411,7 @@ describe("R13 replacement, non-canonical jobs, and missing recipients cancel", (
     const job = halfwayJob();
     expect(
       resolveHalfway(eligibleState(job, { currentPlanVersionId: "version-2" }), NOW),
-    ).toMatchObject({ reason: "plan_version_replaced", disposition: "cancel" });
+    ).toMatchObject({ action: "CANCEL", reason: "plan_version_replaced" });
   });
 
   it("cancels a non-canonical job type, version, or template", () => {
@@ -424,8 +422,8 @@ describe("R13 replacement, non-canonical jobs, and missing recipients cancel", (
     ]) {
       const job = halfwayJob(patch);
       expect(resolveHalfway(eligibleState(job), NOW)).toMatchObject({
+        action: "CANCEL",
         reason: "job_not_canonical",
-        disposition: "cancel",
       });
     }
   });
@@ -433,8 +431,8 @@ describe("R13 replacement, non-canonical jobs, and missing recipients cancel", (
   it("cancels when no deliverable recipient is persisted", () => {
     const job = halfwayJob();
     expect(resolveHalfway(eligibleState(job, { hasRecipient: false }), NOW)).toMatchObject({
+      action: "CANCEL",
       reason: "recipient_missing",
-      disposition: "cancel",
     });
   });
 });
@@ -752,11 +750,12 @@ describe("R23 deterministic, non-mutating, imageless render with the shared foot
   });
 
   it("never renders a canceled resolution", () => {
+    expect(renderHalfway({ action: "CANCEL", reason: "plan_completed" }, RENDER_INPUT)).toBeNull();
     expect(
-      renderHalfway(
-        { action: "CANCEL", reason: "plan_completed", disposition: "cancel" },
-        RENDER_INPUT,
-      ),
+      renderHalfway({ action: "DEFER", reason: "lifecycle_24h_cap" }, RENDER_INPUT),
+    ).toBeNull();
+    expect(
+      renderHalfway({ action: "SUPPRESS", reason: "recipient_suppressed" }, RENDER_INPUT),
     ).toBeNull();
   });
 });
@@ -1152,5 +1151,125 @@ describe("R26 Halfway return exchange is trusted, closed, and read-only", () => 
     expect(ex.writes.map((w) => w.table)).not.toContain("lead_plan_day_completions");
     expect(ex.writes.map((w) => w.table)).not.toContain("email_jobs");
     expect(JSON.stringify(ex.writes)).not.toContain("day_number");
+  });
+});
+
+/* ------------------------------------------------------------------ */
+/* Final contract correction: four explicit resolver actions           */
+/* ------------------------------------------------------------------ */
+
+describe("Halfway resolves exactly four explicit dispatch actions", () => {
+  it("returns SEND with no reason", () => {
+    expect(resolveHalfway(eligibleState(halfwayJob()), NOW)).toEqual({ action: "SEND" });
+  });
+
+  it("returns DEFER with an approved deferral reason and no disposition field", () => {
+    const job = halfwayJob();
+    expect(resolveHalfway(eligibleState(job, { planReadyAcceptedAt: null }), NOW)).toEqual({
+      action: "DEFER",
+      reason: "plan_ready_not_accepted",
+    });
+
+    const early = halfwayJob({ eligible_at: "2026-02-06T18:00:00.000Z" });
+    expect(resolveHalfway(eligibleState(early), NOW)).toEqual({
+      action: "DEFER",
+      reason: "eligibility_floor_not_reached",
+      eligibleAt: "2026-02-06T18:00:00.000Z",
+    });
+
+    const lastAccepted = new Date(NOW.getTime() - LIFECYCLE_MIN_GAP_MS / 2).toISOString();
+    expect(
+      resolveHalfway(eligibleState(job, { lastLifecycleAcceptedAt: lastAccepted }), NOW),
+    ).toEqual({
+      action: "DEFER",
+      reason: "lifecycle_24h_cap",
+      eligibleAt: new Date(new Date(lastAccepted).getTime() + LIFECYCLE_MIN_GAP_MS).toISOString(),
+    });
+  });
+
+  it("returns SUPPRESS for unsubscribe and suppression, never CANCEL", () => {
+    const job = halfwayJob();
+    expect(
+      resolveHalfway(eligibleState(job, { marketingUnsubscribedAt: NOW.toISOString() }), NOW),
+    ).toEqual({ action: "SUPPRESS", reason: "marketing_unsubscribed" });
+    expect(
+      resolveHalfway(eligibleState(job, { emailSuppressedAt: NOW.toISOString() }), NOW),
+    ).toEqual({ action: "SUPPRESS", reason: "recipient_suppressed" });
+    expect(resolveHalfway(eligibleState(job, { suppressionListed: true }), NOW)).toEqual({
+      action: "SUPPRESS",
+      reason: "recipient_suppressed",
+    });
+  });
+
+  it("returns CANCEL with an approved cancellation reason", () => {
+    expect(resolveHalfway(eligibleState(halfwayJob({ job_version: "v9" })), NOW)).toEqual({
+      action: "CANCEL",
+      reason: "job_not_canonical",
+    });
+  });
+
+  it("maps each action to its dispatch outcome", async () => {
+    const send = harness();
+    expect((await dispatchHalfwayJobs(send.deps)).outcomes[0]?.outcome).toBe("provider_accepted");
+
+    const deferred = harness({ state: { planReadyAcceptedAt: null } });
+    expect((await dispatchHalfwayJobs(deferred.deps)).outcomes[0]?.outcome).toBe("deferred");
+    expect(deferred.adapter.requests).toHaveLength(0);
+
+    const suppressed = harness({ state: { suppressionListed: true } });
+    expect((await dispatchHalfwayJobs(suppressed.deps)).outcomes[0]?.outcome).toBe("suppressed");
+    expect(suppressed.adapter.requests).toHaveLength(0);
+
+    const canceled = harness({ state: { currentPlanVersionId: "version-2" } });
+    expect((await dispatchHalfwayJobs(canceled.deps)).outcomes[0]?.outcome).toBe("canceled");
+    expect(canceled.adapter.requests).toHaveLength(0);
+    expect(canceled.store.returnTokens).toHaveLength(0);
+  });
+});
+
+describe("Plan Completed is checked before every other Halfway gate", () => {
+  it("cancels for plan_completed even with a missing recipient", () => {
+    expect(
+      resolveHalfway(
+        eligibleState(halfwayJob(), { planCompletedControl: true, hasRecipient: false }),
+        NOW,
+      ),
+    ).toEqual({ action: "CANCEL", reason: "plan_completed" });
+  });
+
+  it("cancels for plan_completed even with suppression present", () => {
+    expect(
+      resolveHalfway(
+        eligibleState(halfwayJob(), {
+          planComplete: true,
+          suppressionListed: true,
+          marketingUnsubscribedAt: NOW.toISOString(),
+        }),
+        NOW,
+      ),
+    ).toEqual({ action: "CANCEL", reason: "plan_completed" });
+  });
+
+  it("cancels for plan_completed even when a deferral condition also applies", () => {
+    const lastAccepted = new Date(NOW.getTime() - 1000).toISOString();
+    expect(
+      resolveHalfway(
+        eligibleState(halfwayJob(), {
+          planCompletedControl: true,
+          planReadyAcceptedAt: null,
+          lastLifecycleAcceptedAt: lastAccepted,
+          hasRecipient: false,
+          suppressionListed: true,
+          requiredCompletions: 2,
+        }),
+        NOW,
+      ),
+    ).toEqual({ action: "CANCEL", reason: "plan_completed" });
+  });
+
+  it("still cancels through the dispatcher with no provider attempt", async () => {
+    const h = harness({ state: { planCompletedControl: true, suppressionListed: true } });
+    expect((await dispatchHalfwayJobs(h.deps)).outcomes[0]?.outcome).toBe("canceled");
+    expect(h.adapter.requests).toHaveLength(0);
   });
 });
