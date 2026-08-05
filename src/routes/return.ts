@@ -77,15 +77,17 @@ export const Route = createFileRoute("/return")({
 
         const maxAge = Math.max(0, Math.floor((result.expiresAt.getTime() - Date.now()) / 1000));
         // 303 to a clean URL so the bearer token is gone before the app loads.
+        // Destination is the trusted closed value from the exchange, never input.
         return new Response(null, {
           status: 303,
           headers: {
-            location: "/your-plan",
+            location: result.destination,
             "cache-control": "no-store",
             "referrer-policy": "no-referrer",
             "set-cookie": `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`,
           },
         });
+
       },
     },
   },
