@@ -6,7 +6,7 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 ## Current status
 
-The core seven-day plan experience is implemented and connected to Lovable Cloud. The Plan Ready email foundation is also implemented, but outbound email remains intentionally fail-closed until the remaining provider configuration and end-to-end acceptance checks pass.
+The core seven-day plan experience is implemented and connected to Lovable Cloud. Plan Ready and Start Day 1 are implemented in the current synchronized code. Start Day 1 is implemented through controlled dispatch, including secure return routing and authoritative START / RESUME / CANCEL behavior. Outbound email remains intentionally disabled. The current synchronized code is not the published production revision; the older public deployment remains separate.
 
 ### Implemented app experience
 
@@ -25,7 +25,7 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Responsive mobile and desktop layouts
 - PWA manifest and installable-app foundation
 
-### Implemented Plan Ready email foundation
+### Implemented email lifecycle foundation
 
 - App-owned durable outbox
 - Idempotent Plan Ready job creation
@@ -37,8 +37,11 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Bounce and complaint suppression
 - App-owned email preferences
 - A release gate that blocks provider calls unless every required setting and acceptance flag is present
+- Controlled Start Day 1 dispatch using authoritative state immediately before any provider attempt
+- Secure Start Day 1 return routing to `/your-plan/day/1`
+- `START` for eligible unstarted Day 1, `RESUME` for eligible started-but-incomplete Day 1, and non-sendable `CANCEL` when the message should not be sent
 
-Only Plan Ready is currently implemented for delivery. The remaining approved lifecycle emails and user-requested recovery email are later checkpoints. Broadcasts, newsletters, and promotional campaigns are outside the current app-email scope.
+Plan Ready and Start Day 1 are implemented in the current synchronized code. Halfway has not started and is the next implementation checkpoint. The remaining approved lifecycle emails and user-requested recovery email follow later. Broadcasts, newsletters, and promotional campaigns are outside the current app-email scope. Email sending remains disabled, and the current synchronized code is not the published production revision.
 
 ## Architecture
 
