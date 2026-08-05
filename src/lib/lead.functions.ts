@@ -161,10 +161,11 @@ export const completePlanDay = createServerFn({ method: "POST" })
       if (!started.ok) return { ok: false };
     }
 
-    // One transaction records the completion and, on the authoritative
-    // transition from 3 to 4 required completions, resets the inactivity clock,
-    // records the milestone, and creates exactly one Halfway outbox job. No
-    // provider call happens here.
+    // One transaction validates the plan version, validates that the day is a
+    // top-level required assignment, enforces sequential progression, records the
+    // completion, and on the authoritative transition from 3 to 4 required
+    // completions creates exactly one Halfway outbox job plus its queued event.
+    // No provider call happens here.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: applied, error } = await supabaseAdmin.rpc("complete_plan_day_atomic", {
       p_lead_plan_id: access.leadPlanId,
