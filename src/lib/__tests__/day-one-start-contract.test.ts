@@ -73,8 +73,10 @@ describe("Day 1 start contract", () => {
 
     expect(completion).toContain("if (data.day === 1 && !already.includes(1))");
     const startCall = completion.indexOf("await recordDayOneStart(");
-    const completionWrite = completion.indexOf('.from("lead_plan_day_completions")');
+    // The completion itself is now written by the atomic completion boundary.
+    const completionWrite = completion.indexOf('rpc("complete_plan_day_atomic"');
     expect(startCall).toBeGreaterThan(-1);
     expect(completionWrite).toBeGreaterThan(startCall);
+
   });
 });
