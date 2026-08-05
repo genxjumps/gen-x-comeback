@@ -473,20 +473,25 @@ export async function dispatchHalfwayJobs(
     });
     const resolution = resolveHalfway(state, deps.now());
 
-    if (resolution.action === "CANCEL") {
-      if (resolution.disposition === "defer") {
-        outcomes.push(
-          await finish(deps, job, "deferred", {
-            ...(resolution.eligibleAt ? { eligibleAt: resolution.eligibleAt } : {}),
-          }),
-        );
-      } else if (resolution.disposition === "suppress") {
-        outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
-      } else {
-        outcomes.push(await finish(deps, job, "canceled", {}));
-      }
+    if (resolution.action === "DEFER") {
+      outcomes.push(
+        await finish(deps, job, "deferred", {
+          ...(resolution.eligibleAt ? { eligibleAt: resolution.eligibleAt } : {}),
+        }),
+      );
       continue;
     }
+
+    if (resolution.action === "SUPPRESS") {
+      outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
+      continue;
+    }
+
+    if (resolution.action === "CANCEL") {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
 
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {

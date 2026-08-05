@@ -61,61 +61,49 @@ export type HalfwayState = {
   lastLifecycleAcceptedAt: string | null;
 };
 
+/** Permanent, plan-version-scoped non-applicability. */
 export type HalfwayCancelReason =
   | "job_not_canonical"
   | "plan_version_replaced"
-  | "recipient_missing"
   | "plan_completed"
+  | "recipient_missing"
   | "progress_window_not_reached"
-  | "progress_window_passed"
-  | "marketing_unsubscribed"
-  | "recipient_suppressed"
+  | "progress_window_passed";
+
+/** Recipient must not receive lifecycle email at all. */
+export type HalfwaySuppressReason = "marketing_unsubscribed" | "recipient_suppressed";
+
+/** Not sendable yet; the job is kept for a later dispatch run. */
+export type HalfwayDeferReason =
   | "plan_ready_not_accepted"
   | "eligibility_floor_not_reached"
   | "lifecycle_24h_cap";
 
 /**
- * How the dispatcher should transition the job:
- * - defer: not yet sendable, keep the job for a later run
- * - cancel: permanently not applicable to this plan version
- * - suppress: recipient must not receive lifecycle email
+ * The four approved Halfway dispatch outcomes, as an explicit discriminated
+ * union. DEFER and SUPPRESS are first-class actions, never a CANCEL variant.
  */
-export type HalfwayCancelDisposition = "defer" | "cancel" | "suppress";
-
 export type HalfwayResolution =
   | { action: "SEND" }
   | {
-      action: "CANCEL";
-      reason: HalfwayCancelReason;
-      disposition: HalfwayCancelDisposition;
-      /** Earliest ISO time a deferred job could become eligible, when known. */
+      action: "DEFER";
+      reason: HalfwayDeferReason;
+      /** Earliest ISO time this job could become eligible, when known. */
       eligibleAt?: string;
-    };
+    }
+  | { action: "CANCEL"; reason: HalfwayCancelReason }
+  | { action: "SUPPRESS"; reason: HalfwaySuppressReason };
 
-const DISPOSITIONS: Record<HalfwayCancelReason, HalfwayCancelDisposition> = {
-  job_not_canonical: "cancel",
-  plan_version_replaced: "cancel",
-  recipient_missing: "cancel",
-  // A finished plan belongs to Plan Completed, permanently, for this version.
-  plan_completed: "cancel",
-  // Progress only moves forward within a plan version, so a window miss in
-  // either direction is permanent for this job.
-  progress_window_not_reached: "cancel",
-  progress_window_passed: "cancel",
-  marketing_unsubscribed: "suppress",
-  recipient_suppressed: "suppress",
-  plan_ready_not_accepted: "defer",
-  eligibility_floor_not_reached: "defer",
-  lifecycle_24h_cap: "defer",
-};
+function cancel(reason: HalfwayCancelReason): HalfwayResolution {
+  return { action: "CANCEL", reason };
+}
 
-function cancel(reason: HalfwayCancelReason, eligibleAt?: string): HalfwayResolution {
-  return {
-    action: "CANCEL",
-    reason,
-    disposition: DISPOSITIONS[reason],
-    ...(eligibleAt ? { eligibleAt } : {}),
-  };
+function suppress(reason: HalfwaySuppressReason): HalfwayResolution {
+  return { action: "SUPPRESS", reason };
+}
+
+function defer(reason: HalfwayDeferReason, eligibleAt?: string): HalfwayResolution {
+  return { action: "DEFER", reason, ...(eligibleAt ? { eligibleAt } : {}) };
 }
 
 function ms(iso: string): number {
@@ -142,11 +130,13 @@ export function resolveHalfway(state: HalfwayState, now: Date): HalfwayResolutio
     return cancel("plan_version_replaced");
   }
 
-  if (!state.hasRecipient) return cancel("recipient_missing");
-
-  // Plan Completed control, or an authoritatively complete plan, always cancels.
-  // There is no timestamp comparison and no tie-breaker at this boundary.
+  // Plan Completed control, or an authoritatively complete plan, always wins.
+  // Checked immediately after canonical job/current-plan validation and before
+  // recipient, progress window, unsubscribe, suppression, Plan Ready ordering,
+  // eligibility, and lifecycle timing. No timestamp or reason tie-breaker.
   if (state.planCompletedControl || state.planComplete) return cancel("plan_completed");
+
+  if (!state.hasRecipient) return cancel("recipient_missing");
 
   if (state.requiredCompletions < HALFWAY_MIN_COMPLETIONS) {
     return cancel("progress_window_not_reached");
@@ -155,22 +145,23 @@ export function resolveHalfway(state: HalfwayState, now: Date): HalfwayResolutio
     return cancel("progress_window_passed");
   }
 
-  if (state.marketingUnsubscribedAt) return cancel("marketing_unsubscribed");
-  if (state.emailSuppressedAt || state.suppressionListed) return cancel("recipient_suppressed");
+  if (state.marketingUnsubscribedAt) return suppress("marketing_unsubscribed");
+  if (state.emailSuppressedAt || state.suppressionListed) return suppress("recipient_suppressed");
 
-  if (!state.planReadyAcceptedAt) return cancel("plan_ready_not_accepted");
+  if (!state.planReadyAcceptedAt) return defer("plan_ready_not_accepted");
 
   const floor = ms(job.eligible_at);
   if (now.getTime() < floor) {
-    return cancel("eligibility_floor_not_reached", new Date(floor).toISOString());
+    return defer("eligibility_floor_not_reached", new Date(floor).toISOString());
   }
 
   if (state.lastLifecycleAcceptedAt) {
     const nextAllowed = ms(state.lastLifecycleAcceptedAt) + LIFECYCLE_MIN_GAP_MS;
     if (now.getTime() < nextAllowed) {
-      return cancel("lifecycle_24h_cap", new Date(nextAllowed).toISOString());
+      return defer("lifecycle_24h_cap", new Date(nextAllowed).toISOString());
     }
   }
 
   return { action: "SEND" };
 }
+
