@@ -1,13 +1,19 @@
 // Tests for the Plan Ready correction pass: lease fencing, the idempotency
 // horizon, stable derived credentials, early-webhook reconciliation, and the
 // hardened public HTML responses. Deterministic: no provider, database, or network.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { dispatchPlanReadyJobs, type DispatchDeps } from "@/lib/email/dispatch";
 import { deriveEmailCredential } from "@/lib/email/credentials.server";
 import { IDEMPOTENCY_HORIZON_MS, type EmailAdapter, type EmailSendResult } from "@/lib/email/types";
 import { RAW_TOKEN_RE } from "@/lib/lead-plan";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
+
+vi.mock("@/lib/email/rate-limit.server", () => ({
+  callerBucketKey: () => "test-bucket",
+  consumeRateLimit: async () => ({ allowed: true }),
+}));
+
 
 const FIXED_NOW = new Date("2026-02-01T12:00:00.000Z");
 

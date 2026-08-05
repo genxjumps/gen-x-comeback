@@ -6,6 +6,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const exchangeReturnToken = vi.fn(async () => ({ ok: false }) as { ok: boolean });
 
+vi.mock("@/lib/email/rate-limit.server", () => ({
+  callerBucketKey: () => "test-bucket",
+  consumeRateLimit: async () => ({ allowed: true }),
+}));
+
 vi.mock("@/lib/email/return-exchange.server", () => ({
   exchangeReturnToken: (...args: unknown[]) =>
     exchangeReturnToken(...(args as [])) as Promise<{ ok: boolean }>,
