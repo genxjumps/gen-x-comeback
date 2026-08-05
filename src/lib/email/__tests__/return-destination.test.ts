@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   DEFAULT_RETURN_DESTINATION,
+  OPEN_PLAN_TOKEN_PURPOSE,
   RETURN_DESTINATIONS,
   resolveReturnDestination,
 } from "@/lib/email/return-destination";
@@ -53,28 +54,76 @@ async function post(form: Record<string, string>): Promise<Response> {
   });
 }
 
+const LEAD = "11111111-1111-4111-8111-111111111111";
+const VERSION = "22222222-2222-4222-8222-222222222222";
+
+function input(over: Partial<Parameters<typeof resolveReturnDestination>[0]> = {}) {
+  return {
+    purpose: OPEN_PLAN_TOKEN_PURPOSE,
+    leadPlanId: LEAD,
+    planVersionId: VERSION,
+    job: {
+      jobType: START_DAY_1_JOB_TYPE,
+      templateVersion: START_DAY_1_TEMPLATE_VERSION,
+      leadPlanId: LEAD,
+      planVersionId: VERSION,
+    },
+    ...over,
+  } as Parameters<typeof resolveReturnDestination>[0];
+}
+
 describe("resolveReturnDestination mapping", () => {
-  it("maps a trusted start_day_1_v1 job to the Day 1 page (START and RESUME)", () => {
-    expect(
-      resolveReturnDestination({
-        jobType: START_DAY_1_JOB_TYPE,
-        templateVersion: START_DAY_1_TEMPLATE_VERSION,
-      }),
-    ).toBe("/your-plan/day/1");
+  it("maps a trusted linked start_day_1_v1 job to the Day 1 page (START and RESUME)", () => {
+    expect(resolveReturnDestination(input())).toBe("/your-plan/day/1");
   });
 
   it("keeps Plan Ready linked tokens on the general plan hub", () => {
     expect(
-      resolveReturnDestination({
-        jobType: PLAN_READY_JOB_TYPE,
-        templateVersion: PLAN_READY_TEMPLATE_VERSION,
-      }),
+      resolveReturnDestination(
+        input({
+          job: {
+            jobType: PLAN_READY_JOB_TYPE,
+            templateVersion: PLAN_READY_TEMPLATE_VERSION,
+            leadPlanId: LEAD,
+            planVersionId: VERSION,
+          },
+        }),
+      ),
     ).toBe("/your-plan");
   });
 
   it("keeps tokens with no job association on the general plan hub", () => {
-    expect(resolveReturnDestination(null)).toBe("/your-plan");
-    expect(resolveReturnDestination(undefined)).toBe("/your-plan");
+    expect(resolveReturnDestination(input({ job: null }))).toBe("/your-plan");
+    expect(resolveReturnDestination(input({ job: undefined }))).toBe("/your-plan");
+  });
+
+  it("never opens Day 1 for a non open_plan token purpose", () => {
+    for (const purpose of ["recovery", "email_preferences", "", null, undefined]) {
+      expect(resolveReturnDestination(input({ purpose }))).toBe(DEFAULT_RETURN_DESTINATION);
+    }
+  });
+
+  it("never opens Day 1 when the job does not belong to the validated token lead/version", () => {
+    const other = "33333333-3333-4333-8333-333333333333";
+    const mismatches = [
+      { leadPlanId: other, planVersionId: VERSION },
+      { leadPlanId: LEAD, planVersionId: other },
+      { leadPlanId: null, planVersionId: VERSION },
+      { leadPlanId: LEAD, planVersionId: null },
+    ];
+    for (const m of mismatches) {
+      expect(
+        resolveReturnDestination(
+          input({
+            job: {
+              jobType: START_DAY_1_JOB_TYPE,
+              templateVersion: START_DAY_1_TEMPLATE_VERSION,
+              ...m,
+            },
+          }),
+        ),
+      ).toBe(DEFAULT_RETURN_DESTINATION);
+    }
   });
 
   it("never yields an external or unknown destination for mismatched job state", () => {
@@ -85,21 +134,20 @@ describe("resolveReturnDestination mapping", () => {
       { jobType: "https://evil.example.com", templateVersion: "//evil.example.com" },
     ];
     for (const c of cases) {
-      const out = resolveReturnDestination(c);
+      const out = resolveReturnDestination(
+        input({ job: { ...c, leadPlanId: LEAD, planVersionId: VERSION } }),
+      );
       expect(RETURN_DESTINATIONS).toContain(out);
       expect(out).toBe(DEFAULT_RETURN_DESTINATION);
     }
   });
 
   it("is pure and does not mutate its input", () => {
-    const input = {
-      jobType: START_DAY_1_JOB_TYPE,
-      templateVersion: START_DAY_1_TEMPLATE_VERSION,
-    };
-    const snapshot = JSON.stringify(input);
-    resolveReturnDestination(input);
-    resolveReturnDestination(input);
-    expect(JSON.stringify(input)).toBe(snapshot);
+    const value = input();
+    const snapshot = JSON.stringify(value);
+    resolveReturnDestination(value);
+    resolveReturnDestination(value);
+    expect(JSON.stringify(value)).toBe(snapshot);
   });
 });
 
