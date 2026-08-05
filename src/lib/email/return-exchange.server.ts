@@ -2,16 +2,25 @@
 // A raw GET, prefetch, scanner, or provider click never reaches this module.
 import { RAW_TOKEN_RE, generateAccessToken, hashAccessToken } from "@/lib/lead-plan";
 import { RETURN_SESSION_TTL_MS } from "@/lib/email/types";
+import {
+  DEFAULT_RETURN_DESTINATION,
+  resolveReturnDestination,
+  type ReturnDestination,
+} from "@/lib/email/return-destination";
 
-export type ExchangeResult = { ok: true; sessionToken: string; expiresAt: Date } | { ok: false };
+export type ExchangeResult =
+  | { ok: true; sessionToken: string; expiresAt: Date; destination: ReturnDestination }
+  | { ok: false };
 
 /**
  * Verifies an opaque return token, refreshes the authorized session, records
- * verification/engagement, and returns the new session token.
+ * verification/engagement, and returns the new session token plus the trusted
+ * closed destination derived from the token's originating email job.
  * Invalid, expired, revoked, malformed, and replaced tokens all return `{ ok: false }`.
  */
 export async function exchangeReturnToken(rawToken: string | null): Promise<ExchangeResult> {
   if (!rawToken || !RAW_TOKEN_RE.test(rawToken)) return { ok: false };
+
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const tokenHash = await hashAccessToken(rawToken);
