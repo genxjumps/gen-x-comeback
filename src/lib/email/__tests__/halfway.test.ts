@@ -1156,3 +1156,122 @@ describe("R26 Halfway return exchange is trusted, closed, and read-only", () => 
     expect(JSON.stringify(ex.writes)).not.toContain("day_number");
   });
 });
+
+/* ------------------------------------------------------------------ */
+/* Final contract correction: four explicit resolver actions           */
+/* ------------------------------------------------------------------ */
+
+describe("Halfway resolves exactly four explicit dispatch actions", () => {
+  it("returns SEND with no reason", () => {
+    expect(resolveHalfway(eligibleState(halfwayJob()), NOW)).toEqual({ action: "SEND" });
+  });
+
+  it("returns DEFER with an approved deferral reason and no disposition field", () => {
+    const job = halfwayJob();
+    expect(
+      resolveHalfway(eligibleState(job, { planReadyAcceptedAt: null }), NOW),
+    ).toEqual({ action: "DEFER", reason: "plan_ready_not_accepted" });
+
+    const early = halfwayJob({ eligible_at: "2026-02-06T18:00:00.000Z" });
+    expect(resolveHalfway(eligibleState(early), NOW)).toEqual({
+      action: "DEFER",
+      reason: "eligibility_floor_not_reached",
+      eligibleAt: "2026-02-06T18:00:00.000Z",
+    });
+
+    const lastAccepted = new Date(NOW.getTime() - LIFECYCLE_MIN_GAP_MS / 2).toISOString();
+    expect(
+      resolveHalfway(eligibleState(job, { lastLifecycleAcceptedAt: lastAccepted }), NOW),
+    ).toEqual({
+      action: "DEFER",
+      reason: "lifecycle_24h_cap",
+      eligibleAt: new Date(new Date(lastAccepted).getTime() + LIFECYCLE_MIN_GAP_MS).toISOString(),
+    });
+  });
+
+  it("returns SUPPRESS for unsubscribe and suppression, never CANCEL", () => {
+    const job = halfwayJob();
+    expect(
+      resolveHalfway(eligibleState(job, { marketingUnsubscribedAt: NOW.toISOString() }), NOW),
+    ).toEqual({ action: "SUPPRESS", reason: "marketing_unsubscribed" });
+    expect(
+      resolveHalfway(eligibleState(job, { emailSuppressedAt: NOW.toISOString() }), NOW),
+    ).toEqual({ action: "SUPPRESS", reason: "recipient_suppressed" });
+    expect(resolveHalfway(eligibleState(job, { suppressionListed: true }), NOW)).toEqual({
+      action: "SUPPRESS",
+      reason: "recipient_suppressed",
+    });
+  });
+
+  it("returns CANCEL with an approved cancellation reason", () => {
+    expect(resolveHalfway(eligibleState(halfwayJob({ job_version: "v9" })), NOW)).toEqual({
+      action: "CANCEL",
+      reason: "job_not_canonical",
+    });
+  });
+
+  it("maps each action to its dispatch outcome", async () => {
+    const send = harness();
+    expect((await dispatchHalfwayJobs(send.deps)).outcomes[0]?.outcome).toBe("sent");
+
+    const deferred = harness({ state: { planReadyAcceptedAt: null } });
+    expect((await dispatchHalfwayJobs(deferred.deps)).outcomes[0]?.outcome).toBe("deferred");
+    expect(deferred.adapter.requests).toHaveLength(0);
+
+    const suppressed = harness({ state: { suppressionListed: true } });
+    expect((await dispatchHalfwayJobs(suppressed.deps)).outcomes[0]?.outcome).toBe("suppressed");
+    expect(suppressed.adapter.requests).toHaveLength(0);
+
+    const canceled = harness({ state: { currentPlanVersionId: "version-2" } });
+    expect((await dispatchHalfwayJobs(canceled.deps)).outcomes[0]?.outcome).toBe("canceled");
+    expect(canceled.adapter.requests).toHaveLength(0);
+    expect(canceled.store.returnTokens).toHaveLength(0);
+  });
+});
+
+describe("Plan Completed is checked before every other Halfway gate", () => {
+  it("cancels for plan_completed even with a missing recipient", () => {
+    expect(
+      resolveHalfway(
+        eligibleState(halfwayJob(), { planCompletedControl: true, hasRecipient: false }),
+        NOW,
+      ),
+    ).toEqual({ action: "CANCEL", reason: "plan_completed" });
+  });
+
+  it("cancels for plan_completed even with suppression present", () => {
+    expect(
+      resolveHalfway(
+        eligibleState(halfwayJob(), {
+          planComplete: true,
+          suppressionListed: true,
+          marketingUnsubscribedAt: NOW.toISOString(),
+        }),
+        NOW,
+      ),
+    ).toEqual({ action: "CANCEL", reason: "plan_completed" });
+  });
+
+  it("cancels for plan_completed even when a deferral condition also applies", () => {
+    const lastAccepted = new Date(NOW.getTime() - 1000).toISOString();
+    expect(
+      resolveHalfway(
+        eligibleState(halfwayJob(), {
+          planCompletedControl: true,
+          planReadyAcceptedAt: null,
+          lastLifecycleAcceptedAt: lastAccepted,
+          hasRecipient: false,
+          suppressionListed: true,
+          requiredCompletions: 2,
+        }),
+        NOW,
+      ),
+    ).toEqual({ action: "CANCEL", reason: "plan_completed" });
+  });
+
+  it("still cancels through the dispatcher with no provider attempt", async () => {
+    const h = harness({ state: { planCompletedControl: true, suppressionListed: true } });
+    expect((await dispatchHalfwayJobs(h.deps)).outcomes[0]?.outcome).toBe("canceled");
+    expect(h.adapter.requests).toHaveLength(0);
+  });
+});
