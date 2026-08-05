@@ -433,8 +433,101 @@ export async function dispatchStartDayOneJobs(
   return { claimed: jobs.length, outcomes };
 }
 
+/**
+ * Claims due Halfway jobs and, immediately before each provider attempt,
+ * re-resolves authoritative progress state. A CANCEL resolution never renders,
+ * never derives a credential, never builds a payload, and never calls the
+ * provider.
+ *
+ * Priority: this loop runs below Plan Completed and above Start Day 1, so the
+ * shared 24-hour lifecycle gap is consumed by the higher-priority message first.
+ */
+export async function dispatchHalfwayJobs(
+  deps: HalfwayDispatchDeps,
+  options?: { limit?: number; leaseSeconds?: number },
+): Promise<DispatchSummary> {
+  const jobs = await deps.store.claimJobs(
+    HALFWAY_JOB_TYPE,
+    options?.limit ?? 10,
+    options?.leaseSeconds ?? 120,
+  );
+  const outcomes: DispatchSummary["outcomes"] = [];
+
+  for (const job of jobs) {
+    const state = await deps.loadHalfwayState({
+      job_id: job.job_id,
+      job_type: job.job_type,
+      job_version: job.job_version,
+      template_version: job.template_version,
+      lead_plan_id: job.lead_plan_id,
+      plan_version_id: job.plan_version_id,
+      eligible_at: job.eligible_at,
+    });
+    const resolution = resolveHalfway(state, deps.now());
+
+    if (resolution.action === "CANCEL") {
+      if (resolution.disposition === "defer") {
+        outcomes.push(
+          await finish(deps, job, "deferred", {
+            ...(resolution.eligibleAt ? { eligibleAt: resolution.eligibleAt } : {}),
+          }),
+        );
+      } else if (resolution.disposition === "suppress") {
+        outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
+      } else {
+        outcomes.push(await finish(deps, job, "canceled", {}));
+      }
+      continue;
+    }
+
+    const lead = await deps.store.getLead(job.lead_plan_id);
+    if (!lead || lead.plan_version_id !== job.plan_version_id) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    const guarded = await guardCommon(deps, job);
+    if (guarded) {
+      outcomes.push(guarded);
+      continue;
+    }
+
+    // The CTA reuses the ordinary open_plan credential with no job association,
+    // so a completed exchange redirects to the general plan hub.
+    const urls = await issueCredentials(deps, job, lead, false);
+    const rendered = renderHalfway(resolution, {
+      firstName: lead.first_name,
+      returnUrl: urls.returnUrl,
+      preferencesUrl: urls.preferencesUrl,
+    });
+    if (!rendered) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    outcomes.push(
+      await attemptSend(deps, job, {
+        to: lead.email_original,
+        fromEmail: deps.fromEmail,
+        fromName: deps.fromName,
+        replyTo: deps.replyTo,
+        subject: rendered.subject,
+        previewText: rendered.previewText,
+        html: rendered.html,
+        text: rendered.text,
+        idempotencyKey: job.idempotency_key,
+        correlationId: job.job_id,
+        disableClickTracking: true,
+      }),
+    );
+  }
+
+  return { claimed: jobs.length, outcomes };
+}
+
 /** Raises one operational alert per Plan Ready job still unsent after five minutes. */
 export async function raiseStalePlanReadyAlerts(deps: DispatchDeps): Promise<number> {
   const cutoff = new Date(deps.now().getTime() - STALE_PENDING_MS).toISOString();
   return deps.store.raiseStaleAlerts(PLAN_READY_JOB_TYPE, cutoff);
 }
+
