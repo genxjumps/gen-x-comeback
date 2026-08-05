@@ -10,7 +10,7 @@ import {
 } from "@/lib/email/return-destination";
 import {
   PLAN_READY_LINK_EXCHANGE_EVENT,
-  resolveLinkExchangeEvent,
+  resolveLinkExchangeAttribution,
 } from "@/lib/email/link-exchange-event";
 
 export type ExchangeResult =
@@ -62,17 +62,20 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
   // never from request input.
   let destination = DEFAULT_RETURN_DESTINATION;
   let exchangeEvent = PLAN_READY_LINK_EXCHANGE_EVENT;
+  let exchangeJobId: string | null = null;
   if (token.job_id) {
     const { data: jobs, error: jobError } = await supabaseAdmin
       .from("email_jobs")
-      .select("job_type, template_version, lead_plan_id, plan_version_id")
+      .select("job_id, job_type, job_version, template_version, lead_plan_id, plan_version_id")
       .eq("job_id", token.job_id)
       .limit(1);
     if (jobError) throw new Error(jobError.message);
     const job = jobs?.[0];
-    const identity: ReturnTokenJobIdentity | null = job
+    const identity: (ReturnTokenJobIdentity & { jobId: string | null }) | null = job
       ? {
+          jobId: job.job_id,
           jobType: job.job_type,
+          jobVersion: job.job_version,
           templateVersion: job.template_version,
           leadPlanId: job.lead_plan_id,
           planVersionId: job.plan_version_id,
@@ -85,7 +88,9 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
       job: identity,
     };
     destination = resolveReturnDestination(trusted);
-    exchangeEvent = resolveLinkExchangeEvent(trusted);
+    const attribution = resolveLinkExchangeAttribution(trusted);
+    exchangeEvent = attribution.eventName;
+    exchangeJobId = attribution.jobId;
   }
 
   const sessionToken = generateAccessToken();
@@ -120,6 +125,8 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
       event_name: exchangeEvent,
       lead_plan_id: lead.id,
       plan_version_id: lead.plan_version_id,
+      // Internal job identifier only; no recipient or assessment data.
+      job_id: exchangeJobId,
       occurred_at: nowIso,
     },
     {

@@ -32,7 +32,12 @@ import {
   type EmailJobRow,
 } from "@/lib/email/types";
 import { LIFECYCLE_MIN_GAP_MS } from "@/lib/email/start-day-1-resolver";
-import { resolveHalfway, type HalfwayState } from "@/lib/email/halfway-resolver";
+import {
+  halfwayEffectiveFloorMs,
+  resolveHalfway,
+  type HalfwayState,
+} from "@/lib/email/halfway-resolver";
+import { deriveEmailCredential } from "@/lib/email/credentials.server";
 import { loadHalfwayState, requiredDayNumbers } from "@/lib/email/halfway-state.server";
 import {
   HALFWAY_BODY_PARAGRAPHS,
@@ -53,6 +58,7 @@ import {
   HALFWAY_LINK_EXCHANGE_EVENT,
   PLAN_READY_LINK_EXCHANGE_EVENT,
   resolveLinkExchangeEvent,
+  resolveLinkExchangeAttribution,
 } from "@/lib/email/link-exchange-event";
 import { hashAccessToken } from "@/lib/lead-plan";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
@@ -474,8 +480,8 @@ describe("R15 the 24-hour lifecycle gap defers without any provider attempt", ()
     expect(stored.next_attempt_at).toBe(
       new Date(new Date(lastAccepted).getTime() + LIFECYCLE_MIN_GAP_MS).toISOString(),
     );
-    // Claim semantics own attempt_count; a deferral adds nothing beyond them.
-    expect(stored.attempt_count).toBe(1);
+    // A deferral is not a provider attempt: the claim-time increment is restored.
+    expect(stored.attempt_count).toBe(0);
     expect(stored.first_provider_attempt_at ?? null).toBeNull();
     expect(eventNames(h.store)).toEqual([]);
   });
@@ -970,6 +976,7 @@ async function seedExchange(job: ExRow | null, purpose = "open_plan") {
 
 const HALFWAY_JOB_ROW: ExRow = {
   job_type: HALFWAY_JOB_TYPE,
+  job_version: HALFWAY_JOB_VERSION,
   template_version: HALFWAY_TEMPLATE_VERSION,
   lead_plan_id: LEAD,
   plan_version_id: VERSION,
@@ -1224,6 +1231,70 @@ describe("Halfway resolves exactly four explicit dispatch actions", () => {
     expect((await dispatchHalfwayJobs(canceled.deps)).outcomes[0]?.outcome).toBe("canceled");
     expect(canceled.adapter.requests).toHaveLength(0);
     expect(canceled.store.returnTokens).toHaveLength(0);
+  });
+});
+
+describe("Halfway contract corrections", () => {
+  it("restores the pre-claim attempt count on every deferral", async () => {
+    const h = harness({ state: { planReadyAcceptedAt: null } });
+    await dispatchHalfwayJobs(h.deps);
+    const stored = h.store.jobs.get(h.job.job_id)!;
+    expect(stored.status).toBe("retry_scheduled");
+    expect(stored.attempt_count).toBe(0);
+    expect(eventNames(h.store)).toEqual([]);
+    expect(h.adapter.requests).toHaveLength(0);
+  });
+
+  it("applies the full 24-hour Plan Ready ordering gap to the eligibility floor", () => {
+    const accepted = "2026-02-07T00:00:00.000Z";
+    const floor = halfwayEffectiveFloorMs("2026-02-07T06:00:00.000Z", accepted);
+    expect(new Date(floor).toISOString()).toBe("2026-02-08T00:00:00.000Z");
+    expect(
+      halfwayEffectiveFloorMs("2026-02-10T00:00:00.000Z", accepted),
+    ).toBe(new Date("2026-02-10T00:00:00.000Z").getTime());
+  });
+
+  it("derives a distinct open_plan credential per logical job for one plan version", () => {
+    const halfway = deriveEmailCredential("s", "open_plan", VERSION, `halfway:${VERSION}:v1`);
+    const planReady = deriveEmailCredential("s", "open_plan", VERSION, `plan_ready:${VERSION}:v1`);
+    expect(halfway).not.toBe(planReady);
+    // Retrying the same logical job reproduces the identical credential.
+    expect(deriveEmailCredential("s", "open_plan", VERSION, `halfway:${VERSION}:v1`)).toBe(halfway);
+  });
+
+  it("rejects a non-canonical job version for Halfway attribution", () => {
+    const base = {
+      purpose: "open_plan",
+      leadPlanId: LEAD,
+      planVersionId: VERSION,
+      job: {
+        jobId: JOB_ID,
+        jobType: HALFWAY_JOB_TYPE,
+        templateVersion: HALFWAY_TEMPLATE_VERSION,
+        leadPlanId: LEAD,
+        planVersionId: VERSION,
+      },
+    };
+    expect(
+      resolveLinkExchangeAttribution({ ...base, job: { ...base.job, jobVersion: "v2" } }),
+    ).toEqual({ eventName: PLAN_READY_LINK_EXCHANGE_EVENT, jobId: null });
+    expect(
+      resolveLinkExchangeAttribution({
+        ...base,
+        job: { ...base.job, jobVersion: HALFWAY_JOB_VERSION },
+      }),
+    ).toEqual({ eventName: HALFWAY_LINK_EXCHANGE_EVENT, jobId: JOB_ID });
+  });
+
+  it("attributes the exchange event to its originating job id", async () => {
+    await seedExchange(HALFWAY_JOB_ROW);
+    await exchange(RAW);
+    const rows = ex.writes
+      .filter((w) => w.table === "canonical_events" && w.op === "insert")
+      .flatMap((w) => w.payload as ExRow[])
+      .filter((row) => row["event_name"] === HALFWAY_LINK_EXCHANGE_EVENT);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]!["job_id"]).toBe(JOB_ID);
   });
 });
 

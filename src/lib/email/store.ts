@@ -56,6 +56,18 @@ export type EmailStore = {
     patch: EmailJobPatch,
     eventName?: string | null,
   ): Promise<boolean>;
+  /**
+   * Fenced deferral transition used only by a Halfway DEFER. A deferral is not
+   * a provider attempt, so it restores the pre-claim attempt count, releases the
+   * lease, schedules the resolver-approved next attempt time, and emits no
+   * event. Returns false when the claim token no longer matches (lost lease).
+   */
+  deferJob(
+    jobId: string,
+    claimToken: string | null,
+    nextAttemptAt: string,
+    restoredAttemptCount: number,
+  ): Promise<boolean>;
   /** Transactional, rank-guarded delivery transition. */
   applyDeliveryEvent(
     jobId: string,

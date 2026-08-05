@@ -115,6 +115,23 @@ export function createMemoryStore(now: () => Date): MemoryStore {
       else preferenceCredentials.push({ leadPlanId, tokenHash });
     },
 
+    async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {
+      const job = jobs.get(jobId);
+      if (!job) return false;
+      // Same fencing as a terminal transition; no event is ever written.
+      if (job.status !== "processing" || !claimToken || job.claim_token !== claimToken)
+        return false;
+      Object.assign(job, {
+        status: "retry_scheduled",
+        next_attempt_at: nextAttemptAt,
+        attempt_count: restoredAttemptCount,
+        claim_token: null,
+        locked_at: null,
+        lease_expires_at: null,
+      });
+      return true;
+    },
+
     async finishJob(jobId, claimToken, status, patch, eventName) {
       const job = jobs.get(jobId);
       if (!job) return false;
