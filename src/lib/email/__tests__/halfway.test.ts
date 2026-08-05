@@ -1212,7 +1212,7 @@ describe("Halfway resolves exactly four explicit dispatch actions", () => {
 
   it("maps each action to its dispatch outcome", async () => {
     const send = harness();
-    expect((await dispatchHalfwayJobs(send.deps)).outcomes[0]?.outcome).toBe("sent");
+    expect((await dispatchHalfwayJobs(send.deps)).outcomes[0]?.outcome).toBe("provider_accepted");
 
     const deferred = harness({ state: { planReadyAcceptedAt: null } });
     expect((await dispatchHalfwayJobs(deferred.deps)).outcomes[0]?.outcome).toBe("deferred");
