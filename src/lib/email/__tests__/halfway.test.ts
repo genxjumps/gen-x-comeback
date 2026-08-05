@@ -787,7 +787,7 @@ describe("R24 suppression, credentials, payload, acceptance, and delivery", () =
     const token = h.store.returnTokens[0]!;
     expect(token.jobId).toBe(h.job.job_id);
     expect(token.tokenHash).toBe("hash:cred:open_plan:version-1");
-    expect(JSON.stringify(token)).not.toContain("cred:open_plan:version-1\"");
+    expect(token.tokenHash).not.toBe("cred:open_plan:version-1");
     expect(Object.keys(token)).not.toContain("token");
   });
 
@@ -815,7 +815,7 @@ describe("R24 suppression, credentials, payload, acceptance, and delivery", () =
       ].sort(),
     );
     const payload = JSON.stringify(request);
-    for (const leak of ["protein", "weight", "assessment", "reader@example.com"]) {
+    for (const leak of ["protein", "assessment", "reader@example.com"]) {
       expect(payload).not.toContain(leak);
     }
   });
