@@ -20,6 +20,11 @@ export const HALFWAY_TRIGGER_COMPLETIONS = 4;
 export const HALFWAY_MIN_COMPLETIONS = 4;
 export const HALFWAY_MAX_COMPLETIONS = 6;
 
+/**
+ * Plan Completed is the highest-priority lifecycle message. It is not yet
+ * implemented, but its job type is named here so Halfway can always yield to it.
+ */
+export const PLAN_COMPLETED_JOB_TYPE = "plan_completed";
 
 /** Contract retry schedule: delays after each preceding transient failure. */
 export const RETRY_DELAYS_MS = [

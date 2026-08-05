@@ -173,7 +173,6 @@ export const completePlanDay = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
-
     return { ok: true, completedDays: await listCompletedDays(access.leadPlanId) };
   });
 
@@ -258,7 +257,6 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
 
     return { ok: true, firstName: result.first_name, plan };
   });
-
 
 export const getPlanHub = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))

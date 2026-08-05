@@ -31,7 +31,6 @@ import {
   type StartDayOneState,
 } from "@/lib/email/start-day-1-resolver";
 
-
 export type DispatchDeps = {
   store: EmailStore;
   adapter: EmailAdapter;
@@ -57,7 +56,6 @@ export type StartDayOneDispatchDeps = DispatchDeps & {
 export type HalfwayDispatchDeps = DispatchDeps & {
   loadHalfwayState: (job: HalfwayJob) => Promise<HalfwayState>;
 };
-
 
 export type JobOutcome =
   | "provider_accepted"
@@ -544,4 +542,3 @@ export async function raiseStalePlanReadyAlerts(deps: DispatchDeps): Promise<num
   const cutoff = new Date(deps.now().getTime() - STALE_PENDING_MS).toISOString();
   return deps.store.raiseStaleAlerts(PLAN_READY_JOB_TYPE, cutoff);
 }
-
