@@ -87,7 +87,6 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           halfway,
           start_day_1: startDayOne,
         });
-
       },
     },
   },

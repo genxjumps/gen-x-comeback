@@ -77,6 +77,5 @@ describe("Day 1 start contract", () => {
     const completionWrite = completion.indexOf('rpc("complete_plan_day_atomic"');
     expect(startCall).toBeGreaterThan(-1);
     expect(completionWrite).toBeGreaterThan(startCall);
-
   });
 });
