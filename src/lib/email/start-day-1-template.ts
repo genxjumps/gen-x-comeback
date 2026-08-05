@@ -154,5 +154,13 @@ ${bodyHtml}
 </table>
 </body></html>`;
 
-  return { subject, previewText, html, text, personalizedName: name, renderVariant: variant, ctaLabel };
+  return {
+    subject,
+    previewText,
+    html,
+    text,
+    personalizedName: name,
+    renderVariant: variant,
+    ctaLabel,
+  };
 }
