@@ -1,7 +1,7 @@
 // Tests for the Plan Ready correction pass: lease fencing, the idempotency
 // horizon, stable derived credentials, early-webhook reconciliation, and the
 // hardened public HTML responses. Deterministic: no provider, database, or network.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { dispatchPlanReadyJobs, type DispatchDeps } from "@/lib/email/dispatch";
 import { deriveEmailCredential } from "@/lib/email/credentials.server";
