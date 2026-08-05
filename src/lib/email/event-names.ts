@@ -24,9 +24,15 @@ const PREFIXES: Record<string, string> = {
 /**
  * Outcomes that do not emit a canonical event for a given job type.
  * Plan Ready cancellation stays silent, exactly as it already behaves.
+ *
+ * Halfway manual review stays silent too: Section 7.10.1 enumerates exactly
+ * eight approved Halfway canonical events and none of them is a manual-review
+ * event. The job still parks in its existing manual-review state and still
+ * raises the existing operational alert; only the unapproved event is withheld.
  */
 const OMITTED: Record<string, ReadonlySet<LifecycleEventOutcome>> = {
   [PLAN_READY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["canceled"]),
+  [HALFWAY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
 };
 
 /** Canonical event name for one job type and outcome, or null when omitted. */
