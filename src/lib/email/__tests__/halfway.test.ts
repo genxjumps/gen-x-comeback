@@ -32,7 +32,12 @@ import {
   type EmailJobRow,
 } from "@/lib/email/types";
 import { LIFECYCLE_MIN_GAP_MS } from "@/lib/email/start-day-1-resolver";
-import { resolveHalfway, type HalfwayState } from "@/lib/email/halfway-resolver";
+import {
+  halfwayEffectiveFloorMs,
+  resolveHalfway,
+  type HalfwayState,
+} from "@/lib/email/halfway-resolver";
+import { deriveEmailCredential } from "@/lib/email/credentials.server";
 import { loadHalfwayState, requiredDayNumbers } from "@/lib/email/halfway-state.server";
 import {
   HALFWAY_BODY_PARAGRAPHS,
@@ -53,6 +58,7 @@ import {
   HALFWAY_LINK_EXCHANGE_EVENT,
   PLAN_READY_LINK_EXCHANGE_EVENT,
   resolveLinkExchangeEvent,
+  resolveLinkExchangeAttribution,
 } from "@/lib/email/link-exchange-event";
 import { hashAccessToken } from "@/lib/lead-plan";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
