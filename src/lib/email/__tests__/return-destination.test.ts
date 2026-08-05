@@ -158,7 +158,7 @@ describe("POST /return destination behavior", () => {
     });
     expect(res.headers.get("location")).toBe("/your-plan");
     // Only the token is ever read from the request.
-    const arg = exchangeReturnToken.mock.calls[0]?.[0];
+    const arg = (exchangeReturnToken.mock.calls as unknown as unknown[][])[0]?.[0];
     expect(arg).toBe("f".repeat(43));
   });
 
