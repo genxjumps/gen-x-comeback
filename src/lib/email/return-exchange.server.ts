@@ -111,5 +111,5 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
     },
   ]);
 
-  return { ok: true, sessionToken, expiresAt };
+  return { ok: true, sessionToken, expiresAt, destination };
 }
