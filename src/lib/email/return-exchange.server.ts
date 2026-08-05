@@ -6,7 +6,12 @@ import {
   DEFAULT_RETURN_DESTINATION,
   resolveReturnDestination,
   type ReturnDestination,
+  type ReturnTokenJobIdentity,
 } from "@/lib/email/return-destination";
+import {
+  PLAN_READY_LINK_EXCHANGE_EVENT,
+  resolveLinkExchangeEvent,
+} from "@/lib/email/link-exchange-event";
 
 export type ExchangeResult =
   | { ok: true; sessionToken: string; expiresAt: Date; destination: ReturnDestination }
@@ -53,8 +58,10 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
   // A replaced plan version must never be restored by an old link.
   if (lead.plan_version_id !== token.plan_version_id) return { ok: false };
 
-  // Destination comes only from trusted server-side state, never from input.
+  // Destination and event selection come only from trusted server-side state,
+  // never from request input.
   let destination = DEFAULT_RETURN_DESTINATION;
+  let exchangeEvent = PLAN_READY_LINK_EXCHANGE_EVENT;
   if (token.job_id) {
     const { data: jobs, error: jobError } = await supabaseAdmin
       .from("email_jobs")
@@ -63,19 +70,22 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
       .limit(1);
     if (jobError) throw new Error(jobError.message);
     const job = jobs?.[0];
-    destination = resolveReturnDestination({
+    const identity: ReturnTokenJobIdentity | null = job
+      ? {
+          jobType: job.job_type,
+          templateVersion: job.template_version,
+          leadPlanId: job.lead_plan_id,
+          planVersionId: job.plan_version_id,
+        }
+      : null;
+    const trusted = {
       purpose: token.purpose,
       leadPlanId: lead.id,
       planVersionId: lead.plan_version_id,
-      job: job
-        ? {
-            jobType: job.job_type,
-            templateVersion: job.template_version,
-            leadPlanId: job.lead_plan_id,
-            planVersionId: job.plan_version_id,
-          }
-        : null,
-    });
+      job: identity,
+    };
+    destination = resolveReturnDestination(trusted);
+    exchangeEvent = resolveLinkExchangeEvent(trusted);
   }
 
   const sessionToken = generateAccessToken();
@@ -107,7 +117,7 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
 
   await supabaseAdmin.from("canonical_events").insert([
     {
-      event_name: "email_plan_ready_link_exchange_completed",
+      event_name: exchangeEvent,
       lead_plan_id: lead.id,
       plan_version_id: lead.plan_version_id,
       occurred_at: nowIso,

@@ -3,7 +3,7 @@
 // Read-only: every query is a SELECT against persisted state. It never mutates
 // rows, never records events, and never reads request, URL, or browser state.
 import type { HalfwayJob, HalfwayState } from "@/lib/email/halfway-resolver";
-import { PLAN_READY_JOB_TYPE } from "@/lib/email/types";
+import { PLAN_COMPLETED_JOB_TYPE, PLAN_READY_JOB_TYPE } from "@/lib/email/types";
 import type { StartDayOneQueryClient } from "@/lib/email/start-day-1-state.server";
 
 type Row = Record<string, unknown>;
@@ -32,6 +32,25 @@ function isValidRecipient(value: string | null): boolean {
 }
 
 /**
+ * Required day numbers of a saved plan version.
+ *
+ * Only the top-level `plan_json.days` assignments are required. A nested
+ * `days[].optional` Active Recovery session is never a required completion and
+ * never contributes a day number. This mirrors the atomic completion boundary.
+ */
+export function requiredDayNumbers(planJson: unknown): number[] {
+  const days = (planJson as { days?: unknown } | null | undefined)?.days;
+  if (!Array.isArray(days)) return [];
+  const numbers: number[] = [];
+  days.forEach((entry, index) => {
+    const raw = (entry as { day?: unknown } | null)?.day;
+    const day = typeof raw === "number" && Number.isFinite(raw) ? raw : index + 1;
+    if (Number.isInteger(day) && day > 0 && !numbers.includes(day)) numbers.push(day);
+  });
+  return numbers.sort((a, b) => a - b);
+}
+
+/**
  * Loads the authoritative persisted state for one claimed Halfway job.
  * Accepts an injected client for tests; defaults to the service-role client.
  */
@@ -49,7 +68,7 @@ export async function loadHalfwayState(
       db
         .from("lead_plans")
         .select(
-          "id, plan_version_id, email_original, email_normalized, marketing_unsubscribed_at, email_suppressed_at",
+          "id, plan_version_id, plan_json, email_original, email_normalized, marketing_unsubscribed_at, email_suppressed_at",
         )
         .eq("id", job.lead_plan_id)
         .limit(1),
@@ -99,6 +118,23 @@ export async function loadHalfwayState(
       )
     : [];
 
+  // Plan Completed control is presence-only: any Plan Completed job for this
+  // plan version wins, in any state, with no timestamp tie-breaker.
+  const planCompletedJobs = await rows(
+    db
+      .from("email_jobs")
+      .select("job_id")
+      .eq("plan_version_id", job.plan_version_id)
+      .eq("job_type", PLAN_COMPLETED_JOB_TYPE)
+      .limit(1),
+  );
+
+  const required = requiredDayNumbers(leadRow?.["plan_json"]);
+  const requiredCompletions = completions.filter((row) => {
+    const value = row["day_number"];
+    return typeof value === "number" && required.includes(value);
+  }).length;
+
   const lastLifecycleAcceptedAt =
     lifecycleJobs
       .filter(
@@ -119,7 +155,10 @@ export async function loadHalfwayState(
     marketingUnsubscribedAt: str(leadRow, "marketing_unsubscribed_at"),
     emailSuppressedAt: str(leadRow, "email_suppressed_at"),
     suppressionListed: suppressions.length > 0,
-    requiredCompletions: completions.length,
+    requiredCompletions,
+    totalRequiredAssignments: required.length,
+    planComplete: required.length > 0 && requiredCompletions >= required.length,
+    planCompletedControl: planCompletedJobs.length > 0,
     planReadyAcceptedAt: str(planReadyJobs[0], "provider_accepted_at"),
     lastLifecycleAcceptedAt,
   };

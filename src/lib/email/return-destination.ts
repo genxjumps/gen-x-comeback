@@ -40,8 +40,10 @@ export type ReturnDestinationInput = {
  * originating job is a `start_day_1` / `start_day_1_v1` job (START and RESUME
  * share that job contract), and that job belongs to exactly the same lead and
  * plan version as the validated token. Recovery-purpose tokens, mismatched job
- * ownership or version, Plan Ready jobs, tokens with no job, and unknown or
- * mismatched job state all resolve to the general plan hub.
+ * ownership or version, Plan Ready jobs, Halfway jobs, tokens with no job, and
+ * unknown or mismatched job state all resolve to the general plan hub. A trusted
+ * Halfway job association is deliberately part of that closed default: Halfway
+ * opens the plan hub, never a specific day page.
  */
 export function resolveReturnDestination(input: ReturnDestinationInput): ReturnDestination {
   if (input.purpose !== OPEN_PLAN_TOKEN_PURPOSE) return DEFAULT_RETURN_DESTINATION;

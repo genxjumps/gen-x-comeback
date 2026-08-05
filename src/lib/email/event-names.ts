@@ -21,7 +21,6 @@ const PREFIXES: Record<string, string> = {
   [HALFWAY_JOB_TYPE]: "email_halfway",
 };
 
-
 /**
  * Outcomes that do not emit a canonical event for a given job type.
  * Plan Ready cancellation stays silent, exactly as it already behaves.

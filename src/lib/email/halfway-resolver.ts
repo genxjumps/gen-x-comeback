@@ -39,8 +39,22 @@ export type HalfwayState = {
   emailSuppressedAt: string | null;
   /** Suppression list membership (hard bounce or complaint). */
   suppressionListed: boolean;
-  /** Server-authoritative count of required day completions for this plan. */
+  /**
+   * Server-authoritative count of completions that match a top-level
+   * plan_json.days required assignment. Nested optional Active Recovery
+   * sessions never contribute.
+   */
   requiredCompletions: number;
+  /** Total top-level required assignments in the saved plan version. */
+  totalRequiredAssignments: number;
+  /** Authoritative plan-complete flag: every required assignment is complete. */
+  planComplete: boolean;
+  /**
+   * True when the Plan Completed lifecycle message already controls this plan
+   * version (its job exists in any state). It always wins, with no timestamp
+   * tie-breaker of any kind.
+   */
+  planCompletedControl: boolean;
   /** Plan Ready provider acceptance time for this plan version. */
   planReadyAcceptedAt: string | null;
   /** Most recent accepted non-Plan-Ready lifecycle email for this plan. */
@@ -51,6 +65,7 @@ export type HalfwayCancelReason =
   | "job_not_canonical"
   | "plan_version_replaced"
   | "recipient_missing"
+  | "plan_completed"
   | "progress_window_not_reached"
   | "progress_window_passed"
   | "marketing_unsubscribed"
@@ -81,6 +96,8 @@ const DISPOSITIONS: Record<HalfwayCancelReason, HalfwayCancelDisposition> = {
   job_not_canonical: "cancel",
   plan_version_replaced: "cancel",
   recipient_missing: "cancel",
+  // A finished plan belongs to Plan Completed, permanently, for this version.
+  plan_completed: "cancel",
   // Progress only moves forward within a plan version, so a window miss in
   // either direction is permanent for this job.
   progress_window_not_reached: "cancel",
@@ -126,6 +143,10 @@ export function resolveHalfway(state: HalfwayState, now: Date): HalfwayResolutio
   }
 
   if (!state.hasRecipient) return cancel("recipient_missing");
+
+  // Plan Completed control, or an authoritatively complete plan, always cancels.
+  // There is no timestamp comparison and no tie-breaker at this boundary.
+  if (state.planCompletedControl || state.planComplete) return cancel("plan_completed");
 
   if (state.requiredCompletions < HALFWAY_MIN_COMPLETIONS) {
     return cancel("progress_window_not_reached");

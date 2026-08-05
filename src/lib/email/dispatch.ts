@@ -31,7 +31,6 @@ import {
   type StartDayOneState,
 } from "@/lib/email/start-day-1-resolver";
 
-
 export type DispatchDeps = {
   store: EmailStore;
   adapter: EmailAdapter;
@@ -57,7 +56,6 @@ export type StartDayOneDispatchDeps = DispatchDeps & {
 export type HalfwayDispatchDeps = DispatchDeps & {
   loadHalfwayState: (job: HalfwayJob) => Promise<HalfwayState>;
 };
-
 
 export type JobOutcome =
   | "provider_accepted"
@@ -506,13 +504,15 @@ export async function dispatchHalfwayJobs(
       continue;
     }
 
-    // The CTA reuses the ordinary open_plan credential with no job association,
-    // so a completed exchange redirects to the general plan hub.
-    const urls = await issueCredentials(deps, job, lead, false);
+    // The CTA reuses the ordinary open_plan credential, associated with this
+    // Halfway job so a completed exchange can be attributed. Only the token hash
+    // is ever stored. The trusted destination stays the general plan hub.
+    const urls = await issueCredentials(deps, job, lead, true);
     const rendered = renderHalfway(resolution, {
       firstName: lead.first_name,
       returnUrl: urls.returnUrl,
       preferencesUrl: urls.preferencesUrl,
+      appOrigin: deps.appOrigin,
     });
     if (!rendered) {
       outcomes.push(await finish(deps, job, "canceled", {}));
@@ -544,4 +544,3 @@ export async function raiseStalePlanReadyAlerts(deps: DispatchDeps): Promise<num
   const cutoff = new Date(deps.now().getTime() - STALE_PENDING_MS).toISOString();
   return deps.store.raiseStaleAlerts(PLAN_READY_JOB_TYPE, cutoff);
 }
-

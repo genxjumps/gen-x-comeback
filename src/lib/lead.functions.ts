@@ -161,18 +161,21 @@ export const completePlanDay = createServerFn({ method: "POST" })
       if (!started.ok) return { ok: false };
     }
 
-    // One transaction records the completion and, on the authoritative
-    // transition from 3 to 4 required completions, resets the inactivity clock,
-    // records the milestone, and creates exactly one Halfway outbox job. No
-    // provider call happens here.
+    // One transaction validates the plan version, validates that the day is a
+    // top-level required assignment, enforces sequential progression, records the
+    // completion, and on the authoritative transition from 3 to 4 required
+    // completions creates exactly one Halfway outbox job plus its queued event.
+    // No provider call happens here.
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.rpc("complete_plan_day_atomic", {
+    const { data: applied, error } = await supabaseAdmin.rpc("complete_plan_day_atomic", {
       p_lead_plan_id: access.leadPlanId,
       p_plan_version_id: access.planVersionId,
       p_day_number: data.day,
     });
     if (error) throw new Error(error.message);
-
+    // No row means the transaction refused the request: a replaced plan version,
+    // a day that is not a top-level required assignment, or out-of-order progress.
+    if (!Array.isArray(applied) || applied.length === 0) return { ok: false };
 
     return { ok: true, completedDays: await listCompletedDays(access.leadPlanId) };
   });
@@ -258,7 +261,6 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
 
     return { ok: true, firstName: result.first_name, plan };
   });
-
 
 export const getPlanHub = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
