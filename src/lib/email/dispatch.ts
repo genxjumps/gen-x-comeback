@@ -39,7 +39,12 @@ export type DispatchDeps = {
    * Stable per-plan-version credential derivation. Retrying one job must yield
    * the identical return and preference links, never a second live credential.
    */
-  deriveCredential: (purpose: "open_plan" | "email_preferences", planVersionId: string) => string;
+  deriveCredential: (
+    purpose: "open_plan" | "email_preferences",
+    planVersionId: string,
+    /** Opaque logical-job scope for job-associated open_plan credentials. */
+    scope?: string,
+  ) => string;
   hash: (raw: string) => Promise<string>;
 };
 
@@ -209,9 +214,14 @@ async function guardCommon(
   // when the job first became attemptable, so a deliberately delayed job (Start
   // Day 1 waits 24 hours) is not parked for its own scheduled delay. Plan Ready
   // is unaffected: its eligibility equals its creation time.
+  // A resolver-approved timing deferral legitimately moves the next attempt
+  // beyond the original eligibility, so the persisted next_attempt_at is part of
+  // the floor. Without it a correctly deferred job would later be parked for
+  // manual review purely because it waited as instructed.
   const horizonFrom = Math.max(
     new Date(job.created_at).getTime(),
     new Date(job.eligible_at).getTime(),
+    job.next_attempt_at ? new Date(job.next_attempt_at).getTime() : 0,
   );
   if (deps.now().getTime() - horizonFrom > IDEMPOTENCY_HORIZON_MS) {
     return finish(deps, job, "manual_review", { errorCode: "idempotency_horizon_exceeded" });
@@ -228,7 +238,13 @@ async function issueCredentials(
   associateJob: boolean,
 ): Promise<{ returnUrl: string; preferencesUrl: string }> {
   const issuedAt = deps.now();
-  const rawReturnToken = deps.deriveCredential("open_plan", lead.plan_version_id);
+  // Job-associated open_plan credentials are scoped by the logical job key, so
+  // Plan Ready, Start Day 1, and Halfway for one plan version can never collide
+  // on one token hash and overwrite each other's job association. Retrying the
+  // same logical job still reproduces the identical credential.
+  const rawReturnToken = associateJob
+    ? deps.deriveCredential("open_plan", lead.plan_version_id, job.idempotency_key)
+    : deps.deriveCredential("open_plan", lead.plan_version_id);
   const rawPreferencesToken = deps.deriveCredential("email_preferences", lead.plan_version_id);
 
   await deps.store.insertReturnToken({
@@ -474,11 +490,17 @@ export async function dispatchHalfwayJobs(
     const resolution = resolveHalfway(state, deps.now());
 
     if (resolution.action === "DEFER") {
-      outcomes.push(
-        await finish(deps, job, "deferred", {
-          ...(resolution.eligibleAt ? { eligibleAt: resolution.eligibleAt } : {}),
-        }),
+      // A deferral is not a provider attempt: the shared claim RPC already
+      // incremented attempt_count on lease claim, so the fenced deferral
+      // transition restores the pre-claim count and emits no retry event.
+      const nextAttemptAt = resolution.eligibleAt ?? deps.now().toISOString();
+      const fenced = await deps.store.deferJob(
+        job.job_id,
+        job.claim_token,
+        nextAttemptAt,
+        Math.max(job.attempt_count - 1, 0),
       );
+      outcomes.push({ jobId: job.job_id, outcome: fenced ? "deferred" : "lost_lease" });
       continue;
     }
 

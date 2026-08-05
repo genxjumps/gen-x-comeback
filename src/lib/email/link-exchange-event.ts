@@ -4,7 +4,11 @@
 // The event is chosen only from validated server-side state (token purpose plus
 // the originating job's type, template version, and lead/plan ownership). A raw
 // GET, prefetch, scanner, provider open, or provider click never reaches here.
-import { HALFWAY_JOB_TYPE, HALFWAY_TEMPLATE_VERSION } from "@/lib/email/types";
+import {
+  HALFWAY_JOB_TYPE,
+  HALFWAY_JOB_VERSION,
+  HALFWAY_TEMPLATE_VERSION,
+} from "@/lib/email/types";
 import {
   OPEN_PLAN_TOKEN_PURPOSE,
   type ReturnTokenJobIdentity,
@@ -23,7 +27,7 @@ export type LinkExchangeEventInput = {
   leadPlanId: string;
   planVersionId: string;
   /** Originating email job, or null when the token has no job association. */
-  job?: ReturnTokenJobIdentity | null;
+  job?: (ReturnTokenJobIdentity & { jobId?: string | null }) | null;
 };
 
 /**
@@ -36,18 +40,29 @@ export type LinkExchangeEventInput = {
  * recovery-purpose tokens all keep the general event.
  */
 export function resolveLinkExchangeEvent(input: LinkExchangeEventInput): string {
-  if (input.purpose !== OPEN_PLAN_TOKEN_PURPOSE) return PLAN_READY_LINK_EXCHANGE_EVENT;
+  return resolveLinkExchangeAttribution(input).eventName;
+}
+
+/**
+ * Trusted attribution for a completed exchange: the canonical event name and,
+ * for Halfway only, the originating job id. The job id is an internal
+ * identifier, so including it keeps the no-PII event boundary intact.
+ */
+export function resolveLinkExchangeAttribution(input: LinkExchangeEventInput): {
+  eventName: string;
+  jobId: string | null;
+} {
+  const general = { eventName: PLAN_READY_LINK_EXCHANGE_EVENT, jobId: null };
+  if (input.purpose !== OPEN_PLAN_TOKEN_PURPOSE) return general;
 
   const job = input.job;
-  if (!job) return PLAN_READY_LINK_EXCHANGE_EVENT;
-  if (job.jobType !== HALFWAY_JOB_TYPE) return PLAN_READY_LINK_EXCHANGE_EVENT;
-  if (job.templateVersion !== HALFWAY_TEMPLATE_VERSION) return PLAN_READY_LINK_EXCHANGE_EVENT;
-  if (!job.leadPlanId || job.leadPlanId !== input.leadPlanId) {
-    return PLAN_READY_LINK_EXCHANGE_EVENT;
-  }
-  if (!job.planVersionId || job.planVersionId !== input.planVersionId) {
-    return PLAN_READY_LINK_EXCHANGE_EVENT;
-  }
+  if (!job) return general;
+  if (job.jobType !== HALFWAY_JOB_TYPE) return general;
+  if (job.jobVersion !== HALFWAY_JOB_VERSION) return general;
+  if (job.templateVersion !== HALFWAY_TEMPLATE_VERSION) return general;
+  if (!job.leadPlanId || job.leadPlanId !== input.leadPlanId) return general;
+  if (!job.planVersionId || job.planVersionId !== input.planVersionId) return general;
+  if (!job.jobId) return general;
 
-  return HALFWAY_LINK_EXCHANGE_EVENT;
+  return { eventName: HALFWAY_LINK_EXCHANGE_EVENT, jobId: job.jobId };
 }

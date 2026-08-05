@@ -111,6 +111,17 @@ function ms(iso: string): number {
 }
 
 /**
+ * Effective eligibility floor: the later of the job's own eligible_at and the
+ * Plan Ready provider acceptance plus the 24-hour lifecycle gap.
+ */
+export function halfwayEffectiveFloorMs(
+  eligibleAtIso: string,
+  planReadyAcceptedAtIso: string,
+): number {
+  return Math.max(ms(eligibleAtIso), ms(planReadyAcceptedAtIso) + LIFECYCLE_MIN_GAP_MS);
+}
+
+/**
  * Resolves one claimed Halfway job. Safe to call immediately after the existing
  * shared lease claim, and intended to run on freshly reloaded state so late
  * progress (a 7th completion) or a suppression can still stop the send.
@@ -150,7 +161,10 @@ export function resolveHalfway(state: HalfwayState, now: Date): HalfwayResolutio
 
   if (!state.planReadyAcceptedAt) return defer("plan_ready_not_accepted");
 
-  const floor = ms(job.eligible_at);
+  // Full global 24-hour lifecycle spacing: a recent Plan Ready acceptance defers
+  // Halfway to acceptance + 24 hours, exactly like the Plan Ready ordering rule
+  // Start Day 1 already applies.
+  const floor = halfwayEffectiveFloorMs(job.eligible_at, state.planReadyAcceptedAt);
   if (now.getTime() < floor) {
     return defer("eligibility_floor_not_reached", new Date(floor).toISOString());
   }

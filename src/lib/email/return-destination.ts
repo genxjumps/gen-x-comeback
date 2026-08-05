@@ -17,6 +17,7 @@ export const OPEN_PLAN_TOKEN_PURPOSE = "open_plan";
 /** Trusted server-side originating job identity for a return token. */
 export type ReturnTokenJobIdentity = {
   jobType: string | null | undefined;
+  jobVersion: string | null | undefined;
   templateVersion: string | null | undefined;
   leadPlanId: string | null | undefined;
   planVersionId: string | null | undefined;
