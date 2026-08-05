@@ -29,9 +29,10 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
 
   const { data: tokens, error } = await supabaseAdmin
     .from("plan_return_tokens")
-    .select("token_id, lead_plan_id, plan_version_id, expires_at, revoked_at, use_count")
+    .select("token_id, lead_plan_id, plan_version_id, expires_at, revoked_at, use_count, job_id")
     .eq("token_hash", tokenHash)
     .limit(1);
+
   if (error) throw new Error(error.message);
 
   const token = tokens?.[0];
