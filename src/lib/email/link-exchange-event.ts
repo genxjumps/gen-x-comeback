@@ -4,11 +4,7 @@
 // The event is chosen only from validated server-side state (token purpose plus
 // the originating job's type, template version, and lead/plan ownership). A raw
 // GET, prefetch, scanner, provider open, or provider click never reaches here.
-import {
-  HALFWAY_JOB_TYPE,
-  HALFWAY_JOB_VERSION,
-  HALFWAY_TEMPLATE_VERSION,
-} from "@/lib/email/types";
+import { HALFWAY_JOB_TYPE, HALFWAY_JOB_VERSION, HALFWAY_TEMPLATE_VERSION } from "@/lib/email/types";
 import {
   OPEN_PLAN_TOKEN_PURPOSE,
   type ReturnTokenJobIdentity,
