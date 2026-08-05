@@ -1298,6 +1298,43 @@ describe("Halfway contract corrections", () => {
   });
 });
 
+describe("Halfway never emits an unapproved manual-review canonical event", () => {
+  it("parks an aged Halfway job for manual review with an alert, no send, and no event", async () => {
+    // Aged well past the provider idempotency horizon, so the shared guard parks
+    // the job instead of risking a duplicate send.
+    const aged = new Date(NOW.getTime() - IDEMPOTENCY_HORIZON_MS - 60_000).toISOString();
+    const h = harness({ job: { created_at: aged, eligible_at: aged, next_attempt_at: null } });
+
+    const summary = await dispatchHalfwayJobs(h.deps);
+
+    expect(summary.outcomes).toEqual([
+      { jobId: h.job.job_id, outcome: "manual_review", errorCode: "idempotency_horizon_exceeded" },
+    ]);
+    // No provider call: the horizon guard runs before any send attempt.
+    expect(h.adapter.requests).toHaveLength(0);
+
+    const stored = h.store.jobs.get(h.job.job_id)!;
+    expect(stored.status).toBe("failed_permanent");
+    expect(stored.manual_review_at).toBe(NOW.toISOString());
+    expect(stored.last_error_code).toBe("idempotency_horizon_exceeded");
+    // The existing operational alert still reaches a human.
+    expect(h.store.alerts.map((a) => a.alert_type)).toEqual(["halfway_manual_review_required"]);
+    // Section 7.10.1 approves no Halfway manual-review event.
+    expect(eventNames(h.store)).toEqual([]);
+  });
+
+  it("keeps the approved Halfway event namespace free of a manual-review event", () => {
+    expect(lifecycleEventName(HALFWAY_JOB_TYPE, "manual_review")).toBeNull();
+    // Plan Ready and Start Day 1 keep their existing manual-review events.
+    expect(lifecycleEventName(PLAN_READY_JOB_TYPE, "manual_review")).toBe(
+      "email_plan_ready_manual_review",
+    );
+    expect(lifecycleEventName(START_DAY_1_JOB_TYPE, "manual_review")).toBe(
+      "email_start_day_1_manual_review",
+    );
+  });
+});
+
 describe("Plan Completed is checked before every other Halfway gate", () => {
   it("cancels for plan_completed even with a missing recipient", () => {
     expect(
