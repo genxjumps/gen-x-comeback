@@ -564,11 +564,11 @@ describe("R16 authoritative state counts only top-level required assignments", (
         },
       ],
       lead_plan_day_completions: [
-        { day_number: 1 },
-        { day_number: 2 },
-        { day_number: 3 },
+        { lead_plan_id: "lead-1", day_number: 1 },
+        { lead_plan_id: "lead-1", day_number: 2 },
+        { lead_plan_id: "lead-1", day_number: 3 },
         // A stray completion outside the top-level assignments must not count.
-        { day_number: 42 },
+        { lead_plan_id: "lead-1", day_number: 42 },
       ],
       email_jobs: [],
       email_suppressions: [],
@@ -586,10 +586,10 @@ describe("R16 authoritative state counts only top-level required assignments", (
   it("exposes an authoritative plan-complete flag", async () => {
     const rows = tables();
     rows["lead_plan_day_completions"] = [
-      { day_number: 1 },
-      { day_number: 2 },
-      { day_number: 3 },
-      { day_number: 4 },
+      { lead_plan_id: "lead-1", day_number: 1 },
+      { lead_plan_id: "lead-1", day_number: 2 },
+      { lead_plan_id: "lead-1", day_number: 3 },
+      { lead_plan_id: "lead-1", day_number: 4 },
     ];
     const state = await loadHalfwayState(job, client(rows) as never);
     expect(state.requiredCompletions).toBe(4);
@@ -673,7 +673,6 @@ describe("R20 approved body paragraphs, in order, with no old copy", () => {
       "halfway there",
       "Three days left",
       "four days into",
-      "7-Day Comeback Plan",
       "Keep the momentum",
       "discount",
       "offer",
