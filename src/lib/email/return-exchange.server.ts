@@ -2,12 +2,20 @@
 // A raw GET, prefetch, scanner, or provider click never reaches this module.
 import { RAW_TOKEN_RE, generateAccessToken, hashAccessToken } from "@/lib/lead-plan";
 import { RETURN_SESSION_TTL_MS } from "@/lib/email/types";
+import {
+  DEFAULT_RETURN_DESTINATION,
+  resolveReturnDestination,
+  type ReturnDestination,
+} from "@/lib/email/return-destination";
 
-export type ExchangeResult = { ok: true; sessionToken: string; expiresAt: Date } | { ok: false };
+export type ExchangeResult =
+  | { ok: true; sessionToken: string; expiresAt: Date; destination: ReturnDestination }
+  | { ok: false };
 
 /**
  * Verifies an opaque return token, refreshes the authorized session, records
- * verification/engagement, and returns the new session token.
+ * verification/engagement, and returns the new session token plus the trusted
+ * closed destination derived from the token's originating email job.
  * Invalid, expired, revoked, malformed, and replaced tokens all return `{ ok: false }`.
  */
 export async function exchangeReturnToken(rawToken: string | null): Promise<ExchangeResult> {
@@ -20,9 +28,10 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
 
   const { data: tokens, error } = await supabaseAdmin
     .from("plan_return_tokens")
-    .select("token_id, lead_plan_id, plan_version_id, expires_at, revoked_at, use_count")
+    .select("token_id, lead_plan_id, plan_version_id, expires_at, revoked_at, use_count, job_id")
     .eq("token_hash", tokenHash)
     .limit(1);
+
   if (error) throw new Error(error.message);
 
   const token = tokens?.[0];
@@ -41,6 +50,21 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
 
   // A replaced plan version must never be restored by an old link.
   if (lead.plan_version_id !== token.plan_version_id) return { ok: false };
+
+  // Destination comes only from the trusted originating job, never from input.
+  let destination = DEFAULT_RETURN_DESTINATION;
+  if (token.job_id) {
+    const { data: jobs, error: jobError } = await supabaseAdmin
+      .from("email_jobs")
+      .select("job_type, template_version")
+      .eq("job_id", token.job_id)
+      .limit(1);
+    if (jobError) throw new Error(jobError.message);
+    const job = jobs?.[0];
+    destination = resolveReturnDestination(
+      job ? { jobType: job.job_type, templateVersion: job.template_version } : null,
+    );
+  }
 
   const sessionToken = generateAccessToken();
   const expiresAt = new Date(now.getTime() + RETURN_SESSION_TTL_MS);
@@ -84,5 +108,5 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
     },
   ]);
 
-  return { ok: true, sessionToken, expiresAt };
+  return { ok: true, sessionToken, expiresAt, destination };
 }
