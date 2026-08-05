@@ -326,7 +326,6 @@ describe("R9 four required completions is send-eligible", () => {
     expect(result).toMatchObject({
       action: "CANCEL",
       reason: "progress_window_not_reached",
-      disposition: "cancel",
     });
   });
 });
@@ -344,7 +343,7 @@ describe("R10 five and six required completions stay send-eligible", () => {
         eligibleState(job, { requiredCompletions: 7, totalRequiredAssignments: 8 }),
         NOW,
       ),
-    ).toMatchObject({ reason: "progress_window_passed", disposition: "cancel" });
+    ).toMatchObject({ action: "CANCEL", reason: "progress_window_passed" });
   });
 });
 
@@ -362,7 +361,6 @@ describe("R11 an authoritatively complete plan cancels", () => {
     expect(result).toMatchObject({
       action: "CANCEL",
       reason: "plan_completed",
-      disposition: "cancel",
     });
   });
 
@@ -394,7 +392,7 @@ describe("R12 Plan Completed control always wins with no timestamp tie-breaker",
       NOW,
     );
     expect(withOldControl).toEqual(withNewControl);
-    expect(withOldControl).toMatchObject({ reason: "plan_completed", disposition: "cancel" });
+    expect(withOldControl).toMatchObject({ action: "CANCEL", reason: "plan_completed" });
   });
 
   it("takes precedence over the deferral reasons below it", () => {
@@ -404,7 +402,7 @@ describe("R12 Plan Completed control always wins with no timestamp tie-breaker",
         eligibleState(job, { planCompletedControl: true, planReadyAcceptedAt: null }),
         NOW,
       ),
-    ).toMatchObject({ reason: "plan_completed", disposition: "cancel" });
+    ).toMatchObject({ action: "CANCEL", reason: "plan_completed" });
   });
 });
 
@@ -413,7 +411,7 @@ describe("R13 replacement, non-canonical jobs, and missing recipients cancel", (
     const job = halfwayJob();
     expect(
       resolveHalfway(eligibleState(job, { currentPlanVersionId: "version-2" }), NOW),
-    ).toMatchObject({ reason: "plan_version_replaced", disposition: "cancel" });
+    ).toMatchObject({ action: "CANCEL", reason: "plan_version_replaced" });
   });
 
   it("cancels a non-canonical job type, version, or template", () => {
@@ -424,8 +422,8 @@ describe("R13 replacement, non-canonical jobs, and missing recipients cancel", (
     ]) {
       const job = halfwayJob(patch);
       expect(resolveHalfway(eligibleState(job), NOW)).toMatchObject({
+        action: "CANCEL",
         reason: "job_not_canonical",
-        disposition: "cancel",
       });
     }
   });
@@ -433,8 +431,8 @@ describe("R13 replacement, non-canonical jobs, and missing recipients cancel", (
   it("cancels when no deliverable recipient is persisted", () => {
     const job = halfwayJob();
     expect(resolveHalfway(eligibleState(job, { hasRecipient: false }), NOW)).toMatchObject({
+      action: "CANCEL",
       reason: "recipient_missing",
-      disposition: "cancel",
     });
   });
 });
@@ -754,9 +752,13 @@ describe("R23 deterministic, non-mutating, imageless render with the shared foot
   it("never renders a canceled resolution", () => {
     expect(
       renderHalfway(
-        { action: "CANCEL", reason: "plan_completed", disposition: "cancel" },
+        { action: "CANCEL", reason: "plan_completed" },
         RENDER_INPUT,
       ),
+    ).toBeNull();
+    expect(renderHalfway({ action: "DEFER", reason: "lifecycle_24h_cap" }, RENDER_INPUT)).toBeNull();
+    expect(
+      renderHalfway({ action: "SUPPRESS", reason: "recipient_suppressed" }, RENDER_INPUT),
     ).toBeNull();
   });
 });
