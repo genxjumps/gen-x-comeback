@@ -17,6 +17,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { dispatchHalfwayJobs, type HalfwayDispatchDeps } from "@/lib/email/dispatch";
 import { createFakeAdapter } from "@/lib/email/adapters.server";
 import {
+  IDEMPOTENCY_HORIZON_MS,
   HALFWAY_JOB_TYPE,
   HALFWAY_JOB_VERSION,
   HALFWAY_MAX_COMPLETIONS,
