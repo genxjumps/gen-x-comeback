@@ -87,7 +87,6 @@ export const Route = createFileRoute("/return")({
             "set-cookie": `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`,
           },
         });
-
       },
     },
   },

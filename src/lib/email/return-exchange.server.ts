@@ -21,7 +21,6 @@ export type ExchangeResult =
 export async function exchangeReturnToken(rawToken: string | null): Promise<ExchangeResult> {
   if (!rawToken || !RAW_TOKEN_RE.test(rawToken)) return { ok: false };
 
-
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const tokenHash = await hashAccessToken(rawToken);
   const now = new Date();
@@ -66,8 +65,6 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
       job ? { jobType: job.job_type, templateVersion: job.template_version } : null,
     );
   }
-
-
 
   const sessionToken = generateAccessToken();
   const expiresAt = new Date(now.getTime() + RETURN_SESSION_TTL_MS);
