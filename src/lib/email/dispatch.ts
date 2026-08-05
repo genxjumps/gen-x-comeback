@@ -1,6 +1,7 @@
 // Durable lifecycle email dispatcher. Deterministic and injectable: no
 // environment reads, no direct database access, no provider imports.
 import {
+  HALFWAY_JOB_TYPE,
   IDEMPOTENCY_HORIZON_MS,
   MAX_ATTEMPTS,
   PLAN_READY_JOB_TYPE,
@@ -18,11 +19,18 @@ import type { EmailJobPatch, EmailStore } from "@/lib/email/store";
 import { lifecycleEventName, type LifecycleEventOutcome } from "@/lib/email/event-names";
 import { renderPlanReady } from "@/lib/email/plan-ready-template";
 import { renderStartDayOne } from "@/lib/email/start-day-1-template";
+import { renderHalfway } from "@/lib/email/halfway-template";
+import {
+  resolveHalfway,
+  type HalfwayJob,
+  type HalfwayState,
+} from "@/lib/email/halfway-resolver";
 import {
   resolveStartDayOne,
   type StartDayOneJob,
   type StartDayOneState,
 } from "@/lib/email/start-day-1-resolver";
+
 
 export type DispatchDeps = {
   store: EmailStore;
@@ -44,6 +52,12 @@ export type DispatchDeps = {
 export type StartDayOneDispatchDeps = DispatchDeps & {
   loadStartDayOneState: (job: StartDayOneJob) => Promise<StartDayOneState>;
 };
+
+/** Halfway additionally needs its authoritative read-only state loader. */
+export type HalfwayDispatchDeps = DispatchDeps & {
+  loadHalfwayState: (job: HalfwayJob) => Promise<HalfwayState>;
+};
+
 
 export type JobOutcome =
   | "provider_accepted"
