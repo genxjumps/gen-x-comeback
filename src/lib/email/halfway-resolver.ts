@@ -164,4 +164,3 @@ export function resolveHalfway(state: HalfwayState, now: Date): HalfwayResolutio
 
   return { action: "SEND" };
 }
-

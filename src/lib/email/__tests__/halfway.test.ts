@@ -750,13 +750,10 @@ describe("R23 deterministic, non-mutating, imageless render with the shared foot
   });
 
   it("never renders a canceled resolution", () => {
+    expect(renderHalfway({ action: "CANCEL", reason: "plan_completed" }, RENDER_INPUT)).toBeNull();
     expect(
-      renderHalfway(
-        { action: "CANCEL", reason: "plan_completed" },
-        RENDER_INPUT,
-      ),
+      renderHalfway({ action: "DEFER", reason: "lifecycle_24h_cap" }, RENDER_INPUT),
     ).toBeNull();
-    expect(renderHalfway({ action: "DEFER", reason: "lifecycle_24h_cap" }, RENDER_INPUT)).toBeNull();
     expect(
       renderHalfway({ action: "SUPPRESS", reason: "recipient_suppressed" }, RENDER_INPUT),
     ).toBeNull();
@@ -1168,9 +1165,10 @@ describe("Halfway resolves exactly four explicit dispatch actions", () => {
 
   it("returns DEFER with an approved deferral reason and no disposition field", () => {
     const job = halfwayJob();
-    expect(
-      resolveHalfway(eligibleState(job, { planReadyAcceptedAt: null }), NOW),
-    ).toEqual({ action: "DEFER", reason: "plan_ready_not_accepted" });
+    expect(resolveHalfway(eligibleState(job, { planReadyAcceptedAt: null }), NOW)).toEqual({
+      action: "DEFER",
+      reason: "plan_ready_not_accepted",
+    });
 
     const early = halfwayJob({ eligible_at: "2026-02-06T18:00:00.000Z" });
     expect(resolveHalfway(eligibleState(early), NOW)).toEqual({

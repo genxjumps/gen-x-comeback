@@ -492,7 +492,6 @@ export async function dispatchHalfwayJobs(
       continue;
     }
 
-
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
