@@ -9,6 +9,12 @@ import { IDEMPOTENCY_HORIZON_MS, type EmailAdapter, type EmailSendResult } from 
 import { RAW_TOKEN_RE } from "@/lib/lead-plan";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
 
+vi.mock("@/lib/email/rate-limit.server", () => ({
+  callerBucketKey: () => "test-bucket",
+  consumeRateLimit: async () => ({ allowed: true }),
+}));
+
+
 const FIXED_NOW = new Date("2026-02-01T12:00:00.000Z");
 
 function scriptedAdapter(results: EmailSendResult[]) {
