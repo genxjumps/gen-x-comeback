@@ -1249,9 +1249,9 @@ describe("Halfway contract corrections", () => {
     const accepted = "2026-02-07T00:00:00.000Z";
     const floor = halfwayEffectiveFloorMs("2026-02-07T06:00:00.000Z", accepted);
     expect(new Date(floor).toISOString()).toBe("2026-02-08T00:00:00.000Z");
-    expect(
-      halfwayEffectiveFloorMs("2026-02-10T00:00:00.000Z", accepted),
-    ).toBe(new Date("2026-02-10T00:00:00.000Z").getTime());
+    expect(halfwayEffectiveFloorMs("2026-02-10T00:00:00.000Z", accepted)).toBe(
+      new Date("2026-02-10T00:00:00.000Z").getTime(),
+    );
   });
 
   it("derives a distinct open_plan credential per logical job for one plan version", () => {
