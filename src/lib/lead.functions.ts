@@ -71,7 +71,7 @@ function cardioFrom(assessment: unknown, planJson: unknown) {
   const q4 = Array.isArray(saved.q4) ? saved.q4 : [];
   const equipment = Array.isArray(saved.equipment) ? saved.equipment : [];
   return {
-    impactLimited: q4.includes("limit_impact") || savedFlags['impactLimited'] === true,
+    impactLimited: q4.includes("limit_impact") || savedFlags["impactLimited"] === true,
     ownsRope: equipment.includes("jump_rope"),
     ropeLevel: ropeLevelFromExperience(typeof saved.q3 === "string" ? saved.q3 : ""),
   };
@@ -187,7 +187,9 @@ export const completePlanDay = createServerFn({ method: "POST" })
  */
 async function requestFingerprint(parts: Array<string | null>): Promise<string> {
   const { createHash } = await import("node:crypto");
-  return createHash("sha256").update(parts.map((p) => p ?? "").join("\u0000")).digest("hex");
+  return createHash("sha256")
+    .update(parts.map((p) => p ?? "").join("\u0000"))
+    .digest("hex");
 }
 
 export const saveLeadPlan = createServerFn({ method: "POST" })

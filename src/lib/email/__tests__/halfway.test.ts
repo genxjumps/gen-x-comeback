@@ -226,9 +226,7 @@ describe("R3 no job before the fourth required completion", () => {
 
 describe("R4 duplicate completion is idempotent and never creates a second job", () => {
   it("inserts the completion with ON CONFLICT DO NOTHING and tracks whether it was new", () => {
-    expect(FN).toContain(
-      "INSERT INTO public.lead_plan_day_completions (lead_plan_id, day_number)",
-    );
+    expect(FN).toContain("INSERT INTO public.lead_plan_day_completions (lead_plan_id, day_number)");
     expect(FN).toContain("ON CONFLICT (lead_plan_id, day_number) DO NOTHING");
     expect(FN).toContain("v_inserted := v_completed_at IS NOT NULL;");
   });
@@ -277,9 +275,7 @@ describe("R6 a replaced plan version can never gain a Halfway job", () => {
 
 describe("R7 inactivity anchor is the persisted fourth completion timestamp", () => {
   it("captures the actual completed_at of the completion row", () => {
-    expect(FN).toContain(
-      "RETURNING lead_plan_day_completions.completed_at INTO v_completed_at",
-    );
+    expect(FN).toContain("RETURNING lead_plan_day_completions.completed_at INTO v_completed_at");
     expect(FN).toContain("SELECT c.completed_at INTO v_completed_at");
   });
 
@@ -307,7 +303,9 @@ describe("R8 only valid top-level required days progress, in order", () => {
 
   it("stays service-role only", () => {
     expect(SQL).toContain("REVOKE ALL ON FUNCTION public.complete_plan_day_atomic");
-    expect(SQL).toContain("GRANT EXECUTE ON FUNCTION public.complete_plan_day_atomic(uuid, uuid, smallint)\n  TO service_role;");
+    expect(SQL).toContain(
+      "GRANT EXECUTE ON FUNCTION public.complete_plan_day_atomic(uuid, uuid, smallint)\n  TO service_role;",
+    );
   });
 });
 
@@ -457,9 +455,10 @@ describe("R14 Halfway priority sits below Plan Completed and above Start Day 1",
 
   it("yields the plan version entirely to Plan Completed when its job exists", () => {
     const job = halfwayJob();
-    expect(
-      resolveHalfway(eligibleState(job, { planCompletedControl: true }), NOW),
-    ).toMatchObject({ action: "CANCEL", reason: "plan_completed" });
+    expect(resolveHalfway(eligibleState(job, { planCompletedControl: true }), NOW)).toMatchObject({
+      action: "CANCEL",
+      reason: "plan_completed",
+    });
   });
 });
 
@@ -599,7 +598,12 @@ describe("R16 authoritative state counts only top-level required assignments", (
   it("reports Plan Completed control from persisted state for this plan version", async () => {
     const rows = tables({
       email_jobs: [
-        { job_id: "pc-1", job_type: "plan_completed", plan_version_id: "version-1", status: "pending" },
+        {
+          job_id: "pc-1",
+          job_type: "plan_completed",
+          plan_version_id: "version-1",
+          status: "pending",
+        },
       ],
     });
     const state = await loadHalfwayState(job, client(rows) as never);
@@ -645,7 +649,7 @@ describe("R18 approved hidden preview text", () => {
 describe("R19 approved greeting and fallback", () => {
   it("greets by sanitized name", () => {
     expect(rendered.text.startsWith("Hey Todd,")).toBe(true);
-    expect(rendered.html).toContain("<p style=\"margin:0 0 16px 0;\">Hey Todd,</p>");
+    expect(rendered.html).toContain('<p style="margin:0 0 16px 0;">Hey Todd,</p>');
   });
 
   it("falls back to the approved greeting", () => {
@@ -773,9 +777,7 @@ describe("R24 suppression, credentials, payload, acceptance, and delivery", () =
       expect(summary.outcomes[0]?.outcome).toBe("suppressed");
       expect(h.adapter.requests).toHaveLength(0);
       expect(h.store.jobs.get(h.job.job_id)!.status).toBe("suppressed");
-      expect(eventNames(h.store)).toEqual([
-        lifecycleEventName(HALFWAY_JOB_TYPE, "suppressed"),
-      ]);
+      expect(eventNames(h.store)).toEqual([lifecycleEventName(HALFWAY_JOB_TYPE, "suppressed")]);
     }
   });
 

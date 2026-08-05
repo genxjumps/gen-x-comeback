@@ -20,11 +20,7 @@ import { lifecycleEventName, type LifecycleEventOutcome } from "@/lib/email/even
 import { renderPlanReady } from "@/lib/email/plan-ready-template";
 import { renderStartDayOne } from "@/lib/email/start-day-1-template";
 import { renderHalfway } from "@/lib/email/halfway-template";
-import {
-  resolveHalfway,
-  type HalfwayJob,
-  type HalfwayState,
-} from "@/lib/email/halfway-resolver";
+import { resolveHalfway, type HalfwayJob, type HalfwayState } from "@/lib/email/halfway-resolver";
 import {
   resolveStartDayOne,
   type StartDayOneJob,
