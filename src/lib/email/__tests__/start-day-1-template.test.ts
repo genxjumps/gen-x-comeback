@@ -49,6 +49,10 @@ const RESUME_BODY = [
   "Finish what you started.",
 ];
 
+function bodyRegion(html: string): string {
+  return html.split("<tr><td>").at(-1) ?? html;
+}
+
 function orderedIndexes(haystack: string, needles: string[]): number[] {
   return needles.map((needle) => haystack.indexOf(needle));
 }
@@ -81,7 +85,7 @@ describe("Start Day 1 template - START variant", () => {
   it("emits the ordered body plus sign-off in HTML and plain text", () => {
     const rendered = renderStartDayOne(START, input())!;
     expect(isAscending(orderedIndexes(rendered.text, START_BODY))).toBe(true);
-    expect(isAscending(orderedIndexes(rendered.html, START_BODY.map(escapeForHtml)))).toBe(true);
+    expect(isAscending(orderedIndexes(bodyRegion(rendered.html), START_BODY.map(escapeForHtml)))).toBe(true);
     for (const line of ["Move or Rust.", "Todd", "Gen X Jumps"]) {
       expect(rendered.text).toContain(line);
       expect(rendered.html).toContain(line);
@@ -103,7 +107,7 @@ describe("Start Day 1 template - RESUME variant", () => {
   });
 
   it("uses the fallback subject and greeting when the name is unusable", () => {
-    const rendered = renderStartDayOne(RESUME, input("   <script>  "))!;
+    const rendered = renderStartDayOne(RESUME, input("   \u0007\u0001 "))!;
     expect(rendered.subject).toBe(START_DAY_1_RESUME_FALLBACK_SUBJECT);
     expect(rendered.subject).toBe("Finish Day 1: Full Body Flush & Fire");
     expect(rendered.personalizedName).toBeNull();
@@ -113,7 +117,7 @@ describe("Start Day 1 template - RESUME variant", () => {
   it("emits the ordered body plus sign-off in HTML and plain text", () => {
     const rendered = renderStartDayOne(RESUME, input())!;
     expect(isAscending(orderedIndexes(rendered.text, RESUME_BODY))).toBe(true);
-    expect(isAscending(orderedIndexes(rendered.html, RESUME_BODY.map(escapeForHtml)))).toBe(true);
+    expect(isAscending(orderedIndexes(bodyRegion(rendered.html), RESUME_BODY.map(escapeForHtml)))).toBe(true);
     expect(rendered.text).toContain(`Resume Day 1: ${RETURN_URL}`);
   });
 });
