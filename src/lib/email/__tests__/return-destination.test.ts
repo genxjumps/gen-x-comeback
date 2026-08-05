@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   DEFAULT_RETURN_DESTINATION,
+  OPEN_PLAN_TOKEN_PURPOSE,
   RETURN_DESTINATIONS,
   resolveReturnDestination,
 } from "@/lib/email/return-destination";
