@@ -6,11 +6,21 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { hashAccessToken } from "@/lib/lead-plan";
 import {
+  HALFWAY_JOB_TYPE,
+  HALFWAY_JOB_VERSION,
+  HALFWAY_TEMPLATE_VERSION,
   PLAN_READY_JOB_TYPE,
+  PLAN_READY_JOB_VERSION,
   PLAN_READY_TEMPLATE_VERSION,
   START_DAY_1_JOB_TYPE,
+  START_DAY_1_JOB_VERSION,
   START_DAY_1_TEMPLATE_VERSION,
 } from "@/lib/email/types";
+import {
+  HALFWAY_LINK_EXCHANGE_EVENT,
+  PLAN_READY_LINK_EXCHANGE_EVENT,
+  START_DAY_1_LINK_EXCHANGE_EVENT,
+} from "@/lib/email/link-exchange-event";
 
 type Row = Record<string, unknown>;
 type Write = { table: string; op: "insert" | "update"; payload: unknown };
