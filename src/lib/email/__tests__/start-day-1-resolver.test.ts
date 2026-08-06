@@ -40,6 +40,9 @@ function state(overrides: Partial<StartDayOneState> = {}): StartDayOneState {
     planReadyAcceptedAt: new Date(CREATED + 60_000).toISOString(),
     lastLifecycleAcceptedAt: null,
     acceptedInactivityCount: 0,
+    halfwayPending: false,
+    finalRescueAcceptedAt: null,
+    finalRescueDueAt: null,
     ...overrides,
   };
 }

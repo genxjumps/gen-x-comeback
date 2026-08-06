@@ -63,6 +63,9 @@ function eligibleState(job: EmailJobRow, overrides: Partial<StartDayOneState> = 
     planReadyAcceptedAt: PLAN_READY_ACCEPTED_AT,
     lastLifecycleAcceptedAt: null,
     acceptedInactivityCount: 0,
+    halfwayPending: false,
+    finalRescueAcceptedAt: null,
+    finalRescueDueAt: null,
     ...overrides,
   } satisfies StartDayOneState;
 }
