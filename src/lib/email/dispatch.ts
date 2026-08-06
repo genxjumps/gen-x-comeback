@@ -5,6 +5,7 @@ import {
   HALFWAY_JOB_TYPE,
   IDEMPOTENCY_HORIZON_MS,
   MAX_ATTEMPTS,
+  PLAN_COMPLETED_JOB_TYPE,
   PLAN_READY_JOB_TYPE,
   RETRY_DELAYS_MS,
   RETURN_TOKEN_TTL_MS,
@@ -32,10 +33,17 @@ import {
 } from "@/lib/email/final-rescue-resolver";
 import { renderFinalRescue } from "@/lib/email/final-rescue-template";
 import {
+  resolvePlanCompleted,
+  type PlanCompletedJob,
+  type PlanCompletedState,
+} from "@/lib/email/plan-completed-resolver";
+import { renderPlanCompleted } from "@/lib/email/plan-completed-template";
+import {
   resolveStartDayOne,
   type StartDayOneJob,
   type StartDayOneState,
 } from "@/lib/email/start-day-1-resolver";
+
 
 export type DispatchDeps = {
   store: EmailStore;
