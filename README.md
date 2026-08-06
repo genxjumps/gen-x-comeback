@@ -6,9 +6,9 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 ## Current status
 
-The accepted repository baseline is `debf3870ce544ffd0a06efe251e1402882865596`. The actual three-file repository repair is commit `edf8d00bee15f981b76de51b00f082bcd1218065`; `debf3870…` is an empty forward follow-up whose tree is the accepted current tree. GitHub `main` and Lovable were synchronized at `debf3870…` when the repair completed.
+The accepted synchronized implementation baseline is `979883dc2caa1893c9a33383f6d381af1b4a1901`. GitHub `main` and Lovable are synchronized at that SHA.
 
-The core seven-day plan experience is implemented and connected to Lovable Cloud. Plan Ready, Start Day 1, Halfway, and Stalled are implemented; Stalled is accepted. Final Rescue, Plan Completed, user-requested recovery, and scheduler work have not started. Outbound email remains intentionally disabled. No deployment or publication occurred during the repository repair, and the older public deployment remains separate from the accepted repository baseline.
+The core seven-day plan experience is implemented and connected to Lovable Cloud. Plan Ready, Start Day 1, Halfway, Stalled, and Final Rescue are implemented and accepted. Plan Completed, user-requested recovery, and scheduler work have not started. Outbound email remains intentionally disabled. No deployment or publication occurred during the Final Rescue checkpoint.
 
 ### Implemented app experience
 
@@ -44,45 +44,36 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - `START` for eligible unstarted Day 1, `RESUME` for eligible started-but-incomplete Day 1, and non-sendable `CANCEL` when the message should not be sent
 - Server-authoritative Halfway job creation, dispatch validation, rendering, secure return, retry, suppression, and provider reconciliation
 - Server-authoritative Stalled episode creation, cancellation, dispatch validation, rendering, secure return, retry, suppression, recurrence, and Final Rescue closure guards
+- Server-authoritative Final Rescue job creation, four-day initial eligibility, five-day progress re-anchoring, Halfway priority, terminal inactivity closure, suppression, exact copy variants, secure return to `/your-plan`, and provider reconciliation
 
-Plan Ready, Start Day 1, Halfway, and Stalled are implemented in the accepted repository baseline. Final Rescue and Plan Completed remain unimplemented. User-requested recovery follows the remaining proactive lifecycle work. Scheduler implementation and full lifecycle staging acceptance also remain outstanding. Broadcasts, newsletters, and promotional campaigns are outside the current app-email scope. Email sending remains disabled.
+Plan Ready, Start Day 1, Halfway, Stalled, and Final Rescue are implemented in the accepted repository baseline. Plan Completed remains unimplemented. User-requested recovery follows the remaining proactive lifecycle work. Scheduler implementation and full lifecycle staging acceptance also remain outstanding. Broadcasts, newsletters, and promotional campaigns are outside the current app-email scope. Email sending remains disabled.
 
 ### Accepted repository baseline
 
-- Accepted GitHub `main`: `debf3870ce544ffd0a06efe251e1402882865596`
-- Actual three-file repair commit: `edf8d00bee15f981b76de51b00f082bcd1218065`
-- Repaired files: `package.json`, `bun.lock`, and `src/integrations/supabase/types.ts`
+- Accepted GitHub `main`: `979883dc2caa1893c9a33383f6d381af1b4a1901`
+- Final Rescue migration: `20260806175920_582a324d-47f9-44ac-aec4-1ad8b86eb7d6.sql`
 - `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
 - `vite-plugin-hmr-gate`: resolved version `1.3.4`
 - Approved formatted Supabase types blob: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf`
 - Protected route-tree Git blob: `1c551e423ede445c42b1b83e0bfcf0a95f8c1675`
 - Protected route-tree SHA-256: `91532a1d039d221efa0d6462facde203ae2d442e4b21c224ad9f416a4ed609d6`
-- Repository migrations: 13
-- The cumulative diff from `13d134639c7048aa6f6eede6a8d6b603c970d8af` contains exactly the approved 28 formatting files. It excludes `package.json`, `bun.lock`, `src/routeTree.gen.ts`, every migration, this repository `README.md`, the Product Blueprint, the Technical Specification, and the Decision Log.
+- Repository migrations: 14
+- Live migration ledger: 14 matching versions
 
-### Verification evidence and qualification
+### Final Rescue verification evidence
 
-Repository tree verification passed. The final isolated read-only verifier could not rerun Bun installation, formatting, lint, typecheck, build, or tests because that runtime lacked Bun, a mounted repository checkout, package access, and outbound network access. Acceptance relies on exact GitHub object-level reconciliation to the previously fully verified target tree and the prior successful verification evidence.
-
-The prior successful exact-target evidence was:
-
-- Frozen installation passed
-- Installed dependencies were `@lovable.dev/vite-tanstack-config@2.8.5` and `@lovable.dev/vite-plugin-hmr-gate@1.3.4`
-- Prettier passed
-- ESLint passed with two existing `react-refresh/only-export-components` warnings
-- `git diff --check` passed
+- Dedicated Final Rescue tests passed 42/42
+- Affected lifecycle tests passed 255/255
+- The full suite passed 331/331
 - TypeScript passed
 - Production build passed
-- Focused lifecycle tests passed 202/202 across nine files
-- Stalled Final Rescue guard tests passed 20/20
-- The full suite passed 289/289 across 16 files
+- `git diff --check` passed
 - The protected route-tree hash passed
+- The approved Supabase types blob remained unchanged
 
-These gates were not freshly rerun at `debf3870…` by the final isolated verifier.
+The dispatch route was not separately included in the recorded ESLint and Prettier commands. The dedicated Final Rescue test file passed its recorded lint and format checks. Todd accepted this qualification as non-blocking.
 
-Live operational counts were also not newly queried by the final isolated verifier. The last verified state remains 13 matching live migration-ledger records and zero email jobs, provider events, return tokens, operational alerts, and provider attempts.
-
-Documentation reconciliation is the current checkpoint. It changes documentation only and does not begin Final Rescue, Plan Completed, user-requested recovery, scheduler implementation, email sending, deployment, or publication.
+Email sending remains disabled. No deployment or publication occurred. Final Rescue documentation reconciliation is the current checkpoint and does not begin Plan Completed, user-requested recovery, scheduler implementation, sending, deployment, or publication.
 
 ## Architecture
 
