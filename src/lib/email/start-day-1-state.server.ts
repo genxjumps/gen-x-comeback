@@ -123,6 +123,21 @@ export async function loadStartDayOneState(
       )
     : [];
 
+  // Halfway presence and Final Rescue control are read-only lifecycle facts for
+  // this plan version. They are used only by the Final Rescue control guard.
+  const [halfwayJobs, finalRescueControl] = await Promise.all([
+    rows(
+      db
+        .from("email_jobs")
+        .select("job_id")
+        .eq("plan_version_id", job.plan_version_id)
+        .eq("job_type", HALFWAY_JOB_TYPE)
+        .in("status", UNSENT_STATUSES)
+        .limit(1),
+    ),
+    loadFinalRescueControl(job.plan_version_id, db),
+  ]);
+
   const accepted = lifecycleJobs.filter(
     (row) =>
       typeof row["provider_accepted_at"] === "string" && row["job_type"] !== PLAN_READY_JOB_TYPE,
@@ -150,6 +165,9 @@ export async function loadStartDayOneState(
     planReadyAcceptedAt: str(planReadyJobs[0], "provider_accepted_at"),
     lastLifecycleAcceptedAt,
     acceptedInactivityCount,
+    halfwayPending: halfwayJobs.length > 0,
+    finalRescueAcceptedAt: finalRescueControl.finalRescueAcceptedAt,
+    finalRescueDueAt: finalRescueControl.finalRescueDueAt,
   };
 }
 
