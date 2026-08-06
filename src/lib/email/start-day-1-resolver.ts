@@ -20,6 +20,26 @@ export const MAX_ACCEPTED_INACTIVITY_EMAILS = 3;
 /** Inactivity email types counted against the per-plan cap. */
 export const INACTIVITY_JOB_TYPES = ["start_day_1", "stalled", "final_rescue"] as const;
 
+/**
+ * Whether a due, unsent Final Rescue job currently controls inactivity
+ * messaging for its plan version.
+ *
+ * Shared by the lower-priority Start Day 1 and Stalled resolvers, and declared
+ * here alongside the other shared inactivity rules so neither lower resolver
+ * has to import the Final Rescue resolver. A due current Final Rescue job that
+ * is not blocked by Halfway controls those messages even while Final Rescue is
+ * still retrying or has not yet been provider accepted.
+ */
+export function finalRescueDueControls(
+  finalRescueDueAt: string | null,
+  halfwayPending: boolean,
+  now: Date,
+): boolean {
+  if (!finalRescueDueAt) return false;
+  if (halfwayPending) return false;
+  return now.getTime() >= new Date(finalRescueDueAt).getTime();
+}
+
 export type StartDayOneJob = {
   job_id: string;
   job_type: string;
