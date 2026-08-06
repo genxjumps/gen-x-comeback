@@ -130,7 +130,6 @@ describe("non-provider deferral accounting", () => {
       },
     });
 
-
     const first = await dispatchStartDayOneJobs(h.deps);
     expect(first.outcomes[0]?.outcome).toBe("retry_scheduled");
     expect(h.job().attempt_count).toBe(1);

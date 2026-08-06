@@ -102,7 +102,6 @@ const OUTCOME_EVENT: Record<TerminalOutcome, LifecycleEventOutcome | null> = {
   manual_review: "manual_review",
 };
 
-
 type FinishExtra = {
   errorCode?: string;
   providerKey?: string;
@@ -135,7 +134,6 @@ async function deferSend(
   return { jobId: job.job_id, outcome: fenced ? "deferred" : "lost_lease" };
 }
 
-
 /**
  * Applies one fenced terminal transition. A lost lease means another worker
  * already owns this job, so no state, event, or alert is written here.
@@ -163,7 +161,6 @@ async function finish(
     patch.last_error_code = extra.errorCode ?? null;
     patch.last_error_at = nowIso;
   } else if (outcome === "failed_permanent" || outcome === "manual_review") {
-
     patch.next_attempt_at = null;
     patch.last_error_code = extra.errorCode ?? null;
     patch.last_error_at = nowIso;
@@ -253,7 +250,6 @@ async function guardCommon(
   if (deps.now().getTime() - horizonFrom > IDEMPOTENCY_HORIZON_MS) {
     return finish(deps, job, "manual_review", { errorCode: "idempotency_horizon_exceeded" });
   }
-
 
   return null;
 }
@@ -345,7 +341,6 @@ async function attemptSend(
   }
   return finish(deps, job, "retry_scheduled", { errorCode: result.errorCode });
 }
-
 
 /** Claims due Plan Ready jobs, rechecks eligibility, and performs one attempt each. */
 export async function dispatchPlanReadyJobs(
@@ -442,7 +437,6 @@ export async function dispatchStartDayOneJobs(
         // Non-provider lifecycle deferral: fenced, attempt-count restoring, and
         // eventless, exactly as a Halfway DEFER.
         outcomes.push(await deferSend(deps, job, resolution.eligibleAt ?? null));
-
       } else if (resolution.disposition === "suppress") {
         outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
       } else {
@@ -534,7 +528,6 @@ export async function dispatchHalfwayJobs(
       outcomes.push(await deferSend(deps, job, resolution.eligibleAt ?? null));
       continue;
     }
-
 
     if (resolution.action === "SUPPRESS") {
       outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
