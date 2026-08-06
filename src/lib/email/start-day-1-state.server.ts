@@ -7,7 +7,11 @@ import {
   type StartDayOneJob,
   type StartDayOneState,
 } from "@/lib/email/start-day-1-resolver";
-import { PLAN_READY_JOB_TYPE } from "@/lib/email/types";
+import { loadFinalRescueControl } from "@/lib/email/final-rescue-state.server";
+import { HALFWAY_JOB_TYPE, PLAN_READY_JOB_TYPE } from "@/lib/email/types";
+
+/** Unsent states: a job in any of these still controls the lifecycle gap. */
+const UNSENT_STATUSES = ["pending", "processing", "retry_scheduled"] as const;
 
 type Row = Record<string, unknown>;
 
