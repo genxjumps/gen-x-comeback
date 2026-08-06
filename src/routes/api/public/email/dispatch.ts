@@ -59,15 +59,15 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           dispatchHalfwayJobs,
           dispatchStalledJobs,
           dispatchStartDayOneJobs,
+          dispatchFinalRescueJobs,
           raiseStalePlanReadyAlerts,
         } = await import("@/lib/email/dispatch");
         const summary = await dispatchPlanReadyJobs(runtime.deps, { limit: 25 });
         const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
 
         // Lifecycle priority: Plan Completed (not yet implemented), then
-        // Halfway, then Stalled, then Start Day 1, then Final Rescue (not yet
-        // implemented). Higher priority runs first so it consumes the shared
-        // 24-hour lifecycle gap.
+        // Halfway, then Stalled, then Start Day 1, then Final Rescue. Higher
+        // priority runs first so it consumes the shared 24-hour lifecycle gap.
         const { loadHalfwayState } = await import("@/lib/email/halfway-state.server");
         const halfway = await dispatchHalfwayJobs(
           { ...runtime.deps, loadHalfwayState: (job) => loadHalfwayState(job) },
@@ -88,6 +88,14 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           { limit: 25 },
         );
 
+        // Final Rescue is terminal and runs last, after every higher-priority
+        // lifecycle message has had its chance in this tick.
+        const { loadFinalRescueState } = await import("@/lib/email/final-rescue-state.server");
+        const finalRescue = await dispatchFinalRescueJobs(
+          { ...runtime.deps, loadFinalRescueState: (job) => loadFinalRescueState(job) },
+          { limit: 25 },
+        );
+
         return Response.json({
           sending_enabled: true,
           ...summary,
@@ -95,6 +103,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           halfway,
           stalled,
           start_day_1: startDayOne,
+          final_rescue: finalRescue,
         });
       },
     },

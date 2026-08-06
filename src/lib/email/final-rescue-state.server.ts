@@ -1,12 +1,10 @@
-// Server-only authoritative state loader for the Stalled resolver.
+// Server-only authoritative state loader for the Final Rescue resolver.
 //
 // Read-only: every query is a SELECT against persisted state. It never mutates
-// rows, never records events, and never reads request, URL, or browser state.
-import {
-  parseStalledEpisodeDay,
-  type StalledJob,
-  type StalledState,
-} from "@/lib/email/stalled-resolver";
+// rows, never records events, and never reads request, URL, browser, provider
+// open, or provider click state. No personal data beyond recipient presence is
+// derived or returned.
+import type { FinalRescueJob, FinalRescueState } from "@/lib/email/final-rescue-resolver";
 import {
   FINAL_RESCUE_JOB_TYPE,
   HALFWAY_JOB_TYPE,
@@ -15,7 +13,6 @@ import {
 } from "@/lib/email/types";
 import { INACTIVITY_JOB_TYPES } from "@/lib/email/start-day-1-resolver";
 import { requiredDayNumbers } from "@/lib/email/halfway-state.server";
-import { loadFinalRescueControl } from "@/lib/email/final-rescue-state.server";
 import type { StartDayOneQueryClient } from "@/lib/email/start-day-1-state.server";
 
 type Row = Record<string, unknown>;
@@ -43,23 +40,23 @@ function isValidRecipient(value: string | null): boolean {
   return trimmed.length > 0 && trimmed.length <= 254 && EMAIL_PATTERN.test(trimmed);
 }
 
-/** Unsent Halfway states: Halfway still controls the shared lifecycle gap. */
+/** Unsent states: a job in any of these still controls the lifecycle gap. */
 const UNSENT_STATUSES = ["pending", "processing", "retry_scheduled"] as const;
 
 /**
- * Loads the authoritative persisted state for one claimed Stalled job.
+ * Loads the authoritative persisted state for one claimed Final Rescue job.
  * Accepts an injected client for tests; defaults to the service-role client.
  */
-export async function loadStalledState(
-  job: StalledJob,
+export async function loadFinalRescueState(
+  job: FinalRescueJob,
   client?: StartDayOneQueryClient,
-): Promise<StalledState> {
+): Promise<FinalRescueState> {
   const db =
     client ??
     ((await import("@/integrations/supabase/client.server"))
       .supabaseAdmin as unknown as StartDayOneQueryClient);
 
-  const [lead, completions, planReadyJobs, lifecycleJobs, planCompletedJobs, halfwayJobs] =
+  const [lead, starts, completions, planReadyJobs, lifecycleJobs, planCompletedJobs, halfwayJobs] =
     await Promise.all([
       rows(
         db
@@ -68,6 +65,14 @@ export async function loadStalledState(
             "id, plan_version_id, plan_json, email_original, email_normalized, marketing_unsubscribed_at, email_suppressed_at",
           )
           .eq("id", job.lead_plan_id)
+          .limit(1),
+      ),
+      rows(
+        db
+          .from("lead_plan_day_starts")
+          .select("started_at")
+          .eq("plan_version_id", job.plan_version_id)
+          .eq("day_number", 1)
           .limit(1),
       ),
       rows(
@@ -133,21 +138,11 @@ export async function loadStalledState(
       )
     : [];
 
-  // Read-only Final Rescue control facts for this plan version.
-  const finalRescueControl = await loadFinalRescueControl(job.plan_version_id, db);
-
   const required = requiredDayNumbers(leadRow?.["plan_json"]);
   const requiredRows = completions.filter((row) => {
     const value = row["day_number"];
     return typeof value === "number" && required.includes(value);
   });
-
-  const episodeDay = parseStalledEpisodeDay(job.idempotency_key, job.plan_version_id);
-  const latestRequiredCompletedDay =
-    requiredRows.length > 0
-      ? Math.max(...requiredRows.map((row) => row["day_number"] as number))
-      : null;
-  const anchorRow = requiredRows.find((row) => row["day_number"] === episodeDay);
 
   const accepted = lifecycleJobs.filter(
     (row) =>
@@ -156,8 +151,7 @@ export async function loadStalledState(
 
   const lastLifecycleAcceptedAt =
     accepted
-      // Only this job's own acceptance is excluded. An earlier accepted Stalled
-      // episode still consumes the shared 24-hour lifecycle gap.
+      // Only this job's own acceptance is excluded from the shared 24-hour gap.
       .filter((row) => row["job_id"] !== job.job_id)
       .map((row) => row["provider_accepted_at"] as string)
       .sort()
@@ -167,6 +161,13 @@ export async function loadStalledState(
     (INACTIVITY_JOB_TYPES as readonly string[]).includes(String(row["job_type"])),
   ).length;
 
+  const finalRescueAcceptedAt =
+    accepted
+      .filter((row) => row["job_type"] === FINAL_RESCUE_JOB_TYPE)
+      .map((row) => row["provider_accepted_at"] as string)
+      .sort()
+      .at(-1) ?? null;
+
   return {
     job,
     currentPlanVersionId: str(leadRow, "plan_version_id"),
@@ -174,19 +175,55 @@ export async function loadStalledState(
     marketingUnsubscribedAt: str(leadRow, "marketing_unsubscribed_at"),
     emailSuppressedAt: str(leadRow, "email_suppressed_at"),
     suppressionListed: suppressions.length > 0,
-    requiredCompletions: requiredRows.length,
-    totalRequiredAssignments: required.length,
     planComplete: required.length > 0 && requiredRows.length >= required.length,
     planCompletedControl: planCompletedJobs.length > 0,
     halfwayPending: halfwayJobs.length > 0,
-    finalRescueAccepted:
-      accepted.some((row) => row["job_type"] === FINAL_RESCUE_JOB_TYPE) ||
-      finalRescueControl.finalRescueAcceptedAt !== null,
-    finalRescueDueAt: finalRescueControl.finalRescueDueAt,
-    latestRequiredCompletedDay,
-    episodeAnchorCompletedAt: str(anchorRow, "completed_at"),
+    finalRescueAcceptedAt,
+    dayOneStartedAt: str(starts[0], "started_at"),
+    requiredCompletions: requiredRows.length,
+    totalRequiredAssignments: required.length,
     planReadyAcceptedAt: str(planReadyJobs[0], "provider_accepted_at"),
     lastLifecycleAcceptedAt,
     acceptedInactivityCount,
+  };
+}
+
+/**
+ * Read-only lookup of the authoritative Final Rescue control state for one plan
+ * version, used by the lower-priority Start Day 1 and Stalled loaders.
+ *
+ * Returns the acceptance time of Final Rescue, if any, and the eligibility
+ * horizon of the single unsent Final Rescue job, if one exists.
+ */
+export async function loadFinalRescueControl(
+  planVersionId: string,
+  db: StartDayOneQueryClient,
+): Promise<{ finalRescueAcceptedAt: string | null; finalRescueDueAt: string | null }> {
+  const [acceptedJobs, unsentJobs] = await Promise.all([
+    rows(
+      db
+        .from("email_jobs")
+        .select("provider_accepted_at")
+        .eq("plan_version_id", planVersionId)
+        .eq("job_type", FINAL_RESCUE_JOB_TYPE)
+        .eq("status", "provider_accepted")
+        .order("provider_accepted_at", { ascending: false })
+        .limit(1),
+    ),
+    rows(
+      db
+        .from("email_jobs")
+        .select("eligible_at")
+        .eq("plan_version_id", planVersionId)
+        .eq("job_type", FINAL_RESCUE_JOB_TYPE)
+        .in("status", UNSENT_STATUSES)
+        .order("eligible_at", { ascending: true })
+        .limit(1),
+    ),
+  ]);
+
+  return {
+    finalRescueAcceptedAt: str(acceptedJobs[0], "provider_accepted_at"),
+    finalRescueDueAt: str(unsentJobs[0], "eligible_at"),
   };
 }

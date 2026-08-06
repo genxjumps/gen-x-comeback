@@ -111,6 +111,7 @@ function eligibleState(job: EmailJobRow, overrides: Partial<StalledState> = {}):
     planCompletedControl: false,
     halfwayPending: false,
     finalRescueAccepted: false,
+    finalRescueDueAt: null,
     latestRequiredCompletedDay: EPISODE_DAY,
     episodeAnchorCompletedAt: ANCHOR,
     planReadyAcceptedAt: PLAN_READY_ACCEPTED_AT,

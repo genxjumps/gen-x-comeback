@@ -6,6 +6,9 @@
 // ownership). A raw GET, prefetch, scanner, provider open, or provider click
 // never reaches here.
 import {
+  FINAL_RESCUE_JOB_TYPE,
+  FINAL_RESCUE_JOB_VERSION,
+  FINAL_RESCUE_TEMPLATE_VERSION,
   HALFWAY_JOB_TYPE,
   HALFWAY_JOB_VERSION,
   HALFWAY_TEMPLATE_VERSION,
@@ -32,6 +35,9 @@ export const START_DAY_1_LINK_EXCHANGE_EVENT = "email_start_day_1_link_exchange_
 
 /** Emitted only for a deliberate valid open_plan exchange of a Stalled job token. */
 export const STALLED_LINK_EXCHANGE_EVENT = "email_stalled_link_exchange_completed";
+
+/** Emitted only for a deliberate valid open_plan exchange of a Final Rescue token. */
+export const FINAL_RESCUE_LINK_EXCHANGE_EVENT = "email_final_rescue_link_exchange_completed";
 
 export type LinkExchangeEventInput = {
   /** `plan_return_tokens.purpose` of the validated token. */
@@ -83,6 +89,12 @@ const LIFECYCLE_EXCHANGE_CONTRACTS: readonly LifecycleExchangeContract[] = [
     jobVersion: STALLED_JOB_VERSION,
     templateVersion: STALLED_TEMPLATE_VERSION,
     eventName: STALLED_LINK_EXCHANGE_EVENT,
+  },
+  {
+    jobType: FINAL_RESCUE_JOB_TYPE,
+    jobVersion: FINAL_RESCUE_JOB_VERSION,
+    templateVersion: FINAL_RESCUE_TEMPLATE_VERSION,
+    eventName: FINAL_RESCUE_LINK_EXCHANGE_EVENT,
   },
 ];
 

@@ -13,6 +13,7 @@ import {
   STALLED_TEMPLATE_VERSION,
 } from "@/lib/email/types";
 import {
+  finalRescueDueControls,
   LIFECYCLE_MIN_GAP_MS,
   MAX_ACCEPTED_INACTIVITY_EMAILS,
 } from "@/lib/email/start-day-1-resolver";
@@ -85,6 +86,8 @@ export type StalledState = {
   halfwayPending: boolean;
   /** True when a Final Rescue message was already accepted for this plan version. */
   finalRescueAccepted: boolean;
+  /** Eligibility horizon of the single unsent Final Rescue job, if one exists. */
+  finalRescueDueAt: string | null;
   /** Highest required day number with a persisted completion, if any. */
   latestRequiredCompletedDay: number | null;
   /** Persisted completion timestamp this episode is anchored to. */
@@ -103,6 +106,7 @@ export type StalledCancelReason =
   | "plan_version_replaced"
   | "plan_completed"
   | "final_rescue_sent"
+  | "final_rescue_controls"
   | "recipient_missing"
   | "progress_not_started"
   | "progress_window_passed"
@@ -190,6 +194,12 @@ export function resolveStalled(state: StalledState, now: Date): StalledResolutio
 
   // Final Rescue permanently closes later inactivity messaging.
   if (state.finalRescueAccepted) return cancel("final_rescue_sent");
+
+  // A due unsent Final Rescue job that is not blocked by Halfway controls this
+  // lower inactivity message, even while Final Rescue is still retrying.
+  if (finalRescueDueControls(state.finalRescueDueAt, state.halfwayPending, now)) {
+    return cancel("final_rescue_controls");
+  }
 
   if (!state.hasRecipient) return cancel("recipient_missing");
 
