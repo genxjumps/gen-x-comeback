@@ -51,6 +51,7 @@ import {
   resolveReturnDestination,
 } from "@/lib/email/return-destination";
 import { lifecycleEventName } from "@/lib/email/event-names";
+import { requiredDayNumbers } from "@/lib/email/halfway-state.server";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
 
 const NOW = new Date("2026-02-05T18:00:00.000Z");
