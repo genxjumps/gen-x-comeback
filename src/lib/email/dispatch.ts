@@ -1,6 +1,7 @@
 // Durable lifecycle email dispatcher. Deterministic and injectable: no
 // environment reads, no direct database access, no provider imports.
 import {
+  FINAL_RESCUE_JOB_TYPE,
   HALFWAY_JOB_TYPE,
   IDEMPOTENCY_HORIZON_MS,
   MAX_ATTEMPTS,
