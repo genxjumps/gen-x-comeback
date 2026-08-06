@@ -14,11 +14,13 @@ export type DispatchCycleResult = {
   finalRescue: DispatchSummary;
   stalled: DispatchSummary;
   startDayOne: DispatchSummary;
+  /** 0 unless the global (non-lead-scoped) sweep was explicitly requested. */
+  staleAlerts: number;
 };
 
 export async function runDispatchCycle(
   deps: DispatchDeps,
-  options?: { limit?: number },
+  options?: { limit?: number; staleAlerts?: boolean },
 ): Promise<DispatchCycleResult> {
   const limit = options?.limit ?? 25;
 
@@ -30,9 +32,14 @@ export async function runDispatchCycle(
     dispatchStalledJobs,
     dispatchStartDayOneJobs,
     dispatchFinalRescueJobs,
+    raiseStalePlanReadyAlerts,
   } = await import("@/lib/email/dispatch");
 
   const planReady = await dispatchPlanReadyJobs(deps, { limit });
+
+  // The stale-Plan-Ready sweep is global, not lead-scoped, so it runs only when
+  // the caller opts in (production). Its position in the tick is unchanged.
+  const staleAlerts = options?.staleAlerts ? await raiseStalePlanReadyAlerts(deps) : 0;
 
   // Recovery runs after Plan Ready and before proactive lifecycle dispatch.
   // This is execution ordering only: recovery is on-demand product access,
@@ -79,5 +86,14 @@ export async function runDispatchCycle(
     { limit },
   );
 
-  return { planReady, recovery, planCompleted, halfway, finalRescue, stalled, startDayOne };
+  return {
+    planReady,
+    recovery,
+    planCompleted,
+    halfway,
+    finalRescue,
+    stalled,
+    startDayOne,
+    staleAlerts,
+  };
 }
