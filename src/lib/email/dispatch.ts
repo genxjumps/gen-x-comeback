@@ -81,7 +81,7 @@ function preferencesUrl(appOrigin: string, token: string): string {
   return `${appOrigin}/email-preferences?c=${token}`;
 }
 
-type TerminalOutcome = Exclude<JobOutcome, "lost_lease">;
+type TerminalOutcome = Exclude<JobOutcome, "lost_lease" | "deferred">;
 
 const OUTCOME_STATUS: Record<TerminalOutcome, EmailJobStatus> = {
   provider_accepted: "provider_accepted",
@@ -91,8 +91,6 @@ const OUTCOME_STATUS: Record<TerminalOutcome, EmailJobStatus> = {
   canceled: "canceled",
   // A manual-review job is not retried; it is parked as a permanent failure.
   manual_review: "failed_permanent",
-  // A deferral keeps the job claimable at the resolver-approved time.
-  deferred: "retry_scheduled",
 };
 
 const OUTCOME_EVENT: Record<TerminalOutcome, LifecycleEventOutcome | null> = {
@@ -102,8 +100,6 @@ const OUTCOME_EVENT: Record<TerminalOutcome, LifecycleEventOutcome | null> = {
   suppressed: "suppressed",
   canceled: "canceled",
   manual_review: "manual_review",
-  // Not a real transient retry: emitting one would be a false event.
-  deferred: null,
 };
 
 type FinishExtra = {
@@ -112,10 +108,31 @@ type FinishExtra = {
   providerMessageId?: string;
   acceptedAt?: string;
   reason?: string;
-  attemptedAt?: string;
-  /** Resolver-approved next eligibility time for a deferral. */
-  eligibleAt?: string;
 };
+
+/**
+ * Applies one fenced non-provider deferral, shared by every lifecycle resolver
+ * that defers a send (Start Day 1 and Halfway today).
+ *
+ * The shared claim RPC already incremented attempt_count on lease claim, so the
+ * fenced deferral restores the pre-claim count. A deferral is not a provider
+ * attempt: it consumes no retry budget, can repeat indefinitely without ever
+ * reaching max_attempts_exceeded, and emits no retry event.
+ */
+async function deferSend(
+  deps: DispatchDeps,
+  job: EmailJobRow,
+  eligibleAt?: string | null,
+): Promise<{ jobId: string; outcome: JobOutcome }> {
+  const nextAttemptAt = eligibleAt ?? deps.now().toISOString();
+  const fenced = await deps.store.deferJob(
+    job.job_id,
+    job.claim_token,
+    nextAttemptAt,
+    Math.max(job.attempt_count - 1, 0),
+  );
+  return { jobId: job.job_id, outcome: fenced ? "deferred" : "lost_lease" };
+}
 
 /**
  * Applies one fenced terminal transition. A lost lease means another worker
@@ -133,8 +150,6 @@ async function finish(
   const eventName = eventOutcome ? lifecycleEventName(job.job_type, eventOutcome) : null;
   const patch: EmailJobPatch = {};
 
-  if (extra.attemptedAt) patch.first_provider_attempt_at = extra.attemptedAt;
-
   if (outcome === "provider_accepted") {
     patch.provider_key = extra.providerKey ?? deps.adapter.key;
     patch.provider_message_id = extra.providerMessageId ?? null;
@@ -145,8 +160,6 @@ async function finish(
     patch.next_attempt_at = new Date(deps.now().getTime() + delay).toISOString();
     patch.last_error_code = extra.errorCode ?? null;
     patch.last_error_at = nowIso;
-  } else if (outcome === "deferred") {
-    patch.next_attempt_at = extra.eligibleAt ?? nowIso;
   } else if (outcome === "failed_permanent" || outcome === "manual_review") {
     patch.next_attempt_at = null;
     patch.last_error_code = extra.errorCode ?? null;
@@ -210,19 +223,30 @@ async function guardCommon(
   }
 
   // Past the provider's idempotency horizon a fresh attempt could duplicate a
-  // send that already happened. A human decides instead. The horizon runs from
-  // when the job first became attemptable, so a deliberately delayed job (Start
-  // Day 1 waits 24 hours) is not parked for its own scheduled delay. Plan Ready
-  // is unaffected: its eligibility equals its creation time.
-  // A resolver-approved timing deferral legitimately moves the next attempt
-  // beyond the original eligibility, so the persisted next_attempt_at is part of
-  // the floor. Without it a correctly deferred job would later be parked for
-  // manual review purely because it waited as instructed.
-  const horizonFrom = Math.max(
-    new Date(job.created_at).getTime(),
-    new Date(job.eligible_at).getTime(),
-    job.next_attempt_at ? new Date(job.next_attempt_at).getTime() : 0,
-  );
+  // send that already happened. A human decides instead.
+  //
+  // Two horizons are deliberately separate:
+  //
+  // 1. No provider attempt yet. Nothing can have been duplicated, so the floor
+  //    is when the job last legitimately became attemptable:
+  //    max(created_at, eligible_at, next_attempt_at). A deliberately delayed job
+  //    (Start Day 1 waits 24 hours) and any resolver-approved lifecycle deferral
+  //    therefore extend eligibility instead of being parked for waiting as
+  //    instructed. Plan Ready is unaffected: eligibility equals creation.
+  // 2. A provider attempt already happened. The provider only honors the stable
+  //    idempotency key for a bounded period from that original attempt, so the
+  //    horizon is governed only by first_provider_attempt_at. A later
+  //    next_attempt_at must never reset or extend it.
+  const firstProviderAttemptAt = job.first_provider_attempt_at
+    ? new Date(job.first_provider_attempt_at).getTime()
+    : null;
+  const horizonFrom =
+    firstProviderAttemptAt ??
+    Math.max(
+      new Date(job.created_at).getTime(),
+      new Date(job.eligible_at).getTime(),
+      job.next_attempt_at ? new Date(job.next_attempt_at).getTime() : 0,
+    );
   if (deps.now().getTime() - horizonFrom > IDEMPOTENCY_HORIZON_MS) {
     return finish(deps, job, "manual_review", { errorCode: "idempotency_horizon_exceeded" });
   }
@@ -263,13 +287,26 @@ async function issueCredentials(
   };
 }
 
-/** Performs exactly one provider attempt and applies the resulting transition. */
+/**
+ * Performs exactly one provider attempt and applies the resulting transition.
+ *
+ * The first provider-attempt boundary is durably recorded under the current
+ * fenced lease before the provider is called. If that fenced write fails the
+ * lease no longer belongs to this worker, so the provider is never called.
+ */
 async function attemptSend(
   deps: DispatchDeps,
   job: EmailJobRow,
   request: EmailSendRequest,
 ): Promise<{ jobId: string; outcome: JobOutcome; errorCode?: string }> {
   const attemptedAt = deps.now().toISOString();
+  const fenced = await deps.store.recordFirstProviderAttempt(
+    job.job_id,
+    job.claim_token,
+    attemptedAt,
+  );
+  if (!fenced) return { jobId: job.job_id, outcome: "lost_lease" };
+
   const result = await deps.adapter.send(request);
 
   if (result.outcome === "accepted") {
@@ -277,7 +314,6 @@ async function attemptSend(
       providerKey: result.providerKey,
       providerMessageId: result.providerMessageId,
       acceptedAt: result.acceptedAt,
-      attemptedAt,
     });
   }
 
@@ -291,20 +327,19 @@ async function attemptSend(
         providerKey: deps.adapter.key,
         providerMessageId: reconciled.providerMessageId,
         acceptedAt: reconciled.acceptedAt,
-        attemptedAt,
       });
     }
   }
 
   if (result.outcome === "permanent") {
-    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode, attemptedAt });
+    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode });
   }
 
   // Transient or unreconciled ambiguous failure.
   if (job.attempt_count >= MAX_ATTEMPTS) {
-    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode, attemptedAt });
+    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode });
   }
-  return finish(deps, job, "retry_scheduled", { errorCode: result.errorCode, attemptedAt });
+  return finish(deps, job, "retry_scheduled", { errorCode: result.errorCode });
 }
 
 /** Claims due Plan Ready jobs, rechecks eligibility, and performs one attempt each. */
@@ -399,11 +434,9 @@ export async function dispatchStartDayOneJobs(
 
     if (resolution.action === "CANCEL") {
       if (resolution.disposition === "defer") {
-        outcomes.push(
-          await finish(deps, job, "deferred", {
-            ...(resolution.eligibleAt ? { eligibleAt: resolution.eligibleAt } : {}),
-          }),
-        );
+        // Non-provider lifecycle deferral: fenced, attempt-count restoring, and
+        // eventless, exactly as a Halfway DEFER.
+        outcomes.push(await deferSend(deps, job, resolution.eligibleAt ?? null));
       } else if (resolution.disposition === "suppress") {
         outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
       } else {
@@ -490,17 +523,9 @@ export async function dispatchHalfwayJobs(
     const resolution = resolveHalfway(state, deps.now());
 
     if (resolution.action === "DEFER") {
-      // A deferral is not a provider attempt: the shared claim RPC already
-      // incremented attempt_count on lease claim, so the fenced deferral
-      // transition restores the pre-claim count and emits no retry event.
-      const nextAttemptAt = resolution.eligibleAt ?? deps.now().toISOString();
-      const fenced = await deps.store.deferJob(
-        job.job_id,
-        job.claim_token,
-        nextAttemptAt,
-        Math.max(job.attempt_count - 1, 0),
-      );
-      outcomes.push({ jobId: job.job_id, outcome: fenced ? "deferred" : "lost_lease" });
+      // Identical behavior to before, now through the shared non-provider
+      // deferral boundary: fenced, attempt-count restoring, and eventless.
+      outcomes.push(await deferSend(deps, job, resolution.eligibleAt ?? null));
       continue;
     }
 
