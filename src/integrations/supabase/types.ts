@@ -715,6 +715,51 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      claim_email_jobs_for_lead: {
+        Args: {
+          p_job_type: string
+          p_lead_plan_id: string
+          p_lease_seconds?: number
+          p_limit?: number
+        }
+        Returns: {
+          alerted_stale_at: string | null
+          attempt_count: number
+          canceled_at: string | null
+          claim_token: string | null
+          created_at: string
+          delivered_at: string | null
+          delivery_status: Database["public"]["Enums"]["email_delivery_status"]
+          eligible_at: string
+          first_provider_attempt_at: string | null
+          idempotency_key: string
+          job_id: string
+          job_type: string
+          job_version: string
+          last_error_at: string | null
+          last_error_code: string | null
+          lead_plan_id: string
+          lease_expires_at: string | null
+          locked_at: string | null
+          manual_review_at: string | null
+          next_attempt_at: string | null
+          plan_version_id: string
+          provider_accepted_at: string | null
+          provider_key: string | null
+          provider_message_id: string | null
+          source_event_id: string | null
+          status: Database["public"]["Enums"]["email_job_status"]
+          suppression_reason: string | null
+          template_version: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "email_jobs"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       commit_plan_version: {
         Args: {
           p_assessment: Json
