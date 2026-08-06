@@ -26,7 +26,11 @@ import {
 } from "@/lib/email/final-rescue-resolver";
 import {
   FINAL_RESCUE_COPY,
+  FINAL_RESCUE_FOOTER,
+  FINAL_RESCUE_GREETING_FALLBACK,
+  FINAL_RESCUE_RECOVERY_LINE,
   FINAL_RESCUE_RECOVERY_PATH,
+  FINAL_RESCUE_SIGN_OFF,
   renderFinalRescue,
 } from "@/lib/email/final-rescue-template";
 import {
@@ -334,37 +338,103 @@ describe("F3 resolver derives every outcome from persisted state only", () => {
 });
 
 describe("F4 approved template copy for both variants", () => {
+  const RETURN_URL = "https://app.genxjumps.com/return?t=secret-token";
+  const PREFERENCES_URL = "https://app.genxjumps.com/email-preferences?t=pref-token";
+
   const rendered = (variant: "unstarted" | "started", firstName: string | null = "Todd") =>
     renderFinalRescue(
       { action: "SEND", variant },
       {
         firstName,
-        returnUrl: "https://app.genxjumps.com/return?t=secret-token",
-        preferencesUrl: "https://app.genxjumps.com/email-preferences?t=pref-token",
+        returnUrl: RETURN_URL,
+        preferencesUrl: PREFERENCES_URL,
         appOrigin: "https://app.genxjumps.com",
       },
     )!;
 
-  it("renders the approved unstarted subject, body and CTA", () => {
+  /** Every customer-facing surface of one rendered message, combined. */
+  function customerFacingSurface(out: ReturnType<typeof rendered>): string {
+    return [
+      out.subject,
+      out.previewText,
+      out.ctaLabel,
+      out.postCtaLine,
+      out.recoveryUrl,
+      out.text,
+      out.html,
+      FINAL_RESCUE_RECOVERY_LINE,
+      FINAL_RESCUE_FOOTER,
+      ...FINAL_RESCUE_SIGN_OFF,
+    ].join("\n");
+  }
+
+  it("renders the exact approved unstarted copy: subject, preview, body, CTA and post-CTA", () => {
     const out = rendered("unstarted");
+    expect(out.variant).toBe("unstarted");
     expect(out.subject).toBe("Todd, your 7-day plan is still waiting");
-    expect(out.ctaLabel).toBe(FINAL_RESCUE_COPY.unstarted.ctaLabel);
-    expect(out.text).toContain("Your 7-Day Comeback Plan is still here.");
-    expect(out.text).toContain("Open My Plan: https://app.genxjumps.com/return?t=secret-token");
+    expect(out.personalizedName).toBe("Todd");
+    expect(out.previewText).toBe("Come back to your plan and start Day 1 when you\u2019re ready.");
+    expect(out.ctaLabel).toBe("Open My Plan");
+    expect(out.postCtaLine).toBe("One workout. One decision. Get moving again.");
+    expect(FINAL_RESCUE_COPY.unstarted.bodyParagraphs).toEqual([
+      "Your 7-Day Comeback Plan is still here.",
+      "You don\u2019t need to catch up or start over. Open your plan and start Day 1 when you\u2019re ready.",
+    ]);
+    // Greeting plus every approved paragraph, in order, in both renderings.
+    expect(out.text).toContain("Hey Todd,");
+    for (const paragraph of FINAL_RESCUE_COPY.unstarted.bodyParagraphs) {
+      expect(out.text).toContain(paragraph);
+      expect(out.html).toContain(paragraph.replace(/'/g, "&#39;"));
+    }
+    expect(out.text).toContain(`Open My Plan: ${RETURN_URL}`);
+    expect(out.text).toContain("One workout. One decision. Get moving again.");
   });
 
-  it("renders the approved started subject, body and CTA", () => {
+  it("renders the exact approved started copy: subject, preview, body, CTA and post-CTA", () => {
     const out = rendered("started");
+    expect(out.variant).toBe("started");
     expect(out.subject).toBe("Todd, pick up where you left off");
+    expect(out.personalizedName).toBe("Todd");
+    expect(out.previewText).toBe("Your plan and progress are saved.");
     expect(out.ctaLabel).toBe("Return to My Plan");
-    expect(out.text).toContain("Your progress is saved.");
+    expect(out.postCtaLine).toBe("The next step is the only one that matters.");
+    expect(FINAL_RESCUE_COPY.started.bodyParagraphs).toEqual([
+      "You started your 7-Day Comeback Plan, but it\u2019s been a few days since you completed a day in your plan.",
+      "Your progress is saved. You don\u2019t need to restart or make up missed days. Open your plan and complete the next day.",
+    ]);
+    expect(out.text).toContain("Hey Todd,");
+    for (const paragraph of FINAL_RESCUE_COPY.started.bodyParagraphs) {
+      expect(out.text).toContain(paragraph);
+      expect(out.html).toContain(paragraph.replace(/'/g, "&#39;"));
+    }
+    expect(out.text).toContain(`Return to My Plan: ${RETURN_URL}`);
+    expect(out.text).toContain("The next step is the only one that matters.");
   });
 
-  it("falls back to the approved impersonal greeting and subject with no usable name", () => {
-    const out = rendered("unstarted", null);
-    expect(out.subject).toBe("Your 7-day plan is still waiting");
-    expect(out.personalizedName).toBeNull();
-    expect(out.text).toContain("Hey there,");
+  it("uses the exact approved fallback subject and impersonal greeting for both variants", () => {
+    expect(FINAL_RESCUE_GREETING_FALLBACK).toBe("Hey there,");
+    const unstarted = rendered("unstarted", null);
+    expect(unstarted.subject).toBe("Your 7-day plan is still waiting");
+    expect(unstarted.personalizedName).toBeNull();
+    expect(unstarted.text).toContain("Hey there,");
+    expect(unstarted.text).not.toContain("Hey Todd,");
+
+    const started = rendered("started", null);
+    expect(started.subject).toBe("Pick up where you left off");
+    expect(started.personalizedName).toBeNull();
+    expect(started.text).toContain("Hey there,");
+  });
+
+  it("never uses the word assignment in any customer-facing output, in any variant", () => {
+    for (const [variant, name] of [
+      ["unstarted", "Todd"],
+      ["unstarted", null],
+      ["started", "Todd"],
+      ["started", null],
+    ] as const) {
+      const surface = customerFacingSurface(rendered(variant, name));
+      expect(surface.toLowerCase()).not.toContain("assignment");
+    }
   });
 
   it("uses a token-free absolute recovery URL with no query string", () => {
@@ -391,9 +461,7 @@ describe("F4 approved template copy for both variants", () => {
 
   it("includes the preferences link in every variant", () => {
     for (const variant of ["unstarted", "started"] as const) {
-      expect(rendered(variant).text).toContain(
-        "Manage email preferences: https://app.genxjumps.com/email-preferences?t=pref-token",
-      );
+      expect(rendered(variant).text).toContain(`Manage email preferences: ${PREFERENCES_URL}`);
     }
   });
 });
