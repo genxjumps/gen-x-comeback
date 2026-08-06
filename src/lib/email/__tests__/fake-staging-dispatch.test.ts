@@ -168,10 +168,9 @@ describe("fake staging runtime", () => {
     const fetchSpy = vi.fn(async () => new Response("{}"));
     vi.stubGlobal("fetch", fetchSpy);
     vi.doMock("@/lib/email/adapters.server", async () => {
-      const actual =
-        await vi.importActual<typeof import("@/lib/email/adapters.server")>(
-          "@/lib/email/adapters.server",
-        );
+      const actual = await vi.importActual<typeof import("@/lib/email/adapters.server")>(
+        "@/lib/email/adapters.server",
+      );
       return { ...actual, createResendAdapter };
     });
     vi.doMock("@/lib/email/store.server", () => ({
@@ -296,9 +295,7 @@ describe("scoped fake dispatch outcome", () => {
     const scoped = {
       ...store,
       claimJobs: async (jobType: string, limit: number, leaseSeconds: number) => {
-        const hidden = [...store.jobs.entries()].filter(
-          ([, job]) => job.lead_plan_id !== LEAD,
-        );
+        const hidden = [...store.jobs.entries()].filter(([, job]) => job.lead_plan_id !== LEAD);
         for (const [id] of hidden) store.jobs.delete(id);
         try {
           const claimed = await store.claimJobs(jobType, limit, leaseSeconds);

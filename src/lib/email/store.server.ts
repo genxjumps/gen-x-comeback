@@ -55,7 +55,6 @@ export async function createSupabaseEmailStore(options?: {
       return (data ?? []) as unknown as EmailJobRow[];
     },
 
-
     async getLead(leadPlanId) {
       const { data, error } = await supabaseAdmin
         .from("lead_plans")

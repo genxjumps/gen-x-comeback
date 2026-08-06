@@ -21,9 +21,8 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { authorizeDispatch, readStagingLeadPlanId } = await import(
-          "@/lib/email/dispatch-auth"
-        );
+        const { authorizeDispatch, readStagingLeadPlanId } =
+          await import("@/lib/email/dispatch-auth");
         const mode = authorizeDispatch(request);
         if (!mode) return unauthorized();
 
@@ -37,9 +36,8 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             );
           }
 
-          const { buildFakeStagingDispatchDeps } = await import(
-            "@/lib/email/staging-runtime.server"
-          );
+          const { buildFakeStagingDispatchDeps } =
+            await import("@/lib/email/staging-runtime.server");
           const staging = await buildFakeStagingDispatchDeps(leadPlanId);
           if (!staging.enabled) {
             // Fail-closed: link rendering/derivation configuration is required.
