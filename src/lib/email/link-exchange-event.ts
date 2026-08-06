@@ -132,13 +132,28 @@ export function resolveLinkExchangeAttribution(input: LinkExchangeEventInput): {
   jobId: string | null;
 } {
   const general = { eventName: PLAN_READY_LINK_EXCHANGE_EVENT, jobId: null };
+  const job = input.job;
+
+  // Recovery attribution is purpose-limited: only a `recovery` token whose
+  // originating recovery_v1 job is owned by exactly the same validated lead and
+  // plan version earns the recovery exchange event.
+  if (input.purpose === RECOVERY_TOKEN_PURPOSE) {
+    if (!job?.jobId) return general;
+    if (!job.leadPlanId || job.leadPlanId !== input.leadPlanId) return general;
+    if (!job.planVersionId || job.planVersionId !== input.planVersionId) return general;
+    if (job.jobType !== RECOVERY_JOB_TYPE) return general;
+    if (job.jobVersion !== RECOVERY_JOB_VERSION) return general;
+    if (job.templateVersion !== RECOVERY_TEMPLATE_VERSION) return general;
+    return { eventName: RECOVERY_LINK_EXCHANGE_EVENT, jobId: job.jobId };
+  }
+
   if (input.purpose !== OPEN_PLAN_TOKEN_PURPOSE) return general;
 
-  const job = input.job;
   if (!job) return general;
   if (!job.jobId) return general;
   if (!job.leadPlanId || job.leadPlanId !== input.leadPlanId) return general;
   if (!job.planVersionId || job.planVersionId !== input.planVersionId) return general;
+
 
   const contract = LIFECYCLE_EXCHANGE_CONTRACTS.find(
     (candidate) =>
