@@ -88,11 +88,8 @@ export const Route = createFileRoute("/recover")({
         if (!secret) return genericAcknowledgement();
 
         const { callerBucketKey, consumeRateLimit } = await import("@/lib/email/rate-limit.server");
-        const {
-          normalizeSubmittedEmail,
-          recoveryEmailBucketKey,
-          verifyRecoveryRequestId,
-        } = await import("@/lib/email/recovery-request.server");
+        const { normalizeSubmittedEmail, recoveryEmailBucketKey, verifyRecoveryRequestId } =
+          await import("@/lib/email/recovery-request.server");
 
         // Caller/IP limit uses the shared privacy-preserving helper: 5 per hour.
         const caller = await consumeRateLimit(

@@ -306,7 +306,6 @@ function PlanHubPage() {
             </a>
           </p>
         </div>
-
       </section>
     </div>
   );

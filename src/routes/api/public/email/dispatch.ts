@@ -74,8 +74,6 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         // reprioritizes any proactive lifecycle job.
         const recovery = await dispatchRecoveryJobs(runtime.deps, { limit: 25 });
 
-
-
         // Lifecycle priority, in exact order: Plan Completed, then Halfway, then
         // Final Rescue, then Stalled, then Start Day 1. Higher priority runs
         // first in the tick so it consumes the shared 24-hour lifecycle gap
@@ -125,7 +123,6 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           start_day_1: startDayOne,
           final_rescue: finalRescue,
         });
-
       },
     },
   },

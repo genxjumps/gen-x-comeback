@@ -24,7 +24,10 @@ import {
   RECOVERY_LINK_EXCHANGE_EVENT,
   resolveLinkExchangeAttribution,
 } from "@/lib/email/link-exchange-event";
-import { DEFAULT_RETURN_DESTINATION, resolveReturnDestination } from "@/lib/email/return-destination";
+import {
+  DEFAULT_RETURN_DESTINATION,
+  resolveReturnDestination,
+} from "@/lib/email/return-destination";
 import { dispatchRecoveryJobs, type DispatchDeps } from "@/lib/email/dispatch";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
 import type { EmailAdapter, EmailSendRequest } from "@/lib/email/types";
@@ -282,7 +285,9 @@ describe("recovery canonical events", () => {
       "email_plan_ready_provider_accepted",
     );
     expect(lifecycleEventName("halfway", "suppressed")).toBe("email_halfway_suppressed");
-    expect(lifecycleEventName("plan_completed", "delivered")).toBe("email_plan_completed_delivered");
+    expect(lifecycleEventName("plan_completed", "delivered")).toBe(
+      "email_plan_completed_delivered",
+    );
     expect(lifecycleEventName("final_rescue", "manual_review")).toBeNull();
   });
 });
@@ -435,7 +440,6 @@ describe("recovery dispatch", () => {
     expect(withoutToken).not.toContain("reader@example.com");
     expect(withoutToken).not.toContain("lead-1");
     expect(withoutToken).not.toContain("version-1");
-
   });
 
   it("retries of the same job reproduce the identical credential; a different request id does not", async () => {

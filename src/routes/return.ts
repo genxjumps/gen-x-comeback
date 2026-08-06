@@ -43,7 +43,6 @@ function genericRecovery(): Response {
   );
 }
 
-
 export const Route = createFileRoute("/return")({
   server: {
     handlers: {
