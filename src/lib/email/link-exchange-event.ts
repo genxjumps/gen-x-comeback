@@ -103,7 +103,14 @@ const LIFECYCLE_EXCHANGE_CONTRACTS: readonly LifecycleExchangeContract[] = [
     templateVersion: FINAL_RESCUE_TEMPLATE_VERSION,
     eventName: FINAL_RESCUE_LINK_EXCHANGE_EVENT,
   },
+  {
+    jobType: PLAN_COMPLETED_JOB_TYPE,
+    jobVersion: PLAN_COMPLETED_JOB_VERSION,
+    templateVersion: PLAN_COMPLETED_TEMPLATE_VERSION,
+    eventName: PLAN_COMPLETED_LINK_EXCHANGE_EVENT,
+  },
 ];
+
 
 /**
  * Trusted attribution for a completed exchange: the canonical event name and,
