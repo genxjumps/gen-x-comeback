@@ -57,11 +57,12 @@ export type DispatchDeps = {
    * the identical return and preference links, never a second live credential.
    */
   deriveCredential: (
-    purpose: "open_plan" | "email_preferences",
+    purpose: "open_plan" | "email_preferences" | "recovery",
     planVersionId: string,
     /** Opaque logical-job scope for job-associated open_plan credentials. */
     scope?: string,
   ) => string;
+
   hash: (raw: string) => Promise<string>;
 };
 
