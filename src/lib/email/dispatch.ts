@@ -226,22 +226,34 @@ async function guardCommon(
   }
 
   // Past the provider's idempotency horizon a fresh attempt could duplicate a
-  // send that already happened. A human decides instead. The horizon runs from
-  // when the job first became attemptable, so a deliberately delayed job (Start
-  // Day 1 waits 24 hours) is not parked for its own scheduled delay. Plan Ready
-  // is unaffected: its eligibility equals its creation time.
-  // A resolver-approved timing deferral legitimately moves the next attempt
-  // beyond the original eligibility, so the persisted next_attempt_at is part of
-  // the floor. Without it a correctly deferred job would later be parked for
-  // manual review purely because it waited as instructed.
-  const horizonFrom = Math.max(
-    new Date(job.created_at).getTime(),
-    new Date(job.eligible_at).getTime(),
-    job.next_attempt_at ? new Date(job.next_attempt_at).getTime() : 0,
-  );
+  // send that already happened. A human decides instead.
+  //
+  // Two horizons are deliberately separate:
+  //
+  // 1. No provider attempt yet. Nothing can have been duplicated, so the floor
+  //    is when the job last legitimately became attemptable:
+  //    max(created_at, eligible_at, next_attempt_at). A deliberately delayed job
+  //    (Start Day 1 waits 24 hours) and any resolver-approved lifecycle deferral
+  //    therefore extend eligibility instead of being parked for waiting as
+  //    instructed. Plan Ready is unaffected: eligibility equals creation.
+  // 2. A provider attempt already happened. The provider only honors the stable
+  //    idempotency key for a bounded period from that original attempt, so the
+  //    horizon is governed only by first_provider_attempt_at. A later
+  //    next_attempt_at must never reset or extend it.
+  const firstProviderAttemptAt = job.first_provider_attempt_at
+    ? new Date(job.first_provider_attempt_at).getTime()
+    : null;
+  const horizonFrom =
+    firstProviderAttemptAt ??
+    Math.max(
+      new Date(job.created_at).getTime(),
+      new Date(job.eligible_at).getTime(),
+      job.next_attempt_at ? new Date(job.next_attempt_at).getTime() : 0,
+    );
   if (deps.now().getTime() - horizonFrom > IDEMPOTENCY_HORIZON_MS) {
     return finish(deps, job, "manual_review", { errorCode: "idempotency_horizon_exceeded" });
   }
+
 
   return null;
 }
