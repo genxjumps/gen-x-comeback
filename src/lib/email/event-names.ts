@@ -31,7 +31,10 @@ const PREFIXES: Record<string, string> = {
   [STALLED_JOB_TYPE]: "email_stalled",
   [FINAL_RESCUE_JOB_TYPE]: "email_final_rescue",
   [PLAN_COMPLETED_JOB_TYPE]: "email_plan_completed",
+  // Recovery is a product-access namespace, not a proactive lifecycle one.
+  [RECOVERY_JOB_TYPE]: "email_recovery",
 };
+
 
 /**
  * Outcomes that do not emit a canonical event for a given job type.
