@@ -439,11 +439,10 @@ export async function dispatchStartDayOneJobs(
 
     if (resolution.action === "CANCEL") {
       if (resolution.disposition === "defer") {
-        outcomes.push(
-          await finish(deps, job, "deferred", {
-            ...(resolution.eligibleAt ? { eligibleAt: resolution.eligibleAt } : {}),
-          }),
-        );
+        // Non-provider lifecycle deferral: fenced, attempt-count restoring, and
+        // eventless, exactly as a Halfway DEFER.
+        outcomes.push(await deferSend(deps, job, resolution.eligibleAt ?? null));
+
       } else if (resolution.disposition === "suppress") {
         outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
       } else {
