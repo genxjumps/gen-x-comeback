@@ -25,6 +25,12 @@ import { renderStalled } from "@/lib/email/stalled-template";
 import { resolveHalfway, type HalfwayJob, type HalfwayState } from "@/lib/email/halfway-resolver";
 import { resolveStalled, type StalledJob, type StalledState } from "@/lib/email/stalled-resolver";
 import {
+  resolveFinalRescue,
+  type FinalRescueJob,
+  type FinalRescueState,
+} from "@/lib/email/final-rescue-resolver";
+import { renderFinalRescue } from "@/lib/email/final-rescue-template";
+import {
   resolveStartDayOne,
   type StartDayOneJob,
   type StartDayOneState,
@@ -64,6 +70,11 @@ export type HalfwayDispatchDeps = DispatchDeps & {
 /** Stalled additionally needs its authoritative read-only state loader. */
 export type StalledDispatchDeps = DispatchDeps & {
   loadStalledState: (job: StalledJob) => Promise<StalledState>;
+};
+
+/** Final Rescue additionally needs its authoritative read-only state loader. */
+export type FinalRescueDispatchDeps = DispatchDeps & {
+  loadFinalRescueState: (job: FinalRescueJob) => Promise<FinalRescueState>;
 };
 
 export type JobOutcome =
@@ -661,6 +672,103 @@ export async function dispatchStalledJobs(
     // hash is ever stored, and the trusted destination stays the plan hub.
     const urls = await issueCredentials(deps, job, lead, true);
     const rendered = renderStalled(resolution, {
+      firstName: lead.first_name,
+      returnUrl: urls.returnUrl,
+      preferencesUrl: urls.preferencesUrl,
+      appOrigin: deps.appOrigin,
+    });
+    if (!rendered) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    outcomes.push(
+      await attemptSend(deps, job, {
+        to: lead.email_original,
+        fromEmail: deps.fromEmail,
+        fromName: deps.fromName,
+        replyTo: deps.replyTo,
+        subject: rendered.subject,
+        previewText: rendered.previewText,
+        html: rendered.html,
+        text: rendered.text,
+        idempotencyKey: job.idempotency_key,
+        correlationId: job.job_id,
+        disableClickTracking: true,
+      }),
+    );
+  }
+
+  return { claimed: jobs.length, outcomes };
+}
+
+/**
+ * Claims due Final Rescue jobs and, immediately before each provider attempt,
+ * re-resolves authoritative persisted state. A CANCEL or SUPPRESS resolution
+ * never renders, never derives a credential, never builds a payload, and never
+ * calls the provider. A DEFER never performs a provider attempt, consumes no
+ * retry budget, and emits no event.
+ *
+ * Priority: this loop runs last, below Plan Completed, Halfway, Stalled, and
+ * Start Day 1, so higher-priority messages consume the shared 24-hour
+ * lifecycle gap first and Final Rescue stays terminal.
+ */
+export async function dispatchFinalRescueJobs(
+  deps: FinalRescueDispatchDeps,
+  options?: { limit?: number; leaseSeconds?: number },
+): Promise<DispatchSummary> {
+  const jobs = await deps.store.claimJobs(
+    FINAL_RESCUE_JOB_TYPE,
+    options?.limit ?? 10,
+    options?.leaseSeconds ?? 120,
+  );
+  const outcomes: DispatchSummary["outcomes"] = [];
+
+  for (const job of jobs) {
+    const state = await deps.loadFinalRescueState({
+      job_id: job.job_id,
+      job_type: job.job_type,
+      job_version: job.job_version,
+      template_version: job.template_version,
+      lead_plan_id: job.lead_plan_id,
+      plan_version_id: job.plan_version_id,
+      idempotency_key: job.idempotency_key,
+      eligible_at: job.eligible_at,
+    });
+    const resolution = resolveFinalRescue(state, deps.now());
+
+    if (resolution.action === "DEFER") {
+      outcomes.push(await deferSend(deps, job, resolution.eligibleAt ?? null));
+      continue;
+    }
+
+    if (resolution.action === "SUPPRESS") {
+      outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
+      continue;
+    }
+
+    if (resolution.action === "CANCEL") {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    const lead = await deps.store.getLead(job.lead_plan_id);
+    if (!lead || lead.plan_version_id !== job.plan_version_id) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    const guarded = await guardCommon(deps, job);
+    if (guarded) {
+      outcomes.push(guarded);
+      continue;
+    }
+
+    // The CTA reuses the ordinary open_plan credential, scoped to this logical
+    // Final Rescue job so a completed exchange can be attributed. Only the token
+    // hash is ever stored, and the trusted destination stays the plan hub.
+    const urls = await issueCredentials(deps, job, lead, true);
+    const rendered = renderFinalRescue(resolution, {
       firstName: lead.first_name,
       returnUrl: urls.returnUrl,
       preferencesUrl: urls.preferencesUrl,
