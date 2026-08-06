@@ -609,7 +609,6 @@ describe("S12 secure return flow resolves to the plan hub", () => {
       leadPlanId: "lead-1",
       planVersionId: VERSION,
       job: {
-
         jobType: STALLED_JOB_TYPE,
         jobVersion: STALLED_JOB_VERSION,
         templateVersion: STALLED_TEMPLATE_VERSION,
