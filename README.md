@@ -6,9 +6,9 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 ## Current status
 
-The accepted synchronized implementation baseline is `2fa7866380c12280720a33abaa15af007a8b860d`.
+The accepted synchronized implementation baseline is `19d97710facce6f43e53ba7d7ea8c88ada30b41d`.
 
-The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery and scheduler work remain unstarted. Outbound email remains intentionally disabled. No deployment or publication occurred during the Plan Completed checkpoint.
+The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler work remains unstarted. Outbound email remains intentionally disabled. No deployment or publication occurred during the accepted recovery checkpoint.
 
 ### Implemented app experience
 
@@ -21,6 +21,9 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Immediate Day 1 access after a successful save
 - Days 2-7 plan access and workout-day routes
 - Saved-plan return access without requiring a password
+- Public `/recover` access flow with a generic non-enumerating response
+- Saved-plan **Resend My Plan Link** action pointing to `/recover`
+- Invalid, expired, or revoked return-link recovery pointing to `/recover`
 - Plan progress and day-completion behavior
 - Guided workout video delivery
 - Post-plan jump-rope recommendation page
@@ -46,36 +49,36 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Server-authoritative Stalled episode creation, cancellation, dispatch validation, rendering, secure return, retry, suppression, recurrence, and Final Rescue closure guards
 - Server-authoritative Final Rescue job creation, four-day initial eligibility, five-day progress re-anchoring, Halfway priority, terminal inactivity closure, suppression, exact copy variants, secure return to `/your-plan`, and provider reconciliation
 - Server-authoritative Plan Completed job creation at the final required-completion boundary, highest lifecycle priority, same-transaction cancellation of unfinished Start Day 1, Halfway, Stalled, and Final Rescue jobs, suppression, exact completion copy, and secure return to `/your-plan`
+- User-requested recovery as a separate transactional-access job using the durable outbox, request-id idempotency, per-email and caller/IP rate limits, suppression checks, and a fresh recovery-purpose secure return token to `/your-plan`
 
-Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are implemented and accepted in the current repository baseline. User-requested recovery and scheduler implementation remain outstanding. Marketing unsubscribe blocks Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and promotional email without removing plan access or saved progress. Plan Ready and eligible user-requested recovery remain governed by their separate product-access rules. Broadcasts, newsletters, and promotional campaigns are outside the current app-email scope. Email sending remains disabled.
+Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Marketing unsubscribe blocks Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and promotional email without removing plan access or saved progress; it does not block a recovery explicitly requested by the user. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control proactive lifecycle jobs. Broadcasts, newsletters, and promotional campaigns remain outside the current app-email scope. Email sending remains disabled, and scheduler implementation remains unstarted.
 
-### Accepted repository baseline
+### Accepted implementation baseline
 
-- Accepted GitHub `main`: `2fa7866380c12280720a33abaa15af007a8b860d`
-- Plan Completed migration: `20260806200433_cd9cb476-5061-494a-a66e-8e10b0f31dd5.sql`
+- Accepted synchronized implementation SHA: `19d97710facce6f43e53ba7d7ea8c88ada30b41d`
+- Recovery migration: `20260806215657_e52c4b4b-1c81-4e87-828d-81e9e8db23c4.sql`
 - `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
 - `vite-plugin-hmr-gate`: resolved version `1.3.4`
 - Approved formatted Supabase types blob: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf`
-- Protected route-tree Git blob: `1c551e423ede445c42b1b83e0bfcf0a95f8c1675`
-- Protected route-tree SHA-256: `91532a1d039d221efa0d6462facde203ae2d442e4b21c224ad9f416a4ed609d6`
-- Repository migrations: 15
-- Live migration ledger: 15 matching versions
+- Protected route-tree Git blob: `221881b281bc3b37196e76a10876e8a332bedb34`
+- Protected route-tree SHA-256: `28628c9df50d10af6236c9ebfd814ee56d84708194231b5fc34169afba5ed58d`
+- Repository migrations: 16
+- Live migration ledger: 16 matching versions
 
-### Plan Completed verification evidence
+### Recovery verification evidence
 
-- Focused Plan Completed tests passed 33/33
-- The full suite passed 364/364
+- Focused recovery tests passed 29/29
+- Affected return/email tests passed 53/53
+- The full suite passed 393/393
 - TypeScript passed
 - Production build passed
 - Changed-file ESLint passed
-- Changed-file Prettier passed
+- Prettier passed
 - `git diff --check` passed
-- The protected route-tree content and hash were restored and verified
-- The approved Supabase types blob was restored and verified
+- The `/recover` route tree and new protected route-tree blob/hash were verified
+- The approved Supabase types blob remained protected
 
-Existing lifecycle tests passed within the 364/364 full suite. No separate affected-lifecycle command was recorded; this accepted verification qualification is not a blocker.
-
-Email sending remains disabled. No deployment or publication occurred. Plan Completed documentation reconciliation is the current checkpoint and does not begin user-requested recovery, scheduler implementation, sending, deployment, or publication.
+Email sending remains disabled. Scheduler implementation remains unstarted. No deployment or publication occurred during the recovery checkpoint. This documentation reconciliation records the accepted recovery implementation and does not change application behavior, database state, sending, scheduler state, deployment, or publication.
 
 ## Architecture
 
