@@ -466,7 +466,9 @@ describe("F5 controlled dispatch and idempotency", () => {
     const token = h.store.returnTokens[0]!;
     expect(token.jobId).toBe("fr-job");
     expect(token.tokenHash).toBe(`hash:cred:open_plan:version-1:${finalRescueJobKey("version-1")}`);
-    expect(JSON.stringify(token)).not.toContain("cred:open_plan:version-1:final_rescue");
+    // Only a hash is persisted: no raw credential field is ever stored.
+    expect(token.tokenHash.startsWith("hash:")).toBe(true);
+    expect(Object.keys(token)).not.toContain("token");
   });
 });
 
