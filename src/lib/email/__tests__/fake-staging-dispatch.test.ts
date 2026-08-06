@@ -54,6 +54,9 @@ function stagingReadyEnv() {
 beforeEach(() => {
   resetEnv();
   vi.resetModules();
+  vi.doUnmock("@/lib/email/store.server");
+  vi.doUnmock("@/lib/email/adapters.server");
+  vi.doUnmock("@/integrations/supabase/client.server");
 });
 
 afterEach(() => {
@@ -288,13 +291,22 @@ describe("scoped fake dispatch outcome", () => {
       }),
     );
 
-    // Mirrors the database-side authoritative lead filter.
+    // Mirrors the database-side authoritative lead filter: a job belonging to
+    // any other lead is invisible to the claim, so it is never even locked.
     const scoped = {
       ...store,
-      claimJobs: async (jobType: string, limit: number, leaseSeconds: number) =>
-        (await store.claimJobs(jobType, limit, leaseSeconds)).filter(
-          (job: EmailJobRow) => job.lead_plan_id === LEAD,
-        ),
+      claimJobs: async (jobType: string, limit: number, leaseSeconds: number) => {
+        const hidden = [...store.jobs.entries()].filter(
+          ([, job]) => job.lead_plan_id !== LEAD,
+        );
+        for (const [id] of hidden) store.jobs.delete(id);
+        try {
+          const claimed = await store.claimJobs(jobType, limit, leaseSeconds);
+          return claimed.filter((job: EmailJobRow) => job.lead_plan_id === LEAD);
+        } finally {
+          for (const [id, job] of hidden) store.jobs.set(id, job);
+        }
+      },
     };
 
     const adapter = createFakeAdapter();
