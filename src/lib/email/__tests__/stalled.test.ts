@@ -288,7 +288,10 @@ describe("S4 episodes exist only after required Days 1-6", () => {
   });
 
   it("creates no episode for Day 7 in the atomic boundary", () => {
-    expect(FN).toMatch(/p_day_number\s+BETWEEN\s+1\s+AND\s+6/);
+    expect(FN).toContain("AND p_day_number >= 1");
+    expect(FN).toContain("AND p_day_number <= 6");
+    // A candidate also requires a later required day to still exist.
+    expect(FN).toContain("WHERE r.day_number > p_day_number");
   });
 
   it("cancels when no required completion exists at all", () => {
@@ -568,7 +571,7 @@ describe("S11 dispatch re-resolves state and only sends on SEND", () => {
     const cases: Array<[Partial<StalledState>, string]> = [
       [{ planComplete: true }, "canceled"],
       [{ marketingUnsubscribedAt: "2026-02-05T00:00:00Z" }, "suppressed"],
-      [{ halfwayPending: true }, "pending"],
+      [{ halfwayPending: true }, "retry_scheduled"],
     ];
     for (const [state, expected] of cases) {
       const h = harness({ state });
