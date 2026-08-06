@@ -498,14 +498,14 @@ describe("P5 locked customer-facing copy", () => {
   const fallback = renderPlanCompleted({ action: "SEND" }, { firstName: "  ", ...urls })!;
 
   it("renders nothing for a non-SEND resolution", () => {
-    expect(renderPlanCompleted({ action: "CANCEL", reason: "plan_incomplete" }, urls)).toBeNull();
+    const input = { firstName: "Todd", ...urls };
+    expect(renderPlanCompleted({ action: "CANCEL", reason: "plan_incomplete" }, input)).toBeNull();
     expect(
-      renderPlanCompleted({ action: "SUPPRESS", reason: "marketing_unsubscribed" }, urls),
+      renderPlanCompleted({ action: "SUPPRESS", reason: "marketing_unsubscribed" }, input),
     ).toBeNull();
-    expect(
-      renderPlanCompleted({ action: "DEFER", reason: "lifecycle_24h_cap" }, urls),
-    ).toBeNull();
+    expect(renderPlanCompleted({ action: "DEFER", reason: "lifecycle_24h_cap" }, input)).toBeNull();
   });
+
 
   it("uses the exact personalized and fallback subjects and greetings", () => {
     expect(personalized.subject).toBe("Todd, you completed your 7-day plan");
