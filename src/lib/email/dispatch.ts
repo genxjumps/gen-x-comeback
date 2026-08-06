@@ -86,6 +86,13 @@ export type FinalRescueDispatchDeps = DispatchDeps & {
   loadFinalRescueState: (job: FinalRescueJob) => Promise<FinalRescueState>;
 };
 
+/** Plan Completed additionally needs its authoritative read-only state loader. */
+export type PlanCompletedDispatchDeps = DispatchDeps & {
+  loadPlanCompletedState: (job: PlanCompletedJob) => Promise<PlanCompletedState>;
+};
+
+
+
 export type JobOutcome =
   | "provider_accepted"
   | "retry_scheduled"
