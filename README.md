@@ -6,9 +6,9 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 ## Current status
 
-The accepted synchronized implementation baseline is `19d97710facce6f43e53ba7d7ea8c88ada30b41d`.
+The accepted synchronized implementation baseline is `aff55ae6f4ca522e29d4e18b105296c8fbc72c63`.
 
-The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler work remains unstarted. Outbound email remains intentionally disabled. No deployment or publication occurred during the accepted recovery checkpoint.
+The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler invocation plumbing is implemented and accepted, while recurring scheduling remains disabled and unconfigured. Outbound email remains intentionally disabled. No deployment or publication occurred during the scheduler-foundation checkpoint.
 
 ### Implemented app experience
 
@@ -50,20 +50,22 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Server-authoritative Final Rescue job creation, four-day initial eligibility, five-day progress re-anchoring, Halfway priority, terminal inactivity closure, suppression, exact copy variants, secure return to `/your-plan`, and provider reconciliation
 - Server-authoritative Plan Completed job creation at the final required-completion boundary, highest lifecycle priority, same-transaction cancellation of unfinished Start Day 1, Halfway, Stalled, and Final Rescue jobs, suppression, exact completion copy, and secure return to `/your-plan`
 - User-requested recovery as a separate transactional-access job using the durable outbox, request-id idempotency, per-email and caller/IP rate limits, suppression checks, and a fresh recovery-purpose secure return token to `/your-plan`
+- Vault-backed scheduler invocation plumbing through `public.invoke_email_dispatch_scheduler()` using `pg_net`, with recurring scheduling intentionally left disabled
 
-Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Marketing unsubscribe blocks Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and promotional email without removing plan access or saved progress; it does not block a recovery explicitly requested by the user. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control proactive lifecycle jobs. Broadcasts, newsletters, and promotional campaigns remain outside the current app-email scope. Email sending remains disabled, and scheduler implementation remains unstarted.
+Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Marketing unsubscribe blocks Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and promotional email without removing plan access or saved progress; it does not block a recovery explicitly requested by the user. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control proactive lifecycle jobs. Scheduler invocation plumbing is implemented, but no recurring email-dispatch cron job or scheduler Vault secrets are configured yet. Controlled staging scheduler execution is next. Broadcasts, newsletters, and promotional campaigns remain outside the current app-email scope. Email sending remains disabled.
 
 ### Accepted implementation baseline
 
-- Accepted synchronized implementation SHA: `19d97710facce6f43e53ba7d7ea8c88ada30b41d`
+- Accepted synchronized implementation SHA: `aff55ae6f4ca522e29d4e18b105296c8fbc72c63`
 - Recovery migration: `20260806215657_e52c4b4b-1c81-4e87-828d-81e9e8db23c4.sql`
+- Scheduler foundation migration: `20260806224437_0f99de9f-07b7-46cf-909e-1b97a7ff8137.sql`
 - `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
 - `vite-plugin-hmr-gate`: resolved version `1.3.4`
 - Approved formatted Supabase types blob: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf`
 - Protected route-tree Git blob: `221881b281bc3b37196e76a10876e8a332bedb34`
 - Protected route-tree SHA-256: `28628c9df50d10af6236c9ebfd814ee56d84708194231b5fc34169afba5ed58d`
-- Repository migrations: 16
-- Live migration ledger: 16 matching versions
+- Repository migrations: 17
+- Live migration ledger: 17 matching versions
 
 ### Recovery verification evidence
 
@@ -78,7 +80,18 @@ Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are 
 - The `/recover` route tree and new protected route-tree blob/hash were verified
 - The approved Supabase types blob remained protected
 
-Email sending remains disabled. Scheduler implementation remains unstarted. No deployment or publication occurred during the recovery checkpoint. This documentation reconciliation records the accepted recovery implementation and does not change application behavior, database state, sending, scheduler state, deployment, or publication.
+### Scheduler foundation evidence
+
+- `public.invoke_email_dispatch_scheduler()` is implemented as a `SECURITY DEFINER` function
+- PUBLIC, `anon`, and `authenticated` cannot execute the scheduler function
+- `pg_cron` and `pg_net` are installed and Supabase Vault remains installed
+- The scheduler function reads its dispatch URL and bearer secret from Vault and sends no customer data or PII
+- No recurring email-dispatch cron job exists
+- No `email_dispatch_url` or `email_dispatch_secret` Vault secret was inserted by the scheduler-foundation checkpoint
+- No application environment secret changed
+- `git diff --check` passed
+
+Email sending remains disabled. Recurring scheduling remains disabled and unconfigured. Controlled staging scheduler execution is the next release checkpoint, followed by lifecycle/recovery staging verification. Real sending requires later explicit approval after all release gates pass. No deployment or publication occurred during the scheduler-foundation checkpoint.
 
 ## Architecture
 
