@@ -291,13 +291,26 @@ async function issueCredentials(
   };
 }
 
-/** Performs exactly one provider attempt and applies the resulting transition. */
+/**
+ * Performs exactly one provider attempt and applies the resulting transition.
+ *
+ * The first provider-attempt boundary is durably recorded under the current
+ * fenced lease before the provider is called. If that fenced write fails the
+ * lease no longer belongs to this worker, so the provider is never called.
+ */
 async function attemptSend(
   deps: DispatchDeps,
   job: EmailJobRow,
   request: EmailSendRequest,
 ): Promise<{ jobId: string; outcome: JobOutcome; errorCode?: string }> {
   const attemptedAt = deps.now().toISOString();
+  const fenced = await deps.store.recordFirstProviderAttempt(
+    job.job_id,
+    job.claim_token,
+    attemptedAt,
+  );
+  if (!fenced) return { jobId: job.job_id, outcome: "lost_lease" };
+
   const result = await deps.adapter.send(request);
 
   if (result.outcome === "accepted") {
@@ -305,7 +318,6 @@ async function attemptSend(
       providerKey: result.providerKey,
       providerMessageId: result.providerMessageId,
       acceptedAt: result.acceptedAt,
-      attemptedAt,
     });
   }
 
@@ -319,21 +331,21 @@ async function attemptSend(
         providerKey: deps.adapter.key,
         providerMessageId: reconciled.providerMessageId,
         acceptedAt: reconciled.acceptedAt,
-        attemptedAt,
       });
     }
   }
 
   if (result.outcome === "permanent") {
-    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode, attemptedAt });
+    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode });
   }
 
   // Transient or unreconciled ambiguous failure.
   if (job.attempt_count >= MAX_ATTEMPTS) {
-    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode, attemptedAt });
+    return finish(deps, job, "failed_permanent", { errorCode: result.errorCode });
   }
-  return finish(deps, job, "retry_scheduled", { errorCode: result.errorCode, attemptedAt });
+  return finish(deps, job, "retry_scheduled", { errorCode: result.errorCode });
 }
+
 
 /** Claims due Plan Ready jobs, rechecks eligibility, and performs one attempt each. */
 export async function dispatchPlanReadyJobs(
