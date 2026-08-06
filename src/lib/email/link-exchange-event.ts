@@ -15,6 +15,9 @@ import {
   PLAN_COMPLETED_JOB_TYPE,
   PLAN_COMPLETED_JOB_VERSION,
   PLAN_COMPLETED_TEMPLATE_VERSION,
+  RECOVERY_JOB_TYPE,
+  RECOVERY_JOB_VERSION,
+  RECOVERY_TEMPLATE_VERSION,
   STALLED_JOB_TYPE,
   STALLED_JOB_VERSION,
   STALLED_TEMPLATE_VERSION,
@@ -24,8 +27,10 @@ import {
 } from "@/lib/email/types";
 import {
   OPEN_PLAN_TOKEN_PURPOSE,
+  RECOVERY_TOKEN_PURPOSE,
   type ReturnTokenJobIdentity,
 } from "@/lib/email/return-destination";
+
 
 /** General exchange event, kept for Plan Ready and job-less tokens. */
 export const PLAN_READY_LINK_EXCHANGE_EVENT = "email_plan_ready_link_exchange_completed";
