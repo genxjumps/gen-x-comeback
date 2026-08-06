@@ -58,7 +58,14 @@ const OMITTED: Record<string, ReadonlySet<LifecycleEventOutcome>> = {
   [STALLED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
   [FINAL_RESCUE_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
   [PLAN_COMPLETED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
+  // Recovery has exactly seven approved canonical events: queued,
+  // provider_accepted, delivered, retry_scheduled, failed_permanent, suppressed,
+  // and link_exchange_completed. Cancellation of a stale replaced-plan recovery
+  // job and manual review therefore stay silent, exactly as Plan Ready
+  // cancellation already does.
+  [RECOVERY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["canceled", "manual_review"]),
 };
+
 
 /** Canonical event name for one job type and outcome, or null when omitted. */
 export function lifecycleEventName(jobType: string, outcome: LifecycleEventOutcome): string | null {
