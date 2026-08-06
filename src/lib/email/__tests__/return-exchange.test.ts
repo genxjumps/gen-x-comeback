@@ -108,6 +108,7 @@ async function seed(scenario: Scenario = {}) {
             {
               job_id: JOB,
               job_type: START_DAY_1_JOB_TYPE,
+              job_version: START_DAY_1_JOB_VERSION,
               template_version: START_DAY_1_TEMPLATE_VERSION,
               lead_plan_id: LEAD,
               plan_version_id: VERSION,
