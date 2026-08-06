@@ -90,6 +90,12 @@ const LIFECYCLE_EXCHANGE_CONTRACTS: readonly LifecycleExchangeContract[] = [
     templateVersion: STALLED_TEMPLATE_VERSION,
     eventName: STALLED_LINK_EXCHANGE_EVENT,
   },
+  {
+    jobType: FINAL_RESCUE_JOB_TYPE,
+    jobVersion: FINAL_RESCUE_JOB_VERSION,
+    templateVersion: FINAL_RESCUE_TEMPLATE_VERSION,
+    eventName: FINAL_RESCUE_LINK_EXCHANGE_EVENT,
+  },
 ];
 
 /**
