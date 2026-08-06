@@ -27,8 +27,6 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         const mode = authorizeDispatch(request);
         if (!mode) return unauthorized();
 
-        const { runDispatchCycle } = await import("@/lib/email/dispatch-cycle.server");
-
         if (mode === "fake_staging") {
           // Exactly one required synthetic lead_plan_id, validated before any claim.
           const leadPlanId = await readStagingLeadPlanId(request);
@@ -56,8 +54,10 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             );
           }
 
-          // No global stale-Plan-Ready alert sweep here: that sweep is not
-          // lead-scoped, so staging must never run it.
+          // Same dispatcher functions and same lifecycle ordering as production,
+          // but lead-scoped and with the global stale-Plan-Ready alert sweep
+          // deliberately skipped: that sweep is not lead-scoped.
+          const { runDispatchCycle } = await import("@/lib/email/dispatch-cycle.server");
           const cycle = await runDispatchCycle(staging.deps, { limit: 25 });
 
           return Response.json(
@@ -89,18 +89,74 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           );
         }
 
-        const cycle = await runDispatchCycle(runtime.deps, { limit: 25, staleAlerts: true });
+        const {
+          dispatchPlanReadyJobs,
+          dispatchRecoveryJobs,
+          dispatchPlanCompletedJobs,
+          dispatchHalfwayJobs,
+          dispatchStalledJobs,
+          dispatchStartDayOneJobs,
+          dispatchFinalRescueJobs,
+          raiseStalePlanReadyAlerts,
+        } = await import("@/lib/email/dispatch");
+        const summary = await dispatchPlanReadyJobs(runtime.deps, { limit: 25 });
+        const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
+
+        // Recovery runs after Plan Ready and before proactive lifecycle dispatch.
+        // This is execution ordering only: recovery is on-demand product access,
+        // holds no lifecycle priority, consumes no shared 24-hour lifecycle gap,
+        // counts toward no inactivity cap, and never cancels, defers, or
+        // reprioritizes any proactive lifecycle job.
+        const recovery = await dispatchRecoveryJobs(runtime.deps, { limit: 25 });
+
+        // Lifecycle priority, in exact order: Plan Completed, then Halfway, then
+        // Final Rescue, then Stalled, then Start Day 1. Higher priority runs
+        // first in the tick so it consumes the shared 24-hour lifecycle gap
+        // before any lower-priority message.
+        const { loadPlanCompletedState } = await import("@/lib/email/plan-completed-state.server");
+        const planCompleted = await dispatchPlanCompletedJobs(
+          { ...runtime.deps, loadPlanCompletedState: (job) => loadPlanCompletedState(job) },
+          { limit: 25 },
+        );
+
+        const { loadHalfwayState } = await import("@/lib/email/halfway-state.server");
+        const halfway = await dispatchHalfwayJobs(
+          { ...runtime.deps, loadHalfwayState: (job) => loadHalfwayState(job) },
+          { limit: 25 },
+        );
+
+        // Final Rescue is terminal but outranks the two lower inactivity
+        // messages: a due Final Rescue closes Stalled and Start Day 1.
+        const { loadFinalRescueState } = await import("@/lib/email/final-rescue-state.server");
+        const finalRescue = await dispatchFinalRescueJobs(
+          { ...runtime.deps, loadFinalRescueState: (job) => loadFinalRescueState(job) },
+          { limit: 25 },
+        );
+
+        const { loadStalledState } = await import("@/lib/email/stalled-state.server");
+        const stalled = await dispatchStalledJobs(
+          { ...runtime.deps, loadStalledState: (job) => loadStalledState(job) },
+          { limit: 25 },
+        );
+
+        // Start Day 1 shares the runtime, store, lease claim, and adapter. Its
+        // authoritative read-only state loader is injected here.
+        const { loadStartDayOneState } = await import("@/lib/email/start-day-1-state.server");
+        const startDayOne = await dispatchStartDayOneJobs(
+          { ...runtime.deps, loadStartDayOneState: (job) => loadStartDayOneState(job) },
+          { limit: 25 },
+        );
 
         return Response.json({
           sending_enabled: true,
-          ...cycle.planReady,
-          stale_alerts: cycle.staleAlerts,
-          recovery: cycle.recovery,
-          plan_completed: cycle.planCompleted,
-          halfway: cycle.halfway,
-          stalled: cycle.stalled,
-          start_day_1: cycle.startDayOne,
-          final_rescue: cycle.finalRescue,
+          ...summary,
+          stale_alerts: staleAlerts,
+          recovery,
+          plan_completed: planCompleted,
+          halfway,
+          stalled,
+          start_day_1: startDayOne,
+          final_rescue: finalRescue,
         });
       },
     },
