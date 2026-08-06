@@ -32,11 +32,18 @@ export const STALLED_MIN_REQUIRED_DAY = 1;
 export const STALLED_MAX_REQUIRED_DAY = 6;
 
 /**
- * Plan Completed is the highest-priority lifecycle message. It is not yet
- * implemented, but its job type is named here so Halfway and Stalled can always
- * yield to it.
+ * Plan Completed is the highest-priority lifecycle message. It is created only
+ * at the authoritative final required-completion boundary, exactly once per
+ * plan version, and it is not an inactivity email.
  */
 export const PLAN_COMPLETED_JOB_TYPE = "plan_completed";
+export const PLAN_COMPLETED_JOB_VERSION = "v1";
+export const PLAN_COMPLETED_TEMPLATE_VERSION = "plan_completed_v1";
+
+/** Canonical logical Plan Completed idempotency key: one job per plan version. */
+export function planCompletedJobKey(planVersionId: string): string {
+  return `plan_completed:${planVersionId}:${PLAN_COMPLETED_JOB_VERSION}`;
+}
 
 /**
  * Final Rescue is the terminal inactivity message. Stalled and Start Day 1 can

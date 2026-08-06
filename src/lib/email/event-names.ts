@@ -6,6 +6,7 @@
 import {
   FINAL_RESCUE_JOB_TYPE,
   HALFWAY_JOB_TYPE,
+  PLAN_COMPLETED_JOB_TYPE,
   PLAN_READY_JOB_TYPE,
   STALLED_JOB_TYPE,
   START_DAY_1_JOB_TYPE,
@@ -27,6 +28,7 @@ const PREFIXES: Record<string, string> = {
   [HALFWAY_JOB_TYPE]: "email_halfway",
   [STALLED_JOB_TYPE]: "email_stalled",
   [FINAL_RESCUE_JOB_TYPE]: "email_final_rescue",
+  [PLAN_COMPLETED_JOB_TYPE]: "email_plan_completed",
 };
 
 /**
@@ -50,6 +52,7 @@ const OMITTED: Record<string, ReadonlySet<LifecycleEventOutcome>> = {
   [HALFWAY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
   [STALLED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
   [FINAL_RESCUE_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
+  [PLAN_COMPLETED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
 };
 
 /** Canonical event name for one job type and outcome, or null when omitted. */
