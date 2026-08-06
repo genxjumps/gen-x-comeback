@@ -85,8 +85,37 @@ export async function createSupabaseEmailStore(): Promise<EmailStore> {
       return data === true;
     },
 
+    async recordFirstProviderAttempt(jobId, claimToken, attemptedAt) {
+      // Fenced compare-and-set that only ever fills an empty boundary, so the
+      // original first-provider-attempt timestamp is immutable.
+      const { data, error } = await supabaseAdmin
+        .from("email_jobs")
+        .update({ first_provider_attempt_at: attemptedAt, updated_at: new Date().toISOString() })
+        .eq("job_id", jobId)
+        .eq("claim_token", claimToken as string)
+        .eq("status", "processing")
+        .is("first_provider_attempt_at", null)
+        .select("job_id");
+      if (error) throw new Error(error.message);
+      if ((data?.length ?? 0) > 0) return true;
+
+      // No row updated: either the lease was lost, or this job already recorded
+      // its immutable boundary on an earlier attempt.
+      const { data: existing, error: readError } = await supabaseAdmin
+        .from("email_jobs")
+        .select("first_provider_attempt_at")
+        .eq("job_id", jobId)
+        .eq("claim_token", claimToken as string)
+        .eq("status", "processing")
+        .limit(1);
+      if (readError) throw new Error(readError.message);
+      return Boolean(existing?.[0]?.first_provider_attempt_at);
+    },
+
     async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {
-      // Compare-and-set on (job_id, claim_token, status): a worker that lost its
+      // A deferral is not a provider attempt: the claim-time increment is
+      // restored so repeated lifecycle deferrals never consume the retry budget.
+
       // lease cannot rewrite the owner's job. No canonical event is written.
       const { data, error } = await supabaseAdmin
         .from("email_jobs")
