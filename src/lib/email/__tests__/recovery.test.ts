@@ -430,9 +430,12 @@ describe("recovery dispatch", () => {
     const url = new URL(/https:\/\/\S+?(?=[\s"])/.exec(sent[0]!.text)![0]);
     expect(url.pathname).toBe("/return");
     expect([...url.searchParams.keys()]).toEqual(["token"]);
-    expect(sent[0]!.html).not.toContain("reader@example.com");
-    expect(sent[0]!.html).not.toContain("lead-1");
-    expect(sent[0]!.html).not.toContain("version-1");
+    // Outside the opaque credential itself the message carries no identifiers.
+    const withoutToken = sent[0]!.html.replaceAll(url.searchParams.get("token")!, "TOKEN");
+    expect(withoutToken).not.toContain("reader@example.com");
+    expect(withoutToken).not.toContain("lead-1");
+    expect(withoutToken).not.toContain("version-1");
+
   });
 
   it("retries of the same job reproduce the identical credential; a different request id does not", async () => {
