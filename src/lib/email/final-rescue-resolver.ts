@@ -131,22 +131,10 @@ export function finalRescueVariant(
 }
 
 /**
- * Whether a due, unsent Final Rescue job currently controls inactivity
- * messaging for its plan version.
- *
- * Shared by the lower-priority Start Day 1 and Stalled resolvers: a due current
- * Final Rescue job that is not blocked by Halfway controls those messages even
- * while Final Rescue is still retrying or has not yet been provider accepted.
+ * Shared inactivity-control helper, declared alongside the other shared
+ * inactivity rules and re-exported here for Final Rescue call sites.
  */
-export function finalRescueDueControls(
-  finalRescueDueAt: string | null,
-  halfwayPending: boolean,
-  now: Date,
-): boolean {
-  if (!finalRescueDueAt) return false;
-  if (halfwayPending) return false;
-  return now.getTime() >= ms(finalRescueDueAt);
-}
+export { finalRescueDueControls } from "@/lib/email/start-day-1-resolver";
 
 /**
  * Resolves one claimed Final Rescue job against freshly reloaded persisted
