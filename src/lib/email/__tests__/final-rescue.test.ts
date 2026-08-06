@@ -26,7 +26,11 @@ import {
 } from "@/lib/email/final-rescue-resolver";
 import {
   FINAL_RESCUE_COPY,
+  FINAL_RESCUE_FOOTER,
+  FINAL_RESCUE_GREETING_FALLBACK,
+  FINAL_RESCUE_RECOVERY_LINE,
   FINAL_RESCUE_RECOVERY_PATH,
+  FINAL_RESCUE_SIGN_OFF,
   renderFinalRescue,
 } from "@/lib/email/final-rescue-template";
 import {
@@ -47,6 +51,7 @@ import {
   resolveReturnDestination,
 } from "@/lib/email/return-destination";
 import { lifecycleEventName } from "@/lib/email/event-names";
+import { requiredDayNumbers } from "@/lib/email/halfway-state.server";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
 
 const NOW = new Date("2026-02-05T18:00:00.000Z");
@@ -334,37 +339,103 @@ describe("F3 resolver derives every outcome from persisted state only", () => {
 });
 
 describe("F4 approved template copy for both variants", () => {
+  const RETURN_URL = "https://app.genxjumps.com/return?t=secret-token";
+  const PREFERENCES_URL = "https://app.genxjumps.com/email-preferences?t=pref-token";
+
   const rendered = (variant: "unstarted" | "started", firstName: string | null = "Todd") =>
     renderFinalRescue(
       { action: "SEND", variant },
       {
         firstName,
-        returnUrl: "https://app.genxjumps.com/return?t=secret-token",
-        preferencesUrl: "https://app.genxjumps.com/email-preferences?t=pref-token",
+        returnUrl: RETURN_URL,
+        preferencesUrl: PREFERENCES_URL,
         appOrigin: "https://app.genxjumps.com",
       },
     )!;
 
-  it("renders the approved unstarted subject, body and CTA", () => {
+  /** Every customer-facing surface of one rendered message, combined. */
+  function customerFacingSurface(out: ReturnType<typeof rendered>): string {
+    return [
+      out.subject,
+      out.previewText,
+      out.ctaLabel,
+      out.postCtaLine,
+      out.recoveryUrl,
+      out.text,
+      out.html,
+      FINAL_RESCUE_RECOVERY_LINE,
+      FINAL_RESCUE_FOOTER,
+      ...FINAL_RESCUE_SIGN_OFF,
+    ].join("\n");
+  }
+
+  it("renders the exact approved unstarted copy: subject, preview, body, CTA and post-CTA", () => {
     const out = rendered("unstarted");
+    expect(out.variant).toBe("unstarted");
     expect(out.subject).toBe("Todd, your 7-day plan is still waiting");
-    expect(out.ctaLabel).toBe(FINAL_RESCUE_COPY.unstarted.ctaLabel);
-    expect(out.text).toContain("Your 7-Day Comeback Plan is still here.");
-    expect(out.text).toContain("Open My Plan: https://app.genxjumps.com/return?t=secret-token");
+    expect(out.personalizedName).toBe("Todd");
+    expect(out.previewText).toBe("Come back to your plan and start Day 1 when you\u2019re ready.");
+    expect(out.ctaLabel).toBe("Open My Plan");
+    expect(out.postCtaLine).toBe("One workout. One decision. Get moving again.");
+    expect(FINAL_RESCUE_COPY.unstarted.bodyParagraphs).toEqual([
+      "Your 7-Day Comeback Plan is still here.",
+      "You don\u2019t need to catch up or start over. Open your plan and start Day 1 when you\u2019re ready.",
+    ]);
+    // Greeting plus every approved paragraph, in order, in both renderings.
+    expect(out.text).toContain("Hey Todd,");
+    for (const paragraph of FINAL_RESCUE_COPY.unstarted.bodyParagraphs) {
+      expect(out.text).toContain(paragraph);
+      expect(out.html).toContain(paragraph.replace(/'/g, "&#39;"));
+    }
+    expect(out.text).toContain(`Open My Plan: ${RETURN_URL}`);
+    expect(out.text).toContain("One workout. One decision. Get moving again.");
   });
 
-  it("renders the approved started subject, body and CTA", () => {
+  it("renders the exact approved started copy: subject, preview, body, CTA and post-CTA", () => {
     const out = rendered("started");
+    expect(out.variant).toBe("started");
     expect(out.subject).toBe("Todd, pick up where you left off");
+    expect(out.personalizedName).toBe("Todd");
+    expect(out.previewText).toBe("Your plan and progress are saved.");
     expect(out.ctaLabel).toBe("Return to My Plan");
-    expect(out.text).toContain("Your progress is saved.");
+    expect(out.postCtaLine).toBe("The next step is the only one that matters.");
+    expect(FINAL_RESCUE_COPY.started.bodyParagraphs).toEqual([
+      "You started your 7-Day Comeback Plan, but it\u2019s been a few days since you completed a day in your plan.",
+      "Your progress is saved. You don\u2019t need to restart or make up missed days. Open your plan and complete the next day.",
+    ]);
+    expect(out.text).toContain("Hey Todd,");
+    for (const paragraph of FINAL_RESCUE_COPY.started.bodyParagraphs) {
+      expect(out.text).toContain(paragraph);
+      expect(out.html).toContain(paragraph.replace(/'/g, "&#39;"));
+    }
+    expect(out.text).toContain(`Return to My Plan: ${RETURN_URL}`);
+    expect(out.text).toContain("The next step is the only one that matters.");
   });
 
-  it("falls back to the approved impersonal greeting and subject with no usable name", () => {
-    const out = rendered("unstarted", null);
-    expect(out.subject).toBe("Your 7-day plan is still waiting");
-    expect(out.personalizedName).toBeNull();
-    expect(out.text).toContain("Hey there,");
+  it("uses the exact approved fallback subject and impersonal greeting for both variants", () => {
+    expect(FINAL_RESCUE_GREETING_FALLBACK).toBe("Hey there,");
+    const unstarted = rendered("unstarted", null);
+    expect(unstarted.subject).toBe("Your 7-day plan is still waiting");
+    expect(unstarted.personalizedName).toBeNull();
+    expect(unstarted.text).toContain("Hey there,");
+    expect(unstarted.text).not.toContain("Hey Todd,");
+
+    const started = rendered("started", null);
+    expect(started.subject).toBe("Pick up where you left off");
+    expect(started.personalizedName).toBeNull();
+    expect(started.text).toContain("Hey there,");
+  });
+
+  it("never uses the word assignment in any customer-facing output, in any variant", () => {
+    for (const [variant, name] of [
+      ["unstarted", "Todd"],
+      ["unstarted", null],
+      ["started", "Todd"],
+      ["started", null],
+    ] as const) {
+      const surface = customerFacingSurface(rendered(variant, name));
+      expect(surface.toLowerCase()).not.toContain("assignment");
+    }
   });
 
   it("uses a token-free absolute recovery URL with no query string", () => {
@@ -391,9 +462,7 @@ describe("F4 approved template copy for both variants", () => {
 
   it("includes the preferences link in every variant", () => {
     for (const variant of ["unstarted", "started"] as const) {
-      expect(rendered(variant).text).toContain(
-        "Manage email preferences: https://app.genxjumps.com/email-preferences?t=pref-token",
-      );
+      expect(rendered(variant).text).toContain(`Manage email preferences: ${PREFERENCES_URL}`);
     }
   });
 });
@@ -627,5 +696,127 @@ describe("F7 Final Rescue outranks the lower inactivity messages", () => {
       action: "CANCEL",
       reason: "final_rescue_controls",
     });
+  });
+});
+
+describe("F8 only deliberate first-time persisted progress moves the horizon", () => {
+  /** Body of one function definition inside the committed migration. */
+  function functionBody(signature: string): string {
+    const start = MIGRATION.indexOf(signature);
+    expect(start).toBeGreaterThan(-1);
+    const end = MIGRATION.indexOf("$function$;", start);
+    expect(end).toBeGreaterThan(start);
+    return MIGRATION.slice(start, end);
+  }
+
+  const MARK_START = functionBody("CREATE OR REPLACE FUNCTION public.mark_day_1_started");
+  const COMPLETE = functionBody("CREATE OR REPLACE FUNCTION public.complete_plan_day_atomic");
+  const COMMIT = functionBody("CREATE OR REPLACE FUNCTION public.commit_plan_version");
+
+  it("re-anchors on a Day 1 start only inside the newly inserted branch", () => {
+    const newlyInserted = MARK_START.indexOf("IF v_started_at IS NOT NULL THEN");
+    const reanchor = MARK_START.indexOf("eligible_at = v_started_at + interval '5 days'");
+    const branchEnd = MARK_START.indexOf("RETURN QUERY SELECT v_started_at, true;");
+    expect(newlyInserted).toBeGreaterThan(-1);
+    expect(reanchor).toBeGreaterThan(newlyInserted);
+    expect(reanchor).toBeLessThan(branchEnd);
+    // The insert that governs that branch only yields a row when it is new.
+    expect(MARK_START).toContain("ON CONFLICT (plan_version_id, day_number) DO NOTHING");
+    expect(MARK_START).toContain("RETURNING lead_plan_day_starts.started_at INTO v_started_at");
+  });
+
+  it("leaves the replayed Day 1 start branch with only the persisted read and return", () => {
+    const replayBranch = MARK_START.slice(
+      MARK_START.indexOf("RETURN QUERY SELECT v_started_at, true;"),
+    );
+    expect(replayBranch).toContain("FROM public.lead_plan_day_starts AS day_start");
+    expect(replayBranch).toContain("RETURN QUERY SELECT v_started_at, false;");
+    // No Final Rescue write of any kind is reachable from the replay path.
+    expect(replayBranch).not.toContain("final_rescue");
+    expect(replayBranch).not.toContain("email_jobs");
+  });
+
+  it("gates every Final Rescue completion write behind a newly inserted required completion", () => {
+    const insert = COMPLETE.indexOf("INSERT INTO public.lead_plan_day_completions");
+    const insertedFlag = COMPLETE.indexOf("v_inserted := v_completed_at IS NOT NULL;");
+    const guard = COMPLETE.indexOf("IF v_inserted THEN");
+    const reanchor = COMPLETE.indexOf("eligible_at = v_completed_at + interval '5 days'");
+    const cancel = COMPLETE.indexOf("'email_final_rescue_canceled'");
+
+    expect(COMPLETE).toContain("ON CONFLICT (lead_plan_id, day_number) DO NOTHING");
+    expect(insertedFlag).toBeGreaterThan(insert);
+    expect(guard).toBeGreaterThan(insertedFlag);
+    expect(reanchor).toBeGreaterThan(guard);
+    expect(cancel).toBeGreaterThan(guard);
+
+    // A replayed completion reloads the existing timestamp and clears the flag,
+    // so nothing outside the guarded block can touch the Final Rescue job.
+    expect(COMPLETE).toContain("IF NOT v_inserted THEN");
+    const outsideGuard = COMPLETE.slice(0, guard);
+    expect(outsideGuard).not.toContain("final_rescue");
+  });
+
+  it("derives required days only from top-level plan_json.days, so nested optional sessions never re-anchor", () => {
+    expect(COMPLETE).toContain("jsonb_array_elements(COALESCE(v_plan->'days', '[]'::jsonb))");
+    expect(COMPLETE).toContain(
+      "IF v_required IS NULL OR NOT (p_day_number = ANY(v_required)) THEN",
+    );
+    // Validation against v_required happens before the completion insert, hence
+    // before v_inserted and before any Final Rescue write.
+    const validation = COMPLETE.indexOf("IF v_required IS NULL OR NOT");
+    expect(validation).toBeLessThan(
+      COMPLETE.indexOf("INSERT INTO public.lead_plan_day_completions"),
+    );
+    // No nested optional session is ever read as a required day number.
+    expect(COMPLETE).not.toContain("'optional'");
+    expect(COMPLETE).not.toContain("->'optional'");
+
+    // The same rule in the shared TypeScript helper: a top-level recovery day
+    // with a nested optional W07 session contributes exactly one required day.
+    expect(
+      requiredDayNumbers({
+        days: [
+          { day: 6, workout: { id: "W03" } },
+          { day: 7, optional: { id: "W07" } },
+        ],
+      }),
+    ).toEqual([6, 7]);
+  });
+
+  it("treats a required top-level recovery day exactly like a workout day", () => {
+    // The derivation reads only the day number and ordinality: no activity kind,
+    // workout id, recovery flag, or client-supplied field takes part.
+    const derivation = COMPLETE.slice(
+      COMPLETE.indexOf("SELECT array_agg(day_number ORDER BY day_number) INTO v_required"),
+      COMPLETE.indexOf("IF v_required IS NULL OR NOT"),
+    );
+    expect(derivation).toContain("COALESCE((d.value->>'day')::smallint, d.ordinality::smallint)");
+    for (const field of ["kind", "activity", "type", "workout", "recovery", "optional"]) {
+      expect(derivation).not.toContain(field);
+    }
+    // And the re-anchor boundary itself depends only on the persisted
+    // newly-inserted completion timestamp, never on the day's content.
+    expect(COMPLETE).toContain("eligible_at = v_completed_at + interval '5 days'");
+  });
+
+  it("cancels the replaced plan version's unsent Final Rescue job before the new version is committed", () => {
+    const cancelAllUnsent = COMMIT.indexOf(
+      "WHERE plan_version_id = v_lead.plan_version_id\n        AND status IN ('pending','processing','retry_scheduled')",
+    );
+    const reassessment = COMMIT.indexOf("v_source := 'reassessment';");
+    const newJob = COMMIT.indexOf("'final_rescue', 'v1', 'final_rescue_v1'");
+
+    expect(reassessment).toBeGreaterThan(-1);
+    expect(cancelAllUnsent).toBeGreaterThan(reassessment);
+    // The cancellation runs on the replaced version, before the new version's
+    // own Final Rescue job is created later in the same transaction.
+    expect(cancelAllUnsent).toBeLessThan(newJob);
+    expect(COMMIT).toContain("SET status = 'canceled', canceled_at = v_now");
+    // No Final Rescue special-casing is needed: the cancellation is type-agnostic.
+    const cancelStatement = COMMIT.slice(
+      COMMIT.indexOf("UPDATE public.email_jobs", reassessment),
+      cancelAllUnsent + 120,
+    );
+    expect(cancelStatement).not.toContain("job_type");
   });
 });
