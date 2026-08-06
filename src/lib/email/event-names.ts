@@ -4,6 +4,7 @@
 // trusted job type only, never from provider payloads or client input, and no
 // personal or private state is ever part of an event name.
 import {
+  FINAL_RESCUE_JOB_TYPE,
   HALFWAY_JOB_TYPE,
   PLAN_READY_JOB_TYPE,
   STALLED_JOB_TYPE,
@@ -25,6 +26,7 @@ const PREFIXES: Record<string, string> = {
   [START_DAY_1_JOB_TYPE]: "email_start_day_1",
   [HALFWAY_JOB_TYPE]: "email_halfway",
   [STALLED_JOB_TYPE]: "email_stalled",
+  [FINAL_RESCUE_JOB_TYPE]: "email_final_rescue",
 };
 
 /**
@@ -38,11 +40,16 @@ const PREFIXES: Record<string, string> = {
  *
  * Stalled follows the identical rule for the same reason: Section 7.10.2
  * enumerates exactly eight approved Stalled canonical events.
+ *
+ * Final Rescue follows the identical established omission rule: exactly eight
+ * approved canonical events, none of them a manual-review event. The existing
+ * manual-review state and operational alert behavior is preserved.
  */
 const OMITTED: Record<string, ReadonlySet<LifecycleEventOutcome>> = {
   [PLAN_READY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["canceled"]),
   [HALFWAY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
   [STALLED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
+  [FINAL_RESCUE_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
 };
 
 /** Canonical event name for one job type and outcome, or null when omitted. */
