@@ -8,9 +8,11 @@ import {
   HALFWAY_JOB_TYPE,
   PLAN_COMPLETED_JOB_TYPE,
   PLAN_READY_JOB_TYPE,
+  RECOVERY_JOB_TYPE,
   STALLED_JOB_TYPE,
   START_DAY_1_JOB_TYPE,
 } from "@/lib/email/types";
+
 
 /** Terminal or transitional outcomes that may emit a canonical event. */
 export type LifecycleEventOutcome =
