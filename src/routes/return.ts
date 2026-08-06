@@ -39,9 +39,10 @@ function genericRecovery(): Response {
   return shell(
     `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">This Link No Longer Works</h1>
 <p style="margin:0 0 1.5rem 0;color:#555555;">This plan link is not usable. Links stop working after 30 days or once a newer plan replaces an older one.</p>
-<p style="margin:0;"><a href="/assessment/start" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;text-decoration:none;border-radius:0.375rem;font-weight:600;">Get Back to Your Plan</a></p>`,
+<p style="margin:0;"><a href="/recover" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;text-decoration:none;border-radius:0.375rem;font-weight:600;">Get Back to Your Plan</a></p>`,
   );
 }
+
 
 export const Route = createFileRoute("/return")({
   server: {
