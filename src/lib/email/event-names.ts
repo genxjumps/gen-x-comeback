@@ -13,7 +13,6 @@ import {
   START_DAY_1_JOB_TYPE,
 } from "@/lib/email/types";
 
-
 /** Terminal or transitional outcomes that may emit a canonical event. */
 export type LifecycleEventOutcome =
   | "provider_accepted"
@@ -34,7 +33,6 @@ const PREFIXES: Record<string, string> = {
   // Recovery is a product-access namespace, not a proactive lifecycle one.
   [RECOVERY_JOB_TYPE]: "email_recovery",
 };
-
 
 /**
  * Outcomes that do not emit a canonical event for a given job type.
@@ -65,7 +63,6 @@ const OMITTED: Record<string, ReadonlySet<LifecycleEventOutcome>> = {
   // cancellation already does.
   [RECOVERY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["canceled", "manual_review"]),
 };
-
 
 /** Canonical event name for one job type and outcome, or null when omitted. */
 export function lifecycleEventName(jobType: string, outcome: LifecycleEventOutcome): string | null {

@@ -20,7 +20,6 @@ export const OPEN_PLAN_TOKEN_PURPOSE = "open_plan";
  */
 export const RECOVERY_TOKEN_PURPOSE = "recovery";
 
-
 /** Trusted server-side originating job identity for a return token. */
 export type ReturnTokenJobIdentity = {
   jobType: string | null | undefined;
