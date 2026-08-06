@@ -15,6 +15,7 @@ import {
 } from "@/lib/email/types";
 import { INACTIVITY_JOB_TYPES } from "@/lib/email/start-day-1-resolver";
 import { requiredDayNumbers } from "@/lib/email/halfway-state.server";
+import { loadFinalRescueControl } from "@/lib/email/final-rescue-state.server";
 import type { StartDayOneQueryClient } from "@/lib/email/start-day-1-state.server";
 
 type Row = Record<string, unknown>;
@@ -132,6 +133,9 @@ export async function loadStalledState(
       )
     : [];
 
+  // Read-only Final Rescue control facts for this plan version.
+  const finalRescueControl = await loadFinalRescueControl(job.plan_version_id, db);
+
   const required = requiredDayNumbers(leadRow?.["plan_json"]);
   const requiredRows = completions.filter((row) => {
     const value = row["day_number"];
@@ -175,7 +179,10 @@ export async function loadStalledState(
     planComplete: required.length > 0 && requiredRows.length >= required.length,
     planCompletedControl: planCompletedJobs.length > 0,
     halfwayPending: halfwayJobs.length > 0,
-    finalRescueAccepted: accepted.some((row) => row["job_type"] === FINAL_RESCUE_JOB_TYPE),
+    finalRescueAccepted:
+      accepted.some((row) => row["job_type"] === FINAL_RESCUE_JOB_TYPE) ||
+      finalRescueControl.finalRescueAcceptedAt !== null,
+    finalRescueDueAt: finalRescueControl.finalRescueDueAt,
     latestRequiredCompletedDay,
     episodeAnchorCompletedAt: str(anchorRow, "completed_at"),
     planReadyAcceptedAt: str(planReadyJobs[0], "provider_accepted_at"),
