@@ -9,6 +9,9 @@ import {
   HALFWAY_JOB_TYPE,
   HALFWAY_JOB_VERSION,
   HALFWAY_TEMPLATE_VERSION,
+  STALLED_JOB_TYPE,
+  STALLED_JOB_VERSION,
+  STALLED_TEMPLATE_VERSION,
   START_DAY_1_JOB_TYPE,
   START_DAY_1_JOB_VERSION,
   START_DAY_1_TEMPLATE_VERSION,
@@ -26,6 +29,9 @@ export const HALFWAY_LINK_EXCHANGE_EVENT = "email_halfway_link_exchange_complete
 
 /** Emitted only for a deliberate valid open_plan exchange of a Start Day 1 token. */
 export const START_DAY_1_LINK_EXCHANGE_EVENT = "email_start_day_1_link_exchange_completed";
+
+/** Emitted only for a deliberate valid open_plan exchange of a Stalled job token. */
+export const STALLED_LINK_EXCHANGE_EVENT = "email_stalled_link_exchange_completed";
 
 export type LinkExchangeEventInput = {
   /** `plan_return_tokens.purpose` of the validated token. */
@@ -71,6 +77,12 @@ const LIFECYCLE_EXCHANGE_CONTRACTS: readonly LifecycleExchangeContract[] = [
     jobVersion: START_DAY_1_JOB_VERSION,
     templateVersion: START_DAY_1_TEMPLATE_VERSION,
     eventName: START_DAY_1_LINK_EXCHANGE_EVENT,
+  },
+  {
+    jobType: STALLED_JOB_TYPE,
+    jobVersion: STALLED_JOB_VERSION,
+    templateVersion: STALLED_TEMPLATE_VERSION,
+    eventName: STALLED_LINK_EXCHANGE_EVENT,
   },
 ];
 

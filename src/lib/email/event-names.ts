@@ -3,7 +3,12 @@
 // Each job type owns one canonical event namespace. Naming is derived from the
 // trusted job type only, never from provider payloads or client input, and no
 // personal or private state is ever part of an event name.
-import { HALFWAY_JOB_TYPE, PLAN_READY_JOB_TYPE, START_DAY_1_JOB_TYPE } from "@/lib/email/types";
+import {
+  HALFWAY_JOB_TYPE,
+  PLAN_READY_JOB_TYPE,
+  STALLED_JOB_TYPE,
+  START_DAY_1_JOB_TYPE,
+} from "@/lib/email/types";
 
 /** Terminal or transitional outcomes that may emit a canonical event. */
 export type LifecycleEventOutcome =
@@ -19,6 +24,7 @@ const PREFIXES: Record<string, string> = {
   [PLAN_READY_JOB_TYPE]: "email_plan_ready",
   [START_DAY_1_JOB_TYPE]: "email_start_day_1",
   [HALFWAY_JOB_TYPE]: "email_halfway",
+  [STALLED_JOB_TYPE]: "email_stalled",
 };
 
 /**
@@ -29,10 +35,14 @@ const PREFIXES: Record<string, string> = {
  * eight approved Halfway canonical events and none of them is a manual-review
  * event. The job still parks in its existing manual-review state and still
  * raises the existing operational alert; only the unapproved event is withheld.
+ *
+ * Stalled follows the identical rule for the same reason: Section 7.10.2
+ * enumerates exactly eight approved Stalled canonical events.
  */
 const OMITTED: Record<string, ReadonlySet<LifecycleEventOutcome>> = {
   [PLAN_READY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["canceled"]),
   [HALFWAY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
+  [STALLED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
 };
 
 /** Canonical event name for one job type and outcome, or null when omitted. */

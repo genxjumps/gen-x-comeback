@@ -20,11 +20,29 @@ export const HALFWAY_TRIGGER_COMPLETIONS = 4;
 export const HALFWAY_MIN_COMPLETIONS = 4;
 export const HALFWAY_MAX_COMPLETIONS = 6;
 
+export const STALLED_JOB_TYPE = "stalled";
+export const STALLED_JOB_VERSION = "v1";
+export const STALLED_TEMPLATE_VERSION = "stalled_v1";
+
+/** A Stalled episode becomes eligible exactly 48 hours after its anchor. */
+export const STALLED_ELIGIBILITY_DELAY_MS = 48 * 60 * 60 * 1000;
+
+/** Inclusive required-day range that may anchor a Stalled episode. */
+export const STALLED_MIN_REQUIRED_DAY = 1;
+export const STALLED_MAX_REQUIRED_DAY = 6;
+
 /**
  * Plan Completed is the highest-priority lifecycle message. It is not yet
- * implemented, but its job type is named here so Halfway can always yield to it.
+ * implemented, but its job type is named here so Halfway and Stalled can always
+ * yield to it.
  */
 export const PLAN_COMPLETED_JOB_TYPE = "plan_completed";
+
+/**
+ * Final Rescue is the terminal inactivity message. It is not yet implemented,
+ * but its job type is named here so Stalled can never follow an accepted one.
+ */
+export const FINAL_RESCUE_JOB_TYPE = "final_rescue";
 
 /** Contract retry schedule: delays after each preceding transient failure. */
 export const RETRY_DELAYS_MS = [
