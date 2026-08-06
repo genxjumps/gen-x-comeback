@@ -697,3 +697,123 @@ describe("F7 Final Rescue outranks the lower inactivity messages", () => {
     });
   });
 });
+
+describe("F8 only deliberate first-time persisted progress moves the horizon", () => {
+  /** Body of one function definition inside the committed migration. */
+  function functionBody(signature: string): string {
+    const start = MIGRATION.indexOf(signature);
+    expect(start).toBeGreaterThan(-1);
+    const end = MIGRATION.indexOf("$function$;", start);
+    expect(end).toBeGreaterThan(start);
+    return MIGRATION.slice(start, end);
+  }
+
+  const MARK_START = functionBody("CREATE OR REPLACE FUNCTION public.mark_day_1_started");
+  const COMPLETE = functionBody("CREATE OR REPLACE FUNCTION public.complete_plan_day_atomic");
+  const COMMIT = functionBody("CREATE OR REPLACE FUNCTION public.commit_plan_version");
+
+  it("re-anchors on a Day 1 start only inside the newly inserted branch", () => {
+    const newlyInserted = MARK_START.indexOf("IF v_started_at IS NOT NULL THEN");
+    const reanchor = MARK_START.indexOf("eligible_at = v_started_at + interval '5 days'");
+    const branchEnd = MARK_START.indexOf("RETURN QUERY SELECT v_started_at, true;");
+    expect(newlyInserted).toBeGreaterThan(-1);
+    expect(reanchor).toBeGreaterThan(newlyInserted);
+    expect(reanchor).toBeLessThan(branchEnd);
+    // The insert that governs that branch only yields a row when it is new.
+    expect(MARK_START).toContain("ON CONFLICT (plan_version_id, day_number) DO NOTHING");
+    expect(MARK_START).toContain(
+      "RETURNING lead_plan_day_starts.started_at INTO v_started_at",
+    );
+  });
+
+  it("leaves the replayed Day 1 start branch with only the persisted read and return", () => {
+    const replayBranch = MARK_START.slice(
+      MARK_START.indexOf("RETURN QUERY SELECT v_started_at, true;"),
+    );
+    expect(replayBranch).toContain("FROM public.lead_plan_day_starts AS day_start");
+    expect(replayBranch).toContain("RETURN QUERY SELECT v_started_at, false;");
+    // No Final Rescue write of any kind is reachable from the replay path.
+    expect(replayBranch).not.toContain("final_rescue");
+    expect(replayBranch).not.toContain("email_jobs");
+  });
+
+  it("gates every Final Rescue completion write behind a newly inserted required completion", () => {
+    const insert = COMPLETE.indexOf("INSERT INTO public.lead_plan_day_completions");
+    const insertedFlag = COMPLETE.indexOf("v_inserted := v_completed_at IS NOT NULL;");
+    const guard = COMPLETE.indexOf("IF v_inserted THEN");
+    const reanchor = COMPLETE.indexOf("eligible_at = v_completed_at + interval '5 days'");
+    const cancel = COMPLETE.indexOf("'email_final_rescue_canceled'");
+
+    expect(COMPLETE).toContain("ON CONFLICT (lead_plan_id, day_number) DO NOTHING");
+    expect(insertedFlag).toBeGreaterThan(insert);
+    expect(guard).toBeGreaterThan(insertedFlag);
+    expect(reanchor).toBeGreaterThan(guard);
+    expect(cancel).toBeGreaterThan(guard);
+
+    // A replayed completion reloads the existing timestamp and clears the flag,
+    // so nothing outside the guarded block can touch the Final Rescue job.
+    expect(COMPLETE).toContain("IF NOT v_inserted THEN");
+    const outsideGuard = COMPLETE.slice(0, guard);
+    expect(outsideGuard).not.toContain("final_rescue");
+  });
+
+  it("derives required days only from top-level plan_json.days, so nested optional sessions never re-anchor", () => {
+    expect(COMPLETE).toContain("jsonb_array_elements(COALESCE(v_plan->'days', '[]'::jsonb))");
+    expect(COMPLETE).toContain("IF v_required IS NULL OR NOT (p_day_number = ANY(v_required)) THEN");
+    // Validation against v_required happens before the completion insert, hence
+    // before v_inserted and before any Final Rescue write.
+    const validation = COMPLETE.indexOf("IF v_required IS NULL OR NOT");
+    expect(validation).toBeLessThan(COMPLETE.indexOf("INSERT INTO public.lead_plan_day_completions"));
+    // No nested optional session is ever read as a required day number.
+    expect(COMPLETE).not.toContain("'optional'");
+    expect(COMPLETE).not.toContain("->'optional'");
+
+    // The same rule in the shared TypeScript helper: a top-level recovery day
+    // with a nested optional W07 session contributes exactly one required day.
+    expect(
+      requiredDayNumbers({
+        days: [
+          { day: 6, workout: { id: "W03" } },
+          { day: 7, optional: { id: "W07" } },
+        ],
+      }),
+    ).toEqual([6, 7]);
+  });
+
+  it("treats a required top-level recovery day exactly like a workout day", () => {
+    // The derivation reads only the day number and ordinality: no activity kind,
+    // workout id, recovery flag, or client-supplied field takes part.
+    const derivation = COMPLETE.slice(
+      COMPLETE.indexOf("SELECT array_agg(day_number ORDER BY day_number) INTO v_required"),
+      COMPLETE.indexOf("IF v_required IS NULL OR NOT"),
+    );
+    expect(derivation).toContain("COALESCE((d.value->>'day')::smallint, d.ordinality::smallint)");
+    for (const field of ["kind", "activity", "type", "workout", "recovery", "optional"]) {
+      expect(derivation).not.toContain(field);
+    }
+    // And the re-anchor boundary itself depends only on the persisted
+    // newly-inserted completion timestamp, never on the day's content.
+    expect(COMPLETE).toContain("eligible_at = v_completed_at + interval '5 days'");
+  });
+
+  it("cancels the replaced plan version's unsent Final Rescue job before the new version is committed", () => {
+    const cancelAllUnsent = COMMIT.indexOf(
+      "WHERE plan_version_id = v_lead.plan_version_id\n        AND status IN ('pending','processing','retry_scheduled')",
+    );
+    const reassessment = COMMIT.indexOf("v_source := 'reassessment';");
+    const newJob = COMMIT.indexOf("'final_rescue', 'v1', 'final_rescue_v1'");
+
+    expect(reassessment).toBeGreaterThan(-1);
+    expect(cancelAllUnsent).toBeGreaterThan(reassessment);
+    // The cancellation runs on the replaced version, before the new version's
+    // own Final Rescue job is created later in the same transaction.
+    expect(cancelAllUnsent).toBeLessThan(newJob);
+    expect(COMMIT).toContain("SET status = 'canceled', canceled_at = v_now");
+    // No Final Rescue special-casing is needed: the cancellation is type-agnostic.
+    const cancelStatement = COMMIT.slice(
+      COMMIT.indexOf("UPDATE public.email_jobs", reassessment),
+      cancelAllUnsent + 120,
+    );
+    expect(cancelStatement).not.toContain("job_type");
+  });
+});
