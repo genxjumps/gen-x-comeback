@@ -152,8 +152,6 @@ async function finish(
   const eventName = eventOutcome ? lifecycleEventName(job.job_type, eventOutcome) : null;
   const patch: EmailJobPatch = {};
 
-  if (extra.attemptedAt) patch.first_provider_attempt_at = extra.attemptedAt;
-
   if (outcome === "provider_accepted") {
     patch.provider_key = extra.providerKey ?? deps.adapter.key;
     patch.provider_message_id = extra.providerMessageId ?? null;
@@ -164,9 +162,8 @@ async function finish(
     patch.next_attempt_at = new Date(deps.now().getTime() + delay).toISOString();
     patch.last_error_code = extra.errorCode ?? null;
     patch.last_error_at = nowIso;
-  } else if (outcome === "deferred") {
-    patch.next_attempt_at = extra.eligibleAt ?? nowIso;
   } else if (outcome === "failed_permanent" || outcome === "manual_review") {
+
     patch.next_attempt_at = null;
     patch.last_error_code = extra.errorCode ?? null;
     patch.last_error_at = nowIso;
