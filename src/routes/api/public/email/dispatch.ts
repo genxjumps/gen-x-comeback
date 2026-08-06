@@ -118,12 +118,14 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           sending_enabled: true,
           ...summary,
           stale_alerts: staleAlerts,
+          recovery,
           plan_completed: planCompleted,
           halfway,
           stalled,
           start_day_1: startDayOne,
           final_rescue: finalRescue,
         });
+
       },
     },
   },
