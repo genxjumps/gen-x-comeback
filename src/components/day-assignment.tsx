@@ -257,7 +257,12 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
           </div>
         ) : (
           <>
-            <Button size="lg" className="w-full sm:w-auto" disabled={marking} onClick={markComplete}>
+            <Button
+              size="lg"
+              className="w-full sm:w-auto"
+              disabled={marking}
+              onClick={markComplete}
+            >
               {marking ? "Saving..." : completionLabel(day, dayNumber)}
             </Button>
             {markError ? (

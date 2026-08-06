@@ -43,7 +43,6 @@ const steps = [
 ];
 
 function Index() {
-
   const verifyToken = useServerFn(verifyAccessToken);
   const [hasPlan, setHasPlan] = useState(false);
 
@@ -67,8 +66,6 @@ function Index() {
   const ctaLabel = hasPlan ? "Continue My Plan" : "Build My 7-Day Plan";
   const ctaTo = hasPlan ? "/your-plan" : "/assessment/start";
 
-
-
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
       <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
@@ -80,15 +77,20 @@ function Index() {
       </h1>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        No guessing. No complicated program. Just the right workouts, recovery when you need it, and a simple protein plan for your next seven days.
+        No guessing. No complicated program. Just the right workouts, recovery when you need it, and
+        a simple protein plan for your next seven days.
       </p>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        Get a personalized workout plan built around your current fitness level, jump rope experience, available equipment, the number of days you can consistently train, and whether you need a lower-impact option.
+        Get a personalized workout plan built around your current fitness level, jump rope
+        experience, available equipment, the number of days you can consistently train, and whether
+        you need a lower-impact option.
       </p>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-        Training is only half the equation. You'll also get a simple protein plan so you know how much to aim for each day to support fat loss, preserve muscle, and recover without tracking every calorie.
+        Training is only half the equation. You'll also get a simple protein plan so you know how
+        much to aim for each day to support fat loss, preserve muscle, and recover without tracking
+        every calorie.
       </p>
 
       <div className="mt-8">
@@ -98,9 +100,7 @@ function Index() {
         <p className="mt-3 text-xs text-muted-foreground">
           Answer a few short questions. Get your plan and open Day 1 immediately.
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Free. No password required to start.
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground">Free. No password required to start.</p>
       </div>
 
       <Separator className="my-10" />

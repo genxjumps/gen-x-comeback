@@ -2,7 +2,11 @@
 //
 // Read-only: every query is a SELECT against persisted state. It never mutates
 // rows, never records events, and never reads request, URL, or browser state.
-import { INACTIVITY_JOB_TYPES, type StartDayOneJob, type StartDayOneState } from "@/lib/email/start-day-1-resolver";
+import {
+  INACTIVITY_JOB_TYPES,
+  type StartDayOneJob,
+  type StartDayOneState,
+} from "@/lib/email/start-day-1-resolver";
 import { PLAN_READY_JOB_TYPE } from "@/lib/email/types";
 
 type Row = Record<string, unknown>;
@@ -120,7 +124,8 @@ export async function loadStartDayOneState(
     : [];
 
   const accepted = lifecycleJobs.filter(
-    (row) => typeof row["provider_accepted_at"] === "string" && row["job_type"] !== PLAN_READY_JOB_TYPE,
+    (row) =>
+      typeof row["provider_accepted_at"] === "string" && row["job_type"] !== PLAN_READY_JOB_TYPE,
   );
 
   const lastLifecycleAcceptedAt =

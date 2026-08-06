@@ -52,9 +52,9 @@ describe("Start Day 1 dispatch-time resolver", () => {
   });
 
   it("returns RESUME when Day 1 was deliberately started and is incomplete", () => {
-    expect(
-      resolveStartDayOne(state({ dayOneStartedAt: FLOOR_ISO }), AFTER_FLOOR),
-    ).toEqual({ action: "RESUME" });
+    expect(resolveStartDayOne(state({ dayOneStartedAt: FLOOR_ISO }), AFTER_FLOOR)).toEqual({
+      action: "RESUME",
+    });
   });
 
   it("cancels when Day 1 is complete", () => {
@@ -68,7 +68,10 @@ describe("Start Day 1 dispatch-time resolver", () => {
 
   it("cancels when the plan version was replaced", () => {
     expect(
-      resolveStartDayOne(state({ currentPlanVersionId: "44444444-4444-4444-8444-444444444444" }), AFTER_FLOOR),
+      resolveStartDayOne(
+        state({ currentPlanVersionId: "44444444-4444-4444-8444-444444444444" }),
+        AFTER_FLOOR,
+      ),
     ).toEqual({ action: "CANCEL", reason: "plan_version_replaced", disposition: "cancel" });
   });
 
@@ -78,9 +81,11 @@ describe("Start Day 1 dispatch-time resolver", () => {
       { job_version: "v2" },
       { template_version: "start_day_1_v2" },
     ]) {
-      expect(
-        resolveStartDayOne(state({ job: { ...job, ...patch } }), AFTER_FLOOR),
-      ).toEqual({ action: "CANCEL", reason: "job_not_canonical", disposition: "cancel" });
+      expect(resolveStartDayOne(state({ job: { ...job, ...patch } }), AFTER_FLOOR)).toEqual({
+        action: "CANCEL",
+        reason: "job_not_canonical",
+        disposition: "cancel",
+      });
     }
   });
 
@@ -93,9 +98,11 @@ describe("Start Day 1 dispatch-time resolver", () => {
   });
 
   it("suppresses on marketing unsubscribe", () => {
-    expect(
-      resolveStartDayOne(state({ marketingUnsubscribedAt: FLOOR_ISO }), AFTER_FLOOR),
-    ).toEqual({ action: "CANCEL", reason: "marketing_unsubscribed", disposition: "suppress" });
+    expect(resolveStartDayOne(state({ marketingUnsubscribedAt: FLOOR_ISO }), AFTER_FLOOR)).toEqual({
+      action: "CANCEL",
+      reason: "marketing_unsubscribed",
+      disposition: "suppress",
+    });
   });
 
   it("suppresses on hard bounce or complaint suppression", () => {
@@ -318,4 +325,3 @@ describe("Start Day 1 authoritative state loader", () => {
     });
   });
 });
-

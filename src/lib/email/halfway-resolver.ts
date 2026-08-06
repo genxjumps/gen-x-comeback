@@ -75,7 +75,9 @@ export type HalfwaySuppressReason = "marketing_unsubscribed" | "recipient_suppre
 
 /** Not sendable yet; the job is kept for a later dispatch run. */
 export type HalfwayDeferReason =
-  "plan_ready_not_accepted" | "eligibility_floor_not_reached" | "lifecycle_24h_cap";
+  | "plan_ready_not_accepted"
+  | "eligibility_floor_not_reached"
+  | "lifecycle_24h_cap";
 
 /**
  * The four approved Halfway dispatch outcomes, as an explicit discriminated

@@ -275,9 +275,10 @@ describe("S3 48-hour eligibility after a server-confirmed required completion", 
 
   it("cancels when the anchoring completion is no longer persisted", () => {
     const job = stalledJob();
-    expect(
-      resolveStalled(eligibleState(job, { episodeAnchorCompletedAt: null }), NOW),
-    ).toEqual({ action: "CANCEL", reason: "episode_anchor_missing" });
+    expect(resolveStalled(eligibleState(job, { episodeAnchorCompletedAt: null }), NOW)).toEqual({
+      action: "CANCEL",
+      reason: "episode_anchor_missing",
+    });
   });
 });
 
@@ -387,7 +388,9 @@ describe("S6 priority: Plan Completed > Halfway > Stalled > Start Day 1 > Final 
       join(process.cwd(), "src", "routes", "api", "public", "email", "dispatch.ts"),
       "utf8",
     );
-    expect(route.indexOf("dispatchHalfwayJobs(")).toBeLessThan(route.indexOf("dispatchStalledJobs("));
+    expect(route.indexOf("dispatchHalfwayJobs(")).toBeLessThan(
+      route.indexOf("dispatchStalledJobs("),
+    );
     expect(route.indexOf("dispatchStalledJobs(")).toBeLessThan(
       route.indexOf("dispatchStartDayOneJobs("),
     );
@@ -409,7 +412,9 @@ describe("S7 lifecycle spacing is a 24-hour gap and DEFER only", () => {
   it("sends once the full 24 hours has elapsed", () => {
     const job = stalledJob();
     const last = new Date(NOW.getTime() - LIFECYCLE_MIN_GAP_MS).toISOString();
-    expect(resolveStalled(eligibleState(job, { lastLifecycleAcceptedAt: last }), NOW)).toEqual(SEND);
+    expect(resolveStalled(eligibleState(job, { lastLifecycleAcceptedAt: last }), NOW)).toEqual(
+      SEND,
+    );
   });
 
   it("defers until Plan Ready itself was accepted", () => {
@@ -432,9 +437,7 @@ describe("S8 inactivity cap of three per plan version, closed by Final Rescue", 
         NOW,
       ),
     ).toEqual({ action: "CANCEL", reason: "inactivity_cap_reached" });
-    expect(
-      resolveStalled(eligibleState(job, { acceptedInactivityCount: 2 }), NOW),
-    ).toEqual(SEND);
+    expect(resolveStalled(eligibleState(job, { acceptedInactivityCount: 2 }), NOW)).toEqual(SEND);
   });
 
   it("cancels permanently once Final Rescue was accepted", () => {
@@ -540,9 +543,7 @@ describe("S10 exact approved copy", () => {
 
   it("renders nothing for any non-SEND resolution", () => {
     expect(renderStalled({ action: "CANCEL", reason: "plan_completed" }, RENDER_INPUT)).toBeNull();
-    expect(
-      renderStalled({ action: "DEFER", reason: "halfway_priority" }, RENDER_INPUT),
-    ).toBeNull();
+    expect(renderStalled({ action: "DEFER", reason: "halfway_priority" }, RENDER_INPUT)).toBeNull();
     expect(
       renderStalled({ action: "SUPPRESS", reason: "recipient_suppressed" }, RENDER_INPUT),
     ).toBeNull();
