@@ -185,7 +185,9 @@ describe("F1 locked Final Rescue identity", () => {
     expect(lifecycleEventName(FINAL_RESCUE_JOB_TYPE, "delivered")).toBe(
       "email_final_rescue_delivered",
     );
-    expect(lifecycleEventName(FINAL_RESCUE_JOB_TYPE, "canceled")).toBe("email_final_rescue_canceled");
+    expect(lifecycleEventName(FINAL_RESCUE_JOB_TYPE, "canceled")).toBe(
+      "email_final_rescue_canceled",
+    );
     expect(lifecycleEventName(FINAL_RESCUE_JOB_TYPE, "manual_review")).toBeNull();
   });
 });
@@ -241,9 +243,10 @@ describe("F3 resolver derives every outcome from persisted state only", () => {
     expect(finalRescueVariant({ dayOneStartedAt: "x", requiredCompletions: 0 })).toBe("started");
     expect(finalRescueVariant({ dayOneStartedAt: null, requiredCompletions: 2 })).toBe("started");
     expect(finalRescueVariant({ dayOneStartedAt: null, requiredCompletions: 0 })).toBe("unstarted");
-    expect(
-      resolveFinalRescue(sendableState(job, { requiredCompletions: 3 }), NOW),
-    ).toEqual({ action: "SEND", variant: "started" });
+    expect(resolveFinalRescue(sendableState(job, { requiredCompletions: 3 }), NOW)).toEqual({
+      action: "SEND",
+      variant: "started",
+    });
   });
 
   it("cancels permanently for non-applicable plan-version state", () => {
@@ -281,10 +284,16 @@ describe("F3 resolver derives every outcome from persisted state only", () => {
 
   it("suppresses for unsubscribe, hard bounce and complaint", () => {
     expect(
-      resolveFinalRescue(sendableState(job, { marketingUnsubscribedAt: "2026-02-05T09:00:00.000Z" }), NOW),
+      resolveFinalRescue(
+        sendableState(job, { marketingUnsubscribedAt: "2026-02-05T09:00:00.000Z" }),
+        NOW,
+      ),
     ).toEqual({ action: "SUPPRESS", reason: "marketing_unsubscribed" });
     expect(
-      resolveFinalRescue(sendableState(job, { emailSuppressedAt: "2026-02-05T09:00:00.000Z" }), NOW),
+      resolveFinalRescue(
+        sendableState(job, { emailSuppressedAt: "2026-02-05T09:00:00.000Z" }),
+        NOW,
+      ),
     ).toEqual({ action: "SUPPRESS", reason: "recipient_suppressed" });
     expect(resolveFinalRescue(sendableState(job, { suppressionListed: true }), NOW)).toEqual({
       action: "SUPPRESS",
@@ -614,8 +623,9 @@ describe("F7 Final Rescue outranks the lower inactivity messages", () => {
       action: "CANCEL",
       reason: "final_rescue_sent",
     });
-    expect(
-      resolveStalled({ ...base, finalRescueDueAt: "2026-02-05T13:00:00.000Z" }, NOW),
-    ).toEqual({ action: "CANCEL", reason: "final_rescue_controls" });
+    expect(resolveStalled({ ...base, finalRescueDueAt: "2026-02-05T13:00:00.000Z" }, NOW)).toEqual({
+      action: "CANCEL",
+      reason: "final_rescue_controls",
+    });
   });
 });
