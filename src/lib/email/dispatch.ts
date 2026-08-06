@@ -529,19 +529,12 @@ export async function dispatchHalfwayJobs(
     const resolution = resolveHalfway(state, deps.now());
 
     if (resolution.action === "DEFER") {
-      // A deferral is not a provider attempt: the shared claim RPC already
-      // incremented attempt_count on lease claim, so the fenced deferral
-      // transition restores the pre-claim count and emits no retry event.
-      const nextAttemptAt = resolution.eligibleAt ?? deps.now().toISOString();
-      const fenced = await deps.store.deferJob(
-        job.job_id,
-        job.claim_token,
-        nextAttemptAt,
-        Math.max(job.attempt_count - 1, 0),
-      );
-      outcomes.push({ jobId: job.job_id, outcome: fenced ? "deferred" : "lost_lease" });
+      // Identical behavior to before, now through the shared non-provider
+      // deferral boundary: fenced, attempt-count restoring, and eventless.
+      outcomes.push(await deferSend(deps, job, resolution.eligibleAt ?? null));
       continue;
     }
+
 
     if (resolution.action === "SUPPRESS") {
       outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
