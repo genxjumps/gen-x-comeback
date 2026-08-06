@@ -39,8 +39,7 @@ export const Route = createFileRoute("/assessment/")({
       { property: "og:title", content: "Assessment — Free 7-Day Fitness Plan" },
       {
         property: "og:description",
-        content:
-          "Three short stages that shape your personalized 7-day workout and protein plan.",
+        content: "Three short stages that shape your personalized 7-day workout and protein plan.",
       },
     ],
   }),
@@ -183,7 +182,6 @@ function Assessment() {
     setLoaded(true);
   }, []);
 
-
   useEffect(() => {
     if (!loaded) return;
     try {
@@ -196,7 +194,6 @@ function Assessment() {
   const set = <K extends keyof Answers>(key: K, value: Answers[K]) => {
     setAnswers((prev) => ({ ...prev, [key]: value }));
   };
-
 
   const toggleEquipment = (value: string, checked: boolean) => {
     setAnswers((prev) => {
@@ -219,7 +216,10 @@ function Assessment() {
   const focusFirstInvalid = () => {
     const targets: string[] =
       step === 1
-        ? [answers.q1 ? "" : `#q1-${q1Options[0].value}`, answers.q2 ? "" : `#q2-${q2Options[0].value}`]
+        ? [
+            answers.q1 ? "" : `#q1-${q1Options[0].value}`,
+            answers.q2 ? "" : `#q2-${q2Options[0].value}`,
+          ]
         : step === 2
           ? [
               answers.q3 ? "" : `#q3-${q3Options[0].value}`,
@@ -388,7 +388,9 @@ function Assessment() {
             </Question>
             <Question
               heading="Current weight"
-              hint={"Optional. I\u2019ll use this only to calculate a more accurate daily protein target. It will not change your workout plan."}
+              hint={
+                "Optional. I\u2019ll use this only to calculate a more accurate daily protein target. It will not change your workout plan."
+              }
               error={wError}
             >
               <div className="flex gap-2">
@@ -402,10 +404,7 @@ function Assessment() {
                   onChange={(e) => set("weight", e.target.value)}
                   className="flex-1"
                 />
-                <Select
-                  value={answers.unit}
-                  onValueChange={(v) => set("unit", v as "lb" | "kg")}
-                >
+                <Select value={answers.unit} onValueChange={(v) => set("unit", v as "lb" | "kg")}>
                   <SelectTrigger className="w-24" aria-label="Weight unit">
                     <SelectValue />
                   </SelectTrigger>

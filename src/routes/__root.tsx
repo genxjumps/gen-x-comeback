@@ -132,10 +132,7 @@ function RootComponent() {
           <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-5 py-4">
             {inPlan || inJumpRopes ? (
               <>
-                <Link
-                  to="/your-plan"
-                  className="truncate text-sm font-semibold tracking-tight"
-                >
+                <Link to="/your-plan" className="truncate text-sm font-semibold tracking-tight">
                   My Plan
                 </Link>
                 <Link
@@ -170,4 +167,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-

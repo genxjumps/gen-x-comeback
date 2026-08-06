@@ -66,8 +66,6 @@ export type StalledDispatchDeps = DispatchDeps & {
   loadStalledState: (job: StalledJob) => Promise<StalledState>;
 };
 
-
-
 export type JobOutcome =
   | "provider_accepted"
   | "retry_scheduled"
@@ -692,7 +690,6 @@ export async function dispatchStalledJobs(
 
   return { claimed: jobs.length, outcomes };
 }
-
 
 /** Raises one operational alert per Plan Ready job still unsent after five minutes. */
 export async function raiseStalePlanReadyAlerts(deps: DispatchDeps): Promise<number> {

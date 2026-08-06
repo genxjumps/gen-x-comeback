@@ -22,10 +22,7 @@ export const answersSchema = z
     q3: z.enum(Q3_VALUES),
     q4: z.array(z.enum(Q4_VALUES)).length(1),
     q5: z.enum(Q5_VALUES),
-    equipment: z
-      .array(z.enum(EQUIPMENT_VALUES))
-      .min(1)
-      .max(5),
+    equipment: z.array(z.enum(EQUIPMENT_VALUES)).min(1).max(5),
     weight: z.string().max(10),
     unit: z.enum(["lb", "kg"]),
   })
@@ -37,9 +34,7 @@ export const answersSchema = z
     if (raw === "") return;
     const n = Number(raw);
     const ok =
-      Number.isFinite(n) &&
-      n > 0 &&
-      (a.unit === "lb" ? n >= 70 && n <= 700 : n >= 32 && n <= 318);
+      Number.isFinite(n) && n > 0 && (a.unit === "lb" ? n >= 70 && n <= 700 : n >= 32 && n <= 318);
     if (!ok) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid weight" });
     }
@@ -63,7 +58,7 @@ const submissionIdSchema = z.string().uuid("Invalid submission id");
 export const leadInputSchema = z.object({
   submissionId: submissionIdSchema,
   sessionTokenHash: tokenHashSchema,
-  
+
   firstName: z
     .string()
     .transform((v) => v.trim())

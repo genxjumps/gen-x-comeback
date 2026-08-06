@@ -47,7 +47,6 @@ export type DayEntry = {
   optional?: Workout;
 };
 
-
 export type Plan = {
   tier: Tier;
   days: DayEntry[];
@@ -264,7 +263,6 @@ export function buildPlan(a: Answers): Plan {
     }
     return { day, title: slot };
   });
-
 
   return {
     tier,

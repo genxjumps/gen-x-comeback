@@ -13,7 +13,8 @@ import { hashAccessToken } from "@/lib/lead-plan";
 import type { EmailAdapter } from "@/lib/email/types";
 
 export type RuntimeDeps =
-  { enabled: true; deps: DispatchDeps } | { enabled: false; missing: string[] };
+  | { enabled: true; deps: DispatchDeps }
+  | { enabled: false; missing: string[] };
 
 export async function buildDispatchDeps(): Promise<RuntimeDeps> {
   const config = readEmailConfig();

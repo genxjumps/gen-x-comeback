@@ -7,15 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { buildPlan, isCompleteDraft, readAnswers, type Answers } from "@/lib/plan";
-import {
-  ACCESS_TOKEN_STORAGE_KEY,
-  CONSENT_COPY,
-  RAW_TOKEN_RE,
-} from "@/lib/lead-plan";
-import {
-  regeneratePlanWithToken,
-  saveLeadPlan,
-} from "@/lib/lead.functions";
+import { ACCESS_TOKEN_STORAGE_KEY, CONSENT_COPY, RAW_TOKEN_RE } from "@/lib/lead-plan";
+import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
 import { getSubmissionId, mintCredential } from "@/lib/plan-submission";
 import { readStoredToken } from "@/components/plan-access";
 
@@ -129,7 +122,6 @@ function ResultsPage() {
     };
   }, [navigate, regenerate]);
 
-
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
 
   if (!answers || !plan) return null;
@@ -138,7 +130,6 @@ function ResultsPage() {
   const rest = plan.days.slice(1);
   const nameOk = firstName.trim().length > 0;
   const emailOk = EMAIL_RE.test(email.trim());
-
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
@@ -152,8 +143,8 @@ function ResultsPage() {
       </p>
       {recognized ? (
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          This browser recognizes your previous access. Your latest answers were used to rebuild this
-          plan.
+          This browser recognizes your previous access. Your latest answers were used to rebuild
+          this plan.
         </p>
       ) : null}
 
@@ -218,12 +209,7 @@ function ResultsPage() {
                 Today
               </span>
             </div>
-            <Button
-              asChild
-              size="sm"
-              variant="default"
-              className="mt-2 w-full sm:w-auto"
-            >
+            <Button asChild size="sm" variant="default" className="mt-2 w-full sm:w-auto">
               <Link
                 {...(unlocked
                   ? { to: "/your-plan/day/$day" as const, params: { day: "1" } }
@@ -239,7 +225,9 @@ function ResultsPage() {
               <div className="flex items-baseline justify-between gap-3">
                 <h3
                   className={
-                    unlocked ? "text-sm font-medium" : "text-sm font-medium text-muted-foreground/80"
+                    unlocked
+                      ? "text-sm font-medium"
+                      : "text-sm font-medium text-muted-foreground/80"
                   }
                 >
                   Day {d.day}: {d.title}
@@ -282,8 +270,6 @@ function ResultsPage() {
             </ul>
           </div>
 
-
-
           <form
             noValidate
             className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
@@ -321,7 +307,9 @@ function ResultsPage() {
                 setUnlocked(true);
                 navigate({ to: "/your-plan" });
               } catch {
-                setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
+                setError(
+                  "We couldn\u2019t save your plan. Your answers are still here. Try again.",
+                );
               } finally {
                 setSaving(false);
               }
@@ -377,7 +365,9 @@ function ResultsPage() {
             </div>
             <div id="consent-error" aria-live="polite" role="status">
               {showErrors && !consent ? (
-                <p className="text-xs text-muted-foreground">You need to agree before continuing.</p>
+                <p className="text-xs text-muted-foreground">
+                  You need to agree before continuing.
+                </p>
               ) : null}
             </div>
             <Button type="submit" className="mt-1 w-full" disabled={saving}>

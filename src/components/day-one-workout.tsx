@@ -67,7 +67,6 @@ export function DayOneWorkout() {
     }
   }
 
-
   if (status === "checking") {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
@@ -114,9 +113,7 @@ export function DayOneWorkout() {
         {W01_TITLE}
       </h1>
       <p className="mt-2 text-xs text-muted-foreground">{W01_DURATION}</p>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        {W01_RUNDOWN}
-      </p>
+      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{W01_RUNDOWN}</p>
 
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
@@ -144,16 +141,16 @@ export function DayOneWorkout() {
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           Your Cardio Option
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cardioGuidance(cardio)}</p>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {cardioGuidance(cardio)}
+        </p>
       </section>
 
       <section className="mt-4 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           How to Approach This Workout
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          {W01_APPROACH}
-        </p>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{W01_APPROACH}</p>
       </section>
 
       <section className="mt-4 rounded-lg border border-border bg-card p-4">

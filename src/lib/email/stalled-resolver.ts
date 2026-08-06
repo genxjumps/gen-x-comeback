@@ -12,7 +12,10 @@ import {
   STALLED_MIN_REQUIRED_DAY,
   STALLED_TEMPLATE_VERSION,
 } from "@/lib/email/types";
-import { LIFECYCLE_MIN_GAP_MS, MAX_ACCEPTED_INACTIVITY_EMAILS } from "@/lib/email/start-day-1-resolver";
+import {
+  LIFECYCLE_MIN_GAP_MS,
+  MAX_ACCEPTED_INACTIVITY_EMAILS,
+} from "@/lib/email/start-day-1-resolver";
 
 /**
  * Logical episode key. One Stalled episode exists per required day that a

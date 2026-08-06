@@ -94,9 +94,7 @@ function PlanHubPage() {
 
   if (status === "denied" || !hub) return <AccessDenied />;
 
-  const completedCount = hub.completedDays.filter((d) =>
-    hub.days.some((x) => x.day === d),
-  ).length;
+  const completedCount = hub.completedDays.filter((d) => hub.days.some((x) => x.day === d)).length;
   const current = currentAssignmentDay(hub.days, hub.completedDays);
   const currentEntry = current ? hub.days.find((d) => d.day === current) : null;
   const pct = Math.round((completedCount / TOTAL_ASSIGNMENTS) * 100);
@@ -154,7 +152,10 @@ function PlanHubPage() {
       </div>
 
       {/* Current assignment */}
-      <section id="current" className="mt-8 scroll-mt-6 rounded-lg border border-border bg-card p-4">
+      <section
+        id="current"
+        className="mt-8 scroll-mt-6 rounded-lg border border-border bg-card p-4"
+      >
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           Current Assignment
         </h2>
@@ -165,7 +166,9 @@ function PlanHubPage() {
             </p>
             <h3 className="mt-1 text-lg font-semibold tracking-tight">{currentEntry.title}</h3>
             {currentEntry.minutes ? (
-              <p className="mt-1 text-xs text-muted-foreground">About {currentEntry.minutes} minutes</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                About {currentEntry.minutes} minutes
+              </p>
             ) : null}
             {currentEntry.description ? (
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -237,7 +240,6 @@ function PlanHubPage() {
                   </div>
                 </RowLink>
               </li>
-
             );
           })}
         </ul>
