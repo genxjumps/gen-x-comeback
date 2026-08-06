@@ -6,6 +6,9 @@
 // ownership). A raw GET, prefetch, scanner, provider open, or provider click
 // never reaches here.
 import {
+  FINAL_RESCUE_JOB_TYPE,
+  FINAL_RESCUE_JOB_VERSION,
+  FINAL_RESCUE_TEMPLATE_VERSION,
   HALFWAY_JOB_TYPE,
   HALFWAY_JOB_VERSION,
   HALFWAY_TEMPLATE_VERSION,
