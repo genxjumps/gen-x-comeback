@@ -309,6 +309,41 @@ export type Database = {
           },
         ]
       }
+      lead_plan_day_starts: {
+        Row: {
+          created_at: string
+          day_number: number
+          id: string
+          lead_plan_id: string
+          plan_version_id: string
+          started_at: string
+        }
+        Insert: {
+          created_at?: string
+          day_number: number
+          id?: string
+          lead_plan_id: string
+          plan_version_id: string
+          started_at?: string
+        }
+        Update: {
+          created_at?: string
+          day_number?: number
+          id?: string
+          lead_plan_id?: string
+          plan_version_id?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_plan_day_starts_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: false
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_plans: {
         Row: {
           access_token_hash: string | null
@@ -733,6 +768,13 @@ export type Database = {
           p_status: Database["public"]["Enums"]["email_job_status"]
         }
         Returns: boolean
+      }
+      mark_day_1_started: {
+        Args: { p_lead_plan_id: string; p_plan_version_id: string }
+        Returns: {
+          newly_started: boolean
+          started_at: string
+        }[]
       }
       raise_stale_email_job_alerts: {
         Args: { p_cutoff: string; p_job_type: string }
