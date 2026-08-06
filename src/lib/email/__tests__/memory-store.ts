@@ -128,8 +128,8 @@ export function createMemoryStore(now: () => Date): MemoryStore {
     },
 
     async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {
-
       const job = jobs.get(jobId);
+
       if (!job) return false;
       // Same fencing as a terminal transition; no event is ever written.
       if (job.status !== "processing" || !claimToken || job.claim_token !== claimToken)
