@@ -117,8 +117,19 @@ describe("non-provider deferral accounting", () => {
 
   it("counts an actual provider attempt exactly once and keeps the stable key", async () => {
     const h = harness({
-      script: { script: [{ outcome: "transient", errorCode: "http_500" }] },
+      script: {
+        script: [
+          { outcome: "transient", errorCode: "http_500" },
+          {
+            outcome: "accepted",
+            providerKey: "fake",
+            providerMessageId: "fake-2",
+            acceptedAt: new Date(START.getTime() + HOUR).toISOString(),
+          },
+        ],
+      },
     });
+
 
     const first = await dispatchStartDayOneJobs(h.deps);
     expect(first.outcomes[0]?.outcome).toBe("retry_scheduled");
