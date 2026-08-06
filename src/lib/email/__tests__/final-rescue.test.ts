@@ -49,7 +49,7 @@ import {
 import { lifecycleEventName } from "@/lib/email/event-names";
 import { createMemoryStore, makeJob, makeLead, type MemoryStore } from "./memory-store";
 
-const NOW = new Date("2026-02-10T12:00:00.000Z");
+const NOW = new Date("2026-02-05T18:00:00.000Z");
 /** Commit + 4 days, already reached at NOW. */
 const ELIGIBLE_AT = "2026-02-05T12:00:00.000Z";
 const PLAN_READY_ACCEPTED_AT = "2026-02-01T12:00:05.000Z";
@@ -252,7 +252,7 @@ describe("F3 resolver derives every outcome from persisted state only", () => {
       [{ currentPlanVersionId: null }, "plan_version_replaced"],
       [{ planComplete: true }, "plan_completed"],
       [{ planCompletedControl: true }, "plan_completed"],
-      [{ finalRescueAcceptedAt: "2026-02-09T12:00:00.000Z" }, "already_sent"],
+      [{ finalRescueAcceptedAt: "2026-02-05T13:00:00.000Z" }, "already_sent"],
       [{ hasRecipient: false }, "recipient_missing"],
       [{ acceptedInactivityCount: MAX_ACCEPTED_INACTIVITY_EMAILS }, "inactivity_cap_reached"],
     ];
@@ -281,10 +281,10 @@ describe("F3 resolver derives every outcome from persisted state only", () => {
 
   it("suppresses for unsubscribe, hard bounce and complaint", () => {
     expect(
-      resolveFinalRescue(sendableState(job, { marketingUnsubscribedAt: "2026-02-09" }), NOW),
+      resolveFinalRescue(sendableState(job, { marketingUnsubscribedAt: "2026-02-05T09:00:00.000Z" }), NOW),
     ).toEqual({ action: "SUPPRESS", reason: "marketing_unsubscribed" });
     expect(
-      resolveFinalRescue(sendableState(job, { emailSuppressedAt: "2026-02-09" }), NOW),
+      resolveFinalRescue(sendableState(job, { emailSuppressedAt: "2026-02-05T09:00:00.000Z" }), NOW),
     ).toEqual({ action: "SUPPRESS", reason: "recipient_suppressed" });
     expect(resolveFinalRescue(sendableState(job, { suppressionListed: true }), NOW)).toEqual({
       action: "SUPPRESS",
@@ -416,7 +416,7 @@ describe("F5 controlled dispatch and idempotency", () => {
   });
 
   it("cancels an already-accepted job on reload with no second provider call", async () => {
-    const h = harness({ state: { finalRescueAcceptedAt: "2026-02-09T12:00:00.000Z" } });
+    const h = harness({ state: { finalRescueAcceptedAt: "2026-02-05T13:00:00.000Z" } });
     const summary = await dispatchFinalRescueJobs(h.deps);
 
     expect(summary.outcomes[0]?.outcome).toBe("canceled");
@@ -436,8 +436,8 @@ describe("F5 controlled dispatch and idempotency", () => {
 
   it("suppresses unsubscribe, hard bounce and complaint with no provider call", async () => {
     for (const state of [
-      { marketingUnsubscribedAt: "2026-02-09T09:00:00.000Z" },
-      { emailSuppressedAt: "2026-02-09T09:00:00.000Z" },
+      { marketingUnsubscribedAt: "2026-02-05T09:00:00.000Z" },
+      { emailSuppressedAt: "2026-02-05T09:00:00.000Z" },
       { suppressionListed: true },
     ]) {
       const h = harness({ state });
@@ -534,11 +534,11 @@ describe("F6 return exchange attribution and destination", () => {
 
 describe("F7 Final Rescue outranks the lower inactivity messages", () => {
   it("controls only when a due unsent job exists and Halfway is not pending", () => {
-    const due = "2026-02-09T12:00:00.000Z";
+    const due = "2026-02-05T13:00:00.000Z";
     expect(finalRescueDueControls(due, false, NOW)).toBe(true);
     expect(finalRescueDueControls(due, true, NOW)).toBe(false);
     expect(finalRescueDueControls(null, false, NOW)).toBe(false);
-    expect(finalRescueDueControls("2026-02-11T12:00:00.000Z", false, NOW)).toBe(false);
+    expect(finalRescueDueControls("2026-02-06T12:00:00.000Z", false, NOW)).toBe(false);
   });
 
   it("cancels Start Day 1 once Final Rescue is accepted or due", () => {
@@ -569,10 +569,10 @@ describe("F7 Final Rescue outranks the lower inactivity messages", () => {
 
     expect(resolveStartDayOne(base, NOW).action).toBe("START");
     expect(
-      resolveStartDayOne({ ...base, finalRescueAcceptedAt: "2026-02-09T12:00:00.000Z" }, NOW),
+      resolveStartDayOne({ ...base, finalRescueAcceptedAt: "2026-02-05T13:00:00.000Z" }, NOW),
     ).toMatchObject({ action: "CANCEL", reason: "final_rescue_sent", disposition: "cancel" });
     expect(
-      resolveStartDayOne({ ...base, finalRescueDueAt: "2026-02-09T12:00:00.000Z" }, NOW),
+      resolveStartDayOne({ ...base, finalRescueDueAt: "2026-02-05T13:00:00.000Z" }, NOW),
     ).toMatchObject({ action: "CANCEL", reason: "final_rescue_controls" });
   });
 
@@ -613,7 +613,7 @@ describe("F7 Final Rescue outranks the lower inactivity messages", () => {
       reason: "final_rescue_sent",
     });
     expect(
-      resolveStalled({ ...base, finalRescueDueAt: "2026-02-09T12:00:00.000Z" }, NOW),
+      resolveStalled({ ...base, finalRescueDueAt: "2026-02-05T13:00:00.000Z" }, NOW),
     ).toEqual({ action: "CANCEL", reason: "final_rescue_controls" });
   });
 });
