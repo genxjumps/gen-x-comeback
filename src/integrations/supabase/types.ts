@@ -769,6 +769,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      invoke_email_dispatch_scheduler: { Args: never; Returns: undefined }
       mark_day_1_started: {
         Args: { p_lead_plan_id: string; p_plan_version_id: string }
         Returns: {
