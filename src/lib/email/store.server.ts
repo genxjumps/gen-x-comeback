@@ -48,7 +48,9 @@ export async function createSupabaseEmailStore(): Promise<EmailStore> {
         {
           lead_plan_id: token.leadPlanId,
           plan_version_id: token.planVersionId,
-          purpose: "open_plan",
+          // Recovery credentials are purpose-limited; every other credential
+          // keeps the established open_plan purpose byte-for-byte.
+          purpose: token.purpose ?? "open_plan",
           token_hash: token.tokenHash,
           issued_at: token.issuedAt,
           expires_at: token.expiresAt,
@@ -60,6 +62,7 @@ export async function createSupabaseEmailStore(): Promise<EmailStore> {
       );
       if (error) throw new Error(error.message);
     },
+
 
     async upsertPreferenceCredential(leadPlanId, tokenHash) {
       const { error } = await supabaseAdmin

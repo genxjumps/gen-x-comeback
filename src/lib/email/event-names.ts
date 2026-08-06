@@ -8,9 +8,11 @@ import {
   HALFWAY_JOB_TYPE,
   PLAN_COMPLETED_JOB_TYPE,
   PLAN_READY_JOB_TYPE,
+  RECOVERY_JOB_TYPE,
   STALLED_JOB_TYPE,
   START_DAY_1_JOB_TYPE,
 } from "@/lib/email/types";
+
 
 /** Terminal or transitional outcomes that may emit a canonical event. */
 export type LifecycleEventOutcome =
@@ -29,7 +31,10 @@ const PREFIXES: Record<string, string> = {
   [STALLED_JOB_TYPE]: "email_stalled",
   [FINAL_RESCUE_JOB_TYPE]: "email_final_rescue",
   [PLAN_COMPLETED_JOB_TYPE]: "email_plan_completed",
+  // Recovery is a product-access namespace, not a proactive lifecycle one.
+  [RECOVERY_JOB_TYPE]: "email_recovery",
 };
+
 
 /**
  * Outcomes that do not emit a canonical event for a given job type.
@@ -53,7 +58,14 @@ const OMITTED: Record<string, ReadonlySet<LifecycleEventOutcome>> = {
   [STALLED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
   [FINAL_RESCUE_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
   [PLAN_COMPLETED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
+  // Recovery has exactly seven approved canonical events: queued,
+  // provider_accepted, delivered, retry_scheduled, failed_permanent, suppressed,
+  // and link_exchange_completed. Cancellation of a stale replaced-plan recovery
+  // job and manual review therefore stay silent, exactly as Plan Ready
+  // cancellation already does.
+  [RECOVERY_JOB_TYPE]: new Set<LifecycleEventOutcome>(["canceled", "manual_review"]),
 };
+
 
 /** Canonical event name for one job type and outcome, or null when omitted. */
 export function lifecycleEventName(jobType: string, outcome: LifecycleEventOutcome): string | null {

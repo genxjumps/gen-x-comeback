@@ -56,6 +56,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
 
         const {
           dispatchPlanReadyJobs,
+          dispatchRecoveryJobs,
           dispatchPlanCompletedJobs,
           dispatchHalfwayJobs,
           dispatchStalledJobs,
@@ -65,6 +66,13 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         } = await import("@/lib/email/dispatch");
         const summary = await dispatchPlanReadyJobs(runtime.deps, { limit: 25 });
         const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
+
+        // Recovery runs after Plan Ready and before proactive lifecycle dispatch.
+        // This is execution ordering only: recovery is on-demand product access,
+        // holds no lifecycle priority, consumes no shared 24-hour lifecycle gap,
+        // counts toward no inactivity cap, and never cancels, defers, or
+        // reprioritizes any proactive lifecycle job.
+        const recovery = await dispatchRecoveryJobs(runtime.deps, { limit: 25 });
 
         // Lifecycle priority, in exact order: Plan Completed, then Halfway, then
         // Final Rescue, then Stalled, then Start Day 1. Higher priority runs
@@ -108,6 +116,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           sending_enabled: true,
           ...summary,
           stale_alerts: staleAlerts,
+          recovery,
           plan_completed: planCompleted,
           halfway,
           stalled,

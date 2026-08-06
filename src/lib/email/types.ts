@@ -192,3 +192,23 @@ export type EmailAdapter = {
     idempotencyKey: string,
   ) => Promise<{ providerMessageId: string; acceptedAt: string } | null>;
 };
+
+/**
+ * Recovery is on-demand transactional product access, NOT a seventh proactive
+ * lifecycle email. It has no lifecycle timing, consumes no 24-hour lifecycle
+ * gap, participates in no inactivity cap, holds no lifecycle priority, and
+ * never cancels, defers, or reprioritizes any proactive lifecycle job.
+ */
+export const RECOVERY_JOB_TYPE = "recovery";
+export const RECOVERY_JOB_VERSION = "v1";
+export const RECOVERY_TEMPLATE_VERSION = "recovery_v1";
+
+/**
+ * Logical recovery idempotency key. Scoped by the current plan version AND the
+ * validated server-trusted request id, so replaying one request id is idempotent
+ * while a later legitimate request id may create another recovery job for the
+ * same current plan version.
+ */
+export function recoveryJobKey(planVersionId: string, requestId: string): string {
+  return `recovery:${planVersionId}:${requestId}:${RECOVERY_JOB_VERSION}`;
+}

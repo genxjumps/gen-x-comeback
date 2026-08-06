@@ -300,6 +300,11 @@ function PlanHubPage() {
           <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
             Changing your answers rebuilds this plan and resets its progress.
           </p>
+          <p className="mt-3 text-sm leading-relaxed">
+            <a href="/recover" className="underline underline-offset-4">
+              Resend My Plan Link
+            </a>
+          </p>
         </div>
       </section>
     </div>

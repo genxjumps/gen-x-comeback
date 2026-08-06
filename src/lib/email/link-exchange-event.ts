@@ -15,6 +15,9 @@ import {
   PLAN_COMPLETED_JOB_TYPE,
   PLAN_COMPLETED_JOB_VERSION,
   PLAN_COMPLETED_TEMPLATE_VERSION,
+  RECOVERY_JOB_TYPE,
+  RECOVERY_JOB_VERSION,
+  RECOVERY_TEMPLATE_VERSION,
   STALLED_JOB_TYPE,
   STALLED_JOB_VERSION,
   STALLED_TEMPLATE_VERSION,
@@ -24,8 +27,10 @@ import {
 } from "@/lib/email/types";
 import {
   OPEN_PLAN_TOKEN_PURPOSE,
+  RECOVERY_TOKEN_PURPOSE,
   type ReturnTokenJobIdentity,
 } from "@/lib/email/return-destination";
+
 
 /** General exchange event, kept for Plan Ready and job-less tokens. */
 export const PLAN_READY_LINK_EXCHANGE_EVENT = "email_plan_ready_link_exchange_completed";
@@ -44,6 +49,13 @@ export const FINAL_RESCUE_LINK_EXCHANGE_EVENT = "email_final_rescue_link_exchang
 
 /** Emitted only for a deliberate valid open_plan exchange of a Plan Completed token. */
 export const PLAN_COMPLETED_LINK_EXCHANGE_EVENT = "email_plan_completed_link_exchange_completed";
+
+/**
+ * Emitted only for a deliberate valid `recovery`-purpose exchange of a
+ * recovery_v1 job token. Recovery is product access, not a lifecycle event.
+ */
+export const RECOVERY_LINK_EXCHANGE_EVENT = "email_recovery_link_exchange_completed";
+
 
 export type LinkExchangeEventInput = {
   /** `plan_return_tokens.purpose` of the validated token. */
@@ -120,13 +132,28 @@ export function resolveLinkExchangeAttribution(input: LinkExchangeEventInput): {
   jobId: string | null;
 } {
   const general = { eventName: PLAN_READY_LINK_EXCHANGE_EVENT, jobId: null };
+  const job = input.job;
+
+  // Recovery attribution is purpose-limited: only a `recovery` token whose
+  // originating recovery_v1 job is owned by exactly the same validated lead and
+  // plan version earns the recovery exchange event.
+  if (input.purpose === RECOVERY_TOKEN_PURPOSE) {
+    if (!job?.jobId) return general;
+    if (!job.leadPlanId || job.leadPlanId !== input.leadPlanId) return general;
+    if (!job.planVersionId || job.planVersionId !== input.planVersionId) return general;
+    if (job.jobType !== RECOVERY_JOB_TYPE) return general;
+    if (job.jobVersion !== RECOVERY_JOB_VERSION) return general;
+    if (job.templateVersion !== RECOVERY_TEMPLATE_VERSION) return general;
+    return { eventName: RECOVERY_LINK_EXCHANGE_EVENT, jobId: job.jobId };
+  }
+
   if (input.purpose !== OPEN_PLAN_TOKEN_PURPOSE) return general;
 
-  const job = input.job;
   if (!job) return general;
   if (!job.jobId) return general;
   if (!job.leadPlanId || job.leadPlanId !== input.leadPlanId) return general;
   if (!job.planVersionId || job.planVersionId !== input.planVersionId) return general;
+
 
   const contract = LIFECYCLE_EXCHANGE_CONTRACTS.find(
     (candidate) =>

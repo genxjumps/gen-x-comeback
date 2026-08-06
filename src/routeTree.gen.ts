@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReturnRouteImport } from './routes/return'
+import { Route as RecoverRouteImport } from './routes/recover'
 import { Route as JumpRopesRouteImport } from './routes/jump-ropes'
 import { Route as EmailPreferencesRouteImport } from './routes/email-preferences'
 import { Route as IndexRouteImport } from './routes/index'
@@ -31,6 +32,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ReturnRoute = ReturnRouteImport.update({
   id: '/return',
   path: '/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecoverRoute = RecoverRouteImport.update({
+  id: '/recover',
+  path: '/recover',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JumpRopesRoute = JumpRopesRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/email-preferences': typeof EmailPreferencesRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/email-preferences'
     | '/jump-ropes'
+    | '/recover'
     | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/email-preferences'
     | '/jump-ropes'
+    | '/recover'
     | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/email-preferences'
     | '/jump-ropes'
+    | '/recover'
     | '/return'
     | '/sitemap.xml'
     | '/assessment/complete'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EmailPreferencesRoute: typeof EmailPreferencesRoute
   JumpRopesRoute: typeof JumpRopesRoute
+  RecoverRoute: typeof RecoverRoute
   ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
@@ -213,6 +226,13 @@ declare module '@tanstack/react-router' {
       path: '/return'
       fullPath: '/return'
       preLoaderRoute: typeof ReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recover': {
+      id: '/recover'
+      path: '/recover'
+      fullPath: '/recover'
+      preLoaderRoute: typeof RecoverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jump-ropes': {
@@ -299,6 +319,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EmailPreferencesRoute: EmailPreferencesRoute,
   JumpRopesRoute: JumpRopesRoute,
+  RecoverRoute: RecoverRoute,
   ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
@@ -313,13 +334,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

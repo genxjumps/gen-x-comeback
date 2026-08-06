@@ -7,6 +7,7 @@ import {
   MAX_ATTEMPTS,
   PLAN_COMPLETED_JOB_TYPE,
   PLAN_READY_JOB_TYPE,
+  RECOVERY_JOB_TYPE,
   RETRY_DELAYS_MS,
   RETURN_TOKEN_TTL_MS,
   STALLED_JOB_TYPE,
@@ -38,6 +39,7 @@ import {
   type PlanCompletedState,
 } from "@/lib/email/plan-completed-resolver";
 import { renderPlanCompleted } from "@/lib/email/plan-completed-template";
+import { renderRecovery } from "@/lib/email/recovery-template";
 import {
   resolveStartDayOne,
   type StartDayOneJob,
@@ -57,11 +59,12 @@ export type DispatchDeps = {
    * the identical return and preference links, never a second live credential.
    */
   deriveCredential: (
-    purpose: "open_plan" | "email_preferences",
+    purpose: "open_plan" | "email_preferences" | "recovery",
     planVersionId: string,
     /** Opaque logical-job scope for job-associated open_plan credentials. */
     scope?: string,
   ) => string;
+
   hash: (raw: string) => Promise<string>;
 };
 
@@ -913,4 +916,108 @@ export async function dispatchPlanCompletedJobs(
 export async function raiseStalePlanReadyAlerts(deps: DispatchDeps): Promise<number> {
   const cutoff = new Date(deps.now().getTime() - STALE_PENDING_MS).toISOString();
   return deps.store.raiseStaleAlerts(PLAN_READY_JOB_TYPE, cutoff);
+}
+
+/**
+ * Issues the fresh job-scoped, purpose-limited recovery credential and returns
+ * its absolute URL.
+ *
+ * Derivation is scoped by the logical recovery job key, so a different validated
+ * request id yields a different credential while every retry of the same job
+ * reproduces exactly the same one. No preference credential is issued: the
+ * recovery message carries no marketing or unsubscribe CTA.
+ */
+async function issueRecoveryCredential(
+  deps: DispatchDeps,
+  job: EmailJobRow,
+  lead: LeadRow,
+): Promise<string> {
+  const issuedAt = deps.now();
+  const rawToken = deps.deriveCredential("recovery", lead.plan_version_id, job.idempotency_key);
+
+  await deps.store.insertReturnToken({
+    leadPlanId: lead.id,
+    planVersionId: lead.plan_version_id,
+    tokenHash: await deps.hash(rawToken),
+    issuedAt: issuedAt.toISOString(),
+    expiresAt: new Date(issuedAt.getTime() + RETURN_TOKEN_TTL_MS).toISOString(),
+    jobId: job.job_id,
+    purpose: "recovery",
+  });
+
+  return returnUrl(deps.appOrigin, rawToken);
+}
+
+/**
+ * Claims due recovery jobs and performs one provider attempt each.
+ *
+ * Recovery is on-demand product access, so this loop deliberately reads no
+ * lifecycle state: it never consults or consumes the shared 24-hour lifecycle
+ * gap, never counts toward the inactivity cap, never requires Plan Ready
+ * provider acceptance, never inspects plan completion, and never cancels,
+ * defers, or reprioritizes any proactive lifecycle job. Marketing unsubscribe
+ * does not suppress it.
+ *
+ * Immediately before the provider attempt the job is re-checked against the
+ * current plan version, so a reassessment can never send a stale recovery link,
+ * and hard-bounce or complaint suppression blocks the provider call entirely.
+ */
+export async function dispatchRecoveryJobs(
+  deps: DispatchDeps,
+  options?: { limit?: number; leaseSeconds?: number },
+): Promise<DispatchSummary> {
+  const jobs = await deps.store.claimJobs(
+    RECOVERY_JOB_TYPE,
+    options?.limit ?? 10,
+    options?.leaseSeconds ?? 120,
+  );
+  const outcomes: DispatchSummary["outcomes"] = [];
+
+  for (const job of jobs) {
+    const lead = await deps.store.getLead(job.lead_plan_id);
+
+    // A replaced plan version must never be recovered by a stale request.
+    if (!lead || lead.plan_version_id !== job.plan_version_id) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    // Hard bounce or complaint blocks unsafe sending; saved access is retained.
+    const suppression =
+      lead.email_suppression_reason ?? (await deps.store.suppressionReason(lead.email_normalized));
+    if (suppression) {
+      outcomes.push(await finish(deps, job, "suppressed", { reason: suppression }));
+      continue;
+    }
+
+    const guarded = await guardCommon(deps, job);
+    if (guarded) {
+      outcomes.push(guarded);
+      continue;
+    }
+
+    const recoveryUrl = await issueRecoveryCredential(deps, job, lead);
+    const rendered = renderRecovery({
+      firstName: lead.first_name,
+      returnUrl: recoveryUrl,
+    });
+
+    outcomes.push(
+      await attemptSend(deps, job, {
+        to: lead.email_original,
+        fromEmail: deps.fromEmail,
+        fromName: deps.fromName,
+        replyTo: deps.replyTo,
+        subject: rendered.subject,
+        previewText: rendered.previewText,
+        html: rendered.html,
+        text: rendered.text,
+        idempotencyKey: job.idempotency_key,
+        correlationId: job.job_id,
+        disableClickTracking: true,
+      }),
+    );
+  }
+
+  return { claimed: jobs.length, outcomes };
 }
