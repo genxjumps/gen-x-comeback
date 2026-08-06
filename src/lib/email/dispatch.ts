@@ -81,7 +81,7 @@ function preferencesUrl(appOrigin: string, token: string): string {
   return `${appOrigin}/email-preferences?c=${token}`;
 }
 
-type TerminalOutcome = Exclude<JobOutcome, "lost_lease">;
+type TerminalOutcome = Exclude<JobOutcome, "lost_lease" | "deferred">;
 
 const OUTCOME_STATUS: Record<TerminalOutcome, EmailJobStatus> = {
   provider_accepted: "provider_accepted",
@@ -91,20 +91,17 @@ const OUTCOME_STATUS: Record<TerminalOutcome, EmailJobStatus> = {
   canceled: "canceled",
   // A manual-review job is not retried; it is parked as a permanent failure.
   manual_review: "failed_permanent",
-  // A deferral keeps the job claimable at the resolver-approved time.
-  deferred: "retry_scheduled",
 };
 
 const OUTCOME_EVENT: Record<TerminalOutcome, LifecycleEventOutcome | null> = {
   provider_accepted: "provider_accepted",
+  delivered: null,
   retry_scheduled: "retry_scheduled",
   failed_permanent: "failed_permanent",
   suppressed: "suppressed",
   canceled: "canceled",
   manual_review: "manual_review",
-  // Not a real transient retry: emitting one would be a false event.
-  deferred: null,
-};
+} as Record<TerminalOutcome, LifecycleEventOutcome | null>;
 
 type FinishExtra = {
   errorCode?: string;
@@ -112,10 +109,32 @@ type FinishExtra = {
   providerMessageId?: string;
   acceptedAt?: string;
   reason?: string;
-  attemptedAt?: string;
-  /** Resolver-approved next eligibility time for a deferral. */
-  eligibleAt?: string;
 };
+
+/**
+ * Applies one fenced non-provider deferral, shared by every lifecycle resolver
+ * that defers a send (Start Day 1 and Halfway today).
+ *
+ * The shared claim RPC already incremented attempt_count on lease claim, so the
+ * fenced deferral restores the pre-claim count. A deferral is not a provider
+ * attempt: it consumes no retry budget, can repeat indefinitely without ever
+ * reaching max_attempts_exceeded, and emits no retry event.
+ */
+async function deferSend(
+  deps: DispatchDeps,
+  job: EmailJobRow,
+  eligibleAt?: string | null,
+): Promise<{ jobId: string; outcome: JobOutcome }> {
+  const nextAttemptAt = eligibleAt ?? deps.now().toISOString();
+  const fenced = await deps.store.deferJob(
+    job.job_id,
+    job.claim_token,
+    nextAttemptAt,
+    Math.max(job.attempt_count - 1, 0),
+  );
+  return { jobId: job.job_id, outcome: fenced ? "deferred" : "lost_lease" };
+}
+
 
 /**
  * Applies one fenced terminal transition. A lost lease means another worker
