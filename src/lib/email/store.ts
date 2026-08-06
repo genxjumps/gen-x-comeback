@@ -37,7 +37,13 @@ export type ReturnTokenInsert = {
    * recognize a start_day_1_v1 token. Absent for general plan-access tokens.
    */
   jobId?: string;
+  /**
+   * Purpose-limited credential class. Defaults to the established `open_plan`
+   * purpose; on-demand recovery credentials persist `recovery` instead.
+   */
+  purpose?: "open_plan" | "recovery";
 };
+
 
 export type EmailStore = {
   claimJobs(jobType: string, limit: number, leaseSeconds: number): Promise<EmailJobRow[]>;
