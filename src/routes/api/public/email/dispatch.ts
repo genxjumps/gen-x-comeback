@@ -104,8 +104,6 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           { limit: 25 },
         );
 
-
-
         return Response.json({
           sending_enabled: true,
           ...summary,
@@ -116,7 +114,6 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           start_day_1: startDayOne,
           final_rescue: finalRescue,
         });
-
       },
     },
   },

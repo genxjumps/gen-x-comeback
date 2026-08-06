@@ -44,7 +44,6 @@ import {
   type StartDayOneState,
 } from "@/lib/email/start-day-1-resolver";
 
-
 export type DispatchDeps = {
   store: EmailStore;
   adapter: EmailAdapter;
@@ -90,8 +89,6 @@ export type FinalRescueDispatchDeps = DispatchDeps & {
 export type PlanCompletedDispatchDeps = DispatchDeps & {
   loadPlanCompletedState: (job: PlanCompletedJob) => Promise<PlanCompletedState>;
 };
-
-
 
 export type JobOutcome =
   | "provider_accepted"
@@ -911,8 +908,6 @@ export async function dispatchPlanCompletedJobs(
 
   return { claimed: jobs.length, outcomes };
 }
-
-
 
 /** Raises one operational alert per Plan Ready job still unsent after five minutes. */
 export async function raiseStalePlanReadyAlerts(deps: DispatchDeps): Promise<number> {

@@ -105,7 +105,10 @@ function ms(iso: string): number {
  * state, so a replaced plan version, an incomplete plan, a suppression, or an
  * existing acceptance still stops the send before any render or provider call.
  */
-export function resolvePlanCompleted(state: PlanCompletedState, now: Date): PlanCompletedResolution {
+export function resolvePlanCompleted(
+  state: PlanCompletedState,
+  now: Date,
+): PlanCompletedResolution {
   const { job } = state;
 
   if (

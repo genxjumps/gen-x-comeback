@@ -45,7 +45,6 @@ export function planCompletedJobKey(planVersionId: string): string {
   return `plan_completed:${planVersionId}:${PLAN_COMPLETED_JOB_VERSION}`;
 }
 
-
 /**
  * Final Rescue is the terminal inactivity message. Stalled and Start Day 1 can
  * never follow an accepted one, and never send once it controls the lifecycle.

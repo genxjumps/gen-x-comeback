@@ -45,7 +45,6 @@ export const FINAL_RESCUE_LINK_EXCHANGE_EVENT = "email_final_rescue_link_exchang
 /** Emitted only for a deliberate valid open_plan exchange of a Plan Completed token. */
 export const PLAN_COMPLETED_LINK_EXCHANGE_EVENT = "email_plan_completed_link_exchange_completed";
 
-
 export type LinkExchangeEventInput = {
   /** `plan_return_tokens.purpose` of the validated token. */
   purpose: string | null | undefined;
@@ -110,7 +109,6 @@ const LIFECYCLE_EXCHANGE_CONTRACTS: readonly LifecycleExchangeContract[] = [
     eventName: PLAN_COMPLETED_LINK_EXCHANGE_EVENT,
   },
 ];
-
 
 /**
  * Trusted attribution for a completed exchange: the canonical event name and,

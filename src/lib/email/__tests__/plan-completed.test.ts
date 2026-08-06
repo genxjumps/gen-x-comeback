@@ -23,10 +23,7 @@ import {
   planCompletedJobKey,
   type EmailJobRow,
 } from "@/lib/email/types";
-import {
-  resolvePlanCompleted,
-  type PlanCompletedState,
-} from "@/lib/email/plan-completed-resolver";
+import { resolvePlanCompleted, type PlanCompletedState } from "@/lib/email/plan-completed-resolver";
 import {
   PLAN_COMPLETED_BODY_PARAGRAPHS,
   PLAN_COMPLETED_CTA_LABEL,
@@ -506,7 +503,6 @@ describe("P5 locked customer-facing copy", () => {
     expect(renderPlanCompleted({ action: "DEFER", reason: "lifecycle_24h_cap" }, input)).toBeNull();
   });
 
-
   it("uses the exact personalized and fallback subjects and greetings", () => {
     expect(personalized.subject).toBe("Todd, you completed your 7-day plan");
     expect(fallback.subject).toBe("You completed your 7-day plan");
@@ -543,7 +539,9 @@ describe("P5 locked customer-facing copy", () => {
     expect(personalized.text).toContain(PLAN_COMPLETED_FOOTER);
     expect(personalized.text).toContain(`Manage email preferences: ${urls.preferencesUrl}`);
     expect(personalized.html).toContain(urls.preferencesUrl);
-    expect(personalized.recoveryUrl).toBe(`https://app.genxjumps.com${PLAN_COMPLETED_RECOVERY_PATH}`);
+    expect(personalized.recoveryUrl).toBe(
+      `https://app.genxjumps.com${PLAN_COMPLETED_RECOVERY_PATH}`,
+    );
     expect(personalized.text).toContain(PLAN_COMPLETED_RECOVERY_LINE);
     expect(personalized.recoveryUrl).not.toContain("?");
   });
@@ -589,9 +587,7 @@ describe("P6 secure return attribution and destination", () => {
       eventName: PLAN_COMPLETED_LINK_EXCHANGE_EVENT,
       jobId: "pc-job",
     });
-    expect(PLAN_COMPLETED_LINK_EXCHANGE_EVENT).toBe(
-      "email_plan_completed_link_exchange_completed",
-    );
+    expect(PLAN_COMPLETED_LINK_EXCHANGE_EVENT).toBe("email_plan_completed_link_exchange_completed");
   });
 
   it("falls back to the general event for a mismatched or non-open_plan token", () => {

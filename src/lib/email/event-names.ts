@@ -31,7 +31,6 @@ const PREFIXES: Record<string, string> = {
   [PLAN_COMPLETED_JOB_TYPE]: "email_plan_completed",
 };
 
-
 /**
  * Outcomes that do not emit a canonical event for a given job type.
  * Plan Ready cancellation stays silent, exactly as it already behaves.
@@ -55,7 +54,6 @@ const OMITTED: Record<string, ReadonlySet<LifecycleEventOutcome>> = {
   [FINAL_RESCUE_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
   [PLAN_COMPLETED_JOB_TYPE]: new Set<LifecycleEventOutcome>(["manual_review"]),
 };
-
 
 /** Canonical event name for one job type and outcome, or null when omitted. */
 export function lifecycleEventName(jobType: string, outcome: LifecycleEventOutcome): string | null {
