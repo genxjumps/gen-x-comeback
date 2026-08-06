@@ -101,6 +101,8 @@ const DISPOSITIONS: Record<CancelReason, CancelDisposition> = {
   plan_version_replaced: "cancel",
   recipient_missing: "cancel",
   day_1_complete: "cancel",
+  final_rescue_sent: "cancel",
+  final_rescue_controls: "cancel",
   marketing_unsubscribed: "suppress",
   recipient_suppressed: "suppress",
   plan_ready_not_accepted: "defer",
