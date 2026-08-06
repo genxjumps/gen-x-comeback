@@ -7,11 +7,45 @@ import type {
 } from "@/lib/email/types";
 import type { EmailStore, ReturnTokenInsert } from "@/lib/email/store";
 
-export async function createSupabaseEmailStore(): Promise<EmailStore> {
+/**
+ * `options.leadPlanScope` is a staging-only, fake-provider affordance: when set,
+ * job claiming is routed through `claim_email_jobs_for_lead`, which applies an
+ * authoritative `lead_plan_id` filter inside the same atomic claim. Production
+ * callers pass no options and keep the existing `claim_email_jobs` behavior
+ * byte-for-byte.
+ */
+export async function createSupabaseEmailStore(options?: {
+  leadPlanScope?: string;
+}): Promise<EmailStore> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const leadPlanScope = options?.leadPlanScope ?? null;
 
   const store: EmailStore = {
     async claimJobs(jobType, limit, leaseSeconds) {
+      if (leadPlanScope) {
+        // Narrowly typed boundary: the staging RPC is intentionally absent from
+        // the generated Supabase types, which are never regenerated here.
+        const { data, error } = await (
+          supabaseAdmin.rpc as unknown as (
+            fn: "claim_email_jobs_for_lead",
+            args: {
+              p_job_type: string;
+              p_lead_plan_id: string;
+              p_limit: number;
+              p_lease_seconds: number;
+            },
+          ) => Promise<{ data: unknown; error: { message: string } | null }>
+        )("claim_email_jobs_for_lead", {
+          p_job_type: jobType,
+          p_lead_plan_id: leadPlanScope,
+          p_limit: limit,
+          p_lease_seconds: leaseSeconds,
+        });
+        if (error) throw new Error(error.message);
+        // Defense in depth: never hand back a row outside the requested scope.
+        return ((data ?? []) as EmailJobRow[]).filter((row) => row.lead_plan_id === leadPlanScope);
+      }
+
       const { data, error } = await supabaseAdmin.rpc("claim_email_jobs", {
         p_job_type: jobType,
         p_limit: limit,
