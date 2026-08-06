@@ -63,7 +63,6 @@ export async function createSupabaseEmailStore(): Promise<EmailStore> {
       if (error) throw new Error(error.message);
     },
 
-
     async upsertPreferenceCredential(leadPlanId, tokenHash) {
       const { error } = await supabaseAdmin
         .from("email_preference_credentials")

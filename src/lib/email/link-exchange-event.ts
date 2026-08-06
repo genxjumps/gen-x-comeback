@@ -31,7 +31,6 @@ import {
   type ReturnTokenJobIdentity,
 } from "@/lib/email/return-destination";
 
-
 /** General exchange event, kept for Plan Ready and job-less tokens. */
 export const PLAN_READY_LINK_EXCHANGE_EVENT = "email_plan_ready_link_exchange_completed";
 
@@ -55,7 +54,6 @@ export const PLAN_COMPLETED_LINK_EXCHANGE_EVENT = "email_plan_completed_link_exc
  * recovery_v1 job token. Recovery is product access, not a lifecycle event.
  */
 export const RECOVERY_LINK_EXCHANGE_EVENT = "email_recovery_link_exchange_completed";
-
 
 export type LinkExchangeEventInput = {
   /** `plan_return_tokens.purpose` of the validated token. */
@@ -153,7 +151,6 @@ export function resolveLinkExchangeAttribution(input: LinkExchangeEventInput): {
   if (!job.jobId) return general;
   if (!job.leadPlanId || job.leadPlanId !== input.leadPlanId) return general;
   if (!job.planVersionId || job.planVersionId !== input.planVersionId) return general;
-
 
   const contract = LIFECYCLE_EXCHANGE_CONTRACTS.find(
     (candidate) =>

@@ -44,7 +44,6 @@ export type ReturnTokenInsert = {
   purpose?: "open_plan" | "recovery";
 };
 
-
 export type EmailStore = {
   claimJobs(jobType: string, limit: number, leaseSeconds: number): Promise<EmailJobRow[]>;
   getLead(leadPlanId: string): Promise<LeadRow | null>;
