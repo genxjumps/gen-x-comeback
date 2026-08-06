@@ -65,12 +65,21 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         const summary = await dispatchPlanReadyJobs(runtime.deps, { limit: 25 });
         const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
 
-        // Lifecycle priority: Plan Completed (not yet implemented), then
-        // Halfway, then Stalled, then Start Day 1, then Final Rescue. Higher
-        // priority runs first so it consumes the shared 24-hour lifecycle gap.
+        // Lifecycle priority: Plan Completed (not yet implemented) conceptually
+        // outranks all four, then Halfway, then Final Rescue, then Stalled, then
+        // Start Day 1. Higher priority runs first in the tick so it consumes the
+        // shared 24-hour lifecycle gap before any lower-priority message.
         const { loadHalfwayState } = await import("@/lib/email/halfway-state.server");
         const halfway = await dispatchHalfwayJobs(
           { ...runtime.deps, loadHalfwayState: (job) => loadHalfwayState(job) },
+          { limit: 25 },
+        );
+
+        // Final Rescue is terminal but outranks the two lower inactivity
+        // messages: a due Final Rescue closes Stalled and Start Day 1.
+        const { loadFinalRescueState } = await import("@/lib/email/final-rescue-state.server");
+        const finalRescue = await dispatchFinalRescueJobs(
+          { ...runtime.deps, loadFinalRescueState: (job) => loadFinalRescueState(job) },
           { limit: 25 },
         );
 
@@ -85,14 +94,6 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         const { loadStartDayOneState } = await import("@/lib/email/start-day-1-state.server");
         const startDayOne = await dispatchStartDayOneJobs(
           { ...runtime.deps, loadStartDayOneState: (job) => loadStartDayOneState(job) },
-          { limit: 25 },
-        );
-
-        // Final Rescue is terminal and runs last, after every higher-priority
-        // lifecycle message has had its chance in this tick.
-        const { loadFinalRescueState } = await import("@/lib/email/final-rescue-state.server");
-        const finalRescue = await dispatchFinalRescueJobs(
-          { ...runtime.deps, loadFinalRescueState: (job) => loadFinalRescueState(job) },
           { limit: 25 },
         );
 
