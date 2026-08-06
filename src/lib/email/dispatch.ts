@@ -95,13 +95,13 @@ const OUTCOME_STATUS: Record<TerminalOutcome, EmailJobStatus> = {
 
 const OUTCOME_EVENT: Record<TerminalOutcome, LifecycleEventOutcome | null> = {
   provider_accepted: "provider_accepted",
-  delivered: null,
   retry_scheduled: "retry_scheduled",
   failed_permanent: "failed_permanent",
   suppressed: "suppressed",
   canceled: "canceled",
   manual_review: "manual_review",
-} as Record<TerminalOutcome, LifecycleEventOutcome | null>;
+};
+
 
 type FinishExtra = {
   errorCode?: string;
