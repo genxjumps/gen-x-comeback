@@ -722,9 +722,7 @@ describe("F8 only deliberate first-time persisted progress moves the horizon", (
     expect(reanchor).toBeLessThan(branchEnd);
     // The insert that governs that branch only yields a row when it is new.
     expect(MARK_START).toContain("ON CONFLICT (plan_version_id, day_number) DO NOTHING");
-    expect(MARK_START).toContain(
-      "RETURNING lead_plan_day_starts.started_at INTO v_started_at",
-    );
+    expect(MARK_START).toContain("RETURNING lead_plan_day_starts.started_at INTO v_started_at");
   });
 
   it("leaves the replayed Day 1 start branch with only the persisted read and return", () => {
@@ -760,11 +758,15 @@ describe("F8 only deliberate first-time persisted progress moves the horizon", (
 
   it("derives required days only from top-level plan_json.days, so nested optional sessions never re-anchor", () => {
     expect(COMPLETE).toContain("jsonb_array_elements(COALESCE(v_plan->'days', '[]'::jsonb))");
-    expect(COMPLETE).toContain("IF v_required IS NULL OR NOT (p_day_number = ANY(v_required)) THEN");
+    expect(COMPLETE).toContain(
+      "IF v_required IS NULL OR NOT (p_day_number = ANY(v_required)) THEN",
+    );
     // Validation against v_required happens before the completion insert, hence
     // before v_inserted and before any Final Rescue write.
     const validation = COMPLETE.indexOf("IF v_required IS NULL OR NOT");
-    expect(validation).toBeLessThan(COMPLETE.indexOf("INSERT INTO public.lead_plan_day_completions"));
+    expect(validation).toBeLessThan(
+      COMPLETE.indexOf("INSERT INTO public.lead_plan_day_completions"),
+    );
     // No nested optional session is ever read as a required day number.
     expect(COMPLETE).not.toContain("'optional'");
     expect(COMPLETE).not.toContain("->'optional'");
