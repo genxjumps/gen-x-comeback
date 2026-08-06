@@ -36,6 +36,9 @@ export const START_DAY_1_LINK_EXCHANGE_EVENT = "email_start_day_1_link_exchange_
 /** Emitted only for a deliberate valid open_plan exchange of a Stalled job token. */
 export const STALLED_LINK_EXCHANGE_EVENT = "email_stalled_link_exchange_completed";
 
+/** Emitted only for a deliberate valid open_plan exchange of a Final Rescue token. */
+export const FINAL_RESCUE_LINK_EXCHANGE_EVENT = "email_final_rescue_link_exchange_completed";
+
 export type LinkExchangeEventInput = {
   /** `plan_return_tokens.purpose` of the validated token. */
   purpose: string | null | undefined;
