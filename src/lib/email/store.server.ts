@@ -115,8 +115,9 @@ export async function createSupabaseEmailStore(): Promise<EmailStore> {
     async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {
       // A deferral is not a provider attempt: the claim-time increment is
       // restored so repeated lifecycle deferrals never consume the retry budget.
-
+      // Compare-and-set on (job_id, claim_token, status): a worker that lost its
       // lease cannot rewrite the owner's job. No canonical event is written.
+
       const { data, error } = await supabaseAdmin
         .from("email_jobs")
         .update({

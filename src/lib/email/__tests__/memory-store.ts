@@ -115,7 +115,20 @@ export function createMemoryStore(now: () => Date): MemoryStore {
       else preferenceCredentials.push({ leadPlanId, tokenHash });
     },
 
+    async recordFirstProviderAttempt(jobId, claimToken, attemptedAt) {
+      const job = jobs.get(jobId);
+      if (!job) return false;
+      // Same fencing as every other write: a lost lease records nothing.
+      if (job.status !== "processing" || !claimToken || job.claim_token !== claimToken) {
+        return false;
+      }
+      // The first recorded boundary is immutable across later provider retries.
+      job.first_provider_attempt_at = job.first_provider_attempt_at ?? attemptedAt;
+      return true;
+    },
+
     async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {
+
       const job = jobs.get(jobId);
       if (!job) return false;
       // Same fencing as a terminal transition; no event is ever written.
