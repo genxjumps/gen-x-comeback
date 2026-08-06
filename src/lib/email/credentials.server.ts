@@ -7,7 +7,7 @@
 // while a new plan version produces a fresh, unrelated one.
 import { createHmac } from "node:crypto";
 
-export type CredentialPurpose = "open_plan" | "email_preferences";
+export type CredentialPurpose = "open_plan" | "email_preferences" | "recovery";
 
 /** Rotatable key id. A future secret gets its own suffix, never a reuse. */
 export const EMAIL_TOKEN_SECRET_ENV = "EMAIL_TOKEN_SECRET_V1";
