@@ -556,8 +556,8 @@ describe("S11 dispatch re-resolves state and only sends on SEND", () => {
     const summary = await dispatchStalledJobs(h.deps);
     expect(summary.claimed).toBe(1);
     expect(h.loads).toBe(1);
-    expect(h.adapter.sent).toHaveLength(1);
-    expect(h.adapter.sent[0]?.subject).toBe("Todd, your plan is still waiting");
+    expect(h.adapter.requests).toHaveLength(1);
+    expect(h.adapter.requests[0]?.subject).toBe("Todd, your plan is still waiting");
     expect(h.store.jobs.get(h.job.job_id)?.status).toBe("provider_accepted");
     expect(eventNames(h.store)).toContain(
       lifecycleEventName(STALLED_JOB_TYPE, "provider_accepted"),
@@ -573,7 +573,7 @@ describe("S11 dispatch re-resolves state and only sends on SEND", () => {
     for (const [state, expected] of cases) {
       const h = harness({ state });
       await dispatchStalledJobs(h.deps);
-      expect(h.adapter.sent).toHaveLength(0);
+      expect(h.adapter.requests).toHaveLength(0);
       expect(h.store.returnTokens).toHaveLength(0);
       expect(h.store.jobs.get(h.job.job_id)?.status).toBe(expected);
     }
@@ -592,7 +592,7 @@ describe("S11 dispatch re-resolves state and only sends on SEND", () => {
   it("cancels when the lead's plan version no longer matches the job", async () => {
     const h = harness({ lead: { plan_version_id: "other-version" } });
     await dispatchStalledJobs(h.deps);
-    expect(h.adapter.sent).toHaveLength(0);
+    expect(h.adapter.requests).toHaveLength(0);
     expect(h.store.jobs.get(h.job.job_id)?.status).toBe("canceled");
   });
 });
@@ -609,7 +609,7 @@ describe("S12 secure return flow resolves to the plan hub", () => {
       leadPlanId: "lead-1",
       planVersionId: VERSION,
       job: {
-        jobId: "stalled-job",
+
         jobType: STALLED_JOB_TYPE,
         jobVersion: STALLED_JOB_VERSION,
         templateVersion: STALLED_TEMPLATE_VERSION,
