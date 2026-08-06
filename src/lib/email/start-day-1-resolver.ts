@@ -55,6 +55,12 @@ export type StartDayOneState = {
   lastLifecycleAcceptedAt: string | null;
   /** Count of accepted inactivity emails for this plan. */
   acceptedInactivityCount: number;
+  /** True when an unsent Halfway job still controls the shared lifecycle gap. */
+  halfwayPending: boolean;
+  /** Provider acceptance time of Final Rescue for this plan version, if any. */
+  finalRescueAcceptedAt: string | null;
+  /** Eligibility horizon of the single unsent Final Rescue job, if one exists. */
+  finalRescueDueAt: string | null;
 };
 
 export type CancelReason =
@@ -62,6 +68,8 @@ export type CancelReason =
   | "plan_version_replaced"
   | "recipient_missing"
   | "day_1_complete"
+  | "final_rescue_sent"
+  | "final_rescue_controls"
   | "marketing_unsubscribed"
   | "recipient_suppressed"
   | "plan_ready_not_accepted"
