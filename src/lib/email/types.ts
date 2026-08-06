@@ -39,10 +39,23 @@ export const STALLED_MAX_REQUIRED_DAY = 6;
 export const PLAN_COMPLETED_JOB_TYPE = "plan_completed";
 
 /**
- * Final Rescue is the terminal inactivity message. It is not yet implemented,
- * but its job type is named here so Stalled can never follow an accepted one.
+ * Final Rescue is the terminal inactivity message. Stalled and Start Day 1 can
+ * never follow an accepted one, and never send once it controls the lifecycle.
  */
 export const FINAL_RESCUE_JOB_TYPE = "final_rescue";
+export const FINAL_RESCUE_JOB_VERSION = "v1";
+export const FINAL_RESCUE_TEMPLATE_VERSION = "final_rescue_v1";
+
+/** A new plan version becomes Final Rescue eligible 4 days after commit. */
+export const FINAL_RESCUE_INITIAL_DELAY_MS = 4 * 24 * 60 * 60 * 1000;
+
+/** Deliberate Day 1 start or a newly persisted required completion: +5 days. */
+export const FINAL_RESCUE_REANCHOR_DELAY_MS = 5 * 24 * 60 * 60 * 1000;
+
+/** Canonical logical Final Rescue idempotency key: one job per plan version. */
+export function finalRescueJobKey(planVersionId: string): string {
+  return `final_rescue:${planVersionId}:${FINAL_RESCUE_JOB_VERSION}`;
+}
 
 /** Contract retry schedule: delays after each preceding transient failure. */
 export const RETRY_DELAYS_MS = [
