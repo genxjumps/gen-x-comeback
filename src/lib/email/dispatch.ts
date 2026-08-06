@@ -7,6 +7,7 @@ import {
   PLAN_READY_JOB_TYPE,
   RETRY_DELAYS_MS,
   RETURN_TOKEN_TTL_MS,
+  STALLED_JOB_TYPE,
   START_DAY_1_JOB_TYPE,
   STALE_PENDING_MS,
   type EmailAdapter,
@@ -20,7 +21,9 @@ import { lifecycleEventName, type LifecycleEventOutcome } from "@/lib/email/even
 import { renderPlanReady } from "@/lib/email/plan-ready-template";
 import { renderStartDayOne } from "@/lib/email/start-day-1-template";
 import { renderHalfway } from "@/lib/email/halfway-template";
+import { renderStalled } from "@/lib/email/stalled-template";
 import { resolveHalfway, type HalfwayJob, type HalfwayState } from "@/lib/email/halfway-resolver";
+import { resolveStalled, type StalledJob, type StalledState } from "@/lib/email/stalled-resolver";
 import {
   resolveStartDayOne,
   type StartDayOneJob,
@@ -57,6 +60,13 @@ export type StartDayOneDispatchDeps = DispatchDeps & {
 export type HalfwayDispatchDeps = DispatchDeps & {
   loadHalfwayState: (job: HalfwayJob) => Promise<HalfwayState>;
 };
+
+/** Stalled additionally needs its authoritative read-only state loader. */
+export type StalledDispatchDeps = DispatchDeps & {
+  loadStalledState: (job: StalledJob) => Promise<StalledState>;
+};
+
+
 
 export type JobOutcome =
   | "provider_accepted"
@@ -585,6 +595,104 @@ export async function dispatchHalfwayJobs(
 
   return { claimed: jobs.length, outcomes };
 }
+
+/**
+ * Claims due Stalled jobs and, immediately before each provider attempt,
+ * re-resolves authoritative persisted state. A CANCEL or SUPPRESS resolution
+ * never renders, never derives a credential, never builds a payload, and never
+ * calls the provider. A DEFER never performs a provider attempt, consumes no
+ * retry budget, and emits no event.
+ *
+ * Priority: this loop runs below Plan Completed and Halfway and above Start Day
+ * 1, so the shared 24-hour lifecycle gap is consumed by higher-priority
+ * messages first.
+ */
+export async function dispatchStalledJobs(
+  deps: StalledDispatchDeps,
+  options?: { limit?: number; leaseSeconds?: number },
+): Promise<DispatchSummary> {
+  const jobs = await deps.store.claimJobs(
+    STALLED_JOB_TYPE,
+    options?.limit ?? 10,
+    options?.leaseSeconds ?? 120,
+  );
+  const outcomes: DispatchSummary["outcomes"] = [];
+
+  for (const job of jobs) {
+    const state = await deps.loadStalledState({
+      job_id: job.job_id,
+      job_type: job.job_type,
+      job_version: job.job_version,
+      template_version: job.template_version,
+      lead_plan_id: job.lead_plan_id,
+      plan_version_id: job.plan_version_id,
+      idempotency_key: job.idempotency_key,
+      eligible_at: job.eligible_at,
+    });
+    const resolution = resolveStalled(state, deps.now());
+
+    if (resolution.action === "DEFER") {
+      outcomes.push(await deferSend(deps, job, resolution.eligibleAt ?? null));
+      continue;
+    }
+
+    if (resolution.action === "SUPPRESS") {
+      outcomes.push(await finish(deps, job, "suppressed", { reason: resolution.reason }));
+      continue;
+    }
+
+    if (resolution.action === "CANCEL") {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    const lead = await deps.store.getLead(job.lead_plan_id);
+    if (!lead || lead.plan_version_id !== job.plan_version_id) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    const guarded = await guardCommon(deps, job);
+    if (guarded) {
+      outcomes.push(guarded);
+      continue;
+    }
+
+    // The CTA reuses the ordinary open_plan credential, scoped to this logical
+    // Stalled episode so a completed exchange can be attributed. Only the token
+    // hash is ever stored, and the trusted destination stays the plan hub.
+    const urls = await issueCredentials(deps, job, lead, true);
+    const rendered = renderStalled(resolution, {
+      firstName: lead.first_name,
+      returnUrl: urls.returnUrl,
+      preferencesUrl: urls.preferencesUrl,
+      appOrigin: deps.appOrigin,
+    });
+    if (!rendered) {
+      outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    outcomes.push(
+      await attemptSend(deps, job, {
+        to: lead.email_original,
+        fromEmail: deps.fromEmail,
+        fromName: deps.fromName,
+        replyTo: deps.replyTo,
+        subject: rendered.subject,
+        previewText: rendered.previewText,
+        html: rendered.html,
+        text: rendered.text,
+        idempotencyKey: job.idempotency_key,
+        correlationId: job.job_id,
+        disableClickTracking: true,
+      }),
+    );
+  }
+
+  return { claimed: jobs.length, outcomes };
+}
+
 
 /** Raises one operational alert per Plan Ready job still unsent after five minutes. */
 export async function raiseStalePlanReadyAlerts(deps: DispatchDeps): Promise<number> {

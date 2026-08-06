@@ -57,6 +57,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         const {
           dispatchPlanReadyJobs,
           dispatchHalfwayJobs,
+          dispatchStalledJobs,
           dispatchStartDayOneJobs,
           raiseStalePlanReadyAlerts,
         } = await import("@/lib/email/dispatch");
@@ -64,11 +65,18 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
 
         // Lifecycle priority: Plan Completed (not yet implemented), then
-        // Halfway, then Start Day 1. Higher priority runs first so it consumes
-        // the shared 24-hour lifecycle gap.
+        // Halfway, then Stalled, then Start Day 1, then Final Rescue (not yet
+        // implemented). Higher priority runs first so it consumes the shared
+        // 24-hour lifecycle gap.
         const { loadHalfwayState } = await import("@/lib/email/halfway-state.server");
         const halfway = await dispatchHalfwayJobs(
           { ...runtime.deps, loadHalfwayState: (job) => loadHalfwayState(job) },
+          { limit: 25 },
+        );
+
+        const { loadStalledState } = await import("@/lib/email/stalled-state.server");
+        const stalled = await dispatchStalledJobs(
+          { ...runtime.deps, loadStalledState: (job) => loadStalledState(job) },
           { limit: 25 },
         );
 
@@ -85,6 +93,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           ...summary,
           stale_alerts: staleAlerts,
           halfway,
+          stalled,
           start_day_1: startDayOne,
         });
       },
