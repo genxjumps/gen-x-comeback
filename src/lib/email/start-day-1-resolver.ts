@@ -161,6 +161,17 @@ export function resolveStartDayOne(state: StartDayOneState, now: Date): StartDay
 
   if (state.dayOneCompletedAt) return cancel("day_1_complete");
 
+  // Final Rescue closure and control. An accepted Final Rescue permanently
+  // closes later inactivity messaging for this plan version. A due unsent Final
+  // Rescue job that is not blocked by Halfway controls this lower inactivity
+  // message even while Final Rescue is still retrying.
+  if (state.finalRescueAcceptedAt) return cancel("final_rescue_sent");
+  if (finalRescueDueControls(state.finalRescueDueAt, state.halfwayPending, now)) {
+    return cancel("final_rescue_controls");
+  }
+
+
+
   if (state.marketingUnsubscribedAt) return cancel("marketing_unsubscribed");
   if (state.emailSuppressedAt || state.suppressionListed) return cancel("recipient_suppressed");
 
