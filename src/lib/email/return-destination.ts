@@ -14,6 +14,13 @@ export const START_DAY_1_RETURN_DESTINATION: ReturnDestination = "/your-plan/day
 /** The only token purpose that may ever open a specific day. */
 export const OPEN_PLAN_TOKEN_PURPOSE = "open_plan";
 
+/**
+ * Purpose-limited on-demand recovery credential. A recovery token always opens
+ * the general plan hub, never a specific day page.
+ */
+export const RECOVERY_TOKEN_PURPOSE = "recovery";
+
+
 /** Trusted server-side originating job identity for a return token. */
 export type ReturnTokenJobIdentity = {
   jobType: string | null | undefined;
