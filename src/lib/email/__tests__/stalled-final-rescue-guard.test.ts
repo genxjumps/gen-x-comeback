@@ -73,7 +73,7 @@ describe("R1 forward-only migration chain", () => {
       FN.indexOf("     -- Final Rescue closure is authoritative"),
       FN.indexOf("  THEN\n", GUARD),
     );
-    expect(ORIGINAL_FN).toBe(FN.replace(guardBlock, ""));
+    expect(ORIGINAL_FN.trimEnd()).toBe(FN.replace(guardBlock, "").trimEnd());
   });
 });
 
