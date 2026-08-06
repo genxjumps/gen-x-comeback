@@ -12,6 +12,9 @@ import {
   HALFWAY_JOB_TYPE,
   HALFWAY_JOB_VERSION,
   HALFWAY_TEMPLATE_VERSION,
+  PLAN_COMPLETED_JOB_TYPE,
+  PLAN_COMPLETED_JOB_VERSION,
+  PLAN_COMPLETED_TEMPLATE_VERSION,
   STALLED_JOB_TYPE,
   STALLED_JOB_VERSION,
   STALLED_TEMPLATE_VERSION,
@@ -38,6 +41,10 @@ export const STALLED_LINK_EXCHANGE_EVENT = "email_stalled_link_exchange_complete
 
 /** Emitted only for a deliberate valid open_plan exchange of a Final Rescue token. */
 export const FINAL_RESCUE_LINK_EXCHANGE_EVENT = "email_final_rescue_link_exchange_completed";
+
+/** Emitted only for a deliberate valid open_plan exchange of a Plan Completed token. */
+export const PLAN_COMPLETED_LINK_EXCHANGE_EVENT = "email_plan_completed_link_exchange_completed";
+
 
 export type LinkExchangeEventInput = {
   /** `plan_return_tokens.purpose` of the validated token. */
