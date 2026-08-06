@@ -6,11 +6,21 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { hashAccessToken } from "@/lib/lead-plan";
 import {
+  HALFWAY_JOB_TYPE,
+  HALFWAY_JOB_VERSION,
+  HALFWAY_TEMPLATE_VERSION,
   PLAN_READY_JOB_TYPE,
+  PLAN_READY_JOB_VERSION,
   PLAN_READY_TEMPLATE_VERSION,
   START_DAY_1_JOB_TYPE,
+  START_DAY_1_JOB_VERSION,
   START_DAY_1_TEMPLATE_VERSION,
 } from "@/lib/email/types";
+import {
+  HALFWAY_LINK_EXCHANGE_EVENT,
+  PLAN_READY_LINK_EXCHANGE_EVENT,
+  START_DAY_1_LINK_EXCHANGE_EVENT,
+} from "@/lib/email/link-exchange-event";
 
 type Row = Record<string, unknown>;
 type Write = { table: string; op: "insert" | "update"; payload: unknown };
@@ -98,6 +108,7 @@ async function seed(scenario: Scenario = {}) {
             {
               job_id: JOB,
               job_type: START_DAY_1_JOB_TYPE,
+              job_version: START_DAY_1_JOB_VERSION,
               template_version: START_DAY_1_TEMPLATE_VERSION,
               lead_plan_id: LEAD,
               plan_version_id: VERSION,
@@ -230,5 +241,76 @@ describe("exchangeReturnToken derives the destination from trusted state", () =>
     const tables = state.writes.map((w) => w.table);
     expect(tables).not.toContain("lead_plan_day_completions");
     expect(tables).not.toContain("lead_plan_day_starts");
+  });
+});
+
+// Attribution proven at the actual exchange boundary: the canonical_events rows
+// written by exchangeReturnToken itself, not by the pure selector alone.
+function exchangeEvents() {
+  return state.writes
+    .filter((w) => w.table === "canonical_events" && w.op === "insert")
+    .flatMap((w) => (Array.isArray(w.payload) ? (w.payload as Row[]) : [w.payload as Row]));
+}
+
+describe("exchangeReturnToken writes exactly one attributed exchange event", () => {
+  it("writes the Start Day 1 exchange event with the Start Day 1 job id", async () => {
+    await seed();
+    const result = await exchange(RAW);
+    expect(result.ok).toBe(true);
+
+    const events = exchangeEvents();
+    const names = events.map((e) => e.event_name);
+    expect(names).toContain(START_DAY_1_LINK_EXCHANGE_EVENT);
+    expect(names).toContain("return_session_started");
+    expect(names).not.toContain(PLAN_READY_LINK_EXCHANGE_EVENT);
+    expect(names).not.toContain(HALFWAY_LINK_EXCHANGE_EVENT);
+    expect(names.filter((n) => n === START_DAY_1_LINK_EXCHANGE_EVENT)).toHaveLength(1);
+
+    const attributed = events.find((e) => e.event_name === START_DAY_1_LINK_EXCHANGE_EVENT);
+    expect(attributed?.job_id).toBe(JOB);
+  });
+
+  it("keeps a Plan Ready exchange on the general event with no attributed job id", async () => {
+    await seed({
+      job: {
+        job_type: PLAN_READY_JOB_TYPE,
+        job_version: PLAN_READY_JOB_VERSION,
+        template_version: PLAN_READY_TEMPLATE_VERSION,
+      },
+    });
+    const result = await exchange(RAW);
+    expect(result.ok).toBe(true);
+
+    const events = exchangeEvents();
+    const names = events.map((e) => e.event_name);
+    expect(names).toContain(PLAN_READY_LINK_EXCHANGE_EVENT);
+    expect(names).toContain("return_session_started");
+    expect(names).not.toContain(START_DAY_1_LINK_EXCHANGE_EVENT);
+    expect(names).not.toContain(HALFWAY_LINK_EXCHANGE_EVENT);
+
+    const attributed = events.find((e) => e.event_name === PLAN_READY_LINK_EXCHANGE_EVENT);
+    expect(attributed?.job_id).toBeNull();
+  });
+
+  it("writes the Halfway exchange event with the Halfway job id", async () => {
+    await seed({
+      job: {
+        job_type: HALFWAY_JOB_TYPE,
+        job_version: HALFWAY_JOB_VERSION,
+        template_version: HALFWAY_TEMPLATE_VERSION,
+      },
+    });
+    const result = await exchange(RAW);
+    expect(result.ok).toBe(true);
+
+    const events = exchangeEvents();
+    const names = events.map((e) => e.event_name);
+    expect(names).toContain(HALFWAY_LINK_EXCHANGE_EVENT);
+    expect(names).toContain("return_session_started");
+    expect(names).not.toContain(PLAN_READY_LINK_EXCHANGE_EVENT);
+    expect(names).not.toContain(START_DAY_1_LINK_EXCHANGE_EVENT);
+
+    const attributed = events.find((e) => e.event_name === HALFWAY_LINK_EXCHANGE_EVENT);
+    expect(attributed?.job_id).toBe(JOB);
   });
 });
