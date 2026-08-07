@@ -195,9 +195,9 @@ The app database is authoritative for plans, consent, email eligibility, job sta
 
 ## Email release safety
 
-Production sending must stay disabled until domain authentication, sender configuration, webhook signing, dispatch authorization, safe preflight, return-flow inspection, remaining lifecycle/recovery real-provider staging, and all release gates are complete.
+Production sending must stay disabled until domain authentication, sender configuration, webhook signing, dispatch authorization, safe preflight, return-flow inspection, all lifecycle/recovery real-provider staging, and all release gates are complete.
 
-Do not enable production outbound sending merely because the provider API key exists or because the first real Plan Ready staging send passed. The server-side production sending gate must report every prerequisite satisfied before any production provider attempt is allowed.
+All lifecycle and recovery real-provider staging is now complete. Do not enable production outbound sending without an explicit activation decision. The server-side production sending gate must report every prerequisite satisfied before any production provider attempt is allowed.
 
 ## Local development
 
