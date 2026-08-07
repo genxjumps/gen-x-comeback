@@ -41,6 +41,9 @@ const SECRET = "recovery-token-secret-value-0123456789";
 const rateLimitCalls: Array<{ bucket: string; windowSeconds: number; limit: number }> = [];
 const rpcCalls: Array<{ email: string; requestId: string }> = [];
 let rateLimitAllowed = true;
+// Injected RPC outcome for the service-role boundary double.
+let rpcError: { code?: unknown; message?: string; details?: string; hint?: string } | null = null;
+let rpcThrows: Error | null = null;
 
 vi.mock("@/lib/email/rate-limit.server", () => ({
   callerBucketKey: (scope: string) => `${scope}:hashed-caller`,
@@ -50,19 +53,29 @@ vi.mock("@/lib/email/rate-limit.server", () => ({
   },
 }));
 
-vi.mock("@/integrations/supabase/client.server", () => ({
-  supabaseAdmin: {
-    rpc: async (fn: string, args: Record<string, string>) => {
+// Receiver-sensitive double: like the real SDK, `rpc` reads state off its own
+// receiver, so a detached `const rpc = client.rpc` reference throws before any
+// request is made. This is what makes the regression detectable here.
+vi.mock("@/integrations/supabase/client.server", () => {
+  const client = {
+    rest: { marker: "service-role" },
+    rpc(this: unknown, fn: string, args: Record<string, string>) {
+      const self = this as { rest?: { marker?: string } } | undefined;
+      if (!self || self.rest?.marker !== "service-role") {
+        throw new TypeError("undefined is not an object (evaluating 'this.rest')");
+      }
       if (fn === "request_plan_recovery") {
         rpcCalls.push({
           email: args["p_email_normalized"] as string,
           requestId: args["p_request_id"] as string,
         });
       }
-      return { error: null };
+      if (rpcThrows) return Promise.reject(rpcThrows);
+      return Promise.resolve({ error: rpcError });
     },
-  },
-}));
+  };
+  return { supabaseAdmin: client };
+});
 
 type Handler = (ctx: { request: Request }) => Promise<Response>;
 
@@ -106,6 +119,8 @@ describe("public /recover route", () => {
     rateLimitCalls.length = 0;
     rpcCalls.length = 0;
     rateLimitAllowed = true;
+    rpcError = null;
+    rpcThrows = null;
   });
 
   afterEach(() => {
@@ -218,6 +233,108 @@ describe("public /recover route", () => {
     const [id] = requestId.split(".");
     await post({ email: "reader@example.com", request_id: `${id}.tampered-signature-value` });
     expect(rpcCalls).toHaveLength(0);
+  });
+
+  it("reaches the recovery boundary exactly once with receiver context preserved", async () => {
+    const signed = requestIdFrom(await getForm());
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const res = await post({ email: "  Reader@Example.COM  ", request_id: signed });
+
+      // A detached `rpc` reference would have thrown inside the double, so the
+      // recorded call proves the route calls it as a method on the client.
+      expect(rpcCalls).toEqual([{ email: "reader@example.com", requestId: signed.split(".")[0] }]);
+      expect(res.status).toBe(200);
+      expect(await res.text()).toContain(GENERIC);
+      // A successful boundary call logs nothing.
+      expect(errors).not.toHaveBeenCalled();
+    } finally {
+      errors.mockRestore();
+    }
+  });
+
+  it("keeps the generic response and logs one redacted diagnostic for an RPC error", async () => {
+    const signed = requestIdFrom(await getForm());
+    rpcError = {
+      code: "23505",
+      message: "duplicate key value violates unique constraint for reader@example.com",
+      details: "lead id 11111111-1111-1111-1111-111111111111",
+      hint: "plan_version_id 22222222-2222-2222-2222-222222222222",
+    };
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const res = await post({ email: "Reader@Example.com", request_id: signed });
+
+      expect(res.status).toBe(200);
+      expect(await res.text()).toContain(GENERIC);
+      expect(res.headers.get("location")).toBeNull();
+
+      expect(errors).toHaveBeenCalledTimes(1);
+      const serialized = JSON.stringify(errors.mock.calls);
+      expect(serialized).toContain("recovery_rpc_error");
+      expect(serialized).toContain("23505");
+      for (const forbidden of [
+        "Reader@Example.com",
+        "reader@example.com",
+        signed,
+        signed.split(".")[0]!,
+        "duplicate key",
+        "lead id",
+        "plan_version_id",
+        "11111111-1111-1111-1111-111111111111",
+        "22222222-2222-2222-2222-222222222222",
+        "p_email_normalized",
+        "p_request_id",
+        "genxjumps.com",
+        "at Object.",
+      ]) {
+        expect(serialized).not.toContain(forbidden);
+      }
+    } finally {
+      errors.mockRestore();
+    }
+  });
+
+  it("sanitizes an unusable database error code to unknown", async () => {
+    const signed = requestIdFrom(await getForm());
+    rpcError = { code: "reader@example.com is not a code" };
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await post({ email: "reader@example.com", request_id: signed });
+      const serialized = JSON.stringify(errors.mock.calls);
+      expect(serialized).toContain("recovery_rpc_error code=unknown");
+      expect(serialized).not.toContain("reader@example.com");
+    } finally {
+      errors.mockRestore();
+    }
+  });
+
+  it("keeps the generic response and logs only a classification for a thrown RPC", async () => {
+    const signed = requestIdFrom(await getForm());
+    rpcThrows = new Error("connect ECONNREFUSED db.internal reader@example.com");
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      const res = await post({ email: "reader@example.com", request_id: signed });
+
+      expect(res.status).toBe(200);
+      expect(await res.text()).toContain(GENERIC);
+
+      expect(errors).toHaveBeenCalledTimes(1);
+      const serialized = JSON.stringify(errors.mock.calls);
+      expect(serialized).toContain("recovery_rpc_exception");
+      for (const forbidden of [
+        "ECONNREFUSED",
+        "db.internal",
+        "reader@example.com",
+        signed,
+        signed.split(".")[0]!,
+        "at Object.",
+      ]) {
+        expect(serialized).not.toContain(forbidden);
+      }
+    } finally {
+      errors.mockRestore();
+    }
   });
 });
 

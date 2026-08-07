@@ -57,6 +57,24 @@ function genericAcknowledgement(): Response {
   );
 }
 
+/**
+ * Narrowest structural view of the service-role client used here. The RPC is
+ * invoked as a method on the client object so the SDK keeps its own receiver
+ * context; the generated Supabase types are protected and do not describe this
+ * function, so only this local shape is asserted.
+ */
+type RecoveryRpcClient = {
+  rpc(
+    fn: "request_plan_recovery",
+    args: { p_email_normalized: string; p_request_id: string },
+  ): PromiseLike<{ error: { code?: string | null } | null }>;
+};
+
+/** Conservative allowlist so no database text can reach a server log. */
+function sanitizeErrorCode(code: unknown): string {
+  return typeof code === "string" && /^[A-Za-z0-9_]{1,12}$/.test(code) ? code : "unknown";
+}
+
 export const Route = createFileRoute("/recover")({
   server: {
     handlers: {
@@ -117,17 +135,21 @@ export const Route = createFileRoute("/recover")({
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           // Service-role-only atomic boundary. It returns nothing identifying and
-          // is idempotent for one validated request id.
-          const rpc = supabaseAdmin.rpc as unknown as (
-            fn: string,
-            args: Record<string, string>,
-          ) => Promise<{ error: { message: string } | null }>;
-          await rpc("request_plan_recovery", {
+          // is idempotent for one validated request id. The call must stay a
+          // method call on the client: a detached `rpc` reference loses the SDK
+          // receiver and throws before any request is made.
+          const client = supabaseAdmin as unknown as RecoveryRpcClient;
+          const { error } = await client.rpc("request_plan_recovery", {
             p_email_normalized: emailNormalized,
             p_request_id: requestId,
           });
+          if (error) {
+            // Server-only, redacted: stable classification and sanitized code only.
+            console.error(`recovery_rpc_error code=${sanitizeErrorCode(error.code)}`);
+          }
         } catch {
           // An infrastructure failure must not change the visible response.
+          console.error("recovery_rpc_exception");
         }
 
         return genericAcknowledgement();
