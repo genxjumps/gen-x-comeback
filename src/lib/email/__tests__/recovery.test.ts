@@ -120,7 +120,10 @@ describe("public /recover route", () => {
     rateLimitCalls.length = 0;
     rpcCalls.length = 0;
     rateLimitAllowed = true;
+    rpcError = null;
+    rpcThrows = null;
   });
+
 
   afterEach(() => {
     process.env = { ...original };
