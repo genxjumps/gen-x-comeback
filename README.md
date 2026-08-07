@@ -180,6 +180,7 @@ Production email sending remains disabled. Recurring scheduling remains disabled
 - Final cleanup: all Scenario 2 synthetic rows removed, including recovery rate-limit counters created by this test; `EMAIL_REAL_STAGING_ENABLED`, `EMAIL_REAL_STAGING_DISPATCH_SECRET`, and `EMAIL_REAL_STAGING_ALLOWED_RECIPIENT` deleted; application republished so the runtime cannot retain staging-enabled configuration; staging credential now returns 401 at runtime
 - Zero synthetic staging residue remains: alias leads 0, jobs 0, tokens 0, access sessions 0, return sessions 0, canonical events 0, preference credentials 0, provider-event linkage 0, recovery rate-limit rows 0
 - No recurring email-dispatch cron job exists; production email sending remains disabled; production scheduler secrets remain unconfigured; no production lifecycle email has been sent
+- Remaining staging blockers: zero.
 
 ## Architecture
 
