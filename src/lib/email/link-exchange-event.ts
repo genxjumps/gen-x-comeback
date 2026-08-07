@@ -15,6 +15,9 @@ import {
   PLAN_COMPLETED_JOB_TYPE,
   PLAN_COMPLETED_JOB_VERSION,
   PLAN_COMPLETED_TEMPLATE_VERSION,
+  PLAN_READY_JOB_TYPE,
+  PLAN_READY_JOB_VERSION,
+  PLAN_READY_TEMPLATE_VERSION,
   RECOVERY_JOB_TYPE,
   RECOVERY_JOB_VERSION,
   RECOVERY_TEMPLATE_VERSION,
@@ -88,6 +91,14 @@ type LifecycleExchangeContract = {
 };
 
 const LIFECYCLE_EXCHANGE_CONTRACTS: readonly LifecycleExchangeContract[] = [
+  // Plan Ready keeps its existing general event name; the only change is that a
+  // job-associated Plan Ready token now correlates the exchange to its job id.
+  {
+    jobType: PLAN_READY_JOB_TYPE,
+    jobVersion: PLAN_READY_JOB_VERSION,
+    templateVersion: PLAN_READY_TEMPLATE_VERSION,
+    eventName: PLAN_READY_LINK_EXCHANGE_EVENT,
+  },
   {
     jobType: HALFWAY_JOB_TYPE,
     jobVersion: HALFWAY_JOB_VERSION,
