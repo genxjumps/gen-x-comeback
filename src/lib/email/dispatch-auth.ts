@@ -40,6 +40,12 @@ export function authorizeDispatch(request: Request): DispatchMode | null {
     if (secretsMatch(provided, production.trim())) return "production";
   }
 
+  // Real-provider staging: server flag plus its own dedicated secret.
+  const real = readRealStagingConfig();
+  if (real.enabled && real.dispatchSecret) {
+    if (secretsMatch(provided, real.dispatchSecret)) return "real_staging";
+  }
+
   const staging = readFakeStagingConfig();
   if (staging.enabled && staging.dispatchSecret) {
     if (secretsMatch(provided, staging.dispatchSecret)) return "fake_staging";
@@ -47,6 +53,7 @@ export function authorizeDispatch(request: Request): DispatchMode | null {
 
   return null;
 }
+
 
 /**
  * Fake staging requires a JSON body carrying exactly one synthetic
