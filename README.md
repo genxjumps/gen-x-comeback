@@ -180,6 +180,7 @@ Production email sending remains disabled. Recurring scheduling remains disabled
 - Final cleanup: all Scenario 2 synthetic rows removed, including recovery rate-limit counters created by this test; `EMAIL_REAL_STAGING_ENABLED`, `EMAIL_REAL_STAGING_DISPATCH_SECRET`, and `EMAIL_REAL_STAGING_ALLOWED_RECIPIENT` deleted; application republished so the runtime cannot retain staging-enabled configuration; staging credential now returns 401 at runtime
 - Zero synthetic staging residue remains: alias leads 0, jobs 0, tokens 0, access sessions 0, return sessions 0, canonical events 0, preference credentials 0, provider-event linkage 0, recovery rate-limit rows 0
 - No recurring email-dispatch cron job exists; production email sending remains disabled; production scheduler secrets remain unconfigured; no production lifecycle email has been sent
+- Remaining staging blockers: zero.
 
 ## Architecture
 
@@ -197,7 +198,7 @@ The app database is authoritative for plans, consent, email eligibility, job sta
 
 Production sending must stay disabled until domain authentication, sender configuration, webhook signing, dispatch authorization, safe preflight, return-flow inspection, all lifecycle/recovery real-provider staging, and all release gates are complete.
 
-All lifecycle and recovery real-provider staging is now complete. Do not enable production outbound sending without an explicit activation decision. The server-side production sending gate must report every prerequisite satisfied before any production provider attempt is allowed.
+All lifecycle and recovery real-provider staging is now complete. Staging acceptance does not authorize production activation. Do not enable production outbound sending without an explicit activation decision. The server-side production sending gate must report every prerequisite satisfied before any production provider attempt is allowed.
 
 ## Local development
 
