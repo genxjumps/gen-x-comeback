@@ -696,6 +696,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      begin_provider_attempt: {
+        Args: {
+          p_attempted_at: string
+          p_claim_token: string
+          p_job_id: string
+        }
+        Returns: string
+      }
       cancel_unsent_proactive_jobs: {
         Args: { p_at: string; p_lead_plan_id: string }
         Returns: number

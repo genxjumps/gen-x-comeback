@@ -1,6 +1,8 @@
 // Deterministic in-memory EmailStore for acceptance tests. No database, no clock.
 import type { EmailJobPatch, EmailStore, ReturnTokenInsert } from "@/lib/email/store";
 import { deliveredEventName } from "@/lib/email/event-names";
+import { isProactiveJobType } from "@/lib/email/types";
+
 import type {
   CanonicalEventInput,
   EmailDeliveryStatus,
@@ -117,14 +119,27 @@ export function createMemoryStore(now: () => Date): MemoryStore {
 
     async recordFirstProviderAttempt(jobId, claimToken, attemptedAt) {
       const job = jobs.get(jobId);
-      if (!job) return false;
+      if (!job) return "lost_lease";
       // Same fencing as every other write: a lost lease records nothing.
       if (job.status !== "processing" || !claimToken || job.claim_token !== claimToken) {
-        return false;
+        return "lost_lease";
+      }
+      // Authoritative final Plan-consent verification, in the same atomic step
+      // as lease ownership. Mirrors public.begin_provider_attempt. Recovery is
+      // transactional and is never consent-gated here.
+      if (isProactiveJobType(job.job_type)) {
+        const lead = leads.get(job.lead_plan_id);
+        if (!lead || !lead.plan_email_consent_active) return "consent_blocked";
+        if (
+          lead.plan_email_consent_at &&
+          new Date(job.created_at).getTime() < new Date(lead.plan_email_consent_at).getTime()
+        ) {
+          return "consent_blocked";
+        }
       }
       // The first recorded boundary is immutable across later provider retries.
       job.first_provider_attempt_at = job.first_provider_attempt_at ?? attemptedAt;
-      return true;
+      return "ok";
     },
 
     async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {

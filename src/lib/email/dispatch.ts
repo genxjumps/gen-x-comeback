@@ -356,9 +356,12 @@ async function issueCredentials(
 /**
  * Performs exactly one provider attempt and applies the resulting transition.
  *
- * The first provider-attempt boundary is durably recorded under the current
- * fenced lease before the provider is called. If that fenced write fails the
- * lease no longer belongs to this worker, so the provider is never called.
+ * The authoritative final fence runs first: one atomic database step records the
+ * first provider-attempt boundary under the current lease AND, for proactive
+ * lifecycle jobs, re-verifies that Plan-email consent is active and that the job
+ * was created at or after the current Plan consent boundary. A lost lease and a
+ * consent boundary that moved after the earlier application read both stop the
+ * provider from ever being called.
  */
 async function attemptSend(
   deps: DispatchDeps,
@@ -366,12 +369,15 @@ async function attemptSend(
   request: EmailSendRequest,
 ): Promise<{ jobId: string; outcome: JobOutcome; errorCode?: string }> {
   const attemptedAt = deps.now().toISOString();
-  const fenced = await deps.store.recordFirstProviderAttempt(
+  const fence = await deps.store.recordFirstProviderAttempt(
     job.job_id,
     job.claim_token,
     attemptedAt,
   );
-  if (!fenced) return { jobId: job.job_id, outcome: "lost_lease" };
+  // Consent withdrawn, or the boundary moved, after the earlier read: the job is
+  // closed permanently instead of sending.
+  if (fence === "consent_blocked") return finish(deps, job, "canceled", {});
+  if (fence !== "ok") return { jobId: job.job_id, outcome: "lost_lease" };
 
   const result = await deps.adapter.send(request);
 

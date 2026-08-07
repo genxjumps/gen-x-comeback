@@ -10,6 +10,12 @@ import type {
 } from "@/lib/email/types";
 
 /**
+ * Result of the authoritative final provider-attempt fence executed in the
+ * database immediately before any provider call.
+ */
+export type ProviderAttemptFence = "ok" | "lost_lease" | "consent_blocked";
+
+/**
  * Fields a fenced terminal transition may set. Status, lease release, and the
  * claim-token check are handled by the transition itself.
  */
@@ -75,18 +81,26 @@ export type EmailStore = {
     restoredAttemptCount: number,
   ): Promise<boolean>;
   /**
-   * Durably records the first provider-attempt boundary under the current fenced
-   * lease, before any provider call. The first recorded value is immutable: a
-   * later retry never overwrites or extends it.
+   * Authoritative final provider-attempt fence, executed as the last fenced
+   * database write immediately before any provider call. One atomic step
+   * verifies lease/processing ownership and, for proactive lifecycle jobs, that
+   * Plan-email consent is currently active and that the job was created at or
+   * after the current Plan consent boundary.
    *
-   * Returns false when the lease no longer belongs to this worker, in which case
-   * the caller must not call the provider.
+   * The first recorded boundary is immutable: a later retry never overwrites or
+   * extends it, so provider idempotency is preserved.
+   *
+   * - "ok": the caller may perform exactly one provider attempt.
+   * - "lost_lease": the lease no longer belongs to this worker; do not send.
+   * - "consent_blocked": the consent boundary moved or consent was withdrawn
+   *   after the earlier application read; the caller must close the job instead
+   *   of sending. Recovery is transactional and is never consent-blocked.
    */
   recordFirstProviderAttempt(
     jobId: string,
     claimToken: string | null,
     attemptedAt: string,
-  ): Promise<boolean>;
+  ): Promise<ProviderAttemptFence>;
 
   /** Transactional, rank-guarded delivery transition. */
   applyDeliveryEvent(

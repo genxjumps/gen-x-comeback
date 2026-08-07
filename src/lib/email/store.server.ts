@@ -5,7 +5,19 @@ import type {
   LeadRow,
   OperationalAlertInput,
 } from "@/lib/email/types";
-import type { EmailStore, ReturnTokenInsert } from "@/lib/email/store";
+import type { EmailStore, ProviderAttemptFence, ReturnTokenInsert } from "@/lib/email/store";
+
+/**
+ * Narrowest structural view of the service-role client for the authoritative
+ * provider-attempt fence. The RPC is invoked as a method on the client object so
+ * the SDK keeps its own receiver context.
+ */
+type ProviderAttemptRpcClient = {
+  rpc(
+    fn: "begin_provider_attempt",
+    args: { p_job_id: string; p_claim_token: string | null; p_attempted_at: string },
+  ): PromiseLike<{ data: ProviderAttemptFence | null; error: { message: string } | null }>;
+};
 
 /**
  * `options.leadPlanScope` is a staging-only, fake-provider affordance: when set,
@@ -122,30 +134,24 @@ export async function createSupabaseEmailStore(options?: {
     },
 
     async recordFirstProviderAttempt(jobId, claimToken, attemptedAt) {
-      // Fenced compare-and-set that only ever fills an empty boundary, so the
-      // original first-provider-attempt timestamp is immutable.
-      const { data, error } = await supabaseAdmin
-        .from("email_jobs")
-        .update({ first_provider_attempt_at: attemptedAt, updated_at: new Date().toISOString() })
-        .eq("job_id", jobId)
-        .eq("claim_token", claimToken as string)
-        .eq("status", "processing")
-        .is("first_provider_attempt_at", null)
-        .select("job_id");
+      // Authoritative final fence, executed as one atomic locked database step
+      // immediately before any provider call. It verifies current lease /
+      // processing ownership and, for proactive lifecycle jobs, that Plan-email
+      // consent is active and that the job was created at or after the current
+      // Plan consent boundary. The first-provider-attempt boundary is only ever
+      // filled when empty, so provider idempotency is preserved.
+      //
+      // The RPC stays a method call on the client so the SDK keeps its receiver.
+      const client = supabaseAdmin as unknown as ProviderAttemptRpcClient;
+      const { data, error } = await client.rpc("begin_provider_attempt", {
+        p_job_id: jobId,
+        p_claim_token: claimToken,
+        p_attempted_at: attemptedAt,
+      });
       if (error) throw new Error(error.message);
-      if ((data?.length ?? 0) > 0) return true;
-
-      // No row updated: either the lease was lost, or this job already recorded
-      // its immutable boundary on an earlier attempt.
-      const { data: existing, error: readError } = await supabaseAdmin
-        .from("email_jobs")
-        .select("first_provider_attempt_at")
-        .eq("job_id", jobId)
-        .eq("claim_token", claimToken as string)
-        .eq("status", "processing")
-        .limit(1);
-      if (readError) throw new Error(readError.message);
-      return Boolean(existing?.[0]?.first_provider_attempt_at);
+      if (data === "ok") return "ok";
+      if (data === "consent_blocked") return "consent_blocked";
+      return "lost_lease";
     },
 
     async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {
