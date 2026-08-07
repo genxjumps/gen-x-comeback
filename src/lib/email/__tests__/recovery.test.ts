@@ -41,6 +41,9 @@ const SECRET = "recovery-token-secret-value-0123456789";
 const rateLimitCalls: Array<{ bucket: string; windowSeconds: number; limit: number }> = [];
 const rpcCalls: Array<{ email: string; requestId: string }> = [];
 let rateLimitAllowed = true;
+// Injected RPC outcome for the service-role boundary double.
+let rpcError: { code?: unknown; message?: string; details?: string; hint?: string } | null = null;
+let rpcThrows: Error | null = null;
 
 vi.mock("@/lib/email/rate-limit.server", () => ({
   callerBucketKey: (scope: string) => `${scope}:hashed-caller`,
@@ -50,19 +53,30 @@ vi.mock("@/lib/email/rate-limit.server", () => ({
   },
 }));
 
-vi.mock("@/integrations/supabase/client.server", () => ({
-  supabaseAdmin: {
-    rpc: async (fn: string, args: Record<string, string>) => {
+// Receiver-sensitive double: like the real SDK, `rpc` reads state off its own
+// receiver, so a detached `const rpc = client.rpc` reference throws before any
+// request is made. This is what makes the regression detectable here.
+vi.mock("@/integrations/supabase/client.server", () => {
+  const client = {
+    rest: { marker: "service-role" },
+    rpc(this: unknown, fn: string, args: Record<string, string>) {
+      const self = this as { rest?: { marker?: string } } | undefined;
+      if (!self || self.rest?.marker !== "service-role") {
+        throw new TypeError("undefined is not an object (evaluating 'this.rest')");
+      }
       if (fn === "request_plan_recovery") {
         rpcCalls.push({
           email: args["p_email_normalized"] as string,
           requestId: args["p_request_id"] as string,
         });
       }
-      return { error: null };
+      if (rpcThrows) return Promise.reject(rpcThrows);
+      return Promise.resolve({ error: rpcError });
     },
-  },
-}));
+  };
+  return { supabaseAdmin: client };
+});
+
 
 type Handler = (ctx: { request: Request }) => Promise<Response>;
 
