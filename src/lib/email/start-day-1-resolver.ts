@@ -188,7 +188,8 @@ export function resolveStartDayOne(state: StartDayOneState, now: Date): StartDay
   if (state.finalRescueAcceptedAt) return cancel("final_rescue_sent");
   if (finalRescueDueControls(state.finalRescueDueAt, state.halfwayPending, now)) {
     return cancel("final_rescue_controls");
-  }
+
+
 
 
 
