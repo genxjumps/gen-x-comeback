@@ -246,9 +246,8 @@ describe("real staging runtime", () => {
     process.env["EMAIL_PROVIDER"] = "fake";
     mockAdmin(ALLOWED);
 
-    const { buildRealStagingDispatchDeps } = await import(
-      "@/lib/email/real-staging-runtime.server"
-    );
+    const { buildRealStagingDispatchDeps } =
+      await import("@/lib/email/real-staging-runtime.server");
     const runtime = await buildRealStagingDispatchDeps(LEAD);
     expect(runtime.ok).toBe(true);
     if (runtime.ok) expect(runtime.deps.adapter.key).toBe("resend");
@@ -269,9 +268,8 @@ describe("real staging runtime", () => {
     expect(process.env["EMAIL_SENDING_ENABLED"]).toBeUndefined();
     expect(process.env["EMAIL_STAGING_ACCEPTANCE_PASSED"]).toBeUndefined();
 
-    const { buildRealStagingDispatchDeps } = await import(
-      "@/lib/email/real-staging-runtime.server"
-    );
+    const { buildRealStagingDispatchDeps } =
+      await import("@/lib/email/real-staging-runtime.server");
     const runtime = await buildRealStagingDispatchDeps(LEAD);
     expect(runtime.ok).toBe(true);
   });
@@ -288,9 +286,8 @@ describe("real staging runtime", () => {
         throw new Error("store must not be created when configuration is missing");
       },
     }));
-    const { buildRealStagingDispatchDeps } = await import(
-      "@/lib/email/real-staging-runtime.server"
-    );
+    const { buildRealStagingDispatchDeps } =
+      await import("@/lib/email/real-staging-runtime.server");
     const runtime = await buildRealStagingDispatchDeps(LEAD);
     expect(runtime.ok).toBe(false);
     if (!runtime.ok && runtime.error === "missing_configuration") {

@@ -36,9 +36,8 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             );
           }
 
-          const { buildRealStagingDispatchDeps } = await import(
-            "@/lib/email/real-staging-runtime.server"
-          );
+          const { buildRealStagingDispatchDeps } =
+            await import("@/lib/email/real-staging-runtime.server");
           const real = await buildRealStagingDispatchDeps(leadPlanId);
           if (!real.ok) {
             // Fail-closed before any provider request exists.
@@ -86,7 +85,6 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         }
 
         if (mode === "fake_staging") {
-
           // Exactly one required synthetic lead_plan_id, validated before any claim.
           const leadPlanId = await readStagingLeadPlanId(request);
           if (!leadPlanId) {

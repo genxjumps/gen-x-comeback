@@ -13,7 +13,6 @@ import { readRealStagingConfig } from "@/lib/email/real-staging-config.server";
 
 export type DispatchMode = "production" | "fake_staging" | "real_staging";
 
-
 /** Constant-time compare over equal-length digests (raw lengths never leak). */
 export function secretsMatch(provided: string, expected: string): boolean {
   const a = createHash("sha256").update(provided, "utf8").digest();
@@ -53,7 +52,6 @@ export function authorizeDispatch(request: Request): DispatchMode | null {
 
   return null;
 }
-
 
 /**
  * Fake staging requires a JSON body carrying exactly one synthetic
