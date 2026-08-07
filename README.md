@@ -63,8 +63,9 @@ Scheduler transport to the published application is verified. The published `gen
 
 ### Accepted implementation baseline
 
-- Accepted Plan Ready job-correlation repair implementation SHA: `e9601702f40a7d8a504593150e1e0dd2f1c7c193`
-- Accepted real-staging implementation SHA: `78fca403187b928ea653f196d02978ab1c8160fe`
+- Accepted synchronized source SHA: `eed6f82f1fa5a4354e103e7e3e93bea53b3ea914`
+- Previously accepted Plan Ready job-correlation repair implementation SHA: `e9601702f40a7d8a504593150e1e0dd2f1c7c193`
+- Previously accepted real-staging implementation SHA: `78fca403187b928ea653f196d02978ab1c8160fe`
 - Real-staging protected-file-restoration source: `3afe58587f8310fa6af5e05ff3a64f960bcdbe66`
 - Recovery migration: `20260806215657_e52c4b4b-1c81-4e87-828d-81e9e8db23c4.sql`
 - Scheduler foundation migration: `20260806224437_0f99de9f-07b7-46cf-909e-1b97a7ff8137.sql`
@@ -84,6 +85,7 @@ Scheduler transport to the published application is verified. The published `gen
 - Focused recovery tests passed 29/29
 - Affected return/email tests passed 53/53
 - The full suite at recovery acceptance passed 393/393
+- The full suite at the final two-send staging checkpoint passed 434/434 across 22 files
 - TypeScript passed
 - Production build passed
 - Changed-file ESLint passed
@@ -91,6 +93,7 @@ Scheduler transport to the published application is verified. The published `gen
 - `git diff --check` passed
 - The `/recover` route tree and protected route-tree blob/hash were verified
 - The approved Supabase types blob remained protected
+- Recovery request-boundary/RPC receiver repair is accepted; the route calls the Supabase client `rpc` method with proper SDK context, alphanumeric error-code sanitization, and server-only redacted diagnostics
 
 ### Scheduler and fake-staging evidence
 
