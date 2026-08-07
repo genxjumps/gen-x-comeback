@@ -5,10 +5,7 @@
 import { describe, expect, it } from "vitest";
 
 import { dispatchPlanReadyJobs, type DispatchDeps } from "@/lib/email/dispatch";
-import {
-  deriveEmailCredential,
-  type CredentialPurpose,
-} from "@/lib/email/credentials.server";
+import { deriveEmailCredential, type CredentialPurpose } from "@/lib/email/credentials.server";
 import {
   PLAN_READY_LINK_EXCHANGE_EVENT,
   resolveLinkExchangeAttribution,
