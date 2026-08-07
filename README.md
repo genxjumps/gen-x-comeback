@@ -6,9 +6,9 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 ## Current status
 
-The accepted real-staging implementation SHA is `78fca403187b928ea653f196d02978ab1c8160fe`. The synchronized source head after protected-file restoration is `3afe58587f8310fa6af5e05ff3a64f960bcdbe66`.
+The accepted Plan Ready job-correlation repair implementation SHA and synchronized source head is `e9601702f40a7d8a504593150e1e0dd2f1c7c193`. The accepted real-staging implementation remains `78fca403187b928ea653f196d02978ab1c8160fe`.
 
-The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler invocation plumbing is implemented and scheduler transport to the published application authentication boundary is verified. Lead-scoped fake-provider staging is accepted. Lead-scoped real-provider staging is also implemented and accepted for Plan Ready, including exactly one real Resend send to the approved staging alias, signed-webhook delivery reconciliation, and secure-link return verification. Recurring scheduling remains disabled and unconfigured. Production email sending remains intentionally disabled.
+The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler invocation plumbing is implemented and scheduler transport to the published application authentication boundary is verified. Lead-scoped fake-provider staging is accepted. Lead-scoped real-provider staging is also implemented and accepted for Plan Ready, including exactly one real Resend send to the approved staging alias, signed-webhook delivery reconciliation, and secure-link return verification. Plan Ready return tokens are now directly associated with their originating Plan Ready `job_id`, and completed Plan Ready link exchanges preserve that job correlation. Recurring scheduling remains disabled and unconfigured. Production email sending remains intentionally disabled.
 
 ### Implemented app experience
 
@@ -37,6 +37,7 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Job leasing, retry handling, and stale-job alerts
 - Replaceable delivery-provider adapter with Resend support
 - Secure, purpose-limited return tokens
+- Plan Ready return tokens associated with the originating Plan Ready job, with job-correlated link-exchange attribution
 - Deliberate **Open My Plan** confirmation before a saved plan is activated
 - Signed provider-webhook verification and event reconciliation
 - Bounce and complaint suppression
@@ -62,12 +63,14 @@ Scheduler transport to the published application is verified. The published `gen
 
 ### Accepted implementation baseline
 
+- Accepted Plan Ready job-correlation repair implementation SHA: `e9601702f40a7d8a504593150e1e0dd2f1c7c193`
 - Accepted real-staging implementation SHA: `78fca403187b928ea653f196d02978ab1c8160fe`
-- Synchronized source head after protected-file restoration: `3afe58587f8310fa6af5e05ff3a64f960bcdbe66`
+- Real-staging protected-file-restoration source: `3afe58587f8310fa6af5e05ff3a64f960bcdbe66`
 - Recovery migration: `20260806215657_e52c4b4b-1c81-4e87-828d-81e9e8db23c4.sql`
 - Scheduler foundation migration: `20260806224437_0f99de9f-07b7-46cf-909e-1b97a7ff8137.sql`
 - Fake-staging scoped-claim migration: `20260806235258_0a429511-3eac-46f0-a264-bc1bbbe34551.sql`
 - Real-staging checkpoint migration: none
+- Plan Ready job-correlation repair migration: none
 - `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
 - `vite-plugin-hmr-gate`: resolved version `1.3.4`
 - Approved formatted Supabase types blob: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf`
@@ -124,11 +127,27 @@ Scheduler transport to the published application is verified. The published `gen
 - No recurring email-dispatch cron job exists
 - Production email sending remains disabled
 
-### Known pre-production observability cleanup
+### Plan Ready job-correlation repair evidence
 
-The Plan Ready return token and `email_plan_ready_link_exchange_completed` outcome are correctly attributed to the lead and plan version but are not currently associated with the originating Plan Ready `job_id`. The locked Plan Ready token contract does not require `job_id`, so this did not invalidate the real-provider staging checkpoint. However, the shared credential-issuer comment describes Plan Ready as job-associated while current Plan Ready dispatch calls the issuer without job association. Resolve that inconsistency in a separate small checkpoint before production activation rather than silently changing token semantics during another lifecycle-staging task.
+- Safety precheck found zero surviving Plan Ready jobs that had crossed a provider-attempt boundary or reached provider-accepted/delivered canonical state
+- Plan Ready now uses the existing job-associated return-token path
+- New Plan Ready return-token records preserve the originating Plan Ready `job_id`
+- `email_plan_ready_link_exchange_completed` preserves the originating Plan Ready `job_id`
+- The same logical Plan Ready job derives the identical return credential across retries
+- Different logical job scope or plan version derives a different credential
+- Raw GET remains inert; deliberate exchange still creates the expected return session and redirects cleanly to `/your-plan`
+- Exchange does not alter plan progress
+- Start Day 1 and recovery secure-link behavior remain unchanged
+- Focused Plan Ready correlation tests passed 60/60 across five files
+- Fake-staging regression tests passed 15/15
+- Real-staging regression tests passed 15/15
+- Affected return/email tests passed 56/56
+- Full suite passed 430/430 across 22 files
+- TypeScript, production build, changed-file ESLint, changed-file Prettier check, and `git diff --check` passed
+- No migration was required
+- No provider send occurred during the repair
 
-Production email sending remains disabled. Recurring scheduling remains disabled and unconfigured. Remaining email-release work is: resolve the Plan Ready job-correlation observability gap; complete the remaining lifecycle/recovery real-provider staging verification; configure recurring scheduler and production dispatch secrets only after staging gates pass; then enable production sending only after a later explicit activation decision.
+Production email sending remains disabled. Recurring scheduling remains disabled and unconfigured. Remaining email-release work is: complete the remaining lifecycle/recovery real-provider staging verification; configure recurring scheduler and production dispatch secrets only after staging gates pass; then enable production sending only after a later explicit activation decision.
 
 ## Architecture
 
