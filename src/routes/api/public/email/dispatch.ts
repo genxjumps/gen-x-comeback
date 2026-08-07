@@ -26,6 +26,64 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         const mode = authorizeDispatch(request);
         if (!mode) return unauthorized();
 
+        if (mode === "real_staging") {
+          // Exactly one required lead_plan_id, validated before any claim.
+          const leadPlanId = await readStagingLeadPlanId(request);
+          if (!leadPlanId) {
+            return Response.json(
+              { mode: "real_staging", sending_enabled: false, error: "invalid_lead_plan_id" },
+              { status: 400, headers: { "cache-control": "no-store" } },
+            );
+          }
+
+          const { buildRealStagingDispatchDeps } =
+            await import("@/lib/email/real-staging-runtime.server");
+          const real = await buildRealStagingDispatchDeps(leadPlanId);
+          if (!real.ok) {
+            // Fail-closed before any provider request exists.
+            return Response.json(
+              {
+                mode: "real_staging",
+                sending_enabled: false,
+                lead_plan_id: leadPlanId,
+                error: real.error,
+                ...(real.error === "missing_configuration"
+                  ? { missing_configuration: real.missing }
+                  : {}),
+                claimed: 0,
+              },
+              { status: real.error === "recipient_not_allowed" ? 403 : 200 },
+            );
+          }
+
+          // Same dispatcher functions and same lifecycle ordering as production,
+          // but lead-scoped and without the global stale-Plan-Ready sweep.
+          const { runDispatchCycle } = await import("@/lib/email/dispatch-cycle.server");
+          const cycle = await runDispatchCycle(real.deps, { limit: 25 });
+          const evidence = real.evidence();
+
+          return Response.json(
+            {
+              mode: "real_staging",
+              // Production sending remains gated and unchanged.
+              sending_enabled: false,
+              lead_plan_id: leadPlanId,
+              ...cycle.planReady,
+              stale_alerts: 0,
+              recovery: cycle.recovery,
+              plan_completed: cycle.planCompleted,
+              halfway: cycle.halfway,
+              stalled: cycle.stalled,
+              start_day_1: cycle.startDayOne,
+              final_rescue: cycle.finalRescue,
+              // Non-secret provider evidence only.
+              provider_key: evidence?.providerKey ?? null,
+              provider_message_id: evidence?.providerMessageId ?? null,
+            },
+            { headers: { "cache-control": "no-store" } },
+          );
+        }
+
         if (mode === "fake_staging") {
           // Exactly one required synthetic lead_plan_id, validated before any claim.
           const leadPlanId = await readStagingLeadPlanId(request);
