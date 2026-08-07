@@ -9,8 +9,10 @@
 // select the staging mode.
 import { createHash, timingSafeEqual } from "node:crypto";
 import { readFakeStagingConfig } from "@/lib/email/staging-config.server";
+import { readRealStagingConfig } from "@/lib/email/real-staging-config.server";
 
-export type DispatchMode = "production" | "fake_staging";
+export type DispatchMode = "production" | "fake_staging" | "real_staging";
+
 
 /** Constant-time compare over equal-length digests (raw lengths never leak). */
 export function secretsMatch(provided: string, expected: string): boolean {
