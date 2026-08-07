@@ -57,6 +57,25 @@ function genericAcknowledgement(): Response {
   );
 }
 
+/**
+ * Narrowest structural view of the service-role client used here. The RPC is
+ * invoked as a method on the client object so the SDK keeps its own receiver
+ * context; the generated Supabase types are protected and do not describe this
+ * function, so only this local shape is asserted.
+ */
+type RecoveryRpcClient = {
+  rpc(
+    fn: "request_plan_recovery",
+    args: { p_email_normalized: string; p_request_id: string },
+  ): PromiseLike<{ error: { code?: string | null } | null }>;
+};
+
+/** Conservative allowlist so no database text can reach a server log. */
+function sanitizeErrorCode(code: unknown): string {
+  return typeof code === "string" && /^[A-Za-z0-9_]{1,12}$/.test(code) ? code : "unknown";
+}
+
+
 export const Route = createFileRoute("/recover")({
   server: {
     handlers: {
