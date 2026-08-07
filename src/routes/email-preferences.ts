@@ -65,6 +65,25 @@ async function resolveCredential(raw: string | null): Promise<string | null> {
   return data?.[0]?.lead_plan_id ?? null;
 }
 
+/** Approved Plan-email-specific copy. */
+export const PREFS_HEADING = "Gen X Jumps 7-Day Plan Emails";
+export const PREFS_SUBSCRIBED_COPY = "You are currently receiving Gen X Jumps 7-Day Plan emails.";
+export const PREFS_UNSUBSCRIBED_COPY =
+  "You are not receiving Gen X Jumps 7-Day Plan emails. Your saved plan and your plan access are unaffected.";
+export const PREFS_SCOPE_NOTE =
+  "This only changes Gen X Jumps 7-Day Plan emails. Your saved plan and your plan access stay exactly as they are.";
+
+/**
+ * Narrow structural view of the service-role client for the consent boundary.
+ * The RPC stays a method call on the client so the SDK keeps its receiver.
+ */
+type ConsentRpcClient = {
+  rpc(
+    fn: "set_plan_email_consent",
+    args: { p_lead_plan_id: string; p_active: boolean; p_source: string },
+  ): PromiseLike<{ error: { code?: string | null } | null }>;
+};
+
 export const Route = createFileRoute("/email-preferences")({
   server: {
     handlers: {
@@ -77,26 +96,26 @@ export const Route = createFileRoute("/email-preferences")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data } = await supabaseAdmin
           .from("lead_plans")
-          .select("marketing_unsubscribed_at")
+          .select("plan_email_consent_active")
           .eq("id", leadPlanId)
           .limit(1);
-        const unsubscribed = Boolean(data?.[0]?.marketing_unsubscribed_at);
+        const active = data?.[0]?.plan_email_consent_active !== false;
 
         return shell(
-          `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">Email Preferences</h1>
+          `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">${PREFS_HEADING}</h1>
 <p style="margin:0 0 1.5rem 0;color:#555555;">${
-            unsubscribed
-              ? "You are currently unsubscribed from optional fitness emails."
-              : "You are currently subscribed to optional fitness emails."
+            active ? PREFS_SUBSCRIBED_COPY : PREFS_UNSUBSCRIBED_COPY
           }</p>
 <form method="post" action="/email-preferences">
 <input type="hidden" name="c" value="${escapeAttr(credential ?? "")}" />
-<input type="hidden" name="action" value="${unsubscribed ? "resubscribe" : "unsubscribe"}" />
+<input type="hidden" name="action" value="${active ? "unsubscribe" : "resubscribe"}" />
 <button type="submit" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;border:0;border-radius:0.375rem;font-weight:600;font-size:1rem;cursor:pointer;">${
-            unsubscribed ? "Resubscribe to optional emails" : "Unsubscribe from optional emails"
+            active
+              ? "Unsubscribe from 7-Day Plan emails"
+              : "Resubscribe to 7-Day Plan emails"
           }</button>
 </form>
-<p style="margin:1.5rem 0 0 0;font-size:0.8125rem;color:#555555;">This only changes optional fitness emails. Your saved plan and your plan access stay exactly as they are.</p>`,
+<p style="margin:1.5rem 0 0 0;font-size:0.8125rem;color:#555555;">${PREFS_SCOPE_NOTE}</p>`,
         );
       },
 
@@ -109,24 +128,23 @@ export const Route = createFileRoute("/email-preferences")({
         if (!leadPlanId) return generic();
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const nowIso = new Date().toISOString();
-        await supabaseAdmin
-          .from("lead_plans")
-          .update({ marketing_unsubscribed_at: action === "unsubscribe" ? nowIso : null })
-          .eq("id", leadPlanId);
-        await supabaseAdmin.from("canonical_events").insert({
-          event_name:
-            action === "unsubscribe" ? "marketing_unsubscribed" : "marketing_resubscribed",
-          lead_plan_id: leadPlanId,
-          occurred_at: nowIso,
+        // Authoritative atomic Plan-email consent transition. An unsubscribe also
+        // permanently cancels every unsent proactive lifecycle job, so no later
+        // proactive email can send. General marketing consent is never touched,
+        // and suppression records are never removed or bypassed.
+        const client = supabaseAdmin as unknown as ConsentRpcClient;
+        await client.rpc("set_plan_email_consent", {
+          p_lead_plan_id: leadPlanId,
+          p_active: action === "resubscribe",
+          p_source: "plan_preferences",
         });
 
         return shell(
           `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">Preferences Updated</h1>
 <p style="margin:0 0 1.5rem 0;color:#555555;">${
             action === "unsubscribe"
-              ? "You will no longer receive optional fitness emails."
-              : "You will receive optional fitness emails again."
+              ? "You will no longer receive Gen X Jumps 7-Day Plan emails."
+              : "You will receive Gen X Jumps 7-Day Plan emails again."
           } Your saved plan access is unchanged.</p>
 <p style="margin:0;"><a href="/your-plan" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;text-decoration:none;border-radius:0.375rem;font-weight:600;">Go to My Plan</a></p>`,
         );
@@ -134,3 +152,4 @@ export const Route = createFileRoute("/email-preferences")({
     },
   },
 });
+
