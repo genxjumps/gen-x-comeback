@@ -61,7 +61,30 @@ Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are 
 
 Scheduler transport to the published application is verified. The published `gen-x-comeback.lovable.app` API path redirects to the canonical app host, so authenticated server-to-server dispatch targets `https://app.genxjumps.com/api/public/email/dispatch` directly to avoid losing the bearer header across a cross-host redirect. One synthetic Plan Ready job was fake-provider accepted through the lead-scoped staging path. A separate controlled real-provider staging checkpoint then sent exactly one Plan Ready message through Resend to the dedicated staging alias. Subsequent real-provider staging checkpoints completed Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and Recovery. All of these jobs reached `provider_accepted` and reconciled to `delivered` through signed Resend webhooks. The secure Open My Plan link passed the raw-GET and deliberate-exchange smoke test for each applicable job, restoring the saved synthetic plan through a clean 303 redirect to `/your-plan` without changing progress. All synthetic rows, tokens, sessions, credentials, provider-event linkage, and temporary staging-only configuration were removed after each verification. No recurring email-dispatch cron job exists. Production email sending remains disabled.
 
-### Accepted implementation baseline
+### Current accepted implementation baseline
+
+- Accepted consent implementation commit: `7d9417692b9d75cf123dee3d438ac001e8b3b2f4`
+- Repository migrations: 22
+- Live migration ledger: 22 matching versions
+- Latest full suite: 457 passed across 24 files
+- Latest focused consent production-contract tests: 12 passed
+- Latest rewritten consent-state dispatch tests: 11 passed
+- Current generated Supabase types Git blob: `c556ef9b106b11751fbd879f0430c83302e0827e`
+- Protected route-tree Git blob: `221881b281bc3b37196e76a10876e8a332bedb34`
+- Protected route-tree SHA-256: `28628c9df50d10af6236c9ebfd814ee56d84708194231b5fc34169afba5ed58d`
+- `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
+- `vite-plugin-hmr-gate`: resolved version `1.3.4`
+- Consent checkpoint migrations:
+  - `20260807175301_630a998c-8645-4bfa-9f21-e0c0166d673e.sql`
+  - `20260807175318_d05c3c18-8f7e-4fad-8fe9-339088db91b4.sql`
+  - `20260807180632_72978a70-fadf-41c5-be5f-4977c645896a.sql`
+  - `20260807180709_d9ff7846-f2b9-4587-9326-9a5e142a2056.sql`
+
+Verification precision for the consent checkpoint: the latest changed implementation files passed scoped ESLint and scoped Prettier checks. Broad whole-source ESLint and Prettier runs still surface the accepted baseline `src/lib/email/start-day-1-resolver.ts` formatting issue plus two pre-existing baseline warnings, so broad source checks are not claimed clean.
+
+### Prior checkpoint evidence: staging-acceptance baseline (historical)
+
+The values below are historical evidence from the earlier staging-acceptance checkpoint and are superseded by the current accepted baseline above.
 
 - Accepted synchronized source SHA: `eed6f82f1fa5a4354e103e7e3e93bea53b3ea914`
 - Previously accepted Plan Ready job-correlation repair implementation SHA: `e9601702f40a7d8a504593150e1e0dd2f1c7c193`
@@ -72,13 +95,9 @@ Scheduler transport to the published application is verified. The published `gen
 - Fake-staging scoped-claim migration: `20260806235258_0a429511-3eac-46f0-a264-bc1bbbe34551.sql`
 - Real-staging checkpoint migration: none
 - Plan Ready job-correlation repair migration: none
-- `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
-- `vite-plugin-hmr-gate`: resolved version `1.3.4`
-- Approved formatted Supabase types blob: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf`
-- Protected route-tree Git blob: `221881b281bc3b37196e76a10876e8a332bedb34`
-- Protected route-tree SHA-256: `28628c9df50d10af6236c9ebfd814ee56d84708194231b5fc34169afba5ed58d`
-- Repository migrations: 18
-- Live migration ledger: 18 matching versions
+- Approved formatted Supabase types blob at that checkpoint: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf` (historical only; the current blob is `c556ef9b106b11751fbd879f0430c83302e0827e`)
+- Repository migrations at that checkpoint: 18
+- Live migration ledger at that checkpoint: 18 matching versions
 
 ### Recovery verification evidence
 
