@@ -6,9 +6,9 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 ## Current status
 
-The accepted synchronized implementation baseline is `aff55ae6f4ca522e29d4e18b105296c8fbc72c63`.
+The accepted synchronized implementation baseline is `e3afa0d068784ae166e305ca7b6bb9e49db17c8c`.
 
-The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler invocation plumbing is implemented and accepted, while recurring scheduling remains disabled and unconfigured. Outbound email remains intentionally disabled. No deployment or publication occurred during the scheduler-foundation checkpoint.
+The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler invocation plumbing is implemented and scheduler transport to the published application authentication boundary is verified. A lead-scoped fake-provider staging path is implemented and one synthetic Plan Ready dispatch has been accepted end-to-end with the fake adapter. Recurring scheduling remains disabled and unconfigured. Outbound production email remains intentionally disabled.
 
 ### Implemented app experience
 
@@ -51,47 +51,60 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Server-authoritative Plan Completed job creation at the final required-completion boundary, highest lifecycle priority, same-transaction cancellation of unfinished Start Day 1, Halfway, Stalled, and Final Rescue jobs, suppression, exact completion copy, and secure return to `/your-plan`
 - User-requested recovery as a separate transactional-access job using the durable outbox, request-id idempotency, per-email and caller/IP rate limits, suppression checks, and a fresh recovery-purpose secure return token to `/your-plan`
 - Vault-backed scheduler invocation plumbing through `public.invoke_email_dispatch_scheduler()` using `pg_net`, with recurring scheduling intentionally left disabled
+- Lead-scoped fake-provider staging through `public.claim_email_jobs_for_lead(...)`, protected by a staging-only server flag and separate staging dispatch secret
+- Fake-staging runtime that always uses the fake adapter, never instantiates Resend, skips the global stale-Plan-Ready alert sweep, and reports `sending_enabled:false`
 
-Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Marketing unsubscribe blocks Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and promotional email without removing plan access or saved progress; it does not block a recovery explicitly requested by the user. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control proactive lifecycle jobs. Scheduler invocation plumbing is implemented, but no recurring email-dispatch cron job or scheduler Vault secrets are configured yet. Controlled staging scheduler execution is next. Broadcasts, newsletters, and promotional campaigns remain outside the current app-email scope. Email sending remains disabled.
+Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Marketing unsubscribe blocks Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and promotional email without removing plan access or saved progress; it does not block a recovery explicitly requested by the user. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control proactive lifecycle jobs.
+
+Scheduler transport to the published application is verified. The published `gen-x-comeback.lovable.app` API path redirects to the canonical app host, so authenticated server-to-server dispatch targets `https://app.genxjumps.com/api/public/email/dispatch` directly to avoid losing the bearer header across a cross-host redirect. One synthetic Plan Ready job was fake-provider accepted through the lead-scoped staging path; no other lead was touched, Start Day 1 remained pending/unclaimed, and all synthetic rows, tokens, credentials, temporary Vault data, and staging-only application secrets were removed after verification. No recurring email-dispatch cron job exists. Production email sending remains disabled.
 
 ### Accepted implementation baseline
 
-- Accepted synchronized implementation SHA: `aff55ae6f4ca522e29d4e18b105296c8fbc72c63`
+- Accepted synchronized implementation SHA: `e3afa0d068784ae166e305ca7b6bb9e49db17c8c`
 - Recovery migration: `20260806215657_e52c4b4b-1c81-4e87-828d-81e9e8db23c4.sql`
 - Scheduler foundation migration: `20260806224437_0f99de9f-07b7-46cf-909e-1b97a7ff8137.sql`
+- Fake-staging scoped-claim migration: `20260806235258_0a429511-3eac-46f0-a264-bc1bbbe34551.sql`
 - `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
 - `vite-plugin-hmr-gate`: resolved version `1.3.4`
 - Approved formatted Supabase types blob: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf`
 - Protected route-tree Git blob: `221881b281bc3b37196e76a10876e8a332bedb34`
 - Protected route-tree SHA-256: `28628c9df50d10af6236c9ebfd814ee56d84708194231b5fc34169afba5ed58d`
-- Repository migrations: 17
-- Live migration ledger: 17 matching versions
+- Repository migrations: 18
+- Live migration ledger: 18 matching versions
 
 ### Recovery verification evidence
 
 - Focused recovery tests passed 29/29
 - Affected return/email tests passed 53/53
-- The full suite passed 393/393
+- The full suite at recovery acceptance passed 393/393
 - TypeScript passed
 - Production build passed
 - Changed-file ESLint passed
 - Prettier passed
 - `git diff --check` passed
-- The `/recover` route tree and new protected route-tree blob/hash were verified
+- The `/recover` route tree and protected route-tree blob/hash were verified
 - The approved Supabase types blob remained protected
 
-### Scheduler foundation evidence
+### Scheduler and fake-staging evidence
 
 - `public.invoke_email_dispatch_scheduler()` is implemented as a `SECURITY DEFINER` function
 - PUBLIC, `anon`, and `authenticated` cannot execute the scheduler function
 - `pg_cron` and `pg_net` are installed and Supabase Vault remains installed
 - The scheduler function reads its dispatch URL and bearer secret from Vault and sends no customer data or PII
-- No recurring email-dispatch cron job exists
-- No `email_dispatch_url` or `email_dispatch_secret` Vault secret was inserted by the scheduler-foundation checkpoint
-- No application environment secret changed
+- Supabase → `pg_net` → published Lovable app → dispatch authentication boundary was verified
+- `public.claim_email_jobs_for_lead(...)` provides an atomic lead-scoped claim path for fake staging while production keeps the existing global claim function
+- Focused fake-staging tests passed 15/15
+- Directly affected dispatch/config/runtime tests passed 53/53
+- Full suite passed 408/408
+- TypeScript and production build passed
+- Changed-file ESLint and Prettier checks passed
 - `git diff --check` passed
+- One synthetic Plan Ready job reached `provider_accepted` with `provider_key=fake`; all other lifecycle/recovery dispatchers claimed zero
+- No other lead received a fake-provider job
+- Synthetic lead/job/token/preference data and all temporary staging credentials were removed after the live fake-staging pass
+- No recurring email-dispatch cron job exists
 
-Email sending remains disabled. Recurring scheduling remains disabled and unconfigured. Controlled staging scheduler execution is the next release checkpoint, followed by lifecycle/recovery staging verification. Real sending requires later explicit approval after all release gates pass. No deployment or publication occurred during the scheduler-foundation checkpoint.
+Production email sending remains disabled. Recurring scheduling remains disabled and unconfigured. Controlled real-provider staging and the remaining lifecycle/recovery staging verification are next. Any real email send requires explicit product-owner approval; production sending still requires all release gates and a later explicit activation decision.
 
 ## Architecture
 
