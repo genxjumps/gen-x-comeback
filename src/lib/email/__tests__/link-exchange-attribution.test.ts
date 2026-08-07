@@ -68,8 +68,12 @@ describe("deliberate link-exchange attribution", () => {
 
     expect(start).toEqual({ eventName: START_DAY_1_LINK_EXCHANGE_EVENT, jobId: "sd1-job" });
     expect(halfway).toEqual({ eventName: HALFWAY_LINK_EXCHANGE_EVENT, jobId: "halfway-job" });
-    // Plan Ready keeps the general exchange event and is never job-attributed.
-    expect(planReady).toEqual({ eventName: PLAN_READY_LINK_EXCHANGE_EVENT, jobId: null });
+    // Plan Ready keeps its general exchange event name and now correlates to
+    // the originating Plan Ready job id.
+    expect(planReady).toEqual({
+      eventName: PLAN_READY_LINK_EXCHANGE_EVENT,
+      jobId: "plan-ready-job",
+    });
 
     expect(new Set([start.eventName, halfway.eventName, planReady.eventName]).size).toBe(3);
   });
