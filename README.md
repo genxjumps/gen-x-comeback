@@ -57,11 +57,34 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Separate lead-scoped real-provider staging protected by `EMAIL_REAL_STAGING_ENABLED`, a dedicated real-staging dispatch secret, an authoritative allowed-recipient value, and the same lead-scoped claim boundary
 - Real-staging runtime that uses Resend only after staging authorization, lead scope, exact recipient allowlist, sender/provider, token/link, and webhook configuration checks pass while leaving the production sending gate unchanged
 
-Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Marketing unsubscribe blocks Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and promotional email without removing plan access or saved progress; it does not block a recovery explicitly requested by the user. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control proactive lifecycle jobs.
+Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Gen X Jumps 7-Day Plan email consent is the gate for proactive lifecycle email: a Plan-email unsubscribe blocks all six proactive lifecycle jobs — Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed — without removing plan access or saved progress, and leaves general marketing consent unchanged. General marketing consent is independent and is never read to send lifecycle email. A recovery explicitly requested by the user is transactional and may still send while Plan consent is inactive. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control current proactive lifecycle jobs; its only lifecycle effect is the inactive-to-active Plan consent boundary described under **Consent architecture**.
 
 Scheduler transport to the published application is verified. The published `gen-x-comeback.lovable.app` API path redirects to the canonical app host, so authenticated server-to-server dispatch targets `https://app.genxjumps.com/api/public/email/dispatch` directly to avoid losing the bearer header across a cross-host redirect. One synthetic Plan Ready job was fake-provider accepted through the lead-scoped staging path. A separate controlled real-provider staging checkpoint then sent exactly one Plan Ready message through Resend to the dedicated staging alias. Subsequent real-provider staging checkpoints completed Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and Recovery. All of these jobs reached `provider_accepted` and reconciled to `delivered` through signed Resend webhooks. The secure Open My Plan link passed the raw-GET and deliberate-exchange smoke test for each applicable job, restoring the saved synthetic plan through a clean 303 redirect to `/your-plan` without changing progress. All synthetic rows, tokens, sessions, credentials, provider-event linkage, and temporary staging-only configuration were removed after each verification. No recurring email-dispatch cron job exists. Production email sending remains disabled.
 
-### Accepted implementation baseline
+### Current accepted implementation baseline
+
+- Accepted consent implementation commit: `7d9417692b9d75cf123dee3d438ac001e8b3b2f4`
+- Repository migrations: 22
+- Live migration ledger: 22 matching versions
+- Latest full suite: 457 passed across 24 files
+- Latest focused consent production-contract tests: 12 passed
+- Latest rewritten consent-state dispatch tests: 11 passed
+- Current generated Supabase types Git blob: `c556ef9b106b11751fbd879f0430c83302e0827e`
+- Protected route-tree Git blob: `221881b281bc3b37196e76a10876e8a332bedb34`
+- Protected route-tree SHA-256: `28628c9df50d10af6236c9ebfd814ee56d84708194231b5fc34169afba5ed58d`
+- `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
+- `vite-plugin-hmr-gate`: resolved version `1.3.4`
+- Consent checkpoint migrations:
+  - `20260807175301_630a998c-8645-4bfa-9f21-e0c0166d673e.sql`
+  - `20260807175318_d05c3c18-8f7e-4fad-8fe9-339088db91b4.sql`
+  - `20260807180632_72978a70-fadf-41c5-be5f-4977c645896a.sql`
+  - `20260807180709_d9ff7846-f2b9-4587-9326-9a5e142a2056.sql`
+
+Verification precision for the consent checkpoint: the latest changed implementation files passed scoped ESLint and scoped Prettier checks. Broad whole-source ESLint and Prettier runs still surface the accepted baseline `src/lib/email/start-day-1-resolver.ts` formatting issue plus two pre-existing baseline warnings, so broad source checks are not claimed clean.
+
+### Prior checkpoint evidence: staging-acceptance baseline (historical)
+
+The values below are historical evidence from the earlier staging-acceptance checkpoint and are superseded by the current accepted baseline above.
 
 - Accepted synchronized source SHA: `eed6f82f1fa5a4354e103e7e3e93bea53b3ea914`
 - Previously accepted Plan Ready job-correlation repair implementation SHA: `e9601702f40a7d8a504593150e1e0dd2f1c7c193`
@@ -72,13 +95,9 @@ Scheduler transport to the published application is verified. The published `gen
 - Fake-staging scoped-claim migration: `20260806235258_0a429511-3eac-46f0-a264-bc1bbbe34551.sql`
 - Real-staging checkpoint migration: none
 - Plan Ready job-correlation repair migration: none
-- `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
-- `vite-plugin-hmr-gate`: resolved version `1.3.4`
-- Approved formatted Supabase types blob: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf`
-- Protected route-tree Git blob: `221881b281bc3b37196e76a10876e8a332bedb34`
-- Protected route-tree SHA-256: `28628c9df50d10af6236c9ebfd814ee56d84708194231b5fc34169afba5ed58d`
-- Repository migrations: 18
-- Live migration ledger: 18 matching versions
+- Approved formatted Supabase types blob at that checkpoint: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf` (historical only; the current blob is `c556ef9b106b11751fbd879f0430c83302e0827e`)
+- Repository migrations at that checkpoint: 18
+- Live migration ledger at that checkpoint: 18 matching versions
 
 ### Recovery verification evidence
 
@@ -184,17 +203,24 @@ Production email sending remains disabled. Recurring scheduling remains disabled
 
 ### Consent architecture (Recovery consent-state checkpoint)
 
-Migration `20260807175301_630a998c-8645-4bfa-9f21-e0c0166d673e.sql` (applied live, forward-only) plus the follow-up function-grant lockdown establish two independent consent states on one lead identity. One normalized email address is exactly one identity, enforced by a unique index on `email_normalized`.
+Four applied, forward-only migrations establish this behavior: `20260807175301_630a998c-8645-4bfa-9f21-e0c0166d673e.sql` (dual consent state, signup activation, Recovery re-consent, shared proactive cancellation, backfill), `20260807175318_d05c3c18-8f7e-4fad-8fe9-339088db91b4.sql` (function-grant lockdown), `20260807180632_72978a70-fadf-41c5-be5f-4977c645896a.sql` (new Plan version for an existing identity), and `20260807180709_d9ff7846-f2b9-4587-9326-9a5e142a2056.sql` (final atomic provider-attempt fence). Two independent consent states live on one lead identity, and one normalized email address is exactly one identity, enforced by a unique index on `email_normalized`.
 
-- **New-plan dual consent.** A new 7-Day Plan signup explicitly activates BOTH states with source `plan_signup` and fresh consent timestamps. The signup disclosure now covers Plan lifecycle email and general Gen X Jumps marketing email.
-- **Plan email consent** (`plan_email_consent_active`, `_source`, `_at`, `plan_email_unsubscribed_at`) gates every proactive lifecycle email: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. `/email-preferences` is now Plan-email-specific only: an unsubscribe stops all later proactive lifecycle email and permanently cancels every unsent proactive job, while leaving marketing consent untouched. Plan access is never revoked.
+- **New-plan dual consent.** A new 7-Day Plan signup activates BOTH states with source `plan_signup` and fresh consent timestamps. A genuinely new Plan version for an existing normalized identity does the same on that one existing row. The signup disclosure covers Plan lifecycle email and general Gen X Jumps marketing email.
+- **Plan email consent** (`plan_email_consent_active`, `_source`, `_at`, `plan_email_unsubscribed_at`) gates all six proactive lifecycle emails: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. `/email-preferences` is Plan-email-specific only: an unsubscribe stops all later proactive lifecycle email and permanently cancels every unsent proactive job, and leaves general marketing consent unchanged. Plan access is never revoked.
 - **General marketing consent** (`marketing_consent_active`, `_source`, `_at`, `marketing_unsubscribed_at`) is stored and independently withdrawable but has no UI and no sending system. Nothing in the app reads it to send mail.
-- **Recovery re-consent.** Recovery remains on-demand transactional product access and still sends the requested Recovery email. When Plan consent is inactive, one atomic boundary activates it with source `plan_recovery` and a fresh Plan consent timestamp, leaves marketing consent unchanged, and permanently cancels every unsent proactive lifecycle job created before that new boundary. When Plan consent is already active, Recovery does not refresh source or timestamp, does not cancel current jobs, does not restart the lifecycle, and does not touch marketing consent. Recovery never reactivates withdrawn marketing consent. The public response stays generic and non-enumerating for unknown, malformed, rate-limited, and replayed requests, and the exact subordinate disclosure "By recovering your plan, you agree to receive Gen X Jumps 7-Day Plan emails." is rendered beneath the Recovery action.
-- **Authoritative dispatch fence.** Immediately after claiming and before any state resolution, rendering, credential derivation, or provider attempt, every proactive job is fenced: it may send only when Plan consent is active AND the job was created at or after the current Plan consent boundary. Older pending, retry_scheduled, expired-processing, overdue, and future-dated proactive jobs are closed as `canceled` and can never resurface or race through.
-- **Deliverability suppression is separate and absolute.** Hard bounce and complaint suppression continues to block Recovery and every proactive lifecycle send. No consent change removes, bypasses, or weakens suppression, and the migration preserved every suppression record.
-- **Pre-production backfill.** Every existing identity is a Todd-controlled test identity, so the migration backfilled all 19 identities active for both consent states with source `pre_production_test_backfill` and migration-time timestamps, and canceled every pre-migration nonterminal email job of every type. Completed jobs, canonical events, delivery evidence, reconciliations, historical staging evidence, and all contacts were preserved; nothing was deleted.
-- **New Plan version for an existing identity.** Migration `20260807180632_72978a70-fadf-41c5-be5f-4977c645896a.sql` extends the dual-consent contract to the authoritative plan-commit boundary. When an existing normalized identity starts a genuinely new Plan (its `plan_version_id` changes on the one existing row), both Plan and marketing consent are activated with source `plan_signup`, both consent timestamps are refreshed, and both unsubscribe timestamps are cleared. Hard-bounce and complaint suppression is preserved across the boundary, no second identity row is created, and arbitrary row updates never reactivate consent.
-- **Final provider-attempt fence.** Migration `20260807180709_d9ff7846-f2b9-4587-9326-9a5e142a2056.sql` adds the service-role-only `public.begin_provider_attempt(uuid, uuid, timestamptz)` RPC, which is the last fenced database write before any provider call. In one atomic locked step it verifies current lease/processing ownership, and for proactive lifecycle jobs that Plan consent is active and that `job.created_at >= plan_email_consent_at`. It returns `ok`, `lost_lease`, or `consent_blocked`; a `consent_blocked` job is closed as `canceled` and the provider is never called, so a consent boundary that moved after the earlier application read can never slip through. The first-provider-attempt timestamp is only ever filled when empty, preserving provider idempotency, and existing lost-lease behavior is unchanged. Recovery stays outside Plan-consent gating and still respects hard-bounce and complaint suppression.
+- **Recovery re-consent.** Recovery remains on-demand transactional product access and still sends the Recovery email the user explicitly requested, including while Plan consent is inactive. When Plan consent is inactive, one atomic boundary reactivates Plan consent only, records source `plan_recovery` with a fresh Plan consent timestamp, leaves marketing consent unchanged, and permanently cancels every unsent proactive lifecycle job created before that new boundary. When Plan consent is already active, Recovery does not refresh source or timestamp, does not cancel current jobs, does not restart the lifecycle, and does not touch marketing consent. Recovery never reactivates withdrawn marketing consent. The public response stays generic and non-enumerating for unknown, malformed, rate-limited, and replayed requests, and the exact subordinate disclosure "By recovering your plan, you agree to receive Gen X Jumps 7-Day Plan emails." is rendered beneath the Recovery action.
+- **Early application consent guard.** Immediately after claiming and before any state resolution, rendering, credential derivation, or provider attempt, the application guards every proactive job: it may proceed only when Plan consent is active AND the job was created at or after the current Plan consent boundary. Older pending, retry_scheduled, expired-processing, overdue, and future-dated proactive jobs are closed as `canceled` and can never resurface. This early guard is not the authoritative fence; it stops obviously ineligible work before any rendering happens.
+- **Final atomic provider-attempt fence.** `public.begin_provider_attempt(uuid, uuid, timestamptz)` (service-role-only) is the last fenced database write immediately before any provider call, and is authoritative. In one atomic locked step it verifies current lease/processing ownership, and for proactive lifecycle jobs that Plan consent is active and that `job.created_at >= plan_email_consent_at`. It returns `ok`, `lost_lease`, or `consent_blocked`; a `consent_blocked` job is closed as `canceled` and the provider is never called, so a consent boundary that moved or a claim that was canceled after the earlier application read can never slip through. The first-provider-attempt timestamp is only ever filled when empty, preserving provider idempotency, and existing lost-lease behavior is unchanged. Recovery stays outside Plan-consent gating.
+- **Deliverability suppression is separate and absolute.** Hard bounce and complaint suppression continues to block Recovery and every proactive lifecycle send. No consent change removes, bypasses, or weakens suppression, and the migrations preserved every suppression record.
+- **Pre-production backfill.** Every existing identity is a Todd-controlled test identity, so the migration backfilled all 19 identities active for both consent states with source `pre_production_test_backfill` and migration-time timestamps. Zero email jobs existed to cancel at migration time and zero suppression rows existed. Completed jobs, canonical events, delivery evidence, reconciliations, historical staging evidence, and all contacts were preserved; no contacts and no historical evidence were deleted.
+
+### Consent checkpoint verification and current live state
+
+- Full suite: 457 passed across 24 files; focused consent production-contract tests: 12 passed; rewritten consent-state dispatch tests: 11 passed
+- The consent checkpoint used the fake adapter only and sent no real email
+- Temporary real-staging configuration is absent; synthetic staging residue is zero; remaining staging blockers are zero
+- Cron jobs for email dispatch: 0; production email sending disabled; production scheduler secrets unconfigured; no production lifecycle email has been sent
+- Staging acceptance and consent-checkpoint acceptance do not authorize production activation. Enabling recurring scheduling, configuring production dispatch secrets, and enabling production sending each require a separate explicit activation decision.
 
 ## Architecture
 
