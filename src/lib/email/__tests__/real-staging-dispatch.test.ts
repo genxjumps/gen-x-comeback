@@ -63,10 +63,12 @@ function realStagingReadyEnv() {
 
 /** Mocks supabaseAdmin so both the scoped claim RPC and lead read are observable. */
 function mockAdmin(leadEmail: string | null, jobs: ReturnType<typeof makeJob>[] = []) {
-  const rpc = vi.fn(async (fn: string) => {
+  const rpc = vi.fn(async (fn: string, args?: Record<string, unknown>) => {
+    void args;
     if (fn === "claim_email_jobs_for_lead") return { data: jobs, error: null };
     return { data: [], error: null };
   });
+
   const from = vi.fn((table: string) => {
     const rows =
       table === "lead_plans" && leadEmail
