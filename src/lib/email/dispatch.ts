@@ -13,6 +13,7 @@ import {
   STALLED_JOB_TYPE,
   START_DAY_1_JOB_TYPE,
   STALE_PENDING_MS,
+  isProactiveJobType,
   type EmailAdapter,
   type EmailJobRow,
   type EmailJobStatus,
@@ -438,6 +439,13 @@ export async function dispatchPlanReadyJobs(
       continue;
     }
 
+    // Authoritative final Plan-email consent fence before any provider attempt.
+    const consentGuarded = await guardPlanConsent(deps, job, lead);
+    if (consentGuarded) {
+      outcomes.push(consentGuarded);
+      continue;
+    }
+
     const guarded = await guardCommon(deps, job);
     if (guarded) {
       outcomes.push(guarded);
@@ -517,6 +525,13 @@ export async function dispatchStartDayOneJobs(
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    // Authoritative final Plan-email consent fence before any provider attempt.
+    const consentGuarded = await guardPlanConsent(deps, job, lead);
+    if (consentGuarded) {
+      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -611,6 +626,13 @@ export async function dispatchHalfwayJobs(
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    // Authoritative final Plan-email consent fence before any provider attempt.
+    const consentGuarded = await guardPlanConsent(deps, job, lead);
+    if (consentGuarded) {
+      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -711,6 +733,13 @@ export async function dispatchStalledJobs(
       continue;
     }
 
+    // Authoritative final Plan-email consent fence before any provider attempt.
+    const consentGuarded = await guardPlanConsent(deps, job, lead);
+    if (consentGuarded) {
+      outcomes.push(consentGuarded);
+      continue;
+    }
+
     const guarded = await guardCommon(deps, job);
     if (guarded) {
       outcomes.push(guarded);
@@ -808,6 +837,13 @@ export async function dispatchFinalRescueJobs(
       continue;
     }
 
+    // Authoritative final Plan-email consent fence before any provider attempt.
+    const consentGuarded = await guardPlanConsent(deps, job, lead);
+    if (consentGuarded) {
+      outcomes.push(consentGuarded);
+      continue;
+    }
+
     const guarded = await guardCommon(deps, job);
     if (guarded) {
       outcomes.push(guarded);
@@ -902,6 +938,13 @@ export async function dispatchPlanCompletedJobs(
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
+      continue;
+    }
+
+    // Authoritative final Plan-email consent fence before any provider attempt.
+    const consentGuarded = await guardPlanConsent(deps, job, lead);
+    if (consentGuarded) {
+      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -1021,6 +1064,13 @@ export async function dispatchRecoveryJobs(
       lead.email_suppression_reason ?? (await deps.store.suppressionReason(lead.email_normalized));
     if (suppression) {
       outcomes.push(await finish(deps, job, "suppressed", { reason: suppression }));
+      continue;
+    }
+
+    // Authoritative final Plan-email consent fence before any provider attempt.
+    const consentGuarded = await guardPlanConsent(deps, job, lead);
+    if (consentGuarded) {
+      outcomes.push(consentGuarded);
       continue;
     }
 
