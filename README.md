@@ -6,9 +6,9 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 ## Current status
 
-The accepted synchronized implementation baseline is `e3afa0d068784ae166e305ca7b6bb9e49db17c8c`.
+The accepted real-staging implementation SHA is `78fca403187b928ea653f196d02978ab1c8160fe`. The synchronized source head after protected-file restoration is `3afe58587f8310fa6af5e05ff3a64f960bcdbe66`.
 
-The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler invocation plumbing is implemented and scheduler transport to the published application authentication boundary is verified. A lead-scoped fake-provider staging path is implemented and one synthetic Plan Ready dispatch has been accepted end-to-end with the fake adapter. Recurring scheduling remains disabled and unconfigured. Outbound production email remains intentionally disabled.
+The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Scheduler invocation plumbing is implemented and scheduler transport to the published application authentication boundary is verified. Lead-scoped fake-provider staging is accepted. Lead-scoped real-provider staging is also implemented and accepted for Plan Ready, including exactly one real Resend send to the approved staging alias, signed-webhook delivery reconciliation, and secure-link return verification. Recurring scheduling remains disabled and unconfigured. Production email sending remains intentionally disabled.
 
 ### Implemented app experience
 
@@ -41,7 +41,7 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Signed provider-webhook verification and event reconciliation
 - Bounce and complaint suppression
 - App-owned email preferences
-- A release gate that blocks provider calls unless every required setting and acceptance flag is present
+- A release gate that blocks production provider calls unless every required setting and acceptance flag is present
 - Controlled Start Day 1 dispatch using authoritative state immediately before any provider attempt
 - Secure Start Day 1 return routing to `/your-plan/day/1`
 - `START` for eligible unstarted Day 1, `RESUME` for eligible started-but-incomplete Day 1, and non-sendable `CANCEL` when the message should not be sent
@@ -53,17 +53,21 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Vault-backed scheduler invocation plumbing through `public.invoke_email_dispatch_scheduler()` using `pg_net`, with recurring scheduling intentionally left disabled
 - Lead-scoped fake-provider staging through `public.claim_email_jobs_for_lead(...)`, protected by a staging-only server flag and separate staging dispatch secret
 - Fake-staging runtime that always uses the fake adapter, never instantiates Resend, skips the global stale-Plan-Ready alert sweep, and reports `sending_enabled:false`
+- Separate lead-scoped real-provider staging protected by `EMAIL_REAL_STAGING_ENABLED`, a dedicated real-staging dispatch secret, an authoritative allowed-recipient value, and the same lead-scoped claim boundary
+- Real-staging runtime that uses Resend only after staging authorization, lead scope, exact recipient allowlist, sender/provider, token/link, and webhook configuration checks pass while leaving the production sending gate unchanged
 
 Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Marketing unsubscribe blocks Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and promotional email without removing plan access or saved progress; it does not block a recovery explicitly requested by the user. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control proactive lifecycle jobs.
 
-Scheduler transport to the published application is verified. The published `gen-x-comeback.lovable.app` API path redirects to the canonical app host, so authenticated server-to-server dispatch targets `https://app.genxjumps.com/api/public/email/dispatch` directly to avoid losing the bearer header across a cross-host redirect. One synthetic Plan Ready job was fake-provider accepted through the lead-scoped staging path; no other lead was touched, Start Day 1 remained pending/unclaimed, and all synthetic rows, tokens, credentials, temporary Vault data, and staging-only application secrets were removed after verification. No recurring email-dispatch cron job exists. Production email sending remains disabled.
+Scheduler transport to the published application is verified. The published `gen-x-comeback.lovable.app` API path redirects to the canonical app host, so authenticated server-to-server dispatch targets `https://app.genxjumps.com/api/public/email/dispatch` directly to avoid losing the bearer header across a cross-host redirect. One synthetic Plan Ready job was fake-provider accepted through the lead-scoped staging path. A separate controlled real-provider staging checkpoint then sent exactly one Plan Ready message through Resend to the dedicated staging alias. That job reached `provider_accepted` and later reconciled to `delivered` through a signed Resend webhook. The secure Open My Plan link passed the raw-GET and deliberate-exchange smoke test, restoring the saved synthetic plan through a clean 303 redirect to `/your-plan` without changing progress. All synthetic rows, tokens, sessions, credentials, provider-event linkage, and temporary staging-only configuration were removed after verification. No recurring email-dispatch cron job exists. Production email sending remains disabled.
 
 ### Accepted implementation baseline
 
-- Accepted synchronized implementation SHA: `e3afa0d068784ae166e305ca7b6bb9e49db17c8c`
+- Accepted real-staging implementation SHA: `78fca403187b928ea653f196d02978ab1c8160fe`
+- Synchronized source head after protected-file restoration: `3afe58587f8310fa6af5e05ff3a64f960bcdbe66`
 - Recovery migration: `20260806215657_e52c4b4b-1c81-4e87-828d-81e9e8db23c4.sql`
 - Scheduler foundation migration: `20260806224437_0f99de9f-07b7-46cf-909e-1b97a7ff8137.sql`
 - Fake-staging scoped-claim migration: `20260806235258_0a429511-3eac-46f0-a264-bc1bbbe34551.sql`
+- Real-staging checkpoint migration: none
 - `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
 - `vite-plugin-hmr-gate`: resolved version `1.3.4`
 - Approved formatted Supabase types blob: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf`
@@ -91,20 +95,40 @@ Scheduler transport to the published application is verified. The published `gen
 - PUBLIC, `anon`, and `authenticated` cannot execute the scheduler function
 - `pg_cron` and `pg_net` are installed and Supabase Vault remains installed
 - The scheduler function reads its dispatch URL and bearer secret from Vault and sends no customer data or PII
-- Supabase → `pg_net` → published Lovable app → dispatch authentication boundary was verified
-- `public.claim_email_jobs_for_lead(...)` provides an atomic lead-scoped claim path for fake staging while production keeps the existing global claim function
+- Supabase → `pg_net` → published app → dispatch authentication boundary was verified
+- `public.claim_email_jobs_for_lead(...)` provides an atomic lead-scoped claim path for staging while production keeps the existing global claim function
 - Focused fake-staging tests passed 15/15
-- Directly affected dispatch/config/runtime tests passed 53/53
-- Full suite passed 408/408
-- TypeScript and production build passed
-- Changed-file ESLint and Prettier checks passed
-- `git diff --check` passed
+- Directly affected dispatch/config/runtime tests passed 53/53 at fake-staging acceptance
+- Full suite passed 408/408 at fake-staging acceptance
 - One synthetic Plan Ready job reached `provider_accepted` with `provider_key=fake`; all other lifecycle/recovery dispatchers claimed zero
 - No other lead received a fake-provider job
-- Synthetic lead/job/token/preference data and all temporary staging credentials were removed after the live fake-staging pass
-- No recurring email-dispatch cron job exists
+- Synthetic lead/job/token/preference data and all temporary fake-staging credentials were removed after the live fake-staging pass
 
-Production email sending remains disabled. Recurring scheduling remains disabled and unconfigured. Controlled real-provider staging and the remaining lifecycle/recovery staging verification are next. Any real email send requires explicit product-owner approval; production sending still requires all release gates and a later explicit activation decision.
+### First real-provider Plan Ready staging evidence
+
+- Focused real-staging tests passed 15/15
+- Fake-staging regression tests passed 15/15
+- Directly affected dispatch/provider tests passed 34/34 across three files
+- Full suite passed 423/423
+- TypeScript and production build passed
+- Changed-file ESLint passed with zero errors/warnings
+- Prettier check and `git diff --check` passed
+- Exactly one real provider send was performed, to the dedicated staging alias only
+- Dispatch returned HTTP 200 with `mode=real_staging`, claimed exactly one Plan Ready job, and kept production `sending_enabled=false`
+- Provider result reached `provider_accepted` with `provider_key=resend` and a provider message ID
+- A signed Resend `email.delivered` event was received, matched, and reconciled; the job delivery state became `delivered`
+- Direct Gmail inbox inspection was unavailable because the connected Gmail account was not the dedicated staging inbox; signed delivery plus the secure-link smoke test are accepted as sufficient evidence for this checkpoint
+- Locked Plan Ready content was deterministically verified from the exact send inputs, including **Open My Plan** and exclusion of Accelerator promotion, assessment answers, weight, individualized protein target, and internal IDs
+- Raw GET of the secure link was inert; deliberate exchange returned 303 to clean `/your-plan`, created the return session, restored the same saved plan, recorded the Plan Ready link-exchange event, created no duplicate plan, and changed no progress
+- All synthetic records and temporary real-staging configuration were removed; the accepted source was republished afterward
+- No recurring email-dispatch cron job exists
+- Production email sending remains disabled
+
+### Known pre-production observability cleanup
+
+The Plan Ready return token and `email_plan_ready_link_exchange_completed` outcome are correctly attributed to the lead and plan version but are not currently associated with the originating Plan Ready `job_id`. The locked Plan Ready token contract does not require `job_id`, so this did not invalidate the real-provider staging checkpoint. However, the shared credential-issuer comment describes Plan Ready as job-associated while current Plan Ready dispatch calls the issuer without job association. Resolve that inconsistency in a separate small checkpoint before production activation rather than silently changing token semantics during another lifecycle-staging task.
+
+Production email sending remains disabled. Recurring scheduling remains disabled and unconfigured. Remaining email-release work is: resolve the Plan Ready job-correlation observability gap; complete the remaining lifecycle/recovery real-provider staging verification; configure recurring scheduler and production dispatch secrets only after staging gates pass; then enable production sending only after a later explicit activation decision.
 
 ## Architecture
 
@@ -120,9 +144,9 @@ The app database is authoritative for plans, consent, email eligibility, job sta
 
 ## Email release safety
 
-Real sending must stay disabled until domain authentication, sender configuration, webhook signing, dispatch authorization, safe preflight, email preview, return-flow inspection, and staging acceptance are complete.
+Production sending must stay disabled until domain authentication, sender configuration, webhook signing, dispatch authorization, safe preflight, return-flow inspection, remaining lifecycle/recovery real-provider staging, and all release gates are complete.
 
-Do not enable outbound sending merely because a provider API key exists. The server-side sending gate must report every prerequisite satisfied before any real provider attempt is allowed.
+Do not enable production outbound sending merely because the provider API key exists or because the first real Plan Ready staging send passed. The server-side production sending gate must report every prerequisite satisfied before any production provider attempt is allowed.
 
 ## Local development
 
