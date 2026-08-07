@@ -260,6 +260,9 @@ export function makeLead(overrides: Partial<LeadRow> = {}): LeadRow {
     email_normalized: "reader@example.com",
     email_suppressed_at: null,
     email_suppression_reason: null,
+    // A signed-up identity holds active Plan-email consent by default.
+    plan_email_consent_active: true,
+    plan_email_consent_at: "2026-01-01T00:00:00.000Z",
     ...overrides,
   };
 }

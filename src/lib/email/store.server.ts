@@ -59,7 +59,7 @@ export async function createSupabaseEmailStore(options?: {
       const { data, error } = await supabaseAdmin
         .from("lead_plans")
         .select(
-          "id, plan_version_id, first_name, email_original, email_normalized, email_suppressed_at, email_suppression_reason",
+          "id, plan_version_id, first_name, email_original, email_normalized, email_suppressed_at, email_suppression_reason, plan_email_consent_active, plan_email_consent_at",
         )
         .eq("id", leadPlanId)
         .limit(1);

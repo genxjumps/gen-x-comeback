@@ -12,6 +12,14 @@ const PAGE_STYLE =
 export const RECOVER_HEADING = "Get Back to Your Plan";
 export const RECOVER_COPY = "Enter the email you used and I’ll send you a fresh link.";
 
+/**
+ * Exact subordinate consent disclosure rendered beneath the Recovery action.
+ * A successful Recovery may re-activate Gen X Jumps 7-Day Plan email consent;
+ * it never touches general Gen X Jumps marketing consent.
+ */
+export const RECOVER_CONSENT_DISCLOSURE =
+  "By recovering your plan, you agree to receive Gen X Jumps 7-Day Plan emails.";
+
 /** The single generic response for every possible outcome. */
 export const RECOVER_GENERIC_RESPONSE =
   "If that email matches a Gen X Jumps plan, a new link is on the way.";
@@ -94,6 +102,7 @@ export const Route = createFileRoute("/recover")({
 <label for="recover-email" style="display:block;margin:0 0 0.375rem 0;font-size:0.875rem;font-weight:600;">Email</label>
 <input type="email" id="recover-email" name="email" required autocomplete="email" inputmode="email" maxlength="254" style="display:block;width:100%;box-sizing:border-box;padding:0.75rem;margin:0 0 1rem 0;border:1px solid #cccccc;border-radius:0.375rem;font-size:1rem;" />
 <button type="submit" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;border:0;border-radius:0.375rem;font-weight:600;font-size:1rem;cursor:pointer;">Send My Link</button>
+<p style="margin:0.75rem 0 0 0;font-size:0.8125rem;color:#555555;">${RECOVER_CONSENT_DISCLOSURE}</p>
 </form>`,
         );
       },

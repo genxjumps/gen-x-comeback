@@ -138,7 +138,31 @@ export type LeadRow = {
   email_normalized: string;
   email_suppressed_at: string | null;
   email_suppression_reason: string | null;
+  /**
+   * Gen X Jumps 7-Day Plan email consent. Independent of general marketing
+   * consent, which no sending path reads today.
+   */
+  plan_email_consent_active: boolean;
+  /**
+   * Current Plan-email consent boundary. Only a proactive lifecycle job created
+   * at or after this instant may ever send.
+   */
+  plan_email_consent_at: string | null;
 };
+
+/** Proactive lifecycle job types that are gated by Plan-email consent. */
+export const PROACTIVE_JOB_TYPES = [
+  PLAN_READY_JOB_TYPE,
+  START_DAY_1_JOB_TYPE,
+  HALFWAY_JOB_TYPE,
+  STALLED_JOB_TYPE,
+  FINAL_RESCUE_JOB_TYPE,
+  PLAN_COMPLETED_JOB_TYPE,
+] as const;
+
+export function isProactiveJobType(jobType: string): boolean {
+  return (PROACTIVE_JOB_TYPES as readonly string[]).includes(jobType);
+}
 
 export type CanonicalEventInput = {
   event_name: string;
