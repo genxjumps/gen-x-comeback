@@ -423,6 +423,17 @@ export async function dispatchPlanReadyJobs(
   const outcomes: DispatchSummary["outcomes"] = [];
 
   for (const job of jobs) {
+    // Authoritative final Plan-email consent fence, applied before any state
+    // resolution, rendering, credential derivation, or provider attempt.
+    const consentLead = await deps.store.getLead(job.lead_plan_id);
+    if (consentLead) {
+      const consentGuarded = await guardPlanConsent(deps, job, consentLead);
+      if (consentGuarded) {
+        outcomes.push(consentGuarded);
+        continue;
+      }
+    }
+
     const lead = await deps.store.getLead(job.lead_plan_id);
 
     // The job must still represent the current plan version.
@@ -436,13 +447,6 @@ export async function dispatchPlanReadyJobs(
       lead.email_suppression_reason ?? (await deps.store.suppressionReason(lead.email_normalized));
     if (suppression) {
       outcomes.push(await finish(deps, job, "suppressed", { reason: suppression }));
-      continue;
-    }
-
-    // Authoritative final Plan-email consent fence before any provider attempt.
-    const consentGuarded = await guardPlanConsent(deps, job, lead);
-    if (consentGuarded) {
-      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -498,6 +502,17 @@ export async function dispatchStartDayOneJobs(
   const outcomes: DispatchSummary["outcomes"] = [];
 
   for (const job of jobs) {
+    // Authoritative final Plan-email consent fence, applied before any state
+    // resolution, rendering, credential derivation, or provider attempt.
+    const consentLead = await deps.store.getLead(job.lead_plan_id);
+    if (consentLead) {
+      const consentGuarded = await guardPlanConsent(deps, job, consentLead);
+      if (consentGuarded) {
+        outcomes.push(consentGuarded);
+        continue;
+      }
+    }
+
     const state = await deps.loadStartDayOneState({
       job_id: job.job_id,
       job_type: job.job_type,
@@ -525,13 +540,6 @@ export async function dispatchStartDayOneJobs(
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
-      continue;
-    }
-
-    // Authoritative final Plan-email consent fence before any provider attempt.
-    const consentGuarded = await guardPlanConsent(deps, job, lead);
-    if (consentGuarded) {
-      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -595,6 +603,17 @@ export async function dispatchHalfwayJobs(
   const outcomes: DispatchSummary["outcomes"] = [];
 
   for (const job of jobs) {
+    // Authoritative final Plan-email consent fence, applied before any state
+    // resolution, rendering, credential derivation, or provider attempt.
+    const consentLead = await deps.store.getLead(job.lead_plan_id);
+    if (consentLead) {
+      const consentGuarded = await guardPlanConsent(deps, job, consentLead);
+      if (consentGuarded) {
+        outcomes.push(consentGuarded);
+        continue;
+      }
+    }
+
     const state = await deps.loadHalfwayState({
       job_id: job.job_id,
       job_type: job.job_type,
@@ -626,13 +645,6 @@ export async function dispatchHalfwayJobs(
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
-      continue;
-    }
-
-    // Authoritative final Plan-email consent fence before any provider attempt.
-    const consentGuarded = await guardPlanConsent(deps, job, lead);
-    if (consentGuarded) {
-      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -700,6 +712,17 @@ export async function dispatchStalledJobs(
   const outcomes: DispatchSummary["outcomes"] = [];
 
   for (const job of jobs) {
+    // Authoritative final Plan-email consent fence, applied before any state
+    // resolution, rendering, credential derivation, or provider attempt.
+    const consentLead = await deps.store.getLead(job.lead_plan_id);
+    if (consentLead) {
+      const consentGuarded = await guardPlanConsent(deps, job, consentLead);
+      if (consentGuarded) {
+        outcomes.push(consentGuarded);
+        continue;
+      }
+    }
+
     const state = await deps.loadStalledState({
       job_id: job.job_id,
       job_type: job.job_type,
@@ -730,13 +753,6 @@ export async function dispatchStalledJobs(
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
-      continue;
-    }
-
-    // Authoritative final Plan-email consent fence before any provider attempt.
-    const consentGuarded = await guardPlanConsent(deps, job, lead);
-    if (consentGuarded) {
-      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -804,6 +820,17 @@ export async function dispatchFinalRescueJobs(
   const outcomes: DispatchSummary["outcomes"] = [];
 
   for (const job of jobs) {
+    // Authoritative final Plan-email consent fence, applied before any state
+    // resolution, rendering, credential derivation, or provider attempt.
+    const consentLead = await deps.store.getLead(job.lead_plan_id);
+    if (consentLead) {
+      const consentGuarded = await guardPlanConsent(deps, job, consentLead);
+      if (consentGuarded) {
+        outcomes.push(consentGuarded);
+        continue;
+      }
+    }
+
     const state = await deps.loadFinalRescueState({
       job_id: job.job_id,
       job_type: job.job_type,
@@ -834,13 +861,6 @@ export async function dispatchFinalRescueJobs(
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
-      continue;
-    }
-
-    // Authoritative final Plan-email consent fence before any provider attempt.
-    const consentGuarded = await guardPlanConsent(deps, job, lead);
-    if (consentGuarded) {
-      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -908,6 +928,17 @@ export async function dispatchPlanCompletedJobs(
   const outcomes: DispatchSummary["outcomes"] = [];
 
   for (const job of jobs) {
+    // Authoritative final Plan-email consent fence, applied before any state
+    // resolution, rendering, credential derivation, or provider attempt.
+    const consentLead = await deps.store.getLead(job.lead_plan_id);
+    if (consentLead) {
+      const consentGuarded = await guardPlanConsent(deps, job, consentLead);
+      if (consentGuarded) {
+        outcomes.push(consentGuarded);
+        continue;
+      }
+    }
+
     const state = await deps.loadPlanCompletedState({
       job_id: job.job_id,
       job_type: job.job_type,
@@ -938,13 +969,6 @@ export async function dispatchPlanCompletedJobs(
     const lead = await deps.store.getLead(job.lead_plan_id);
     if (!lead || lead.plan_version_id !== job.plan_version_id) {
       outcomes.push(await finish(deps, job, "canceled", {}));
-      continue;
-    }
-
-    // Authoritative final Plan-email consent fence before any provider attempt.
-    const consentGuarded = await guardPlanConsent(deps, job, lead);
-    if (consentGuarded) {
-      outcomes.push(consentGuarded);
       continue;
     }
 
@@ -1051,6 +1075,17 @@ export async function dispatchRecoveryJobs(
   const outcomes: DispatchSummary["outcomes"] = [];
 
   for (const job of jobs) {
+    // Authoritative final Plan-email consent fence, applied before any state
+    // resolution, rendering, credential derivation, or provider attempt.
+    const consentLead = await deps.store.getLead(job.lead_plan_id);
+    if (consentLead) {
+      const consentGuarded = await guardPlanConsent(deps, job, consentLead);
+      if (consentGuarded) {
+        outcomes.push(consentGuarded);
+        continue;
+      }
+    }
+
     const lead = await deps.store.getLead(job.lead_plan_id);
 
     // A replaced plan version must never be recovered by a stale request.
@@ -1064,13 +1099,6 @@ export async function dispatchRecoveryJobs(
       lead.email_suppression_reason ?? (await deps.store.suppressionReason(lead.email_normalized));
     if (suppression) {
       outcomes.push(await finish(deps, job, "suppressed", { reason: suppression }));
-      continue;
-    }
-
-    // Authoritative final Plan-email consent fence before any provider attempt.
-    const consentGuarded = await guardPlanConsent(deps, job, lead);
-    if (consentGuarded) {
-      outcomes.push(consentGuarded);
       continue;
     }
 
