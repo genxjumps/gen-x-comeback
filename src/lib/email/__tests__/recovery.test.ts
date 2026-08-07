@@ -77,7 +77,6 @@ vi.mock("@/integrations/supabase/client.server", () => {
   return { supabaseAdmin: client };
 });
 
-
 type Handler = (ctx: { request: Request }) => Promise<Response>;
 
 async function recoverHandler(method: "GET" | "POST"): Promise<Handler> {
@@ -123,7 +122,6 @@ describe("public /recover route", () => {
     rpcError = null;
     rpcThrows = null;
   });
-
 
   afterEach(() => {
     process.env = { ...original };
@@ -245,9 +243,7 @@ describe("public /recover route", () => {
 
       // A detached `rpc` reference would have thrown inside the double, so the
       // recorded call proves the route calls it as a method on the client.
-      expect(rpcCalls).toEqual([
-        { email: "reader@example.com", requestId: signed.split(".")[0] },
-      ]);
+      expect(rpcCalls).toEqual([{ email: "reader@example.com", requestId: signed.split(".")[0] }]);
       expect(res.status).toBe(200);
       expect(await res.text()).toContain(GENERIC);
       // A successful boundary call logs nothing.
@@ -341,7 +337,6 @@ describe("public /recover route", () => {
     }
   });
 });
-
 
 // ---------------------------------------------------------------------------
 // Server-trusted request identity

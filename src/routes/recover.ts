@@ -75,7 +75,6 @@ function sanitizeErrorCode(code: unknown): string {
   return typeof code === "string" && /^[A-Za-z0-9_]{1,12}$/.test(code) ? code : "unknown";
 }
 
-
 export const Route = createFileRoute("/recover")({
   server: {
     handlers: {
@@ -152,7 +151,6 @@ export const Route = createFileRoute("/recover")({
           // An infrastructure failure must not change the visible response.
           console.error("recovery_rpc_exception");
         }
-
 
         return genericAcknowledgement();
       },
