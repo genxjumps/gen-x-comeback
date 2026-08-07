@@ -412,7 +412,9 @@ export async function dispatchPlanReadyJobs(
       continue;
     }
 
-    const urls = await issueCredentials(deps, job, lead, false);
+    // Plan Ready's return credential is job-associated so the exchange it
+    // produces correlates back to the originating Plan Ready job.
+    const urls = await issueCredentials(deps, job, lead, true);
     const rendered = renderPlanReady({
       firstName: lead.first_name,
       returnUrl: urls.returnUrl,
