@@ -1,7 +1,11 @@
-// Purpose-limited email preferences. Changing marketing preferences never
-// revokes plan access and never suppresses the transactional Plan Ready email.
+// Purpose-limited Gen X Jumps 7-Day Plan email preferences. This page controls
+// Plan email consent ONLY: general Gen X Jumps marketing consent is never read
+// or written here, and there is no general-marketing UI or sending system.
+// Changing Plan preferences never revokes plan access and never removes or
+// bypasses hard-bounce or complaint suppression.
 import { createFileRoute } from "@tanstack/react-router";
 import { RAW_TOKEN_RE, hashAccessToken } from "@/lib/lead-plan";
+
 
 const PAGE_STYLE =
   "margin:0;background:#ffffff;color:#111111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;";
