@@ -227,7 +227,7 @@ describe("real staging request scope", () => {
     expect(new Set(called)).toEqual(new Set(["claim_email_jobs_for_lead"]));
     expect(called).not.toContain("claim_email_jobs");
     for (const call of rpc.mock.calls) {
-      expect((call[1] as { p_lead_plan_id: string }).p_lead_plan_id).toBe(LEAD);
+      expect((call[1] as unknown as { p_lead_plan_id: string }).p_lead_plan_id).toBe(LEAD);
     }
   });
 
