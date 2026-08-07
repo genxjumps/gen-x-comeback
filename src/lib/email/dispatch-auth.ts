@@ -1,9 +1,6 @@
 // Dispatch endpoint authorization. Server-only.
 //
-// Production authorization is unchanged: `Authorization: Bearer
-// EMAIL_DISPATCH_SECRET`, compared in constant time over equal-length digests.
-//
-// A second, strictly staging-only credential is accepted ONLY when the server
+// Staging credentials are accepted ONLY when the server
 // environment sets EMAIL_FAKE_STAGING_ENABLED=true AND a separate
 // EMAIL_STAGING_DISPATCH_SECRET is configured. Request input alone can never
 // select the staging mode.
@@ -11,7 +8,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { readFakeStagingConfig } from "@/lib/email/staging-config.server";
 import { readRealStagingConfig } from "@/lib/email/real-staging-config.server";
 
-export type DispatchMode = "production" | "fake_staging" | "real_staging";
+export type StagingDispatchMode = "fake_staging" | "real_staging";
 
 /** Constant-time compare over equal-length digests (raw lengths never leak). */
 export function secretsMatch(provided: string, expected: string): boolean {
@@ -30,14 +27,9 @@ function bearer(request: Request): string | null {
 }
 
 /** Returns the authorized dispatch mode, or null when unauthorized. */
-export function authorizeDispatch(request: Request): DispatchMode | null {
+export function authorizeStagingDispatch(request: Request): StagingDispatchMode | null {
   const provided = bearer(request);
   if (!provided) return null;
-
-  const production = process.env["EMAIL_DISPATCH_SECRET"];
-  if (typeof production === "string" && production.trim().length > 0) {
-    if (secretsMatch(provided, production.trim())) return "production";
-  }
 
   // Real-provider staging: server flag plus its own dedicated secret.
   const real = readRealStagingConfig();

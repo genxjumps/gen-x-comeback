@@ -445,12 +445,12 @@ describe("R13 replacement, non-canonical jobs, and missing recipients cancel", (
 });
 
 describe("R14 Halfway priority sits below Plan Completed and above Start Day 1", () => {
-  it("dispatches Halfway before Start Day 1 in the worker endpoint", () => {
+  it("dispatches Halfway before Start Day 1 in the shared worker cycle", () => {
     const route = readFileSync(
-      join(process.cwd(), "src", "routes", "api", "public", "email", "dispatch.ts"),
+      join(process.cwd(), "src", "lib", "email", "dispatch-cycle.server.ts"),
       "utf8",
     );
-    const planReady = route.indexOf("dispatchPlanReadyJobs(runtime.deps");
+    const planReady = route.indexOf("dispatchPlanReadyJobs(deps");
     const halfway = route.indexOf("dispatchHalfwayJobs(");
     const startDayOne = route.indexOf("dispatchStartDayOneJobs(");
     expect(planReady).toBeGreaterThan(-1);

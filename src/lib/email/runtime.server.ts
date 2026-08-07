@@ -16,7 +16,7 @@ export type RuntimeDeps =
   | { enabled: true; deps: DispatchDeps }
   | { enabled: false; missing: string[] };
 
-export async function buildDispatchDeps(): Promise<RuntimeDeps> {
+export async function buildDispatchDeps(invocationId?: string): Promise<RuntimeDeps> {
   const config = readEmailConfig();
   const gate = evaluateSendingGate(config);
   const tokenSecret = readEmailTokenSecret();
@@ -38,7 +38,9 @@ export async function buildDispatchDeps(): Promise<RuntimeDeps> {
   return {
     enabled: true,
     deps: {
-      store: await createSupabaseEmailStore(),
+      store: await createSupabaseEmailStore(
+        invocationId ? { productionInvocationId: invocationId } : undefined,
+      ),
       adapter,
       now: () => new Date(),
       appOrigin: resolveAppOrigin(config),

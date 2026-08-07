@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { readStoredToken } from "@/components/plan-access";
+import { readStoredToken } from "@/lib/access-token";
 import { verifyAccessToken } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/")({

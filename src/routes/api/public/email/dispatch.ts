@@ -21,10 +21,9 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { authorizeDispatch, readStagingLeadPlanId } =
+        const { authorizeStagingDispatch, readStagingLeadPlanId } =
           await import("@/lib/email/dispatch-auth");
-        const mode = authorizeDispatch(request);
-        if (!mode) return unauthorized();
+        const mode = authorizeStagingDispatch(request);
 
         if (mode === "real_staging") {
           // Exactly one required lead_plan_id, validated before any claim.
@@ -134,86 +133,138 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           );
         }
 
-        const { buildDispatchDeps } = await import("@/lib/email/runtime.server");
-        const runtime = await buildDispatchDeps();
+        const {
+          authenticateProductionScheduler,
+          countProductionEligibleJobs,
+          finishSchedulerInvocation,
+          readProductionDispatchGate,
+        } = await import("@/lib/email/production-scheduler.server");
+        const authentication = await authenticateProductionScheduler(request);
+        if (!authentication.ok) return unauthorized();
 
-        if (!runtime.enabled) {
-          // Fail-closed: no provider attempt while prerequisites are missing.
+        const gate = await readProductionDispatchGate();
+        if (!gate.enabled) {
+          await finishSchedulerInvocation({
+            invocationId: authentication.invocationId,
+            succeeded: true,
+            sendingEnabled: false,
+            claimedCount: 0,
+            eligibleJobsAfter: 0,
+            failureCode: gate.reason,
+          });
           return Response.json(
-            { sending_enabled: false, missing_configuration: runtime.missing, claimed: 0 },
-            { status: 200 },
+            {
+              mode: "production",
+              sending_enabled: false,
+              activation_boundary: gate.activationBoundary,
+              claimed: 0,
+              provider_submissions: 0,
+            },
+            { headers: { "cache-control": "no-store" } },
           );
         }
 
-        const {
-          dispatchPlanReadyJobs,
-          dispatchRecoveryJobs,
-          dispatchPlanCompletedJobs,
-          dispatchHalfwayJobs,
-          dispatchStalledJobs,
-          dispatchStartDayOneJobs,
-          dispatchFinalRescueJobs,
-          raiseStalePlanReadyAlerts,
-        } = await import("@/lib/email/dispatch");
-        const summary = await dispatchPlanReadyJobs(runtime.deps, { limit: 25 });
-        const staleAlerts = await raiseStalePlanReadyAlerts(runtime.deps);
+        const { buildDispatchDeps } = await import("@/lib/email/runtime.server");
+        const runtime = await buildDispatchDeps(authentication.invocationId);
 
-        // Recovery runs after Plan Ready and before proactive lifecycle dispatch.
-        // This is execution ordering only: recovery is on-demand product access,
-        // holds no lifecycle priority, consumes no shared 24-hour lifecycle gap,
-        // counts toward no inactivity cap, and never cancels, defers, or
-        // reprioritizes any proactive lifecycle job.
-        const recovery = await dispatchRecoveryJobs(runtime.deps, { limit: 25 });
+        if (!runtime.enabled) {
+          // Fail-closed: no provider attempt while prerequisites are missing.
+          await finishSchedulerInvocation({
+            invocationId: authentication.invocationId,
+            succeeded: false,
+            sendingEnabled: true,
+            claimedCount: 0,
+            eligibleJobsAfter: await countProductionEligibleJobs(),
+            failureCode: "missing_runtime_configuration",
+          });
+          return Response.json(
+            {
+              mode: "production",
+              sending_enabled: false,
+              missing_configuration: runtime.missing,
+              claimed: 0,
+              provider_submissions: 0,
+            },
+            { status: 200, headers: { "cache-control": "no-store" } },
+          );
+        }
 
-        // Lifecycle priority, in exact order: Plan Completed, then Halfway, then
-        // Final Rescue, then Stalled, then Start Day 1. Higher priority runs
-        // first in the tick so it consumes the shared 24-hour lifecycle gap
-        // before any lower-priority message.
-        const { loadPlanCompletedState } = await import("@/lib/email/plan-completed-state.server");
-        const planCompleted = await dispatchPlanCompletedJobs(
-          { ...runtime.deps, loadPlanCompletedState: (job) => loadPlanCompletedState(job) },
-          { limit: 25 },
-        );
-
-        const { loadHalfwayState } = await import("@/lib/email/halfway-state.server");
-        const halfway = await dispatchHalfwayJobs(
-          { ...runtime.deps, loadHalfwayState: (job) => loadHalfwayState(job) },
-          { limit: 25 },
-        );
-
-        // Final Rescue is terminal but outranks the two lower inactivity
-        // messages: a due Final Rescue closes Stalled and Start Day 1.
-        const { loadFinalRescueState } = await import("@/lib/email/final-rescue-state.server");
-        const finalRescue = await dispatchFinalRescueJobs(
-          { ...runtime.deps, loadFinalRescueState: (job) => loadFinalRescueState(job) },
-          { limit: 25 },
-        );
-
-        const { loadStalledState } = await import("@/lib/email/stalled-state.server");
-        const stalled = await dispatchStalledJobs(
-          { ...runtime.deps, loadStalledState: (job) => loadStalledState(job) },
-          { limit: 25 },
-        );
-
-        // Start Day 1 shares the runtime, store, lease claim, and adapter. Its
-        // authoritative read-only state loader is injected here.
-        const { loadStartDayOneState } = await import("@/lib/email/start-day-1-state.server");
-        const startDayOne = await dispatchStartDayOneJobs(
-          { ...runtime.deps, loadStartDayOneState: (job) => loadStartDayOneState(job) },
-          { limit: 25 },
-        );
-
-        return Response.json({
-          sending_enabled: true,
-          ...summary,
-          stale_alerts: staleAlerts,
-          recovery,
-          plan_completed: planCompleted,
-          halfway,
-          stalled,
-          start_day_1: startDayOne,
-          final_rescue: finalRescue,
-        });
+        try {
+          const { runDispatchCycle } = await import("@/lib/email/dispatch-cycle.server");
+          const cycle = await runDispatchCycle(runtime.deps, {
+            limit: gate.providerSubmissionLimit,
+            staleAlerts: true,
+          });
+          const summaries = [
+            cycle.planReady,
+            cycle.recovery,
+            cycle.planCompleted,
+            cycle.halfway,
+            cycle.finalRescue,
+            cycle.stalled,
+            cycle.startDayOne,
+          ];
+          const claimed = summaries.reduce((sum, value) => sum + value.claimed, 0);
+          const providerSubmissions = summaries.reduce(
+            (sum, value) =>
+              sum +
+              value.outcomes.filter((outcome) => outcome.outcome === "provider_accepted").length,
+            0,
+          );
+          const eligibleJobsAfter = await countProductionEligibleJobs();
+          await finishSchedulerInvocation({
+            invocationId: authentication.invocationId,
+            succeeded: true,
+            sendingEnabled: true,
+            claimedCount: claimed,
+            eligibleJobsAfter,
+          });
+          return Response.json(
+            {
+              mode: "production",
+              sending_enabled: true,
+              activation_boundary: gate.activationBoundary,
+              provider_submission_limit: gate.providerSubmissionLimit,
+              provider_submissions: providerSubmissions,
+              ...cycle.planReady,
+              claimed,
+              stale_alerts: cycle.staleAlerts,
+              recovery: cycle.recovery,
+              plan_completed: cycle.planCompleted,
+              halfway: cycle.halfway,
+              stalled: cycle.stalled,
+              start_day_1: cycle.startDayOne,
+              final_rescue: cycle.finalRescue,
+            },
+            { headers: { "cache-control": "no-store" } },
+          );
+        } catch {
+          const { disableProductionSending } =
+            await import("@/lib/email/production-scheduler.server");
+          try {
+            await disableProductionSending("dispatch_exception");
+          } catch {
+            // The response remains a failure. Operational evidence already
+            // records any completed provider reservation, and no retry occurs
+            // inside this invocation.
+          }
+          try {
+            await finishSchedulerInvocation({
+              invocationId: authentication.invocationId,
+              succeeded: false,
+              sendingEnabled: false,
+              claimedCount: 0,
+              eligibleJobsAfter: await countProductionEligibleJobs(),
+              failureCode: "dispatch_exception_send_gate_disabled",
+            });
+          } catch {
+            // Fail closed even if invocation finalization is unavailable.
+          }
+          return Response.json(
+            { mode: "production", sending_enabled: false, error: "dispatch_failed" },
+            { status: 500, headers: { "cache-control": "no-store" } },
+          );
+        }
       },
     },
   },

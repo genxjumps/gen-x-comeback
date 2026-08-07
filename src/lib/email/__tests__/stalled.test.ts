@@ -384,9 +384,9 @@ describe("S6 priority: Plan Completed > Halfway > Stalled > Start Day 1 > Final 
     });
   });
 
-  it("runs Stalled above Start Day 1 in the worker route", () => {
+  it("runs Stalled above Start Day 1 in the shared worker cycle", () => {
     const route = readFileSync(
-      join(process.cwd(), "src", "routes", "api", "public", "email", "dispatch.ts"),
+      join(process.cwd(), "src", "lib", "email", "dispatch-cycle.server.ts"),
       "utf8",
     );
     expect(route.indexOf("dispatchHalfwayJobs(")).toBeLessThan(

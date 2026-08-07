@@ -10,7 +10,7 @@ import { buildPlan, isCompleteDraft, readAnswers, type Answers } from "@/lib/pla
 import { ACCESS_TOKEN_STORAGE_KEY, CONSENT_COPY, RAW_TOKEN_RE } from "@/lib/lead-plan";
 import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
 import { getSubmissionId, mintCredential } from "@/lib/plan-submission";
-import { readStoredToken } from "@/components/plan-access";
+import { readStoredToken } from "@/lib/access-token";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({

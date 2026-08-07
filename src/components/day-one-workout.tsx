@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { readStoredToken } from "@/components/plan-access";
+import { readStoredToken } from "@/lib/access-token";
 import { cardioGuidance, type CardioContext } from "@/lib/lead-plan";
 import { completePlanDay, getDayOneBrief } from "@/lib/lead.functions";
 import {

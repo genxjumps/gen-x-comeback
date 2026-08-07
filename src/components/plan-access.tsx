@@ -1,16 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { ACCESS_TOKEN_STORAGE_KEY, RAW_TOKEN_RE } from "@/lib/lead-plan";
-
-/** Reads the stored raw access token for private plan pages. */
-export function readStoredToken(): string | null {
-  try {
-    const v = window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-    return v && RAW_TOKEN_RE.test(v) ? v : null;
-  } catch {
-    return null;
-  }
-}
 
 /** Controlled return path shown when access is missing or invalid. */
 export function AccessDenied() {

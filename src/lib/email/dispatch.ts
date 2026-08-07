@@ -369,19 +369,45 @@ async function attemptSend(
   request: EmailSendRequest,
 ): Promise<{ jobId: string; outcome: JobOutcome; errorCode?: string }> {
   const attemptedAt = deps.now().toISOString();
-  const fence = await deps.store.recordFirstProviderAttempt(
+  const authorization = await deps.store.recordFirstProviderAttempt(
     job.job_id,
     job.claim_token,
     attemptedAt,
   );
   // Consent withdrawn, or the boundary moved, after the earlier read: the job is
   // closed permanently instead of sending.
-  if (fence === "consent_blocked") return finish(deps, job, "canceled", {});
-  if (fence !== "ok") return { jobId: job.job_id, outcome: "lost_lease" };
+  if (
+    authorization.outcome === "consent_blocked" ||
+    authorization.outcome === "activation_blocked"
+  ) {
+    return finish(deps, job, "canceled", {});
+  }
+  if (authorization.outcome === "suppression_blocked") {
+    return finish(deps, job, "suppressed", { reason: "production_suppression_fence" });
+  }
+  if (
+    authorization.outcome === "limit_reached" ||
+    authorization.outcome === "controlled_scope_blocked" ||
+    authorization.outcome === "sending_disabled"
+  ) {
+    return deferSend(deps, job, new Date(deps.now().getTime() + 5 * 60_000).toISOString());
+  }
+  if (authorization.outcome !== "ok") {
+    return { jobId: job.job_id, outcome: "lost_lease" };
+  }
 
   const result = await deps.adapter.send(request);
 
   if (result.outcome === "accepted") {
+    const completed = await deps.store.completeProviderAttempt({
+      submissionAttemptId: authorization.submissionAttemptId,
+      outcome: "accepted",
+      completedAt: deps.now().toISOString(),
+      providerKey: result.providerKey,
+      providerMessageId: result.providerMessageId,
+      providerAcceptedAt: result.acceptedAt,
+    });
+    if (!completed) throw new Error("provider_attempt_evidence_not_completed");
     return finish(deps, job, "provider_accepted", {
       providerKey: result.providerKey,
       providerMessageId: result.providerMessageId,
@@ -395,12 +421,38 @@ async function attemptSend(
       ? await deps.adapter.lookupByIdempotencyKey(job.idempotency_key)
       : null;
     if (reconciled) {
+      const completed = await deps.store.completeProviderAttempt({
+        submissionAttemptId: authorization.submissionAttemptId,
+        outcome: "accepted",
+        completedAt: deps.now().toISOString(),
+        providerKey: deps.adapter.key,
+        providerMessageId: reconciled.providerMessageId,
+        providerAcceptedAt: reconciled.acceptedAt,
+      });
+      if (!completed) throw new Error("provider_attempt_evidence_not_completed");
       return finish(deps, job, "provider_accepted", {
         providerKey: deps.adapter.key,
         providerMessageId: reconciled.providerMessageId,
         acceptedAt: reconciled.acceptedAt,
       });
     }
+    const completed = await deps.store.completeProviderAttempt({
+      submissionAttemptId: authorization.submissionAttemptId,
+      outcome: "uncertain",
+      completedAt: deps.now().toISOString(),
+      providerKey: deps.adapter.key,
+      outcomeCode: result.errorCode,
+    });
+    if (!completed) throw new Error("provider_attempt_evidence_not_completed");
+  } else {
+    const completed = await deps.store.completeProviderAttempt({
+      submissionAttemptId: authorization.submissionAttemptId,
+      outcome: result.outcome,
+      completedAt: deps.now().toISOString(),
+      providerKey: deps.adapter.key,
+      outcomeCode: result.errorCode,
+    });
+    if (!completed) throw new Error("provider_attempt_evidence_not_completed");
   }
 
   if (result.outcome === "permanent") {

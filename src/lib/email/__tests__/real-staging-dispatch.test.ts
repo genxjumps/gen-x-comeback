@@ -3,13 +3,12 @@
 // and provider boundary is mocked; the Resend HTTP call is never performed.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { authorizeDispatch, readStagingLeadPlanId } from "@/lib/email/dispatch-auth";
+import { authorizeStagingDispatch, readStagingLeadPlanId } from "@/lib/email/dispatch-auth";
 import { evaluateSendingGate } from "@/lib/email/config.server";
 import { makeJob, makeLead } from "./memory-store";
 
 const LEAD = "33333333-3333-4333-8333-333333333333";
 const OTHER_LEAD = "44444444-4444-4444-8444-444444444444";
-const PROD_SECRET = "production-dispatch-secret-0123456789";
 const FAKE_SECRET = "fake-staging-dispatch-secret-0123456789";
 const REAL_SECRET = "real-staging-dispatch-secret-0123456789";
 const TOKEN_SECRET = "token-secret-token-secret-token-secret";
@@ -29,7 +28,6 @@ const ORIGINAL_ENV = { ...process.env };
 function resetEnv() {
   process.env = { ...ORIGINAL_ENV };
   for (const name of [
-    "EMAIL_DISPATCH_SECRET",
     "EMAIL_FAKE_STAGING_ENABLED",
     "EMAIL_STAGING_DISPATCH_SECRET",
     "EMAIL_REAL_STAGING_ENABLED",
@@ -111,40 +109,37 @@ afterEach(() => {
 describe("real staging authorization", () => {
   it("rejects the real-staging secret while the real-staging flag is false", () => {
     process.env["EMAIL_REAL_STAGING_DISPATCH_SECRET"] = REAL_SECRET;
-    expect(authorizeDispatch(req(REAL_SECRET))).toBeNull();
+    expect(authorizeStagingDispatch(req(REAL_SECRET))).toBeNull();
   });
 
   it("rejects a wrong or missing real-staging secret while the flag is true", () => {
     process.env["EMAIL_REAL_STAGING_ENABLED"] = "true";
-    expect(authorizeDispatch(req(REAL_SECRET))).toBeNull();
+    expect(authorizeStagingDispatch(req(REAL_SECRET))).toBeNull();
 
     process.env["EMAIL_REAL_STAGING_DISPATCH_SECRET"] = REAL_SECRET;
-    expect(authorizeDispatch(req("not-the-real-secret"))).toBeNull();
-    expect(authorizeDispatch(req())).toBeNull();
-    expect(authorizeDispatch(req(REAL_SECRET))).toBe("real_staging");
+    expect(authorizeStagingDispatch(req("not-the-real-secret"))).toBeNull();
+    expect(authorizeStagingDispatch(req())).toBeNull();
+    expect(authorizeStagingDispatch(req(REAL_SECRET))).toBe("real_staging");
   });
 
-  it("keeps production authorization unchanged and distinct from both staging modes", () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = PROD_SECRET;
+  it("keeps both staging credentials distinct", () => {
     process.env["EMAIL_REAL_STAGING_ENABLED"] = "true";
     process.env["EMAIL_REAL_STAGING_DISPATCH_SECRET"] = REAL_SECRET;
     process.env["EMAIL_FAKE_STAGING_ENABLED"] = "true";
     process.env["EMAIL_STAGING_DISPATCH_SECRET"] = FAKE_SECRET;
 
-    expect(authorizeDispatch(req(PROD_SECRET))).toBe("production");
-    expect(authorizeDispatch(req(REAL_SECRET))).toBe("real_staging");
-    expect(authorizeDispatch(req(FAKE_SECRET))).toBe("fake_staging");
-    expect(authorizeDispatch(req("wrong"))).toBeNull();
+    expect(authorizeStagingDispatch(req(REAL_SECRET))).toBe("real_staging");
+    expect(authorizeStagingDispatch(req(FAKE_SECRET))).toBe("fake_staging");
+    expect(authorizeStagingDispatch(req("wrong"))).toBeNull();
   });
 
-  it("does not weaken the production sending gate", () => {
+  it("does not weaken the provider runtime prerequisites", () => {
     realStagingReadyEnv();
     const gate = evaluateSendingGate();
     expect(gate.enabled).toBe(false);
     if (!gate.enabled) {
       expect(gate.missing).toEqual(
         expect.arrayContaining([
-          "EMAIL_SENDING_ENABLED",
           "EMAIL_SENDING_DOMAIN_VERIFIED",
           "EMAIL_CLICK_TRACKING_DISABLED",
           "EMAIL_ALERTS_ENABLED",

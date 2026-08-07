@@ -156,6 +156,213 @@ export type Database = {
           },
         ];
       };
+      email_production_control: {
+        Row: {
+          activated_at: string | null;
+          activation_boundary: string | null;
+          controlled_lead_plan_id: string | null;
+          cron_job_id: number | null;
+          genuine_plans_admitted: boolean;
+          provider_submission_limit: number;
+          scheduler_configured_at: string | null;
+          scheduler_secret_sha256: string | null;
+          scheduler_url: string | null;
+          sending_enabled: boolean;
+          singleton_id: number;
+          updated_at: string;
+        };
+        Insert: {
+          activated_at?: string | null;
+          activation_boundary?: string | null;
+          controlled_lead_plan_id?: string | null;
+          cron_job_id?: number | null;
+          genuine_plans_admitted?: boolean;
+          provider_submission_limit?: number;
+          scheduler_configured_at?: string | null;
+          scheduler_secret_sha256?: string | null;
+          scheduler_url?: string | null;
+          sending_enabled?: boolean;
+          singleton_id?: number;
+          updated_at?: string;
+        };
+        Update: {
+          activated_at?: string | null;
+          activation_boundary?: string | null;
+          controlled_lead_plan_id?: string | null;
+          cron_job_id?: number | null;
+          genuine_plans_admitted?: boolean;
+          provider_submission_limit?: number;
+          scheduler_configured_at?: string | null;
+          scheduler_secret_sha256?: string | null;
+          scheduler_url?: string | null;
+          sending_enabled?: boolean;
+          singleton_id?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "email_production_control_controlled_lead_plan_id_fkey";
+            columns: ["controlled_lead_plan_id"];
+            isOneToOne: false;
+            referencedRelation: "lead_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      email_provider_submissions: {
+        Row: {
+          completed_at: string | null;
+          created_at: string;
+          idempotency_key: string;
+          invocation_id: string;
+          job_id: string;
+          job_type: string;
+          lead_plan_id: string;
+          outcome_code: string | null;
+          provider_accepted_at: string | null;
+          provider_key: string | null;
+          provider_message_id: string | null;
+          reserved_at: string;
+          status: string;
+          submission_attempt_id: string;
+          template_version: string;
+        };
+        Insert: {
+          completed_at?: string | null;
+          created_at?: string;
+          idempotency_key: string;
+          invocation_id: string;
+          job_id: string;
+          job_type: string;
+          lead_plan_id: string;
+          outcome_code?: string | null;
+          provider_accepted_at?: string | null;
+          provider_key?: string | null;
+          provider_message_id?: string | null;
+          reserved_at?: string;
+          status?: string;
+          submission_attempt_id?: string;
+          template_version: string;
+        };
+        Update: {
+          completed_at?: string | null;
+          created_at?: string;
+          idempotency_key?: string;
+          invocation_id?: string;
+          job_id?: string;
+          job_type?: string;
+          lead_plan_id?: string;
+          outcome_code?: string | null;
+          provider_accepted_at?: string | null;
+          provider_key?: string | null;
+          provider_message_id?: string | null;
+          reserved_at?: string;
+          status?: string;
+          submission_attempt_id?: string;
+          template_version?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "email_provider_submissions_invocation_id_fkey";
+            columns: ["invocation_id"];
+            isOneToOne: false;
+            referencedRelation: "email_scheduler_invocations";
+            referencedColumns: ["invocation_id"];
+          },
+          {
+            foreignKeyName: "email_provider_submissions_job_id_fkey";
+            columns: ["job_id"];
+            isOneToOne: false;
+            referencedRelation: "email_jobs";
+            referencedColumns: ["job_id"];
+          },
+          {
+            foreignKeyName: "email_provider_submissions_lead_plan_id_fkey";
+            columns: ["lead_plan_id"];
+            isOneToOne: false;
+            referencedRelation: "lead_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      email_scheduler_auth_attempts: {
+        Row: {
+          attempted_at: string;
+          id: string;
+          invocation_reference: string | null;
+          result: string;
+        };
+        Insert: {
+          attempted_at?: string;
+          id?: string;
+          invocation_reference?: string | null;
+          result: string;
+        };
+        Update: {
+          attempted_at?: string;
+          id?: string;
+          invocation_reference?: string | null;
+          result?: string;
+        };
+        Relationships: [];
+      };
+      email_scheduler_invocations: {
+        Row: {
+          auth_deadline: string;
+          auth_result: string | null;
+          authenticated_at: string | null;
+          claimed_count: number;
+          completed_at: string | null;
+          created_at: string;
+          dispatch_succeeded: boolean | null;
+          eligible_jobs_after: number;
+          failure_code: string | null;
+          invocation_id: string;
+          invoked_at: string;
+          provider_accepted_count: number;
+          provider_attempt_count: number;
+          sending_enabled: boolean | null;
+          source: string;
+          transport_request_id: number | null;
+        };
+        Insert: {
+          auth_deadline: string;
+          auth_result?: string | null;
+          authenticated_at?: string | null;
+          claimed_count?: number;
+          completed_at?: string | null;
+          created_at?: string;
+          dispatch_succeeded?: boolean | null;
+          eligible_jobs_after?: number;
+          failure_code?: string | null;
+          invocation_id?: string;
+          invoked_at?: string;
+          provider_accepted_count?: number;
+          provider_attempt_count?: number;
+          sending_enabled?: boolean | null;
+          source?: string;
+          transport_request_id?: number | null;
+        };
+        Update: {
+          auth_deadline?: string;
+          auth_result?: string | null;
+          authenticated_at?: string | null;
+          claimed_count?: number;
+          completed_at?: string | null;
+          created_at?: string;
+          dispatch_succeeded?: boolean | null;
+          eligible_jobs_after?: number;
+          failure_code?: string | null;
+          invocation_id?: string;
+          invoked_at?: string;
+          provider_accepted_count?: number;
+          provider_attempt_count?: number;
+          sending_enabled?: boolean | null;
+          source?: string;
+          transport_request_id?: number | null;
+        };
+        Relationships: [];
+      };
       email_preference_credentials: {
         Row: {
           credential_id: string;
@@ -682,6 +889,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admit_genuine_email_plans: { Args: never; Returns: boolean };
       apply_email_delivery_event: {
         Args: {
           p_job_id: string;
@@ -697,6 +905,15 @@ export type Database = {
           p_job_id: string;
         };
         Returns: string;
+      };
+      begin_production_provider_attempt: {
+        Args: {
+          p_attempted_at: string;
+          p_claim_token: string;
+          p_invocation_id: string;
+          p_job_id: string;
+        };
+        Returns: Json;
       };
       cancel_unsent_proactive_jobs: {
         Args: { p_at: string; p_lead_plan_id: string };
@@ -787,6 +1004,21 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      claim_production_email_jobs: {
+        Args: {
+          p_invocation_id: string;
+          p_job_type: string;
+          p_lease_seconds?: number;
+          p_limit?: number;
+        };
+        Returns: Database["public"]["Tables"]["email_jobs"]["Row"][];
+        SetofOptions: {
+          from: "*";
+          to: "email_jobs";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       commit_plan_version: {
         Args: {
           p_assessment: Json;
@@ -827,10 +1059,44 @@ export type Database = {
         Args: { p_bucket: string; p_limit: number; p_window_seconds: number };
         Returns: boolean;
       };
+      authenticate_email_scheduler_invocation: {
+        Args: {
+          p_authenticated_at?: string;
+          p_invocation_id: string;
+          p_request_timestamp: string;
+          p_secret_sha256: string;
+        };
+        Returns: string;
+      };
+      complete_production_provider_attempt: {
+        Args: {
+          p_completed_at: string;
+          p_outcome: string;
+          p_outcome_code?: string;
+          p_provider_accepted_at?: string;
+          p_provider_key?: string;
+          p_provider_message_id?: string;
+          p_submission_attempt_id: string;
+        };
+        Returns: boolean;
+      };
+      configure_email_production_scheduler: {
+        Args: { p_url: string };
+        Returns: Json;
+      };
+      count_production_eligible_email_jobs: { Args: never; Returns: number };
+      create_email_production_cron: { Args: never; Returns: number };
+      disable_email_production_sending: {
+        Args: { p_reason: string };
+        Returns: boolean;
+      };
       email_delivery_rank: {
         Args: { p_status: Database["public"]["Enums"]["email_delivery_status"] };
         Returns: number;
       };
+      email_production_warning_state: { Args: never; Returns: Json };
+      enable_email_production_sending: { Args: never; Returns: boolean };
+      establish_email_production_activation: { Args: never; Returns: Json };
       finish_email_job: {
         Args: {
           p_claim_token: string;
@@ -841,7 +1107,19 @@ export type Database = {
         };
         Returns: boolean;
       };
-      invoke_email_dispatch_scheduler: { Args: never; Returns: undefined };
+      finish_email_scheduler_invocation: {
+        Args: {
+          p_claimed_count: number;
+          p_completed_at?: string;
+          p_dispatch_succeeded: boolean;
+          p_eligible_jobs_after: number;
+          p_failure_code?: string;
+          p_invocation_id: string;
+          p_sending_enabled: boolean;
+        };
+        Returns: boolean;
+      };
+      invoke_email_dispatch_scheduler: { Args: never; Returns: string };
       mark_day_1_started: {
         Args: { p_lead_plan_id: string; p_plan_version_id: string };
         Returns: {
@@ -853,9 +1131,22 @@ export type Database = {
         Args: { p_cutoff: string; p_job_type: string };
         Returns: number;
       };
+      pause_email_production_cron: { Args: never; Returns: boolean };
       request_plan_recovery: {
         Args: { p_email_normalized: string; p_request_id: string };
         Returns: undefined;
+      };
+      record_email_scheduler_auth_attempt: {
+        Args: {
+          p_attempted_at?: string;
+          p_invocation_reference: string;
+          p_result: string;
+        };
+        Returns: undefined;
+      };
+      set_email_production_controlled_plan: {
+        Args: { p_lead_plan_id: string };
+        Returns: boolean;
       };
       set_plan_email_consent: {
         Args: { p_active: boolean; p_lead_plan_id: string; p_source: string };

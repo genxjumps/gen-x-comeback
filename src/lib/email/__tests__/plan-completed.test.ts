@@ -74,7 +74,7 @@ const REASSESSMENT_MIGRATION = readFileSync(
 );
 
 const DISPATCH_ROUTE = readFileSync(
-  join(process.cwd(), "src", "routes", "api", "public", "email", "dispatch.ts"),
+  join(process.cwd(), "src", "lib", "email", "dispatch-cycle.server.ts"),
   "utf8",
 );
 
@@ -479,7 +479,7 @@ describe("P4 dispatch performs exactly one guarded provider attempt", () => {
     expect(order.every((index) => index > 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
     // Plan Ready keeps its existing separate immediate pipeline.
-    expect(DISPATCH_ROUTE).toContain("dispatchPlanReadyJobs(runtime.deps");
+    expect(DISPATCH_ROUTE).toContain("dispatchPlanReadyJobs(deps");
     expect(PLAN_READY_JOB_TYPE).toBe("plan_ready");
   });
 });

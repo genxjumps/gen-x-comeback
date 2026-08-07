@@ -35,19 +35,16 @@ async function handlerFor(
 
 const DISPATCH_URL = "https://app.genxjumps.com/api/public/email/dispatch";
 const SECRET = "dispatch-secret-value-0123456789";
+const INVOCATION = "11111111-1111-4111-8111-111111111111";
+const TIMESTAMP = "2026-08-07T19:30:00.000Z";
 
 describe("POST /api/public/email/dispatch authorization", () => {
-  const original = { ...process.env };
-
   beforeEach(() => {
-    delete process.env["EMAIL_DISPATCH_SECRET"];
-    delete process.env["SUPABASE_ANON_KEY"];
-    // Keep the sending gate incomplete so authorization is the only variable.
-    delete process.env["EMAIL_SENDING_ENABLED"];
+    vi.resetModules();
   });
 
   afterEach(() => {
-    process.env = { ...original };
+    vi.restoreAllMocks();
   });
 
   async function post(headers: Record<string, string>): Promise<Response> {
@@ -55,55 +52,89 @@ describe("POST /api/public/email/dispatch authorization", () => {
     return handler({ request: new Request(DISPATCH_URL, { method: "POST", headers }) });
   }
 
-  it("rejects when the server secret is not configured", async () => {
-    const res = await post({ authorization: `Bearer ${SECRET}` });
-    expect(res.status).toBe(401);
-  });
-
   it("rejects when no authorization header is present", async () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = SECRET;
+    vi.doMock("@/integrations/supabase/client.server", () => ({
+      supabaseAdmin: { rpc: vi.fn(async () => ({ data: null, error: null })) },
+    }));
     expect((await post({})).status).toBe(401);
   });
 
   it("rejects malformed and non-Bearer authorization headers", async () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = SECRET;
+    vi.doMock("@/integrations/supabase/client.server", () => ({
+      supabaseAdmin: { rpc: vi.fn(async () => ({ data: null, error: null })) },
+    }));
     for (const value of [SECRET, `Basic ${SECRET}`, "Bearer", "Bearer ", `bearer${SECRET}`]) {
       expect((await post({ authorization: value })).status).toBe(401);
     }
   });
 
-  it("rejects a wrong bearer secret", async () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = SECRET;
-    expect((await post({ authorization: "Bearer not-the-secret" })).status).toBe(401);
+  it("rejects invalid and stale scheduler authentication", async () => {
+    const rpc = vi
+      .fn()
+      .mockResolvedValueOnce({ data: "invalid", error: null })
+      .mockResolvedValueOnce({ data: "stale", error: null });
+    vi.doMock("@/integrations/supabase/client.server", () => ({ supabaseAdmin: { rpc } }));
+    const headers = {
+      authorization: `Bearer ${SECRET}`,
+      "x-scheduler-invocation-id": INVOCATION,
+      "x-scheduler-timestamp": TIMESTAMP,
+    };
+    expect((await post(headers)).status).toBe(401);
+    vi.resetModules();
+    vi.doMock("@/integrations/supabase/client.server", () => ({ supabaseAdmin: { rpc } }));
+    expect((await post(headers)).status).toBe(401);
   });
 
   it("no longer accepts Supabase anon or publishable keys", async () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = SECRET;
-    process.env["SUPABASE_ANON_KEY"] = "anon-key-value";
-    process.env["SUPABASE_PUBLISHABLE_KEY"] = "sb_publishable_test";
+    vi.doMock("@/integrations/supabase/client.server", () => ({
+      supabaseAdmin: { rpc: vi.fn(async () => ({ data: "invalid", error: null })) },
+    }));
     for (const key of ["anon-key-value", "sb_publishable_test"]) {
-      expect((await post({ authorization: `Bearer ${key}` })).status).toBe(401);
+      expect(
+        (
+          await post({
+            authorization: `Bearer ${key}`,
+            "x-scheduler-invocation-id": INVOCATION,
+            "x-scheduler-timestamp": TIMESTAMP,
+          })
+        ).status,
+      ).toBe(401);
       expect((await post({ apikey: key })).status).toBe(401);
     }
   });
 
-  it("rejects apikey-only authorization even when it carries the dispatch secret", async () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = SECRET;
+  it("rejects apikey-only authorization", async () => {
+    vi.doMock("@/integrations/supabase/client.server", () => ({
+      supabaseAdmin: { rpc: vi.fn(async () => ({ data: null, error: null })) },
+    }));
     expect((await post({ apikey: SECRET })).status).toBe(401);
   });
 
-  it("passes a correct bearer secret through to the fail-closed runtime gate", async () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = SECRET;
-    const res = await post({ authorization: `Bearer ${SECRET}` });
+  it("accepts one fresh invocation but sends zero while the database gate is disabled", async () => {
+    vi.doMock("@/lib/email/production-scheduler.server", () => ({
+      authenticateProductionScheduler: async () => ({ ok: true, invocationId: INVOCATION }),
+      readProductionDispatchGate: async () => ({
+        enabled: false,
+        reason: "production_send_disabled",
+        activationBoundary: null,
+      }),
+      finishSchedulerInvocation: vi.fn(async () => undefined),
+      countProductionEligibleJobs: async () => 0,
+    }));
+    const res = await post({
+      authorization: `Bearer ${SECRET}`,
+      "x-scheduler-invocation-id": INVOCATION,
+      "x-scheduler-timestamp": TIMESTAMP,
+    });
     expect(res.status).toBe(200);
     const body = (await res.json()) as {
       sending_enabled: boolean;
-      missing_configuration: string[];
       claimed: number;
+      provider_submissions: number;
     };
     expect(body.sending_enabled).toBe(false);
     expect(body.claimed).toBe(0);
-    expect(body.missing_configuration).toContain("EMAIL_SENDING_ENABLED");
+    expect(body.provider_submissions).toBe(0);
   });
 });
 

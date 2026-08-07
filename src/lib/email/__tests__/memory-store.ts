@@ -119,27 +119,31 @@ export function createMemoryStore(now: () => Date): MemoryStore {
 
     async recordFirstProviderAttempt(jobId, claimToken, attemptedAt) {
       const job = jobs.get(jobId);
-      if (!job) return "lost_lease";
+      if (!job) return { outcome: "lost_lease" };
       // Same fencing as every other write: a lost lease records nothing.
       if (job.status !== "processing" || !claimToken || job.claim_token !== claimToken) {
-        return "lost_lease";
+        return { outcome: "lost_lease" };
       }
       // Authoritative final Plan-consent verification, in the same atomic step
       // as lease ownership. Mirrors public.begin_provider_attempt. Recovery is
       // transactional and is never consent-gated here.
       if (isProactiveJobType(job.job_type)) {
         const lead = leads.get(job.lead_plan_id);
-        if (!lead || !lead.plan_email_consent_active) return "consent_blocked";
+        if (!lead || !lead.plan_email_consent_active) return { outcome: "consent_blocked" };
         if (
           lead.plan_email_consent_at &&
           new Date(job.created_at).getTime() < new Date(lead.plan_email_consent_at).getTime()
         ) {
-          return "consent_blocked";
+          return { outcome: "consent_blocked" };
         }
       }
       // The first recorded boundary is immutable across later provider retries.
       job.first_provider_attempt_at = job.first_provider_attempt_at ?? attemptedAt;
-      return "ok";
+      return { outcome: "ok", submissionAttemptId: null };
+    },
+
+    async completeProviderAttempt() {
+      return true;
     },
 
     async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {

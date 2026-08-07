@@ -2,7 +2,8 @@ import { useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { AccessDenied, readStoredToken } from "@/components/plan-access";
+import { AccessDenied } from "@/components/plan-access";
+import { readStoredToken } from "@/lib/access-token";
 import {
   TOTAL_ASSIGNMENTS,
   assignmentKind,

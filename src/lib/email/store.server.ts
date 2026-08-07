@@ -5,7 +5,12 @@ import type {
   LeadRow,
   OperationalAlertInput,
 } from "@/lib/email/types";
-import type { EmailStore, ProviderAttemptFence, ReturnTokenInsert } from "@/lib/email/store";
+import type {
+  EmailStore,
+  ProviderAttemptAuthorization,
+  ProviderAttemptFence,
+  ReturnTokenInsert,
+} from "@/lib/email/store";
 
 /**
  * Narrowest structural view of the service-role client for the authoritative
@@ -19,6 +24,21 @@ type ProviderAttemptRpcClient = {
   ): PromiseLike<{ data: ProviderAttemptFence | null; error: { message: string } | null }>;
 };
 
+type ProductionAttemptRpcClient = {
+  rpc(
+    fn: "begin_production_provider_attempt",
+    args: {
+      p_job_id: string;
+      p_claim_token: string | null;
+      p_invocation_id: string;
+      p_attempted_at: string;
+    },
+  ): PromiseLike<{
+    data: { outcome?: string; submission_attempt_id?: string } | null;
+    error: { message: string } | null;
+  }>;
+};
+
 /**
  * `options.leadPlanScope` is a staging-only, fake-provider affordance: when set,
  * job claiming is routed through `claim_email_jobs_for_lead`, which applies an
@@ -28,12 +48,25 @@ type ProviderAttemptRpcClient = {
  */
 export async function createSupabaseEmailStore(options?: {
   leadPlanScope?: string;
+  productionInvocationId?: string;
 }): Promise<EmailStore> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const leadPlanScope = options?.leadPlanScope ?? null;
+  const productionInvocationId = options?.productionInvocationId ?? null;
 
   const store: EmailStore = {
     async claimJobs(jobType, limit, leaseSeconds) {
+      if (productionInvocationId) {
+        const { data, error } = await supabaseAdmin.rpc("claim_production_email_jobs", {
+          p_job_type: jobType,
+          p_invocation_id: productionInvocationId,
+          p_limit: limit,
+          p_lease_seconds: leaseSeconds,
+        });
+        if (error) throw new Error(error.message);
+        return (data ?? []) as unknown as EmailJobRow[];
+      }
+
       if (leadPlanScope) {
         // Narrowly typed boundary: the staging RPC is intentionally absent from
         // the generated Supabase types, which are never regenerated here.
@@ -134,6 +167,33 @@ export async function createSupabaseEmailStore(options?: {
     },
 
     async recordFirstProviderAttempt(jobId, claimToken, attemptedAt) {
+      if (productionInvocationId) {
+        const client = supabaseAdmin as unknown as ProductionAttemptRpcClient;
+        const { data, error } = await client.rpc("begin_production_provider_attempt", {
+          p_job_id: jobId,
+          p_claim_token: claimToken,
+          p_invocation_id: productionInvocationId,
+          p_attempted_at: attemptedAt,
+        });
+        if (error) throw new Error(error.message);
+        const allowed = new Set<ProviderAttemptFence>([
+          "ok",
+          "lost_lease",
+          "authentication_blocked",
+          "sending_disabled",
+          "activation_blocked",
+          "controlled_scope_blocked",
+          "consent_blocked",
+          "suppression_blocked",
+          "limit_reached",
+        ]);
+        const raw = data?.outcome as ProviderAttemptFence | undefined;
+        const outcome = raw && allowed.has(raw) ? raw : "lost_lease";
+        const result: ProviderAttemptAuthorization = { outcome };
+        if (data?.submission_attempt_id) result.submissionAttemptId = data.submission_attempt_id;
+        return result;
+      }
+
       // Authoritative final fence, executed as one atomic locked database step
       // immediately before any provider call. It verifies current lease /
       // processing ownership and, for proactive lifecycle jobs, that Plan-email
@@ -149,9 +209,24 @@ export async function createSupabaseEmailStore(options?: {
         p_attempted_at: attemptedAt,
       });
       if (error) throw new Error(error.message);
-      if (data === "ok") return "ok";
-      if (data === "consent_blocked") return "consent_blocked";
-      return "lost_lease";
+      if (data === "ok") return { outcome: "ok", submissionAttemptId: null };
+      if (data === "consent_blocked") return { outcome: "consent_blocked" };
+      return { outcome: "lost_lease" };
+    },
+
+    async completeProviderAttempt(input) {
+      if (!productionInvocationId || !input.submissionAttemptId) return true;
+      const { data, error } = await supabaseAdmin.rpc("complete_production_provider_attempt", {
+        p_submission_attempt_id: input.submissionAttemptId,
+        p_outcome: input.outcome,
+        p_completed_at: input.completedAt,
+        p_provider_key: input.providerKey ?? undefined,
+        p_provider_message_id: input.providerMessageId ?? undefined,
+        p_provider_accepted_at: input.providerAcceptedAt ?? undefined,
+        p_outcome_code: input.outcomeCode ?? undefined,
+      });
+      if (error) throw new Error(error.message);
+      return data === true;
     },
 
     async deferJob(jobId, claimToken, nextAttemptAt, restoredAttemptCount) {

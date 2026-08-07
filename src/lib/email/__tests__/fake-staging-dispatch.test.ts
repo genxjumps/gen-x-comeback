@@ -3,7 +3,7 @@
 // provider boundary is either mocked or replaced by the in-memory store.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { authorizeDispatch, readStagingLeadPlanId } from "@/lib/email/dispatch-auth";
+import { authorizeStagingDispatch, readStagingLeadPlanId } from "@/lib/email/dispatch-auth";
 import { readFakeStagingConfig } from "@/lib/email/staging-config.server";
 import { evaluateSendingGate } from "@/lib/email/config.server";
 import { dispatchPlanReadyJobs, type DispatchDeps } from "@/lib/email/dispatch";
@@ -12,7 +12,6 @@ import { createMemoryStore, makeJob, makeLead } from "./memory-store";
 
 const LEAD = "11111111-1111-4111-8111-111111111111";
 const OTHER_LEAD = "22222222-2222-4222-8222-222222222222";
-const PROD_SECRET = "production-dispatch-secret-0123456789";
 const STAGING_SECRET = "staging-dispatch-secret-0123456789";
 const TOKEN_SECRET = "token-secret-token-secret-token-secret";
 const FIXED_NOW = new Date("2026-02-01T12:00:00.000Z");
@@ -29,7 +28,6 @@ const ORIGINAL_ENV = { ...process.env };
 
 function resetEnv() {
   process.env = { ...ORIGINAL_ENV };
-  delete process.env["EMAIL_DISPATCH_SECRET"];
   delete process.env["EMAIL_FAKE_STAGING_ENABLED"];
   delete process.env["EMAIL_STAGING_DISPATCH_SECRET"];
 }
@@ -67,40 +65,27 @@ afterEach(() => {
 
 describe("staging dispatch authorization", () => {
   it("rejects the staging secret while the staging flag is false", () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = PROD_SECRET;
     process.env["EMAIL_STAGING_DISPATCH_SECRET"] = STAGING_SECRET;
     expect(readFakeStagingConfig().enabled).toBe(false);
-    expect(authorizeDispatch(req(STAGING_SECRET))).toBeNull();
+    expect(authorizeStagingDispatch(req(STAGING_SECRET))).toBeNull();
   });
 
   it("rejects a wrong or missing staging secret while staging is enabled", () => {
     process.env["EMAIL_FAKE_STAGING_ENABLED"] = "true";
-    expect(authorizeDispatch(req(STAGING_SECRET))).toBeNull();
+    expect(authorizeStagingDispatch(req(STAGING_SECRET))).toBeNull();
 
     process.env["EMAIL_STAGING_DISPATCH_SECRET"] = STAGING_SECRET;
-    expect(authorizeDispatch(req("not-the-staging-secret"))).toBeNull();
-    expect(authorizeDispatch(req())).toBeNull();
+    expect(authorizeStagingDispatch(req("not-the-staging-secret"))).toBeNull();
+    expect(authorizeStagingDispatch(req())).toBeNull();
   });
 
   it("accepts the staging secret only with flag plus secret, as fake_staging", () => {
     process.env["EMAIL_FAKE_STAGING_ENABLED"] = "true";
     process.env["EMAIL_STAGING_DISPATCH_SECRET"] = STAGING_SECRET;
-    expect(authorizeDispatch(req(STAGING_SECRET))).toBe("fake_staging");
+    expect(authorizeStagingDispatch(req(STAGING_SECRET))).toBe("fake_staging");
   });
 
-  it("keeps the production authorization path unchanged", () => {
-    process.env["EMAIL_DISPATCH_SECRET"] = PROD_SECRET;
-    expect(authorizeDispatch(req(PROD_SECRET))).toBe("production");
-    expect(authorizeDispatch(req("wrong"))).toBeNull();
-    expect(authorizeDispatch(req())).toBeNull();
-
-    // Staging enablement never changes the production verdict.
-    process.env["EMAIL_FAKE_STAGING_ENABLED"] = "true";
-    process.env["EMAIL_STAGING_DISPATCH_SECRET"] = STAGING_SECRET;
-    expect(authorizeDispatch(req(PROD_SECRET))).toBe("production");
-  });
-
-  it("does not weaken the production sending gate", () => {
+  it("does not weaken the provider runtime prerequisites", () => {
     process.env["EMAIL_FAKE_STAGING_ENABLED"] = "true";
     process.env["EMAIL_STAGING_DISPATCH_SECRET"] = STAGING_SECRET;
     stagingReadyEnv();
@@ -109,7 +94,6 @@ describe("staging dispatch authorization", () => {
     if (!gate.enabled) {
       expect(gate.missing).toEqual(
         expect.arrayContaining([
-          "EMAIL_SENDING_ENABLED",
           "EMAIL_PROVIDER_API_KEY",
           "EMAIL_WEBHOOK_SECRET",
           "EMAIL_SENDING_DOMAIN_VERIFIED",

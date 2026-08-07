@@ -13,7 +13,21 @@ import type {
  * Result of the authoritative final provider-attempt fence executed in the
  * database immediately before any provider call.
  */
-export type ProviderAttemptFence = "ok" | "lost_lease" | "consent_blocked";
+export type ProviderAttemptFence =
+  | "ok"
+  | "lost_lease"
+  | "authentication_blocked"
+  | "sending_disabled"
+  | "activation_blocked"
+  | "controlled_scope_blocked"
+  | "consent_blocked"
+  | "suppression_blocked"
+  | "limit_reached";
+
+export type ProviderAttemptAuthorization = {
+  outcome: ProviderAttemptFence;
+  submissionAttemptId?: string | null;
+};
 
 /**
  * Fields a fenced terminal transition may set. Status, lease release, and the
@@ -100,7 +114,18 @@ export type EmailStore = {
     jobId: string,
     claimToken: string | null,
     attemptedAt: string,
-  ): Promise<ProviderAttemptFence>;
+  ): Promise<ProviderAttemptAuthorization>;
+
+  /** Completes the production volume reservation after the provider result. */
+  completeProviderAttempt(input: {
+    submissionAttemptId: string | null | undefined;
+    outcome: "accepted" | "uncertain" | "transient" | "permanent";
+    completedAt: string;
+    providerKey?: string | null;
+    providerMessageId?: string | null;
+    providerAcceptedAt?: string | null;
+    outcomeCode?: string | null;
+  }): Promise<boolean>;
 
   /** Transactional, rank-guarded delivery transition. */
   applyDeliveryEvent(

@@ -369,10 +369,11 @@ describe("authoritative provider-attempt fence migration contract", () => {
     const fn = source.slice(source.indexOf("async recordFirstProviderAttempt"));
     const body = fn.slice(0, fn.indexOf("async deferJob"));
 
+    expect(body).toContain('client.rpc("begin_production_provider_attempt"');
     expect(body).toContain('client.rpc("begin_provider_attempt"');
-    expect(body).toContain('if (data === "ok") return "ok";');
-    expect(body).toContain('if (data === "consent_blocked") return "consent_blocked";');
-    expect(body).toContain('return "lost_lease";');
+    expect(body).toContain('return { outcome: "ok", submissionAttemptId: null };');
+    expect(body).toContain('return { outcome: "consent_blocked" };');
+    expect(body).toContain('return { outcome: "lost_lease" };');
     // The weaker application-only update path is gone.
     expect(body).not.toContain('.from("email_jobs")');
   });
@@ -386,11 +387,10 @@ describe("authoritative provider-attempt fence migration contract", () => {
     const sendIndex = body.indexOf("deps.adapter.send");
     expect(fenceIndex).toBeGreaterThan(-1);
     expect(sendIndex).toBeGreaterThan(fenceIndex);
-    expect(body).toContain(
-      'if (fence === "consent_blocked") return finish(deps, job, "canceled", {});',
-    );
-    expect(body).toContain(
-      'if (fence !== "ok") return { jobId: job.job_id, outcome: "lost_lease" };',
-    );
+    expect(body).toContain('authorization.outcome === "consent_blocked"');
+    expect(body).toContain('authorization.outcome === "activation_blocked"');
+    expect(body).toContain('authorization.outcome === "suppression_blocked"');
+    expect(body).toContain('authorization.outcome === "limit_reached"');
+    expect(body).toContain('authorization.outcome !== "ok"');
   });
 });

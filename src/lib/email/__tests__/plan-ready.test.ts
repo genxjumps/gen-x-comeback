@@ -83,7 +83,6 @@ const FULL_CONFIG: EmailConfig = {
   fromName: "Todd from Gen X Jumps",
   replyTo: "todd@genxjumps.com",
   webhookSecret: "whsec_dGVzdHNlY3JldA==",
-  sendingEnabled: true,
   clickTrackingDisabled: true,
   alertsEnabled: true,
   domainVerified: true,
@@ -421,10 +420,9 @@ describe("Plan Ready acceptance gates", () => {
     expect(rendered.text.trim().length).toBeGreaterThan(200);
   });
 
-  it("Acceptance 14: production sending stays disabled until every prerequisite is configured", () => {
+  it("Acceptance 14: provider runtime stays disabled until every prerequisite is configured", () => {
     const blocked = evaluateSendingGate({
       ...FULL_CONFIG,
-      sendingEnabled: false,
       providerApiKey: null,
       webhookSecret: null,
       domainVerified: false,
@@ -435,7 +433,6 @@ describe("Plan Ready acceptance gates", () => {
     if (!blocked.enabled) {
       expect(blocked.missing).toEqual(
         expect.arrayContaining([
-          "EMAIL_SENDING_ENABLED",
           "EMAIL_PROVIDER_API_KEY",
           "EMAIL_WEBHOOK_SECRET",
           "EMAIL_SENDING_DOMAIN_VERIFIED",

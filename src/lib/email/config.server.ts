@@ -9,7 +9,6 @@ export type EmailConfig = {
   fromName: string;
   replyTo: string | null;
   webhookSecret: string | null;
-  sendingEnabled: boolean;
   clickTrackingDisabled: boolean;
   alertsEnabled: boolean;
   domainVerified: boolean;
@@ -34,7 +33,6 @@ export function readEmailConfig(): EmailConfig {
     fromName: env("EMAIL_FROM_NAME") ?? "Todd from Gen X Jumps",
     replyTo: env("EMAIL_REPLY_TO"),
     webhookSecret: env("EMAIL_WEBHOOK_SECRET"),
-    sendingEnabled: flag("EMAIL_SENDING_ENABLED"),
     clickTrackingDisabled: flag("EMAIL_CLICK_TRACKING_DISABLED"),
     alertsEnabled: flag("EMAIL_ALERTS_ENABLED"),
     domainVerified: flag("EMAIL_SENDING_DOMAIN_VERIFIED"),
@@ -52,7 +50,6 @@ export type SendingGate =
  */
 export function evaluateSendingGate(config: EmailConfig = readEmailConfig()): SendingGate {
   const missing: string[] = [];
-  if (!config.sendingEnabled) missing.push("EMAIL_SENDING_ENABLED");
   if (!config.appOrigin || !/^https:\/\//.test(config.appOrigin)) missing.push("APP_ORIGIN");
   if (!config.providerApiKey) missing.push("EMAIL_PROVIDER_API_KEY");
   if (!config.fromEmail) missing.push("EMAIL_FROM_ADDRESS");
