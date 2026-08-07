@@ -270,7 +270,7 @@ describe("exchangeReturnToken writes exactly one attributed exchange event", () 
     expect(attributed?.job_id).toBe(JOB);
   });
 
-  it("keeps a Plan Ready exchange on the general event with no attributed job id", async () => {
+  it("correlates a Plan Ready exchange to the originating Plan Ready job id", async () => {
     await seed({
       job: {
         job_type: PLAN_READY_JOB_TYPE,
@@ -289,7 +289,7 @@ describe("exchangeReturnToken writes exactly one attributed exchange event", () 
     expect(names).not.toContain(HALFWAY_LINK_EXCHANGE_EVENT);
 
     const attributed = events.find((e) => e.event_name === PLAN_READY_LINK_EXCHANGE_EVENT);
-    expect(attributed?.job_id).toBeNull();
+    expect(attributed?.job_id).toBe(JOB);
   });
 
   it("writes the Halfway exchange event with the Halfway job id", async () => {
