@@ -6,7 +6,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { RAW_TOKEN_RE, hashAccessToken } from "@/lib/lead-plan";
 
-
 const PAGE_STYLE =
   "margin:0;background:#ffffff;color:#111111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;";
 
@@ -110,9 +109,7 @@ export const Route = createFileRoute("/email-preferences")({
 <input type="hidden" name="c" value="${escapeAttr(credential ?? "")}" />
 <input type="hidden" name="action" value="${active ? "unsubscribe" : "resubscribe"}" />
 <button type="submit" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;border:0;border-radius:0.375rem;font-weight:600;font-size:1rem;cursor:pointer;">${
-            active
-              ? "Unsubscribe from 7-Day Plan emails"
-              : "Resubscribe to 7-Day Plan emails"
+            active ? "Unsubscribe from 7-Day Plan emails" : "Resubscribe to 7-Day Plan emails"
           }</button>
 </form>
 <p style="margin:1.5rem 0 0 0;font-size:0.8125rem;color:#555555;">${PREFS_SCOPE_NOTE}</p>`,
@@ -152,4 +149,3 @@ export const Route = createFileRoute("/email-preferences")({
     },
   },
 });
-

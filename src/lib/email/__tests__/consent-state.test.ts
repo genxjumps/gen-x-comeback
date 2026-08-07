@@ -306,7 +306,10 @@ describe("Recovery consent boundary", () => {
   // 8
   it("never reactivates withdrawn marketing consent", () => {
     const identity = withdrawMarketing(
-      withdrawPlan(signup("reader@example.com", "2026-01-01T00:00:00.000Z"), "2026-01-10T00:00:00.000Z"),
+      withdrawPlan(
+        signup("reader@example.com", "2026-01-01T00:00:00.000Z"),
+        "2026-01-10T00:00:00.000Z",
+      ),
       "2026-01-11T00:00:00.000Z",
     );
     const recovered = recoverConsent(identity, NOW.toISOString());
@@ -333,7 +336,10 @@ describe("Recovery consent boundary", () => {
   // 10
   it("fences every pre-Recovery proactive job out of sending", async () => {
     const recovered = recoverConsent(
-      withdrawPlan(signup("reader@example.com", "2026-01-01T00:00:00.000Z"), "2026-01-20T00:00:00.000Z"),
+      withdrawPlan(
+        signup("reader@example.com", "2026-01-01T00:00:00.000Z"),
+        "2026-01-20T00:00:00.000Z",
+      ),
       NOW.toISOString(),
     );
     const stale = [
@@ -345,7 +351,11 @@ describe("Recovery consent boundary", () => {
         lease_expires_at: "2026-01-31T00:00:00.000Z",
       },
       { label: "overdue", status: "pending" as const, eligible_at: "2026-01-02T00:00:00.000Z" },
-      { label: "future_dated", status: "pending" as const, eligible_at: "2026-03-01T00:00:00.000Z" },
+      {
+        label: "future_dated",
+        status: "pending" as const,
+        eligible_at: "2026-03-01T00:00:00.000Z",
+      },
     ];
 
     for (const variant of stale) {
@@ -368,7 +378,10 @@ describe("Recovery consent boundary", () => {
   // 12
   it("allows new qualifying post-Recovery lifecycle jobs to send", async () => {
     const recovered = recoverConsent(
-      withdrawPlan(signup("reader@example.com", "2026-01-01T00:00:00.000Z"), "2026-01-20T00:00:00.000Z"),
+      withdrawPlan(
+        signup("reader@example.com", "2026-01-01T00:00:00.000Z"),
+        "2026-01-20T00:00:00.000Z",
+      ),
       "2026-02-01T11:00:00.000Z",
     );
     const store = createMemoryStore(() => NOW);

@@ -320,8 +320,6 @@ async function guardPlanConsent(
   return null;
 }
 
-
-
 /** Issues the approved opaque credentials and returns their absolute URLs. */
 async function issueCredentials(
   deps: DispatchDeps,

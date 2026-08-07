@@ -194,7 +194,6 @@ Migration `20260807175301_630a998c-8645-4bfa-9f21-e0c0166d673e.sql` (applied liv
 - **Deliverability suppression is separate and absolute.** Hard bounce and complaint suppression continues to block Recovery and every proactive lifecycle send. No consent change removes, bypasses, or weakens suppression, and the migration preserved every suppression record.
 - **Pre-production backfill.** Every existing identity is a Todd-controlled test identity, so the migration backfilled all 19 identities active for both consent states with source `pre_production_test_backfill` and migration-time timestamps, and canceled every pre-migration nonterminal email job of every type. Completed jobs, canonical events, delivery evidence, reconciliations, historical staging evidence, and all contacts were preserved; nothing was deleted.
 
-
 ## Architecture
 
 - **Frontend and server:** React 19, TypeScript, TanStack Start, and TanStack Router
