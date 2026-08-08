@@ -1,0 +1,43 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release/v1.1
+  push:
+    branches:
+      - main
+      - release/v1.1
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify locked source
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.8
+
+      - name: Install locked dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run the complete quality gate
+        run: bun run verify
+
+      - name: Confirm protected generated files stayed clean
+        run: git diff --exit-code -- bun.lock src/routeTree.gen.ts
