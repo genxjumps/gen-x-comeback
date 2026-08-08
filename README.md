@@ -258,7 +258,7 @@ Pre-activation lifecycle jobs are permanently non-sendable. Reaching the rolling
 
 ## Local development
 
-[Bun](https://bun.sh/) is recommended because this repository includes a Bun lockfile.
+[Bun 1.3.8](https://bun.sh/) is the locked project runtime.
 
 ```sh
 git clone https://github.com/genxjumps/gen-x-comeback.git
@@ -270,13 +270,21 @@ bun run dev
 Run the verification commands before committing application changes:
 
 ```sh
-bun run test
-bunx tsc --noEmit
-bun run lint
-bun run build
+bun run verify
 ```
 
 Keep server credentials and signing secrets out of source control.
+
+## Development workflow
+
+- `main` is the production source branch.
+- V1.1 integrates on `release/v1.1` through bounded `agent/<checkpoint>` pull requests.
+- GitHub runs the locked quality gate before integration.
+- Lovable is used only for controlled preview and production publication, not source development.
+- Lovable preview shares the production backend, so database work requires an isolated staging environment first.
+- V1.1 is functional-first. Visual polish remains deferred.
+
+See [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) for the complete checkpoint and release process.
 
 ## Lovable
 
