@@ -142,7 +142,7 @@ function SingleSelect({
         <Label
           key={o.value}
           htmlFor={`${name}-${o.value}`}
-          className="flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug has-[[data-state=checked]]:border-foreground"
+          className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
         >
           <RadioGroupItem id={`${name}-${o.value}`} value={o.value} />
           <span>{o.label}</span>
@@ -263,19 +263,19 @@ function Assessment() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-      <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+      <p className="gxj-kicker text-xs font-semibold uppercase tracking-[0.16em]">
         Step {step} of 3
       </p>
       <div className="mt-3 flex gap-1.5" aria-hidden="true">
         {[1, 2, 3].map((s) => (
           <span
             key={s}
-            className={`h-1 flex-1 rounded-full ${s <= step ? "bg-foreground" : "bg-muted"}`}
+            className={`h-1 flex-1 rounded-[2px] ${s <= step ? "bg-gxj-teal" : "bg-muted"}`}
           />
         ))}
       </div>
 
-      <h1 className="mt-5 text-2xl font-semibold tracking-tight">
+      <h1 className="gxj-display-title mt-5 text-2xl tracking-tight sm:text-3xl">
         {step === 1
           ? "Your Starting Point"
           : step === 2
@@ -363,7 +363,7 @@ function Assessment() {
                   <Label
                     key={o.value}
                     htmlFor={`equipment-${o.value}`}
-                    className="flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug has-[[data-state=checked]]:border-foreground"
+                    className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
                   >
                     <Checkbox
                       id={`equipment-${o.value}`}

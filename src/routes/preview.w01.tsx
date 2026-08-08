@@ -70,7 +70,7 @@ function DayOnePreviewPage() {
   if (status === "denied" || !cardio) {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
-        <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+        <h1 className="gxj-display-title text-2xl leading-tight tracking-tight sm:text-3xl">
           Finish Your Assessment First
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -98,10 +98,8 @@ function DayOnePreviewPage() {
         Back to My Results
       </Link>
 
-      <p className="mt-6 text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-        Day 1
-      </p>
-      <h1 className="mt-2 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+      <p className="gxj-kicker mt-6 text-[10px] font-semibold uppercase tracking-[0.16em]">Day 1</p>
+      <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {W01_TITLE}
       </h1>
       <p className="mt-2 text-xs text-muted-foreground">{W01_DURATION}</p>

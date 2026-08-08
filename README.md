@@ -30,6 +30,17 @@ The core seven-day plan experience is implemented and connected to Lovable Cloud
 - Responsive mobile and desktop layouts
 - PWA manifest and installable-app foundation
 
+### Approved V1 visual system
+
+- The accepted wireframe structure, hierarchy, spacing, copy, routes, and behavior remain unchanged.
+- Anton 400 is bundled locally and reserved for true display and page headlines. Body copy, functional headings, labels, and controls use the existing readable interface sans.
+- The interface uses a warm off-white page surface (`#FAF8F3`), white cards, black primary actions, deep teal (`#05465C`) for compact labels and progress, and soft mint (`#D8F0D7`) for selected, current, and completed states.
+- The header uses a compact outlined `GEN X JUMPS` text box. The former `PREVIEW` badge is removed.
+- Cards, inputs, and controls use crisp borders, restrained corner radii, and no decorative shadows. Primary actions are black; secondary actions are outlined.
+- Long button labels may wrap and grow vertically on narrow screens. Intentional mobile headline phrase breaks flow naturally at wider breakpoints.
+- Recovery, return-link, email-preferences, 404, access, loading, and error states use the same design system. Strict-CSP server-rendered utility pages keep the interface sans and shared inline CSS without weakening their existing security or form contracts.
+- The accepted whole-app audit covered 60 route-width combinations at 320, 390, 768, 1024, and 1440 pixels with zero horizontal overflow after two narrow-phone defects were corrected.
+
 ### Implemented email lifecycle foundation
 
 - App-owned durable outbox
@@ -230,7 +241,7 @@ Four applied, forward-only migrations establish this behavior: `20260807175301_6
 ## Architecture
 
 - **Frontend and server:** React 19, TypeScript, TanStack Start, and TanStack Router
-- **UI:** Tailwind CSS 4 with Radix/shadcn-style components
+- **UI:** Tailwind CSS 4 with Radix/shadcn-style components and the approved Gen X Jumps V1 visual system
 - **Backend:** Lovable Cloud with PostgreSQL/Supabase-compatible services
 - **Email transport:** Resend, used only as a replaceable delivery pipe
 - **Testing:** Vitest

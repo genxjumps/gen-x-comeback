@@ -173,10 +173,10 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
         Back to My Plan
       </Link>
 
-      <p className="mt-6 text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+      <p className="gxj-kicker mt-6 text-[10px] font-semibold uppercase tracking-[0.16em]">
         Day {dayNumber}
       </p>
-      <h1 className="mt-2 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+      <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {title}
       </h1>
       {duration ? <p className="mt-2 text-xs text-muted-foreground">{duration}</p> : null}
@@ -235,7 +235,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
 
       <section className="mt-8">
         {completed ? (
-          <div className="rounded-lg border border-border bg-card p-4">
+          <div className="rounded-lg border border-border bg-gxj-mint p-4">
             <p className="text-sm font-semibold">Day {dayNumber} Complete</p>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
               Nice work. Your progress is saved.

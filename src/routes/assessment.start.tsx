@@ -68,7 +68,7 @@ function BeforeYouStart() {
   if (ineligible) {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-        <h1 className="text-2xl font-semibold tracking-tight">Before You Start</h1>
+        <h1 className="gxj-display-title text-2xl tracking-tight sm:text-3xl">Before You Start</h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           This plan is not designed for rehabilitation, chair-based exercise, assisted exercise, or
           people who cannot complete basic exercise independently.
@@ -87,7 +87,7 @@ function BeforeYouStart() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-      <h1 className="text-2xl font-semibold tracking-tight">Before You Start</h1>
+      <h1 className="gxj-display-title text-2xl tracking-tight sm:text-3xl">Before You Start</h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         This plan is for adults ranging from deconditioned to fit who can exercise independently.
       </p>
@@ -105,7 +105,7 @@ function BeforeYouStart() {
                   <Label
                     key={o.value}
                     htmlFor={`eligibility-${o.value}`}
-                    className="flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug has-[[data-state=checked]]:border-foreground"
+                    className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
                   >
                     <RadioGroupItem id={`eligibility-${o.value}`} value={o.value} />
                     <span>{o.label}</span>

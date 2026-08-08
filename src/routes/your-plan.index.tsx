@@ -120,24 +120,22 @@ function PlanHubPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
-      <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-        Your Plan
-      </p>
-      <h1 className="mt-2 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+      <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">Your Plan</p>
+      <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {hub.firstName}, Here&rsquo;s What To Do Next
       </h1>
       <p className="mt-3 text-sm font-medium">
         {completedCount} of {TOTAL_ASSIGNMENTS} assignments complete
       </p>
       <div
-        className="mt-2 h-2 w-full overflow-hidden rounded-full bg-muted"
+        className="mt-2 h-2 w-full overflow-hidden rounded-[2px] bg-muted"
         role="progressbar"
         aria-valuemin={0}
         aria-valuemax={TOTAL_ASSIGNMENTS}
         aria-valuenow={completedCount}
         aria-label="Plan progress"
       >
-        <div className="h-full bg-foreground" style={{ width: `${pct}%` }} />
+        <div className="h-full bg-gxj-teal" style={{ width: `${pct}%` }} />
       </div>
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
@@ -155,7 +153,9 @@ function PlanHubPage() {
       {/* Current assignment */}
       <section
         id="current"
-        className="mt-8 scroll-mt-6 rounded-lg border border-border bg-card p-4"
+        className={`mt-8 scroll-mt-6 rounded-lg border border-border p-4 ${
+          currentEntry ? "bg-card" : "bg-gxj-mint"
+        }`}
       >
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           Current Assignment
@@ -229,13 +229,17 @@ function PlanHubPage() {
             const isCurrent = d.day === current;
             const status = complete ? "Complete" : isCurrent ? "Current" : "Upcoming";
             return (
-              <li key={d.day} className={isCurrent ? "bg-card" : "bg-muted/30"}>
+              <li key={d.day} className={isCurrent ? "bg-gxj-mint" : "bg-muted/30"}>
                 <RowLink day={d.day}>
                   <div className="flex items-baseline justify-between gap-3">
                     <h3 className="text-sm font-semibold">
                       Day {d.day}: {d.title}
                     </h3>
-                    <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
+                    <span
+                      className={`shrink-0 text-[10px] uppercase tracking-widest ${
+                        isCurrent ? "font-semibold text-gxj-teal" : "text-muted-foreground"
+                      }`}
+                    >
                       {status}
                     </span>
                   </div>

@@ -60,10 +60,12 @@ const picks = [
 function JumpRopes() {
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-      <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+      <p className="gxj-kicker text-xs font-semibold uppercase tracking-[0.16em]">
         Gen X Jumps Gear Guide
       </p>
-      <h1 className="mt-3 text-2xl font-semibold tracking-tight">The Jump Rope Gear I Recommend</h1>
+      <h1 className="gxj-display-title mt-3 text-2xl tracking-tight sm:text-3xl">
+        The Jump Rope Gear I Recommend
+      </h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         You do not need fancy gear to start jumping rope. But if you want the ropes and mats I
         recommend, these are the Crossrope options I would look at first.

@@ -4,9 +4,7 @@
 // a recovery request, and every possible outcome returns exactly the same
 // visible response so nothing about account, email, or plan existence leaks.
 import { createFileRoute } from "@tanstack/react-router";
-
-const PAGE_STYLE =
-  "margin:0;background:#ffffff;color:#111111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;";
+import { renderStaticPage } from "@/lib/static-page";
 
 /** Approved customer-facing form copy. */
 export const RECOVER_HEADING = "Get Back to Your Plan";
@@ -31,26 +29,19 @@ const CALLER_WINDOW_SECONDS = 3600;
 const CALLER_LIMIT = 5;
 
 function shell(body: string): Response {
-  return new Response(
-    `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex, nofollow" />
-<title>Get Back to Your Plan | Gen X Jumps</title></head>
-<body style="${PAGE_STYLE}"><main style="max-width:36rem;margin:0 auto;padding:2.5rem 1.25rem;">${body}</main></body></html>`,
-    {
-      status: 200,
-      headers: {
-        "content-type": "text/html; charset=utf-8",
-        "cache-control": "no-store",
-        "content-security-policy":
-          "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff",
-        "referrer-policy": "no-referrer",
-        "x-robots-tag": "noindex, nofollow",
-      },
+  return new Response(renderStaticPage("Get Back to Your Plan | Gen X Jumps", body), {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+      "content-security-policy":
+        "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
+      "x-frame-options": "DENY",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "no-referrer",
+      "x-robots-tag": "noindex, nofollow",
     },
-  );
+  });
 }
 
 function escapeAttr(value: string): string {
@@ -60,8 +51,8 @@ function escapeAttr(value: string): string {
 /** One identical acknowledgement for match, unknown, malformed, rate-limited, suppressed, queued, and replay. */
 function genericAcknowledgement(): Response {
   return shell(
-    `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">${RECOVER_HEADING}</h1>
-<p style="margin:0;color:#555555;">${RECOVER_GENERIC_RESPONSE}</p>`,
+    `<h1 class="gxj-title">${RECOVER_HEADING}</h1>
+<p class="gxj-copy">${RECOVER_GENERIC_RESPONSE}</p>`,
   );
 }
 
@@ -95,14 +86,14 @@ export const Route = createFileRoute("/recover")({
         const requestId = secret ? issueRecoveryRequestId(secret) : "";
 
         return shell(
-          `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">${RECOVER_HEADING}</h1>
-<p style="margin:0 0 1.5rem 0;color:#555555;">${RECOVER_COPY}</p>
-<form method="post" action="/recover" id="recover-form">
+          `<h1 class="gxj-title">${RECOVER_HEADING}</h1>
+<p class="gxj-copy">${RECOVER_COPY}</p>
+<form method="post" action="/recover" id="recover-form" class="gxj-form">
 <input type="hidden" name="request_id" value="${escapeAttr(requestId)}" />
-<label for="recover-email" style="display:block;margin:0 0 0.375rem 0;font-size:0.875rem;font-weight:600;">Email</label>
-<input type="email" id="recover-email" name="email" required autocomplete="email" inputmode="email" maxlength="254" style="display:block;width:100%;box-sizing:border-box;padding:0.75rem;margin:0 0 1rem 0;border:1px solid #cccccc;border-radius:0.375rem;font-size:1rem;" />
-<button type="submit" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;border:0;border-radius:0.375rem;font-weight:600;font-size:1rem;cursor:pointer;">Send My Link</button>
-<p style="margin:0.75rem 0 0 0;font-size:0.8125rem;color:#555555;">${RECOVER_CONSENT_DISCLOSURE}</p>
+<label class="gxj-label" for="recover-email">Email</label>
+<input class="gxj-input" type="email" id="recover-email" name="email" required autocomplete="email" inputmode="email" maxlength="254" />
+<button type="submit" class="gxj-button">Send My Link</button>
+<p class="gxj-note">${RECOVER_CONSENT_DISCLOSURE}</p>
 </form>`,
         );
       },

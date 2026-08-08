@@ -1,3 +1,4 @@
+@import "@fontsource/anton/400.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -59,11 +60,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-gxj-teal: var(--gxj-teal);
+  --color-gxj-mint: var(--gxj-mint);
 }
 
 :root {
-  --radius: 0.5rem;
-  --background: oklch(1 0 0);
+  --radius: 0.25rem;
+  --background: oklch(0.97928 0.006952 88.642);
   --foreground: oklch(0.19 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.19 0 0);
@@ -95,6 +98,8 @@
   --sidebar-accent-foreground: oklch(0.24 0 0);
   --sidebar-border: oklch(0.9 0 0);
   --sidebar-ring: oklch(0.6 0 0);
+  --gxj-teal: oklch(0.368619 0.069427 227.945);
+  --gxj-mint: oklch(0.930779 0.041868 144.14);
 }
 
 .dark {
@@ -141,4 +146,31 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+}
+
+.gxj-display-title {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  text-wrap: balance;
+}
+
+.gxj-kicker {
+  display: block;
+  width: fit-content;
+  border-radius: 2px;
+  background-color: var(--color-gxj-teal);
+  color: oklch(1 0 0);
+  padding: 0.35rem 0.5rem 0.3rem;
+  line-height: 1.15;
+}
+
+.gxj-choice {
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.gxj-choice:has([data-state="checked"]) {
+  border-color: var(--color-gxj-teal);
+  background-color: var(--color-gxj-mint);
 }

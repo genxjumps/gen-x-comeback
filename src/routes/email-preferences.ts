@@ -5,31 +5,22 @@
 // bypasses hard-bounce or complaint suppression.
 import { createFileRoute } from "@tanstack/react-router";
 import { RAW_TOKEN_RE, hashAccessToken } from "@/lib/lead-plan";
-
-const PAGE_STYLE =
-  "margin:0;background:#ffffff;color:#111111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;";
+import { renderStaticPage } from "@/lib/static-page";
 
 function shell(body: string): Response {
-  return new Response(
-    `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex, nofollow" />
-<title>Email Preferences | Gen X Jumps</title></head>
-<body style="${PAGE_STYLE}"><main style="max-width:36rem;margin:0 auto;padding:2.5rem 1.25rem;">${body}</main></body></html>`,
-    {
-      status: 200,
-      headers: {
-        "content-type": "text/html; charset=utf-8",
-        "cache-control": "no-store",
-        "content-security-policy":
-          "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff",
-        "referrer-policy": "no-referrer",
-        "x-robots-tag": "noindex, nofollow",
-      },
+  return new Response(renderStaticPage("Email Preferences | Gen X Jumps", body), {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+      "content-security-policy":
+        "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
+      "x-frame-options": "DENY",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "no-referrer",
+      "x-robots-tag": "noindex, nofollow",
     },
-  );
+  });
 }
 
 function escapeAttr(value: string): string {
@@ -38,9 +29,9 @@ function escapeAttr(value: string): string {
 
 function generic(): Response {
   return shell(
-    `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">This Preferences Link No Longer Works</h1>
-<p style="margin:0 0 1.5rem 0;color:#555555;">This link is not usable. Your saved plan is unaffected.</p>
-<p style="margin:0;"><a href="/assessment/start" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;text-decoration:none;border-radius:0.375rem;font-weight:600;">Get Back to Your Plan</a></p>`,
+    `<h1 class="gxj-title">This Preferences Link No Longer Works</h1>
+<p class="gxj-copy">This link is not usable. Your saved plan is unaffected.</p>
+<div class="gxj-actions"><a class="gxj-button" href="/assessment/start">Get Back to Your Plan</a></div>`,
   );
 }
 
@@ -101,18 +92,16 @@ export const Route = createFileRoute("/email-preferences")({
         const active = data?.[0]?.plan_email_consent_active !== false;
 
         return shell(
-          `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">${PREFS_HEADING}</h1>
-<p style="margin:0 0 1.5rem 0;color:#555555;">${
-            active ? PREFS_SUBSCRIBED_COPY : PREFS_UNSUBSCRIBED_COPY
-          }</p>
-<form method="post" action="/email-preferences">
+          `<h1 class="gxj-title">${PREFS_HEADING}</h1>
+<p class="gxj-copy">${active ? PREFS_SUBSCRIBED_COPY : PREFS_UNSUBSCRIBED_COPY}</p>
+<form method="post" action="/email-preferences" class="gxj-form">
 <input type="hidden" name="c" value="${escapeAttr(credential ?? "")}" />
 <input type="hidden" name="action" value="${active ? "unsubscribe" : "resubscribe"}" />
-<button type="submit" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;border:0;border-radius:0.375rem;font-weight:600;font-size:1rem;cursor:pointer;">${
+<button type="submit" class="gxj-button">${
             active ? "Unsubscribe from 7-Day Plan emails" : "Resubscribe to 7-Day Plan emails"
           }</button>
 </form>
-<p style="margin:1.5rem 0 0 0;font-size:0.8125rem;color:#555555;">${PREFS_SCOPE_NOTE}</p>`,
+<p class="gxj-note">${PREFS_SCOPE_NOTE}</p>`,
         );
       },
 
@@ -137,13 +126,13 @@ export const Route = createFileRoute("/email-preferences")({
         });
 
         return shell(
-          `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">Preferences Updated</h1>
-<p style="margin:0 0 1.5rem 0;color:#555555;">${
+          `<h1 class="gxj-title">Preferences Updated</h1>
+<p class="gxj-copy">${
             action === "unsubscribe"
               ? "You will no longer receive Gen X Jumps 7-Day Plan emails."
               : "You will receive Gen X Jumps 7-Day Plan emails again."
           } Your saved plan access is unchanged.</p>
-<p style="margin:0;"><a href="/your-plan" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;text-decoration:none;border-radius:0.375rem;font-weight:600;">Go to My Plan</a></p>`,
+<div class="gxj-actions"><a class="gxj-button" href="/your-plan">Go to My Plan</a></div>`,
         );
       },
     },

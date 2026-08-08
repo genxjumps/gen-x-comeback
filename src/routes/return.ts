@@ -3,31 +3,22 @@
 // exchange verifies the token, creates the session, and redirects.
 import { createFileRoute } from "@tanstack/react-router";
 import { RETURN_SESSION_COOKIE } from "@/lib/email/types";
-
-const PAGE_STYLE =
-  "margin:0;background:#ffffff;color:#111111;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;line-height:1.6;";
+import { renderStaticPage } from "@/lib/static-page";
 
 function shell(body: string): Response {
-  return new Response(
-    `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex, nofollow" />
-<title>Open My Plan | Gen X Jumps</title></head>
-<body style="${PAGE_STYLE}"><main style="max-width:36rem;margin:0 auto;padding:2.5rem 1.25rem;">${body}</main></body></html>`,
-    {
-      status: 200,
-      headers: {
-        "content-type": "text/html; charset=utf-8",
-        "cache-control": "no-store",
-        "content-security-policy":
-          "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
-        "x-frame-options": "DENY",
-        "x-content-type-options": "nosniff",
-        "referrer-policy": "no-referrer",
-        "x-robots-tag": "noindex, nofollow",
-      },
+  return new Response(renderStaticPage("Open My Plan | Gen X Jumps", body), {
+    status: 200,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+      "content-security-policy":
+        "default-src 'none'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; img-src 'none'; style-src 'unsafe-inline'",
+      "x-frame-options": "DENY",
+      "x-content-type-options": "nosniff",
+      "referrer-policy": "no-referrer",
+      "x-robots-tag": "noindex, nofollow",
     },
-  );
+  });
 }
 
 function escapeAttr(value: string): string {
@@ -37,9 +28,9 @@ function escapeAttr(value: string): string {
 /** One generic response for invalid, expired, revoked, malformed, and replaced tokens. */
 function genericRecovery(): Response {
   return shell(
-    `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">This Link No Longer Works</h1>
-<p style="margin:0 0 1.5rem 0;color:#555555;">This plan link is not usable. Links stop working after 30 days or once a newer plan replaces an older one.</p>
-<p style="margin:0;"><a href="/recover" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;text-decoration:none;border-radius:0.375rem;font-weight:600;">Get Back to Your Plan</a></p>`,
+    `<h1 class="gxj-title">This Link No Longer Works</h1>
+<p class="gxj-copy">This plan link is not usable. Links stop working after 30 days or once a newer plan replaces an older one.</p>
+<div class="gxj-actions"><a class="gxj-button" href="/recover">Get Back to Your Plan</a></div>`,
   );
 }
 
@@ -52,11 +43,11 @@ export const Route = createFileRoute("/return")({
       GET: async ({ request }) => {
         const token = new URL(request.url).searchParams.get("token") ?? "";
         return shell(
-          `<h1 style="font-size:1.5rem;font-weight:600;margin:0 0 0.75rem 0;">Opening Your Plan</h1>
-<p style="margin:0 0 1.5rem 0;color:#555555;">Press the button below to open your saved 7-day plan and your latest progress.</p>
-<form method="post" action="/return" id="return-form">
+          `<h1 class="gxj-title">Opening Your Plan</h1>
+<p class="gxj-copy">Press the button below to open your saved 7-day plan and your latest progress.</p>
+<form method="post" action="/return" id="return-form" class="gxj-form">
 <input type="hidden" name="token" value="${escapeAttr(token)}" />
-<button type="submit" style="display:inline-block;padding:0.75rem 1.25rem;background:#111111;color:#ffffff;border:0;border-radius:0.375rem;font-weight:600;font-size:1rem;cursor:pointer;">Open My Plan</button>
+<button type="submit" class="gxj-button">Open My Plan</button>
 </form>`,
         );
       },

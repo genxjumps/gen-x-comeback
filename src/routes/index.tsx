@@ -68,12 +68,15 @@ function Index() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
-      <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-        Free personalized 7-day fitness plan
+      <p className="gxj-kicker text-balance text-xs font-semibold uppercase tracking-[0.16em]">
+        <span className="block sm:inline">Free personalized 7-day</span>{" "}
+        <span className="block sm:inline">fitness plan</span>
       </p>
 
-      <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-        Get the exact roadmap for where to start, what to do, and how to do it
+      <h1 className="gxj-display-title mt-4 text-3xl leading-tight tracking-tight sm:text-4xl">
+        <span className="block sm:inline">Get the exact roadmap</span>{" "}
+        <span className="block sm:inline">for where to start,</span>{" "}
+        <span className="block sm:inline">what to do, and how to do it</span>
       </h1>
 
       <p className="mt-4 text-base leading-relaxed text-muted-foreground">

@@ -78,7 +78,7 @@ export function DayOneWorkout() {
   if (status === "denied" || !cardio) {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
-        <h1 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+        <h1 className="gxj-display-title text-2xl leading-tight tracking-tight sm:text-3xl">
           This Workout Is Part of Your 7-Day Plan
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -106,10 +106,8 @@ export function DayOneWorkout() {
         Back to My Plan
       </Link>
 
-      <p className="mt-6 text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-        Day 1
-      </p>
-      <h1 className="mt-2 text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+      <p className="gxj-kicker mt-6 text-[10px] font-semibold uppercase tracking-[0.16em]">Day 1</p>
+      <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {W01_TITLE}
       </h1>
       <p className="mt-2 text-xs text-muted-foreground">{W01_DURATION}</p>
@@ -166,7 +164,7 @@ export function DayOneWorkout() {
 
       <section className="mt-8">
         {completed ? (
-          <div className="rounded-lg border border-border bg-card p-4">
+          <div className="rounded-lg border border-border bg-gxj-mint p-4">
             <p className="text-sm font-semibold">Day 1 Complete</p>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
               Nice work. Your progress is saved.
