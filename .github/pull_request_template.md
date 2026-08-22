@@ -6,9 +6,10 @@ Describe the one bounded outcome this pull request delivers and its acceptance c
 
 - [ ] The diff contains only the approved checkpoint.
 - [ ] No unrelated cleanup or visual redesign is included.
-- [ ] No live database, plan, job, token, session, scheduler, secret, email, provider, or publication action was taken during development.
-- [ ] Any database migration is forward-only and was first verified in an isolated staging environment.
-- [ ] Governing documentation was updated with the implementation.
+- [ ] No unintended database, plan, job, token, session, scheduler, secret, email, provider, payment, or publication action was taken during development.
+- [ ] Any database migration is forward-only, version-controlled, and verified against controlled development data.
+- [ ] No secret or local environment file is committed.
+- [ ] Governing documentation was updated with the implementation/process change.
 
 ## Verification
 
@@ -20,5 +21,5 @@ Describe the one bounded outcome this pull request delivers and its acceptance c
 
 - Runtime impact:
 - Database impact:
-- Lovable preview required:
-- Production publication required:
+- Lovable review required:
+- Publication required:
