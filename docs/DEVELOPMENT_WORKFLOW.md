@@ -10,11 +10,9 @@ A separate staging backend is not required just to continue V1.1 development. Re
 
 ## Branch roles
 
-| Branch               | Role                                  | Lovable                                      |
-| -------------------- | ------------------------------------- | -------------------------------------------- |
-| `main`               | Current accepted app baseline         | Normal synced branch                         |
-| `release/v1.1`       | Integrated V1.1 candidate             | Controlled visual review after CI passes     |
-| `agent/<checkpoint>` | One bounded implementation checkpoint | Do not select for routine Lovable development |
+- `main` - current accepted app baseline and normal Lovable-synced branch.
+- `release/v1.1` - integrated V1.1 candidate used for controlled visual review after CI passes.
+- `agent/<checkpoint>` - one bounded implementation checkpoint. Do not select these branches for routine Lovable development.
 
 `main` and `release/v1.1` are integration boundaries, not development workspaces. Changes reach them through pull requests.
 
