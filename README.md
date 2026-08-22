@@ -1,294 +1,128 @@
-# Gen X Jumps 7-Day Plan App
+# Gen X Jumps App
 
-This repository contains the mobile-first Gen X Jumps app that builds and delivers a personalized seven-day workout and protein plan.
+Mobile-first Gen X Jumps PWA for the free personalized 7-Day Plan and the upcoming 28-Day Fat Loss Accelerator.
 
 The repository and Lovable project still use the historical working name `Gen X Comeback`. That is a project slug, not a locked public product title.
 
 ## Current status
 
-The production scheduler and controlled-soft-launch source is implemented on top of the accepted consent-state checkpoint `47032c7e8554baae371919ecd7d634acb3b177a4`. The live production state is database-owned and queryable: scheduler authentication, activation, sending, controlled-recipient scope, genuine-Plan admission, and rolling provider-submission capacity are independent controls rather than source or environment toggles.
+The app is **pre-launch and still in development**. There are no real external users or live paid customers using it yet.
 
-The core seven-day plan experience is implemented and connected to Lovable Cloud. All six V1 proactive lifecycle jobs are implemented and accepted: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. User-requested recovery is implemented and accepted separately as on-demand transactional product access; it is not a seventh proactive lifecycle email. Lead-scoped fake-provider staging is accepted. All lifecycle jobs and recovery have passed lead-scoped real-provider staging through Resend, with signed-webhook delivery reconciliation and secure-link return verification for each job type. Plan Ready return tokens are directly associated with their originating Plan Ready `job_id`, and completed Plan Ready link exchanges preserve that job correlation.
+The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Accelerator is the active next development phase, but no 28-Day feature implementation is currently merged.
 
-### Implemented app experience
+`main` and `release/v1.1` are kept aligned as the accepted pre-launch baseline before new V1.1 checkpoints begin.
 
-- Public offer and entry screen
+## What currently works
+
+- Mobile-first entry experience
 - Multi-step fitness assessment
-- Personalized results preview
-- Lead capture and consent after the schedule preview
-- Transactional persistence of the lead, assessment, consent, and current plan
-- Deterministic workout and recovery-day assignments
-- Immediate Day 1 access after a successful save
-- Days 2-7 plan access and workout-day routes
-- Saved-plan return access without requiring a password
-- Public `/recover` access flow with a generic non-enumerating response
-- Saved-plan **Resend My Plan Link** action pointing to `/recover`
-- Invalid, expired, or revoked return-link recovery pointing to `/recover`
-- Plan progress and day-completion behavior
-- Guided workout video delivery
-- Post-plan jump-rope recommendation page
-- Responsive mobile and desktop layouts
+- Personalized 3-, 4-, 5-, and 7-workout schedules
+- Results preview before lead capture
+- Lead, consent, assessment, and plan persistence
+- Day 1 through Day 7 assignment flow
+- Server-enforced sequential completion
+- Saved-plan return access
+- Passwordless secure return links
+- Public recovery flow
+- All seven workout videos
+- Plan progress and completion behavior
+- Six proactive free-plan lifecycle emails: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed
+- User-requested recovery email
+- Resend delivery integration and signed webhook reconciliation
+- Production-capable scheduler and email safeguards
 - PWA manifest and installable-app foundation
+- Current Gen X Jumps V1 visual system
 
-### Approved V1 visual system
+The existing email and scheduler infrastructure has been heavily staged and verified, but that does **not** mean the overall product has launched to customers.
 
-- The accepted wireframe structure, hierarchy, spacing, copy, routes, and behavior remain unchanged.
-- Anton 400 is bundled locally and reserved for true display and page headlines. Body copy, functional headings, labels, and controls use the existing readable interface sans.
-- The interface uses a warm off-white page surface (`#FAF8F3`), white cards, black primary actions, deep teal (`#05465C`) for compact labels and progress, and soft mint (`#D8F0D7`) for selected, current, and completed states.
-- The header uses a compact outlined `GEN X JUMPS` text box. The former `PREVIEW` badge is removed.
-- Cards, inputs, and controls use crisp borders, restrained corner radii, and no decorative shadows. Primary actions are black; secondary actions are outlined.
-- Long button labels may wrap and grow vertically on narrow screens. Intentional mobile headline phrase breaks flow naturally at wider breakpoints.
-- Recovery, return-link, email-preferences, 404, access, loading, and error states use the same design system. Strict-CSP server-rendered utility pages keep the interface sans and shared inline CSS without weakening their existing security or form contracts.
-- The accepted whole-app audit covered 60 route-width combinations at 320, 390, 768, 1024, and 1440 pixels with zero horizontal overflow after two narrow-phone defects were corrected.
+## Verification baseline
 
-### Implemented email lifecycle foundation
-
-- App-owned durable outbox
-- Idempotent Plan Ready job creation
-- Job leasing, retry handling, and stale-job alerts
-- Replaceable delivery-provider adapter with Resend support
-- Secure, purpose-limited return tokens
-- Plan Ready return tokens associated with the originating Plan Ready job, with job-correlated link-exchange attribution
-- Deliberate **Open My Plan** confirmation before a saved plan is activated
-- Signed provider-webhook verification and event reconciliation
-- Bounce and complaint suppression
-- App-owned email preferences
-- A release gate that blocks production provider calls unless every required setting and acceptance flag is present
-- Controlled Start Day 1 dispatch using authoritative state immediately before any provider attempt
-- Secure Start Day 1 return routing to `/your-plan/day/1`
-- `START` for eligible unstarted Day 1, `RESUME` for eligible started-but-incomplete Day 1, and non-sendable `CANCEL` when the message should not be sent
-- Server-authoritative Halfway job creation, dispatch validation, rendering, secure return, retry, suppression, and provider reconciliation
-- Server-authoritative Stalled episode creation, cancellation, dispatch validation, rendering, secure return, retry, suppression, recurrence, and Final Rescue closure guards
-- Server-authoritative Final Rescue job creation, four-day initial eligibility, five-day progress re-anchoring, Halfway priority, terminal inactivity closure, suppression, exact copy variants, secure return to `/your-plan`, and provider reconciliation
-- Server-authoritative Plan Completed job creation at the final required-completion boundary, highest lifecycle priority, same-transaction cancellation of unfinished Start Day 1, Halfway, Stalled, and Final Rescue jobs, suppression, exact completion copy, and secure return to `/your-plan`
-- User-requested recovery as a separate transactional-access job using the durable outbox, request-id idempotency, per-email and caller/IP rate limits, suppression checks, and a fresh recovery-purpose secure return token to `/your-plan`
-- Vault-backed five-minute scheduler invocation through `public.invoke_email_dispatch_scheduler()` using `pg_cron` and `pg_net`, targeting the exact permanent URL `https://app.genxjumps.com/api/public/email/dispatch`
-- Dedicated production scheduler authentication with an internally generated Vault secret, stored only as plaintext in Vault and as a SHA-256 digest in the production control row; timestamp freshness and one-time invocation IDs reject missing, invalid, stale, or replayed credentials
-- Independent database-owned production controls for explicit sending enablement, an immutable activation boundary, Todd-only controlled-Plan scope, and later genuine-Plan admission
-- A five-accepted-submission rolling 24-hour limit that counts accepted provider submissions rather than recipients, reserves capacity before provider calls, preserves jobs when capacity is unavailable, and does not auto-increase
-- Durable scheduler invocation, authentication-attempt, provider-attempt, acceptance, warning, and rollback evidence
-- Lead-scoped fake-provider staging through `public.claim_email_jobs_for_lead(...)`, protected by a staging-only server flag and separate staging dispatch secret
-- Fake-staging runtime that always uses the fake adapter, never instantiates Resend, skips the global stale-Plan-Ready alert sweep, and reports `sending_enabled:false`
-- Separate lead-scoped real-provider staging protected by `EMAIL_REAL_STAGING_ENABLED`, a dedicated real-staging dispatch secret, an authoritative allowed-recipient value, and the same lead-scoped claim boundary
-- Real-staging runtime that uses Resend only after staging authorization, lead scope, exact recipient allowlist, sender/provider, token/link, and webhook configuration checks pass while leaving the production sending gate unchanged
-
-Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed are the six implemented and accepted proactive lifecycle jobs. User-requested recovery is implemented and accepted separately as transactional product access. Gen X Jumps 7-Day Plan email consent is the gate for proactive lifecycle email: a Plan-email unsubscribe blocks all six proactive lifecycle jobs — Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed — without removing plan access or saved progress, and leaves general marketing consent unchanged. General marketing consent is independent and is never read to send lifecycle email. A recovery explicitly requested by the user is transactional and may still send while Plan consent is inactive. Hard bounce or complaint suppression blocks recovery sending. Recovery does not require Plan Ready acceptance, remains available after plan completion, does not use lifecycle 24-hour spacing or inactivity caps, and does not cancel or control current proactive lifecycle jobs; its only lifecycle effect is the inactive-to-active Plan consent boundary described under **Consent architecture**.
-
-Scheduler transport to the published application is verified. The published `gen-x-comeback.lovable.app` API path redirects to the canonical app host, so authenticated server-to-server dispatch targets `https://app.genxjumps.com/api/public/email/dispatch` directly to avoid losing the bearer header across a cross-host redirect. One synthetic Plan Ready job was fake-provider accepted through the lead-scoped staging path. A separate controlled real-provider staging checkpoint then sent exactly one Plan Ready message through Resend to the dedicated staging alias. Subsequent real-provider staging checkpoints completed Start Day 1, Halfway, Stalled, Final Rescue, Plan Completed, and Recovery. All of these jobs reached `provider_accepted` and reconciled to `delivered` through signed Resend webhooks. The secure Open My Plan link passed the raw-GET and deliberate-exchange smoke test for each applicable job, restoring the saved synthetic plan through a clean 303 redirect to `/your-plan` without changing progress. All synthetic rows, tokens, sessions, credentials, provider-event linkage, and temporary staging-only configuration were removed after each verification.
-
-### Production scheduler release contract
-
-- Accepted starting SHA: `47032c7e8554baae371919ecd7d634acb3b177a4`
-- Permanent dispatch URL: `https://app.genxjumps.com/api/public/email/dispatch`
-- Scheduler: Supabase `pg_cron`, exact schedule `*/5 * * * *`, invoking the application through `pg_net`
-- Scheduler secret: generated inside PostgreSQL; plaintext stored only in Supabase Vault under `email_production_scheduler_secret`; only its SHA-256 digest is stored in `public.email_production_control`
-- Dispatch URL location: Supabase Vault under `email_production_dispatch_url`, plus the non-secret exact URL in `public.email_production_control`
-- Authentication: bearer digest, a fresh scheduler timestamp, and a one-time invocation UUID are all required; missing, invalid, stale, and replayed attempts are rejected and recorded
-- Activation: `public.establish_email_production_activation()` records the immutable boundary and permanently cancels every nonterminal pre-boundary lifecycle job
-- Sending: the database production-send gate is independent of scheduler authentication and all provider/runtime prerequisites
-- Initial volume: maximum five accepted provider submissions in the rolling prior 24 hours; retries and repeated accepted submissions count, recipients are not deduplicated, and the limit never auto-increases
-- Controlled launch: initial enabled sending is restricted to one explicitly recorded Todd-controlled post-boundary Plan; genuine post-boundary Plans can be admitted only after exactly one accepted controlled submission, delivered reconciliation, and a job-attributed secure-link exchange
-- Rollback: disabling production sending preserves all jobs, attempts, provider evidence, events, and reconciliation rows; scheduler transport or authentication concerns can additionally pause the cron
-- Queryable warnings: no successful authenticated dispatch for 15 minutes, two consecutive authenticated dispatch failures, repeatedly eligible jobs remaining unclaimed, and reaching the active submission limit
-- Production scheduler migration: `20260807193000_4d5f0f64-0a61-4ee4-bf12-3a1f3d50f92e.sql`
-- Latest full source verification at implementation time: 472 passed across 25 files
-- Protected route-tree Git blob: `221881b281bc3b37196e76a10876e8a332bedb34`
-- Protected route-tree SHA-256: `28628c9df50d10af6236c9ebfd814ee56d84708194231b5fc34169afba5ed58d`
-- `@lovable.dev/vite-tanstack-config`: exact version `2.8.5`
-- `vite-plugin-hmr-gate`: resolved version `1.3.4`
-- Repository-wide ESLint and Prettier are required to be clean for this release; the previously reported single formatting issue and two warnings were corrected without changing unrelated behavior.
-
-### Prior checkpoint evidence: staging-acceptance baseline (historical)
-
-The values below are historical evidence from the earlier staging-acceptance checkpoint and are superseded by the current accepted baseline above.
-
-- Accepted synchronized source SHA: `eed6f82f1fa5a4354e103e7e3e93bea53b3ea914`
-- Previously accepted Plan Ready job-correlation repair implementation SHA: `e9601702f40a7d8a504593150e1e0dd2f1c7c193`
-- Previously accepted real-staging implementation SHA: `78fca403187b928ea653f196d02978ab1c8160fe`
-- Real-staging protected-file-restoration source: `3afe58587f8310fa6af5e05ff3a64f960bcdbe66`
-- Recovery migration: `20260806215657_e52c4b4b-1c81-4e87-828d-81e9e8db23c4.sql`
-- Scheduler foundation migration: `20260806224437_0f99de9f-07b7-46cf-909e-1b97a7ff8137.sql`
-- Fake-staging scoped-claim migration: `20260806235258_0a429511-3eac-46f0-a264-bc1bbbe34551.sql`
-- Real-staging checkpoint migration: none
-- Plan Ready job-correlation repair migration: none
-- Approved formatted Supabase types blob at that checkpoint: `dd7cbdb9cf0765396b647b8b2277751ddaf912bf` (historical only; the current blob is `c556ef9b106b11751fbd879f0430c83302e0827e`)
-- Repository migrations at that checkpoint: 18
-- Live migration ledger at that checkpoint: 18 matching versions
-
-### Recovery verification evidence
-
-- Focused recovery tests passed 29/29
-- Affected return/email tests passed 53/53
-- The full suite at recovery acceptance passed 393/393
-- The full suite at the final two-send staging checkpoint passed 434/434 across 22 files
-- TypeScript passed
-- Production build passed
-- Changed-file ESLint passed
-- Prettier passed
-- `git diff --check` passed
-- The `/recover` route tree and protected route-tree blob/hash were verified
-- The approved Supabase types blob remained protected
-- Recovery request-boundary/RPC receiver repair is accepted; the route calls the Supabase client `rpc` method with proper SDK context, alphanumeric error-code sanitization, and server-only redacted diagnostics
-
-### Scheduler and fake-staging evidence
-
-- `public.invoke_email_dispatch_scheduler()` is implemented as a `SECURITY DEFINER` function
-- PUBLIC, `anon`, and `authenticated` cannot execute the scheduler function
-- `pg_cron` and `pg_net` are installed and Supabase Vault remains installed
-- The scheduler function reads its dispatch URL and bearer secret from Vault and sends no customer data or PII
-- Supabase → `pg_net` → published app → dispatch authentication boundary was verified
-- `public.claim_email_jobs_for_lead(...)` provides an atomic lead-scoped claim path for staging while production keeps the existing global claim function
-- Focused fake-staging tests passed 15/15
-- Directly affected dispatch/config/runtime tests passed 53/53 at fake-staging acceptance
-- Full suite passed 408/408 at fake-staging acceptance
-- One synthetic Plan Ready job reached `provider_accepted` with `provider_key=fake`; all other lifecycle/recovery dispatchers claimed zero
-- No other lead received a fake-provider job
-- Synthetic lead/job/token/preference data and all temporary fake-staging credentials were removed after the live fake-staging pass
-
-### First real-provider Plan Ready staging evidence
-
-- Focused real-staging tests passed 15/15
-- Fake-staging regression tests passed 15/15
-- Directly affected dispatch/provider tests passed 34/34 across three files
-- Full suite passed 423/423
-- TypeScript and production build passed
-- Changed-file ESLint passed with zero errors/warnings
-- Prettier check and `git diff --check` passed
-- Exactly one real provider send was performed, to the dedicated staging alias only
-- Dispatch returned HTTP 200 with `mode=real_staging`, claimed exactly one Plan Ready job, and kept production `sending_enabled=false`
-- Provider result reached `provider_accepted` with `provider_key=resend` and a provider message ID
-- A signed Resend `email.delivered` event was received, matched, and reconciled; the job delivery state became `delivered`
-- Direct Gmail inbox inspection was unavailable because the connected Gmail account was not the dedicated staging inbox; signed delivery plus the secure-link smoke test are accepted as sufficient evidence for this checkpoint
-- Locked Plan Ready content was deterministically verified from the exact send inputs, including **Open My Plan** and exclusion of Accelerator promotion, assessment answers, weight, individualized protein target, and internal IDs
-- Raw GET of the secure link was inert; deliberate exchange returned 303 to clean `/your-plan`, created the return session, restored the same saved plan, recorded the Plan Ready link-exchange event, created no duplicate plan, and changed no progress
-- All synthetic records and temporary real-staging configuration were removed; the accepted source was republished afterward
-- No recurring email-dispatch cron job exists
-- Production email sending remains disabled
-
-### Plan Ready job-correlation repair evidence
-
-- Safety precheck found zero surviving Plan Ready jobs that had crossed a provider-attempt boundary or reached provider-accepted/delivered canonical state
-- Plan Ready now uses the existing job-associated return-token path
-- New Plan Ready return-token records preserve the originating Plan Ready `job_id`
-- `email_plan_ready_link_exchange_completed` preserves the originating Plan Ready `job_id`
-- The same logical Plan Ready job derives the identical return credential across retries
-- Different logical job scope or plan version derives a different credential
-- Raw GET remains inert; deliberate exchange still creates the expected return session and redirects cleanly to `/your-plan`
-- Exchange does not alter plan progress
-- Start Day 1 and recovery secure-link behavior remain unchanged
-- Focused Plan Ready correlation tests passed 60/60 across five files
-- Fake-staging regression tests passed 15/15
-- Real-staging regression tests passed 15/15
-- Affected return/email tests passed 56/56
-- Full suite passed 430/430 across 22 files
-- TypeScript, production build, changed-file ESLint, changed-file Prettier check, and `git diff --check` passed
-- No migration was required
-- No provider send occurred during the repair
-
-This historical checkpoint predated production activation. Its staging evidence remains preserved; the production scheduler release contract above supersedes its operational-state statements.
-
-### Final two-send real-provider staging checkpoint evidence
-
-- Starting synchronized SHA: `29488e9989f76d570faa6d36836f5df602a05ca7`; corrective restoration to accepted baseline produced SHA `eed6f82f1fa5a4354e103e7e3e93bea53b3ea914`
-- Authorization preflight passed: POST with invalid `lead_plan_id` returned HTTP 400, `mode=real_staging`, `error=invalid_lead_plan_id`, claimed=0, zero provider attempts
-- Cumulative controlled real-provider sends completed: 8
-- **Scenario 1 (Plan Completed)**:
-  - Synthetic plan fixture had exactly seven top-level days with optional W07 Active Recovery nested at Day 4 and not completed
-  - All seven top-level days were completed sequentially through `public.complete_plan_day_atomic`
-  - The final authoritative completion created exactly one `plan_completed` job and canceled/obsolete Start Day 1, Halfway, Stalled, and Final Rescue jobs
-  - Authorized real-staging dispatch returned HTTP 200, `mode=real_staging`, `sending_enabled=false`, `plan_completed` claimed=1, all other lifecycle/recovery types claimed=0
-  - Provider outcome was `provider_accepted` with `provider_key=resend` and a provider message ID; exactly one provider attempt
-  - Locked rendering verified: personalized subject "Todd, you completed your 7-day plan"; preview "You finished what you started."; body order Hey Todd → "You did it. You completed every day in your 7-Day Comeback Plan." → "That means you worked, recovered, and kept coming back until the plan was done." → "Perfect wasn’t required. You finished."; CTA "View My Completed Plan"; post-CTA "Keep moving. Keep rebuilding. Stay capable."; sign-off "Move or Rust. / Todd / Gen X Jumps"; canonical `https://app.genxjumps.com` origin; no Accelerator, sales, assessment answers, weight, individualized protein, internal IDs, raw tokens, or customer-facing assignment
-  - Signed Resend `email.delivered` event reconciled to the job/provider message ID
-  - Secure-link smoke: raw GET inert; deliberate POST returned 303 to clean `/your-plan`; token removed from visible URL; authorized return session created; seven required completions unchanged; no duplicate plan; no progress mutation; `email_plan_completed_link_exchange_completed` recorded with the correct `job_id`
-  - All Scenario 1 synthetic rows removed before Scenario 2
-- **Scenario 2 (User-requested Recovery)**:
-  - Fresh isolated synthetic plan created; `marketing_unsubscribed_at` active; no hard-bounce/complaint suppression
-  - Plan Ready represented as `provider_accepted` for isolation only; all proactive lifecycle jobs canceled or non-claimable
-  - Recovery created through the published `/recover` route: GET returned HTTP 200 with the heading "Get Back to Your Plan"; POST with the server-issued request ID returned HTTP 200 and the exact generic response "If that email matches a Gen X Jumps plan, a new link is on the way."
-  - Exactly one pending recovery job created; exactly one `email_recovery_queued` event; correct current `lead_plan_id` and `plan_version_id`; unsubscribe did not block creation
-  - Authorized real-staging dispatch returned HTTP 200, `mode=real_staging`, `sending_enabled=false`, `recovery` claimed=1, every proactive lifecycle type claimed=0
-  - Provider outcome was `provider_accepted` with `provider_key=resend` and a provider message ID; exactly one provider attempt
-  - Locked rendering verified: personalized subject "Todd, here’s a fresh link to your 7-day plan"; preview "Open your saved plan and pick up where you left off."; body order Hey Todd → "Here’s the fresh link you requested for your 7-Day Comeback Plan." → "Your plan and progress are still saved."; CTA "Open My Plan"; "This link opens your current saved plan on any device. No password needed."; sign-off "Move or Rust. / Todd / Gen X Jumps"; recovery footer "You received this because a fresh access link was requested for your Gen X Jumps plan."; canonical app origin; no Accelerator, marketing CTA, unsubscribe CTA, assessment answers, weight, individualized protein, internal IDs, raw tokens, or customer-facing assignment
-  - Signed Resend `email.delivered` event reconciled to the recovery job/provider message ID
-  - Secure-link smoke: token purpose `recovery`; raw GET inert; deliberate POST returned 303 to clean `/your-plan`; token removed; authorized session restored the current synthetic plan; no duplicate plan; no progress mutation; `email_recovery_link_exchange_completed` recorded with the correct recovery `job_id`
-- Final cleanup: all Scenario 2 synthetic rows removed, including recovery rate-limit counters created by this test; `EMAIL_REAL_STAGING_ENABLED`, `EMAIL_REAL_STAGING_DISPATCH_SECRET`, and `EMAIL_REAL_STAGING_ALLOWED_RECIPIENT` deleted; application republished so the runtime cannot retain staging-enabled configuration; staging credential now returns 401 at runtime
-- Zero synthetic staging residue remains: alias leads 0, jobs 0, tokens 0, access sessions 0, return sessions 0, canonical events 0, preference credentials 0, provider-event linkage 0, recovery rate-limit rows 0
-- No recurring email-dispatch cron job exists; production email sending remains disabled; production scheduler secrets remain unconfigured; no production lifecycle email has been sent
-- Remaining staging blockers: zero.
-
-### Consent architecture (Recovery consent-state checkpoint)
-
-Four applied, forward-only migrations establish this behavior: `20260807175301_630a998c-8645-4bfa-9f21-e0c0166d673e.sql` (dual consent state, signup activation, Recovery re-consent, shared proactive cancellation, backfill), `20260807175318_d05c3c18-8f7e-4fad-8fe9-339088db91b4.sql` (function-grant lockdown), `20260807180632_72978a70-fadf-41c5-be5f-4977c645896a.sql` (new Plan version for an existing identity), and `20260807180709_d9ff7846-f2b9-4587-9326-9a5e142a2056.sql` (final atomic provider-attempt fence). Two independent consent states live on one lead identity, and one normalized email address is exactly one identity, enforced by a unique index on `email_normalized`.
-
-- **New-plan dual consent.** A new 7-Day Plan signup activates BOTH states with source `plan_signup` and fresh consent timestamps. A genuinely new Plan version for an existing normalized identity does the same on that one existing row. The signup disclosure covers Plan lifecycle email and general Gen X Jumps marketing email.
-- **Plan email consent** (`plan_email_consent_active`, `_source`, `_at`, `plan_email_unsubscribed_at`) gates all six proactive lifecycle emails: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed. `/email-preferences` is Plan-email-specific only: an unsubscribe stops all later proactive lifecycle email and permanently cancels every unsent proactive job, and leaves general marketing consent unchanged. Plan access is never revoked.
-- **General marketing consent** (`marketing_consent_active`, `_source`, `_at`, `marketing_unsubscribed_at`) is stored and independently withdrawable but has no UI and no sending system. Nothing in the app reads it to send mail.
-- **Recovery re-consent.** Recovery remains on-demand transactional product access and still sends the Recovery email the user explicitly requested, including while Plan consent is inactive. When Plan consent is inactive, one atomic boundary reactivates Plan consent only, records source `plan_recovery` with a fresh Plan consent timestamp, leaves marketing consent unchanged, and permanently cancels every unsent proactive lifecycle job created before that new boundary. When Plan consent is already active, Recovery does not refresh source or timestamp, does not cancel current jobs, does not restart the lifecycle, and does not touch marketing consent. Recovery never reactivates withdrawn marketing consent. The public response stays generic and non-enumerating for unknown, malformed, rate-limited, and replayed requests, and the exact subordinate disclosure "By recovering your plan, you agree to receive Gen X Jumps 7-Day Plan emails." is rendered beneath the Recovery action.
-- **Early application consent guard.** Immediately after claiming and before any state resolution, rendering, credential derivation, or provider attempt, the application guards every proactive job: it may proceed only when Plan consent is active AND the job was created at or after the current Plan consent boundary. Older pending, retry_scheduled, expired-processing, overdue, and future-dated proactive jobs are closed as `canceled` and can never resurface. This early guard is not the authoritative fence; it stops obviously ineligible work before any rendering happens.
-- **Final atomic provider-attempt fence.** `public.begin_provider_attempt(uuid, uuid, timestamptz)` (service-role-only) is the last fenced database write immediately before any provider call, and is authoritative. In one atomic locked step it verifies current lease/processing ownership, and for proactive lifecycle jobs that Plan consent is active and that `job.created_at >= plan_email_consent_at`. It returns `ok`, `lost_lease`, or `consent_blocked`; a `consent_blocked` job is closed as `canceled` and the provider is never called, so a consent boundary that moved or a claim that was canceled after the earlier application read can never slip through. The first-provider-attempt timestamp is only ever filled when empty, preserving provider idempotency, and existing lost-lease behavior is unchanged. Recovery stays outside Plan-consent gating.
-- **Deliverability suppression is separate and absolute.** Hard bounce and complaint suppression continues to block Recovery and every proactive lifecycle send. No consent change removes, bypasses, or weakens suppression, and the migrations preserved every suppression record.
-- **Pre-production backfill.** Every existing identity is a Todd-controlled test identity, so the migration backfilled all 19 identities active for both consent states with source `pre_production_test_backfill` and migration-time timestamps. Zero email jobs existed to cancel at migration time and zero suppression rows existed. Completed jobs, canonical events, delivery evidence, reconciliations, historical staging evidence, and all contacts were preserved; no contacts and no historical evidence were deleted.
-
-### Consent checkpoint verification and live state at acceptance (historical)
-
-- Full suite: 457 passed across 24 files; focused consent production-contract tests: 12 passed; rewritten consent-state dispatch tests: 11 passed
-- The consent checkpoint used the fake adapter only and sent no real email
-- Temporary real-staging configuration is absent; synthetic staging residue is zero; remaining staging blockers are zero
-- Cron jobs for email dispatch: 0; production email sending disabled; production scheduler secrets unconfigured; no production lifecycle email has been sent
-- Staging acceptance and consent-checkpoint acceptance do not authorize production activation. Enabling recurring scheduling, configuring production dispatch secrets, and enabling production sending each require a separate explicit activation decision.
-
-## Architecture
-
-- **Frontend and server:** React 19, TypeScript, TanStack Start, and TanStack Router
-- **UI:** Tailwind CSS 4 with Radix/shadcn-style components and the approved Gen X Jumps V1 visual system
-- **Backend:** Lovable Cloud with PostgreSQL/Supabase-compatible services
-- **Email transport:** Resend, used only as a replaceable delivery pipe
-- **Testing:** Vitest
-- **Hosting and project control:** Lovable
-- **Version history:** GitHub, synchronized with the connected Lovable project
-
-The app database is authoritative for plans, consent, email eligibility, job state, suppression, and send history. Email delivery must never control product access.
-
-## Email release safety
-
-Production provider submission requires all independent release controls to pass at the final provider-attempt fence: valid scheduler authentication, the explicit database production-send gate, the immutable activation boundary, active controlled/genuine admission scope, rolling provider-submission capacity, current Plan-email consent for proactive mail, no hard-bounce or complaint suppression, and every existing job-specific eligibility and provider-attempt requirement.
-
-Pre-activation lifecycle jobs are permanently non-sendable. Reaching the rolling limit preserves and defers jobs without making a provider call. Authentication attempts and zero-send scheduler runs do not consume provider capacity. The active limit can be changed only by an explicit later manual decision; this release neither authorizes nor schedules an increase above five.
-
-## Local development
-
-[Bun 1.3.8](https://bun.sh/) is the locked project runtime.
-
-```sh
-git clone https://github.com/genxjumps/gen-x-comeback.git
-cd gen-x-comeback
-bun install
-bun run dev
-```
-
-Run the verification commands before committing application changes:
+The repository uses Bun 1.3.8 and one complete verification command:
 
 ```sh
 bun run verify
 ```
 
-Keep server credentials and signing secrets out of source control.
+That command runs:
+
+- Vitest
+- TypeScript
+- ESLint
+- Prettier check
+- Production build
+
+Current accepted regression baseline: **472 tests across 25 test files**.
+
+GitHub Actions runs the same quality gate for changes targeting `main` or `release/v1.1`.
 
 ## Development workflow
 
-- `main` is the production source branch.
-- V1.1 integrates on `release/v1.1` through bounded `agent/<checkpoint>` pull requests.
-- GitHub runs the locked quality gate before integration.
-- Lovable is used only for controlled preview and production publication, not source development.
-- Lovable preview shares the production backend, so database work requires an isolated staging environment first.
-- V1.1 is functional-first. Visual polish remains deferred.
+The development order is:
 
-See [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md) for the complete checkpoint and release process.
+**ChatGPT / coding agent -> GitHub -> Lovable**
 
-## Lovable
+GitHub is the source of truth. Lovable is used later for controlled visual/interaction review and publication, not as the default coding environment.
 
-- **Live app:** https://gen-x-comeback.lovable.app
-- **Lovable editor:** https://lovable.dev/projects/9882f922-c17b-4fca-bd5b-48b9548e5322
+Branch roles:
 
-Changes pushed to the connected `main` branch synchronize back to Lovable. Avoid force pushes, rebases, amendments, or squashes that rewrite published history.
+- `main` - accepted pre-launch baseline
+- `release/v1.1` - V1.1 integration branch
+- `agent/<checkpoint>` - one bounded development checkpoint
+
+New work should begin from the current `release/v1.1` head, pass `bun run verify`, and reach `release/v1.1` through a pull request.
+
+See [`docs/DEVELOPMENT_WORKFLOW.md`](docs/DEVELOPMENT_WORKFLOW.md) and [`AGENTS.md`](AGENTS.md) for the working rules.
+
+## Backend during pre-launch development
+
+Because there are no real external users yet, the current Lovable/Supabase backend remains the development backend for now.
+
+A separate staging backend is **not required** just to continue V1.1 development. Revisit that decision before public launch, or earlier if a particular checkpoint introduces enough operating risk to justify isolation.
+
+Development rules still apply:
+
+- Use clearly identifiable test data.
+- Keep secrets and local `.env` files out of Git.
+- Keep schema changes in version-controlled forward-only migrations.
+- Keep real-money and test payment behavior separated when Stripe is added.
+- Keep outbound email testing bounded to intended recipients.
+- Review and clean test state before public launch.
+
+## Local development
+
+Bun 1.3.8 is the locked runtime.
+
+```sh
+git clone https://github.com/genxjumps/gen-x-comeback.git
+cd gen-x-comeback
+cp .env.example .env
+bun install --frozen-lockfile
+bun run dev
+```
+
+Before opening or merging a pull request:
+
+```sh
+bun run verify
+```
+
+## Main technology
+
+- React 19
+- TypeScript
+- TanStack Start / Router
+- Tailwind CSS 4
+- Lovable Cloud / Supabase-compatible backend
+- Resend for email transport
+- Vitest
+- Bun 1.3.8
+
+## Next development phase
+
+Resume V1.1 from a fresh bounded branch created from `release/v1.1`.
+
+The next product work is the 28-Day Fat Loss Accelerator. Carry forward only still-approved architecture and product decisions from prior planning. The older draft V1.1 architecture PR was intentionally closed because its mandatory isolated-staging assumption no longer matches the current pre-launch environment.
+
+## Historical implementation evidence
+
+Detailed email-staging, migration, scheduler, and production-safety evidence previously stored in this README remains preserved in Git history and the governing project documentation. It was removed from the README so this file can serve as a clean current-state entry point for development.
