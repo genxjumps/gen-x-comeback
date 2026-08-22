@@ -1,14 +1,18 @@
 # Gen X Jumps App Development Workflow
 
-This is the required workflow for V1.1 and later releases. It keeps the live app stable while development happens in GitHub-controlled checkpoints.
+This is the required workflow for V1.1 and later development. It keeps changes bounded and reviewable while GitHub remains the source of truth and Lovable stays later in the loop.
+
+## Current environment status
+
+The app is still pre-launch. There are no real external users or live paid customers using the product yet. The current Lovable/Supabase backend is therefore the development backend.
+
+A separate staging backend is not required just to continue V1.1 development. Revisit that decision before the first real-user/public release, or earlier if a checkpoint introduces enough risk that isolation is clearly worth the setup.
 
 ## Branch roles
 
-| Branch               | Role                                  | Lovable                                                  | Production                        |
-| -------------------- | ------------------------------------- | -------------------------------------------------------- | --------------------------------- |
-| `main`               | Current production source             | Normal synced branch                                     | Only branch that may be published |
-| `release/v1.1`       | Integrated V1.1 candidate             | May be selected for a controlled preview after CI passes | Never publish directly            |
-| `agent/<checkpoint>` | One bounded implementation checkpoint | Never select in Lovable                                  | Never publish                     |
+- `main` - current accepted app baseline and normal Lovable-synced branch.
+- `release/v1.1` - integrated V1.1 candidate used for controlled visual review after CI passes.
+- `agent/<checkpoint>` - one bounded implementation checkpoint. Do not select these branches for routine Lovable development.
 
 `main` and `release/v1.1` are integration boundaries, not development workspaces. Changes reach them through pull requests.
 
@@ -16,56 +20,60 @@ This is the required workflow for V1.1 and later releases. It keeps the live app
 
 1. Define one bounded outcome, acceptance criteria, exclusions, and affected documentation.
 2. Create `agent/<checkpoint>` from the current `release/v1.1` head.
-3. Build and test locally. Do not use Lovable to generate or edit source.
+3. Build and test through GitHub-controlled development. Do not use Lovable to generate routine source changes.
 4. Run `bun install --frozen-lockfile` and `bun run verify`.
 5. Review the complete diff once. Remove incidental cleanup and unrelated changes.
 6. Open a pull request into `release/v1.1`.
 7. Merge only after the GitHub Quality Gate passes and Todd approves the completed checkpoint.
 
-The agent should not interrupt Todd for small implementation choices that stay inside the locked scope. Stop only when evidence conflicts, a decision would change product behavior, or a live or destructive action needs explicit authorization.
+The agent should not interrupt Todd for small implementation choices that stay inside the locked scope. Stop only when evidence conflicts, a decision would change product behavior, or a destructive/external action needs explicit authorization.
 
-## V1.1 integration review
+## Backend development rules
 
-After a group of related checkpoints is merged into `release/v1.1`:
+Because the product is still pre-launch, controlled V1.1 development may use the current backend.
 
-1. Confirm the branch is green and its diff from `main` contains only accepted V1.1 work.
-2. Switch Lovable's synced branch from `main` to `release/v1.1` only for the controlled preview.
-3. Do not edit code in Lovable and do not publish.
-4. Test read-only and isolated flows. The preview shares backend data with production, so it is not a database staging environment.
-5. Switch Lovable back to `main` after the review unless another approved integrated checkpoint immediately follows.
+- Use test records deliberately and keep them clearly identifiable.
+- Do not treat real personal/customer data as test fixtures.
+- Do not commit secrets or local `.env` files.
+- Keep schema changes in version-controlled, forward-only migrations.
+- Regenerate and review TypeScript database types when schema changes require it.
+- Keep payment-provider test mode and real-money mode explicitly separated when Stripe is added.
+- Keep outbound email test behavior bounded so development does not accidentally message unintended recipients.
+- Before the first public launch or real-user intake, establish the production boundary, clean test data as appropriate, verify secrets/configuration, and decide whether ongoing development should move to a separate staging backend.
 
-## Backend safety
+## Lovable usage
 
-A Git branch isolates source code, not the Lovable Cloud database. Lovable preview and the published app share the same backend and data for this project.
+Lovable is later in the stack:
 
-Before the first V1.1 schema or data migration:
+1. Build and test in GitHub first.
+2. Integrate accepted checkpoints on `release/v1.1`.
+3. Use Lovable for controlled visual/interaction review when that review adds value.
+4. Do not use Lovable chat or visual editing as the default coding workflow.
+5. Publish only after Todd explicitly approves the release.
 
-1. Establish an isolated staging database or independent staging project.
-2. Prove the migration and rollback or forward-repair plan there.
-3. Regenerate and review TypeScript database types in the same checkpoint.
-4. Verify affected lifecycle, consent, recovery, scheduler, and plan-state tests.
-5. Do not apply the migration to production until the complete release candidate is approved.
+This keeps routine development from consuming Lovable effort/credits unnecessarily.
 
-Production data, plans, jobs, tokens, sessions, email activity, scheduler controls, secrets, and provider state must not be used as development fixtures.
+## Release preparation
 
-## V1.1 release
+Before the first real public release:
 
-1. Freeze the accepted `release/v1.1` commit and run the complete quality gate.
+1. Freeze the accepted release candidate and run the complete quality gate.
 2. Review the full `main...release/v1.1` diff and reconcile Product Blueprint, Technical Specification, Decision Log, and repository documentation.
-3. Create one release pull request from `release/v1.1` into `main`.
-4. Merge without rewriting published history.
-5. Confirm GitHub `main` and Lovable show the same source revision and no Lovable-generated drift.
-6. Get Todd's explicit production approval.
-7. Publish once through Lovable.
-8. Run a bounded production smoke test without creating unintended plans, tokens, sessions, jobs, or email activity.
-9. Record the release commit and production evidence.
+3. Verify database migrations, test-data cleanup, secrets, email controls, payment controls, analytics boundaries, and rollback/forward-repair procedures.
+4. Decide whether production and staging now need separate backends based on the real operating risk.
+5. Create one release pull request from `release/v1.1` into `main`.
+6. Merge without rewriting published history.
+7. Confirm GitHub `main` and Lovable show the same source revision and no Lovable-generated drift.
+8. Get Todd's explicit launch approval.
+9. Publish once through Lovable.
+10. Run a bounded smoke test and record the release evidence.
 
 ## Hard rules
 
-- GitHub is the source of truth. Lovable is preview and publish only.
+- GitHub is the source of truth. Lovable is visual review and publication, not the routine development environment.
 - No direct development on `main` or `release/v1.1`.
 - No force push, rebase, amend, or squash of pushed Lovable-synced history.
-- No source changes during preview or release.
-- No migration, provider send, scheduler change, secret change, or production publication hidden inside another checkpoint.
-- Documentation changes travel with the feature they govern.
-- V1.1 functionality comes before visual polish. The current V1 visual system remains unchanged until Todd explicitly reopens design work.
+- No hidden migration, provider send, scheduler change, secret change, or publication inside another checkpoint.
+- Documentation changes travel with the behavior/process they govern.
+- Environment files and secrets stay out of source control.
+- Do not add process overhead merely because the app may need it later; add isolation and release controls when real operating risk justifies them.
