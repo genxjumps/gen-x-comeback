@@ -1,8 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { evaluateMarketingSyncGate } from "@/lib/marketing/config.server";
 import { dispatchMarketingSyncJobs } from "@/lib/marketing/dispatch";
-import { createMailerLiteAdapter } from "@/lib/marketing/mailerlite.server";
+import {
+  createMailerLiteEdgeAdapter,
+  readMailerLiteEdgeGate,
+} from "@/lib/marketing/mailerlite-edge.server";
 import type {
   MarketingLead,
   MarketingSyncFence,
@@ -11,6 +13,10 @@ import type {
 } from "@/lib/marketing/types";
 
 const NOW = new Date("2026-08-28T15:00:00.000Z");
+const EDGE_CONFIG = {
+  endpoint: "https://project.supabase.co/functions/v1/mailerlite-marketing-sync",
+  serviceRoleKey: "service-role-secret",
+};
 
 function makeJob(patch: Partial<MarketingSyncJob> = {}): MarketingSyncJob {
   return {
@@ -54,42 +60,72 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("MailerLite activation gate", () => {
-  it("stays disabled unless explicitly enabled", () => {
-    expect(
-      evaluateMarketingSyncGate({ enabled: false, apiToken: "token", groupId: "123" }),
-    ).toEqual({ enabled: false, reason: "disabled", missing: [] });
+describe("MailerLite Edge Function client", () => {
+  it("reads the fail-closed activation gate without exposing secret values", async () => {
+    const fetchImpl = vi.fn(async () =>
+      Response.json({
+        enabled: false,
+        reason: "disabled",
+        missing: [],
+        configuration: {
+          enable_flag_present: true,
+          api_token_present: true,
+          group_id_present: true,
+          group_id_valid: true,
+        },
+      }),
+    );
+    const result = await readMailerLiteEdgeGate(EDGE_CONFIG, fetchImpl as typeof fetch);
+    expect(result).toEqual({
+      enabled: false,
+      reason: "disabled",
+      missing: [],
+      configuration: {
+        enable_flag_present: true,
+        api_token_present: true,
+        group_id_present: true,
+        group_id_valid: true,
+      },
+    });
+    expect(fetchImpl).toHaveBeenCalledWith(
+      EDGE_CONFIG.endpoint,
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          authorization: `Bearer ${EDGE_CONFIG.serviceRoleKey}`,
+        }),
+        body: JSON.stringify({ action: "status" }),
+      }),
+    );
   });
 
-  it("fails closed when an enabled deployment lacks a valid token or group", () => {
-    expect(
-      evaluateMarketingSyncGate({ enabled: true, apiToken: null, groupId: "not-an-id" }),
-    ).toEqual({
+  it("fails closed when the Edge Function is unavailable", async () => {
+    const fetchImpl = vi.fn(async () => new Response("not found", { status: 404 }));
+    await expect(readMailerLiteEdgeGate(EDGE_CONFIG, fetchImpl as typeof fetch)).resolves.toEqual({
       enabled: false,
-      reason: "missing_configuration",
-      missing: ["MAILERLITE_API_TOKEN", "MAILERLITE_GROUP_ID"],
+      reason: "edge_unavailable",
+      missing: [],
     });
   });
-});
 
-describe("MailerLite adapter", () => {
-  it("sends only contact, consent, and group data and never forces resubscribe", async () => {
+  it("sends only the approved contact fields to the internal Edge Function", async () => {
     const requests: Array<{ input: RequestInfo | URL; init?: RequestInit }> = [];
     const fetchImpl = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       requests.push({ input, init });
-      return new Response(JSON.stringify({ data: { id: "subscriber-1", status: "active" } }), {
-        status: 201,
-        headers: { "content-type": "application/json" },
+      return Response.json({
+        outcome: "accepted",
+        subscriberId: "subscriber-1",
+        subscriberStatus: "active",
       });
     });
 
-    const result = await createMailerLiteAdapter(
-      "secret",
+    const result = await createMailerLiteEdgeAdapter(
+      EDGE_CONFIG,
       fetchImpl as typeof fetch,
     ).upsertSubscriber({
       email: "jason@example.com",
       firstName: "Jason",
-      groupId: "123456",
+      groupId: "must-not-cross-the-edge-boundary",
       consentAt: "2026-08-28T14:00:00.000Z",
     });
 
@@ -99,27 +135,25 @@ describe("MailerLite adapter", () => {
       subscriberStatus: "active",
     });
     expect(requests).toHaveLength(1);
-    expect(requests[0]!.input).toBe("https://connect.mailerlite.com/api/subscribers");
+    expect(requests[0]!.input).toBe(EDGE_CONFIG.endpoint);
     const body = JSON.parse(String(requests[0]!.init?.body)) as Record<string, unknown>;
     expect(body).toEqual({
-      email: "jason@example.com",
-      fields: { name: "Jason" },
-      groups: ["123456"],
-      opted_in_at: "2026-08-28 14:00:00",
+      action: "upsert",
+      subscriber: {
+        email: "jason@example.com",
+        firstName: "Jason",
+        consentAt: "2026-08-28T14:00:00.000Z",
+      },
     });
-    expect(body).not.toHaveProperty("status");
-    expect(body).not.toHaveProperty("resubscribe");
-    for (const forbidden of ["assessment", "weight", "protein", "plan", "progress"]) {
-      expect(JSON.stringify(body).toLowerCase()).not.toContain(forbidden);
+    for (const forbidden of ["groupId", "assessment", "weight", "protein", "plan", "progress"]) {
+      expect(JSON.stringify(body).toLowerCase()).not.toContain(forbidden.toLowerCase());
     }
   });
 
-  it("honors MailerLite retry-after guidance", async () => {
-    const fetchImpl = vi.fn(
-      async () => new Response("rate limited", { status: 429, headers: { "retry-after": "119" } }),
-    );
-    const result = await createMailerLiteAdapter(
-      "secret",
+  it("turns an unavailable Edge Function into a retry", async () => {
+    const fetchImpl = vi.fn(async () => new Response("unavailable", { status: 503 }));
+    const result = await createMailerLiteEdgeAdapter(
+      EDGE_CONFIG,
       fetchImpl as typeof fetch,
     ).upsertSubscriber({
       email: "jason@example.com",
@@ -127,7 +161,7 @@ describe("MailerLite adapter", () => {
       groupId: "123456",
       consentAt: "2026-08-28T14:00:00.000Z",
     });
-    expect(result).toEqual({ outcome: "retry", errorCode: "http_429", retryAfterMs: 119_000 });
+    expect(result).toEqual({ outcome: "retry", errorCode: "edge_http_503" });
   });
 });
 

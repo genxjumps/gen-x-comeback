@@ -1,1 +1,6 @@
 project_id = "wrvjgjvdjjoytjdwntlx"
+
+[functions.mailerlite-marketing-sync]
+# The function performs its own constant-time service-role authentication so
+# opaque sb_secret service keys work as well as legacy JWT service-role keys.
+verify_jwt = false

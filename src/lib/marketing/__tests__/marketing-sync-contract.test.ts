@@ -10,10 +10,15 @@ const ROUTE = readFileSync(
   join(process.cwd(), "src", "routes", "api", "public", "email", "dispatch.ts"),
   "utf8",
 );
-const ADAPTER = readFileSync(
-  join(process.cwd(), "src", "lib", "marketing", "mailerlite.server.ts"),
+const EDGE_CLIENT = readFileSync(
+  join(process.cwd(), "src", "lib", "marketing", "mailerlite-edge.server.ts"),
   "utf8",
 );
+const EDGE_FUNCTION = readFileSync(
+  join(process.cwd(), "supabase", "functions", "mailerlite-marketing-sync", "index.ts"),
+  "utf8",
+);
+const SUPABASE_CONFIG = readFileSync(join(process.cwd(), "supabase", "config.toml"), "utf8");
 
 describe("durable marketing sync contract", () => {
   it("queues only future explicit marketing-consent activations with no migration backfill", () => {
@@ -48,10 +53,27 @@ describe("durable marketing sync contract", () => {
     expect(ROUTE).toContain('marketingSync = { enabled: true, error: "dispatch_failed" }');
   });
 
+  it("keeps MailerLite project secrets inside the authenticated Edge Function", () => {
+    expect(EDGE_FUNCTION).toContain('env("MARKETING_SYNC_ENABLED")');
+    expect(EDGE_FUNCTION).toContain('env("MAILERLITE_API_TOKEN")');
+    expect(EDGE_FUNCTION).toContain('env("MAILERLITE_GROUP_ID")');
+    expect(EDGE_FUNCTION).toContain('env("SUPABASE_SERVICE_ROLE_KEY")');
+    expect(EDGE_FUNCTION).toContain("secretsMatch(bearer(request), config.serviceRoleKey)");
+    expect(EDGE_CLIENT).not.toContain("MAILERLITE_API_TOKEN");
+    expect(EDGE_CLIENT).not.toContain("MAILERLITE_GROUP_ID");
+    expect(SUPABASE_CONFIG).toContain("[functions.mailerlite-marketing-sync]");
+    expect(SUPABASE_CONFIG).toContain("verify_jwt = false");
+  });
+
   it("never sends assessment or forced-reactivation fields to MailerLite", () => {
-    const payloadStart = ADAPTER.indexOf("body: JSON.stringify({");
-    const payloadEnd = ADAPTER.indexOf("}),", payloadStart);
-    const payload = ADAPTER.slice(payloadStart, payloadEnd);
+    const providerCall = EDGE_FUNCTION.slice(
+      EDGE_FUNCTION.indexOf("const response = await fetch(MAILERLITE_SUBSCRIBERS_ENDPOINT"),
+      EDGE_FUNCTION.indexOf("if (response.ok)"),
+    );
+    expect(providerCall).toContain("email: request.subscriber.email");
+    expect(providerCall).toContain("fields: { name: request.subscriber.firstName }");
+    expect(providerCall).toContain("groups: [config.groupId!]");
+    expect(providerCall).toContain("opted_in_at: mailerLiteDate(request.subscriber.consentAt)");
     for (const forbidden of [
       "assessment",
       "weight",
@@ -60,7 +82,8 @@ describe("durable marketing sync contract", () => {
       "progress",
       "resubscribe",
       "status",
-    ])
-      expect(payload.toLowerCase()).not.toContain(forbidden);
+    ]) {
+      expect(providerCall.toLowerCase()).not.toContain(forbidden);
+    }
   });
 });
