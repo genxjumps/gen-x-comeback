@@ -1,0 +1,179 @@
+export const ACCELERATOR_PRODUCT_CODE = "accelerator_28" as const;
+export const ACCELERATOR_PROGRAM_VERSION = "accelerator_28_v1" as const;
+
+export const ACCELERATOR_OFFER = {
+  priceCents: 3_700,
+  currency: "USD",
+  billing: "one_time",
+  refundWindowDays: 7,
+  access: "completion_based",
+  expiresWhileActive: false,
+  includedUpdates: "same_product_only",
+} as const;
+
+export const ACCELERATOR_AVAILABILITY = {
+  publicEnrollment: false,
+  reason: "launch_requirements_unverified",
+} as const;
+
+export type AcceleratorWeek = 1 | 2 | 3 | 4;
+export type AcceleratorDayNumber =
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18
+  | 19
+  | 20
+  | 21
+  | 22
+  | 23
+  | 24
+  | 25
+  | 26
+  | 27
+  | 28;
+
+export type AcceleratorAssignmentCode =
+  | "workout_a"
+  | "workout_b"
+  | "workout_c"
+  | "workout_d"
+  | "workout_e"
+  | "active_recovery_f"
+  | "rest";
+
+export type AcceleratorDayKind = "primary_workout" | "active_recovery" | "rest";
+
+export type AcceleratorDay = {
+  day: AcceleratorDayNumber;
+  week: AcceleratorWeek;
+  dayOfWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  assignment: AcceleratorAssignmentCode;
+  kind: AcceleratorDayKind;
+  videoRequired: boolean;
+  acknowledgementRequired: boolean;
+};
+
+export const ACCELERATOR_WEEK_FOCUS = [
+  { week: 1, title: "Set Your Baseline" },
+  { week: 2, title: "Clean It Up" },
+  { week: 3, title: "Raise Your Output" },
+  { week: 4, title: "Finish Strong" },
+] as const satisfies ReadonlyArray<{ week: AcceleratorWeek; title: string }>;
+
+const WEEKLY_ASSIGNMENTS = [
+  { assignment: "workout_a", kind: "primary_workout", videoRequired: true },
+  { assignment: "workout_b", kind: "primary_workout", videoRequired: true },
+  { assignment: "workout_c", kind: "primary_workout", videoRequired: true },
+  { assignment: "workout_d", kind: "primary_workout", videoRequired: true },
+  { assignment: "workout_e", kind: "primary_workout", videoRequired: true },
+  { assignment: "active_recovery_f", kind: "active_recovery", videoRequired: false },
+  { assignment: "rest", kind: "rest", videoRequired: false },
+] as const satisfies ReadonlyArray<{
+  assignment: AcceleratorAssignmentCode;
+  kind: AcceleratorDayKind;
+  videoRequired: boolean;
+}>;
+
+export const ACCELERATOR_DAYS: ReadonlyArray<AcceleratorDay> = Array.from(
+  { length: 28 },
+  (_, index) => {
+    const day = (index + 1) as AcceleratorDayNumber;
+    const week = (Math.floor(index / 7) + 1) as AcceleratorWeek;
+    const dayOfWeek = ((index % 7) + 1) as AcceleratorDay["dayOfWeek"];
+    const assignment = WEEKLY_ASSIGNMENTS[dayOfWeek - 1];
+
+    return {
+      day,
+      week,
+      dayOfWeek,
+      assignment: assignment.assignment,
+      kind: assignment.kind,
+      videoRequired: assignment.videoRequired,
+      acknowledgementRequired: true,
+    };
+  },
+);
+
+export type AcceleratorDayAccess = "completed" | "current" | "locked";
+
+/**
+ * Completion is sequential. Out-of-order values are ignored until every prior
+ * day is complete, matching the server contract the paid program will use.
+ */
+export function acceleratorDayAccess(
+  completedDays: ReadonlySet<number>,
+): ReadonlyArray<AcceleratorDay & { access: AcceleratorDayAccess }> {
+  let completedPrefix = 0;
+
+  for (let day = 1; day <= ACCELERATOR_DAYS.length; day += 1) {
+    if (!completedDays.has(day)) break;
+    completedPrefix = day;
+  }
+
+  return ACCELERATOR_DAYS.map((entry) => ({
+    ...entry,
+    access:
+      entry.day <= completedPrefix
+        ? "completed"
+        : entry.day === completedPrefix + 1
+          ? "current"
+          : "locked",
+  }));
+}
+
+export type AcceleratorLaunchRequirement = {
+  code:
+    | "workout_media"
+    | "workout_runtime"
+    | "equipment_audit"
+    | "weekly_coaching"
+    | "nutrition_targets"
+    | "checkout_handoff"
+    | "refund_path"
+    | "resume_behavior";
+  status: "unverified" | "verified";
+};
+
+/**
+ * These begin unverified on purpose. Public enrollment must remain closed until
+ * a later checkpoint verifies every requirement against the delivered app.
+ */
+export const ACCELERATOR_LAUNCH_REQUIREMENTS: ReadonlyArray<AcceleratorLaunchRequirement> = [
+  { code: "workout_media", status: "unverified" },
+  { code: "workout_runtime", status: "unverified" },
+  { code: "equipment_audit", status: "unverified" },
+  { code: "weekly_coaching", status: "unverified" },
+  { code: "nutrition_targets", status: "unverified" },
+  { code: "checkout_handoff", status: "unverified" },
+  { code: "refund_path", status: "unverified" },
+  { code: "resume_behavior", status: "unverified" },
+];
+
+export function acceleratorLaunchReady(
+  requirements: ReadonlyArray<AcceleratorLaunchRequirement>,
+): boolean {
+  const requiredCodes = new Set(ACCELERATOR_LAUNCH_REQUIREMENTS.map(({ code }) => code));
+  const verifiedCodes = new Set(
+    requirements.filter(({ status }) => status === "verified").map(({ code }) => code),
+  );
+
+  return (
+    requiredCodes.size === ACCELERATOR_LAUNCH_REQUIREMENTS.length &&
+    [...requiredCodes].every((code) => verifiedCodes.has(code))
+  );
+}

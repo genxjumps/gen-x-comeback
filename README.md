@@ -12,7 +12,10 @@ New public plan intake is closed in source during pre-launch. Existing participa
 their saved access or request a recovery link. Reopening intake requires a reviewed source change
 and release.
 
-The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Accelerator is the active next development phase, but no 28-Day feature implementation is currently merged.
+The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Accelerator is the active
+next development phase. Its first bounded checkpoint defines the product contract, deterministic
+28-day sequence, and fail-closed launch requirements; checkout, paid access, and the public offer
+remain unimplemented.
 
 `main` and `release/v1.1` are kept aligned as the accepted pre-launch baseline before new V1.1 checkpoints begin.
 
@@ -56,7 +59,8 @@ That command runs:
 - Prettier check
 - Production build
 
-Current checkpoint regression baseline: **487 tests across 28 test files**.
+The current regression count is reported by Vitest during `bun run verify`; that command is the
+authoritative quality gate rather than a manually maintained test total in this README.
 
 GitHub Actions runs the same quality gate for changes targeting `main` or `release/v1.1`.
 
@@ -157,7 +161,13 @@ bun run verify
 
 Resume V1.1 from a fresh bounded branch created from `release/v1.1`.
 
-The next product work is the 28-Day Fat Loss Accelerator. Carry forward only still-approved architecture and product decisions from prior planning. The older draft V1.1 architecture PR was intentionally closed because its mandatory isolated-staging assumption no longer matches the current pre-launch environment.
+The current 28-Day foundation is governed by
+[`docs/V1_1_28_DAY_PRODUCT_CONTRACT.md`](docs/V1_1_28_DAY_PRODUCT_CONTRACT.md). The next checkpoint
+must inventory and verify the real workout, coaching, equipment, runtime, and nutrition inputs
+before implementing customer-facing program delivery. Carry forward only still-approved
+architecture and product decisions from prior planning. The older draft V1.1 architecture PR was
+intentionally closed because its mandatory isolated-staging assumption no longer matches the
+current pre-launch environment.
 
 ## Historical implementation evidence
 
