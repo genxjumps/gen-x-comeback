@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { IntakeClosed } from "@/components/intake-closed";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
 
 export const Route = createFileRoute("/assessment/start")({
   head: () => ({
@@ -64,6 +66,14 @@ function BeforeYouStart() {
     }
     navigate({ to: "/assessment" });
   };
+
+  if (!NEW_PLAN_INTAKE_OPEN) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
+        <IntakeClosed />
+      </div>
+    );
+  }
 
   if (ineligible) {
     return (

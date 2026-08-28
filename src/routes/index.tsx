@@ -3,8 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { IntakeClosed } from "@/components/intake-closed";
 import { Separator } from "@/components/ui/separator";
 import { readStoredToken } from "@/lib/access-token";
+import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
 import { verifyAccessToken } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/")({
@@ -65,6 +67,14 @@ function Index() {
 
   const ctaLabel = hasPlan ? "Continue My Plan" : "Build My 7-Day Plan";
   const ctaTo = hasPlan ? "/your-plan" : "/assessment/start";
+
+  if (!NEW_PLAN_INTAKE_OPEN && !hasPlan) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
+        <IntakeClosed />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
