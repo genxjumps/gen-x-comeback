@@ -96,7 +96,9 @@ Development rules still apply:
 ## MailerLite lead sync
 
 The app has a direct, no-Zapier MailerLite sync path. It uses the existing five-minute scheduler,
-but has its own fail-closed environment gate. It does not depend on Resend sending being enabled.
+but has its own fail-closed environment gate. The published app calls a service-role-authenticated
+Cloud Edge Function for the provider request because McLovable project secrets are available there
+at runtime. It does not depend on Resend sending being enabled.
 
 Only a future activation of `marketing_consent_active` creates a durable sync job. Publishing the
 migration does not backfill existing participants. The provider payload contains only:
@@ -110,7 +112,7 @@ Assessment answers, weight, protein targets, plan details, and progress are neve
 MailerLite. The integration never sets MailerLite's `resubscribe` flag, so it cannot reactivate a
 contact MailerLite already marks unsubscribed, bounced, or junk.
 
-Activation requires all three server-only values:
+Activation requires all three Edge Function project secrets:
 
 - `MARKETING_SYNC_ENABLED=true`
 - `MAILERLITE_API_TOKEN`
