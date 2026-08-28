@@ -8,6 +8,10 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 The app is **pre-launch and still in development**. There are no real external users or live paid customers using it yet.
 
+New public plan intake is closed in source during pre-launch. Existing participants can still use
+their saved access or request a recovery link. Reopening intake requires a reviewed source change
+and release.
+
 The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Accelerator is the active next development phase, but no 28-Day feature implementation is currently merged.
 
 `main` and `release/v1.1` are kept aligned as the accepted pre-launch baseline before new V1.1 checkpoints begin.
