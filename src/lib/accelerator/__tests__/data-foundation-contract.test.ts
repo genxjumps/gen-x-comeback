@@ -59,7 +59,9 @@ describe("account-owned Accelerator and program-run foundation", () => {
     );
     expect(migration).toContain("SELECT COALESCE(max(run_number), 0) + 1");
     expect(migration).toContain("paid program run history is immutable");
-    expect(migration).toContain("NEW.program_snapshot, NEW.run_number, NEW.started_at");
+    expect(migration).toContain(
+      "NEW.program_snapshot, NEW.run_number, NEW.customer_time_zone, NEW.started_at",
+    );
   });
 
   it("enforces one active structured run and safe switching", () => {
@@ -70,6 +72,8 @@ describe("account-owned Accelerator and program-run foundation", () => {
     expect(migration).toContain("status IN ('active', 'paused', 'completed', 'revoked')");
     expect(migration).toContain("CREATE OR REPLACE FUNCTION public.pause_program_run_atomic");
     expect(migration).toContain("CREATE OR REPLACE FUNCTION public.resume_program_run_atomic");
+    expect(migration).toContain("CREATE TABLE public.customer_active_programs");
+    expect(migration).toContain("CREATE OR REPLACE FUNCTION public.activate_lead_plan_atomic");
     expect(migration).toContain("SET status = 'paused', paused_at = now()");
   });
 
@@ -80,7 +84,11 @@ describe("account-owned Accelerator and program-run foundation", () => {
       "start_program_run_atomic",
       "pause_program_run_atomic",
       "resume_program_run_atomic",
+      "activate_lead_plan_atomic",
+      "accelerator_progress_state",
       "complete_accelerator_day_atomic",
+      "undo_accelerator_day_atomic",
+      "record_accelerator_video_view_atomic",
       "save_accelerator_weekly_check_in_atomic",
     ]) {
       expect(migration).toContain(`GRANT EXECUTE ON FUNCTION public.${fn}`);

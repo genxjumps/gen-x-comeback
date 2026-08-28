@@ -176,15 +176,16 @@ remains unapplied and requires reconciliation with the expanded contract before 
 The read-only foundation gap audit is complete. The dependency-based build sequence and GitHub
 Actions discipline are recorded in
 [`docs/V1_1_ACCELERATOR_IMPLEMENTATION_PLAN.md`](docs/V1_1_ACCELERATOR_IMPLEMENTATION_PLAN.md).
-The unified customer-account and ownership/program-run corrections are complete at source level.
-Both migrations remain unapplied and every public entry point remains closed.
+The unified customer-account, ownership/program-run, and program-progress corrections are complete
+at source level. Customer-local next-day unlocking, missed-day persistence, bounded Undo,
+completed-day reopening, separate video views, and safe 7-Day Plan switching are represented and
+tested. Both migrations remain unapplied and every public entry point remains closed.
 
-The next checkpoint must reconcile the program progress engine, including customer-local next-day
-unlocking, missed days, undo, completed-day reopening, separate video views, and safe switching with
-the existing 7-Day Plan. Later checkpoints may apply and verify the corrected migration chain
-inside a controlled development boundary, audit real workout and coaching assets, approve
-nutrition formulas, and add a tested checkout handoff. Public enrollment remains fail-closed
-throughout that work.
+The next checkpoint is independent optional weight and waist history with safe corrections,
+removals, and run-specific starting, newest, and final values. Later checkpoints may apply and
+verify the corrected migration chain inside a controlled development boundary, audit real workout
+and coaching assets, approve nutrition formulas, and add a tested checkout handoff. Public
+enrollment remains fail-closed throughout that work.
 
 ## Historical implementation evidence
 

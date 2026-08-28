@@ -50,6 +50,7 @@ CREATE TABLE public.paid_program_enrollments (
   program_version text NOT NULL,
   program_snapshot jsonb NOT NULL,
   run_number integer NOT NULL CHECK (run_number > 0),
+  customer_time_zone text NOT NULL,
   status text NOT NULL CHECK (status IN ('active', 'paused', 'completed', 'revoked')),
   started_at timestamptz NOT NULL,
   paused_at timestamptz,
@@ -63,6 +64,10 @@ CREATE TABLE public.paid_program_enrollments (
     AND program_snapshot->>'programVersion' = program_version
     AND jsonb_typeof(program_snapshot->'days') = 'array'
     AND jsonb_array_length(program_snapshot->'days') > 0
+  ),
+  CONSTRAINT paid_program_enrollments_time_zone_check CHECK (
+    customer_time_zone = btrim(customer_time_zone)
+    AND length(customer_time_zone) BETWEEN 1 AND 100
   ),
   CONSTRAINT paid_program_enrollments_state_check CHECK (
     (status = 'active' AND paused_at IS NULL AND completed_at IS NULL AND revoked_at IS NULL)
@@ -82,8 +87,46 @@ CREATE TABLE public.paid_program_day_completions (
   program_version text NOT NULL,
   day_number smallint NOT NULL CHECK (day_number > 0),
   completed_at timestamptz NOT NULL DEFAULT now(),
+  undo_until timestamptz NOT NULL DEFAULT (now() + interval '10 minutes'),
   created_at timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT paid_program_day_completions_unique UNIQUE (enrollment_id, day_number)
+  CONSTRAINT paid_program_day_completions_unique UNIQUE (enrollment_id, day_number),
+  CONSTRAINT paid_program_day_completions_undo_window_check CHECK (
+    undo_until = completed_at + interval '10 minutes'
+  )
+);
+
+-- Viewing a program video and completing its day are deliberately independent.
+-- Replays update this compact fact without changing assignment progress.
+CREATE TABLE public.paid_program_video_views (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  enrollment_id uuid NOT NULL REFERENCES public.paid_program_enrollments(id) ON DELETE CASCADE,
+  program_version text NOT NULL,
+  day_number smallint NOT NULL CHECK (day_number > 0),
+  media_key text NOT NULL CHECK (
+    media_key = btrim(media_key) AND length(media_key) BETWEEN 1 AND 200
+  ),
+  first_viewed_at timestamptz NOT NULL DEFAULT now(),
+  last_viewed_at timestamptz NOT NULL DEFAULT now(),
+  view_count integer NOT NULL DEFAULT 1 CHECK (view_count > 0),
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT paid_program_video_views_unique UNIQUE (enrollment_id, day_number, media_key),
+  CONSTRAINT paid_program_video_views_time_check CHECK (last_viewed_at >= first_viewed_at)
+);
+
+-- One small pointer coordinates free and paid structured programs. Removing or
+-- replacing this pointer never deletes either program's history.
+CREATE TABLE public.customer_active_programs (
+  customer_id uuid PRIMARY KEY REFERENCES public.customer_accounts(id) ON DELETE RESTRICT,
+  program_kind text NOT NULL CHECK (program_kind IN ('lead_plan', 'paid_run')),
+  lead_plan_id uuid UNIQUE REFERENCES public.lead_plans(id) ON DELETE RESTRICT,
+  paid_enrollment_id uuid UNIQUE REFERENCES public.paid_program_enrollments(id) ON DELETE RESTRICT,
+  activated_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT customer_active_programs_target_check CHECK (
+    (program_kind = 'lead_plan' AND lead_plan_id IS NOT NULL AND paid_enrollment_id IS NULL)
+    OR (program_kind = 'paid_run' AND paid_enrollment_id IS NOT NULL AND lead_plan_id IS NULL)
+  )
 );
 
 -- Retained only for the existing private proof. Checkpoint 4 replaces this
@@ -111,6 +154,8 @@ CREATE INDEX paid_program_enrollments_customer_id_idx
   ON public.paid_program_enrollments (customer_id, created_at DESC);
 CREATE INDEX paid_program_day_completions_enrollment_id_idx
   ON public.paid_program_day_completions (enrollment_id, day_number);
+CREATE INDEX paid_program_video_views_enrollment_id_idx
+  ON public.paid_program_video_views (enrollment_id, day_number, last_viewed_at DESC);
 CREATE INDEX paid_program_weekly_check_ins_enrollment_id_idx
   ON public.paid_program_weekly_check_ins (enrollment_id, week_number);
 
@@ -118,10 +163,10 @@ CREATE OR REPLACE FUNCTION public.protect_paid_program_enrollment_history()
 RETURNS trigger LANGUAGE plpgsql SET search_path = public AS $$
 BEGIN
   IF (NEW.customer_id, NEW.entitlement_id, NEW.product_code, NEW.program_version,
-      NEW.program_snapshot, NEW.run_number, NEW.started_at)
+      NEW.program_snapshot, NEW.run_number, NEW.customer_time_zone, NEW.started_at)
     IS DISTINCT FROM
      (OLD.customer_id, OLD.entitlement_id, OLD.product_code, OLD.program_version,
-      OLD.program_snapshot, OLD.run_number, OLD.started_at)
+      OLD.program_snapshot, OLD.run_number, OLD.customer_time_zone, OLD.started_at)
   THEN
     RAISE EXCEPTION 'paid program run history is immutable';
   END IF;
@@ -138,7 +183,8 @@ DECLARE t text;
 BEGIN
   FOREACH t IN ARRAY ARRAY[
     'paid_purchases', 'paid_product_entitlements', 'paid_program_enrollments',
-    'paid_program_day_completions', 'paid_program_weekly_check_ins'
+    'paid_program_day_completions', 'paid_program_video_views',
+    'paid_program_weekly_check_ins', 'customer_active_programs'
   ]
   LOOP
     EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', t);
@@ -247,9 +293,11 @@ CREATE OR REPLACE FUNCTION public.start_program_run_atomic(
   p_customer_id uuid,
   p_entitlement_id uuid,
   p_program_version text,
-  p_program_snapshot jsonb
+  p_program_snapshot jsonb,
+  p_customer_time_zone text
 ) RETURNS TABLE(
-  outcome text, enrollment_id uuid, run_number integer, paused_enrollment_id uuid
+  outcome text, enrollment_id uuid, run_number integer,
+  paused_enrollment_id uuid, paused_lead_plan_id uuid
 )
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
@@ -257,10 +305,13 @@ DECLARE
   v_run_number integer;
   v_enrollment_id uuid;
   v_paused_id uuid;
+  v_paused_lead_plan_id uuid;
 BEGIN
   IF p_customer_id IS NULL OR p_entitlement_id IS NULL
     OR p_program_version IS NULL OR length(btrim(p_program_version)) = 0
     OR p_program_snapshot IS NULL
+    OR p_customer_time_zone IS NULL
+    OR NOT EXISTS (SELECT 1 FROM pg_timezone_names WHERE name = p_customer_time_zone)
   THEN RETURN; END IF;
 
   PERFORM pg_advisory_xact_lock(hashtextextended(p_customer_id::text, 2));
@@ -278,9 +329,15 @@ BEGIN
   IF EXISTS (SELECT 1 FROM public.paid_program_enrollments
     WHERE entitlement_id = p_entitlement_id AND status IN ('active', 'paused'))
   THEN
-    RETURN QUERY SELECT 'existing_unfinished_run'::text, NULL::uuid, NULL::integer, NULL::uuid;
+    RETURN QUERY SELECT 'existing_unfinished_run'::text, NULL::uuid, NULL::integer,
+      NULL::uuid, NULL::uuid;
     RETURN;
   END IF;
+
+  SELECT active.lead_plan_id INTO v_paused_lead_plan_id
+    FROM public.customer_active_programs active
+   WHERE active.customer_id = p_customer_id AND active.program_kind = 'lead_plan'
+   FOR UPDATE;
 
   UPDATE public.paid_program_enrollments
      SET status = 'paused', paused_at = now(), updated_at = now()
@@ -292,13 +349,22 @@ BEGIN
 
   INSERT INTO public.paid_program_enrollments (
     customer_id, entitlement_id, product_code, program_version,
-    program_snapshot, run_number, status, started_at
+    program_snapshot, run_number, customer_time_zone, status, started_at
   ) VALUES (
     p_customer_id, p_entitlement_id, v_entitlement.product_code, p_program_version,
-    p_program_snapshot, v_run_number, 'active', now()
+    p_program_snapshot, v_run_number, p_customer_time_zone, 'active', now()
   ) RETURNING id INTO v_enrollment_id;
 
-  RETURN QUERY SELECT 'started'::text, v_enrollment_id, v_run_number, v_paused_id;
+  INSERT INTO public.customer_active_programs (
+    customer_id, program_kind, lead_plan_id, paid_enrollment_id
+  ) VALUES (p_customer_id, 'paid_run', NULL, v_enrollment_id)
+  ON CONFLICT (customer_id) DO UPDATE SET
+    program_kind = 'paid_run', lead_plan_id = NULL,
+    paid_enrollment_id = EXCLUDED.paid_enrollment_id,
+    activated_at = now(), updated_at = now();
+
+  RETURN QUERY SELECT 'started'::text, v_enrollment_id, v_run_number,
+    v_paused_id, v_paused_lead_plan_id;
 END;
 $$;
 
@@ -312,15 +378,20 @@ BEGIN
      SET status = 'paused', paused_at = now(), updated_at = now()
    WHERE id = p_enrollment_id AND customer_id = p_customer_id AND status = 'active'
   RETURNING *;
+  DELETE FROM public.customer_active_programs
+   WHERE customer_id = p_customer_id AND paid_enrollment_id = p_enrollment_id;
 END;
 $$;
 
 CREATE OR REPLACE FUNCTION public.resume_program_run_atomic(
   p_customer_id uuid, p_enrollment_id uuid
-) RETURNS TABLE(outcome text, enrollment_id uuid, paused_enrollment_id uuid)
+) RETURNS TABLE(
+  outcome text, enrollment_id uuid, paused_enrollment_id uuid, paused_lead_plan_id uuid
+)
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
   v_paused_id uuid;
+  v_paused_lead_plan_id uuid;
 BEGIN
   PERFORM pg_advisory_xact_lock(hashtextextended(p_customer_id::text, 2));
   PERFORM 1 FROM public.paid_program_enrollments n
@@ -329,6 +400,11 @@ BEGIN
      AND n.status = 'paused' AND e.status = 'active' FOR UPDATE OF n;
   IF NOT FOUND THEN RETURN; END IF;
 
+  SELECT active.lead_plan_id INTO v_paused_lead_plan_id
+    FROM public.customer_active_programs active
+   WHERE active.customer_id = p_customer_id AND active.program_kind = 'lead_plan'
+   FOR UPDATE;
+
   UPDATE public.paid_program_enrollments
      SET status = 'paused', paused_at = now(), updated_at = now()
    WHERE customer_id = p_customer_id AND status = 'active' AND id <> p_enrollment_id
@@ -336,49 +412,301 @@ BEGIN
   UPDATE public.paid_program_enrollments
      SET status = 'active', paused_at = NULL, updated_at = now()
    WHERE id = p_enrollment_id;
-  RETURN QUERY SELECT 'resumed'::text, p_enrollment_id, v_paused_id;
+  INSERT INTO public.customer_active_programs (
+    customer_id, program_kind, lead_plan_id, paid_enrollment_id
+  ) VALUES (p_customer_id, 'paid_run', NULL, p_enrollment_id)
+  ON CONFLICT (customer_id) DO UPDATE SET
+    program_kind = 'paid_run', lead_plan_id = NULL,
+    paid_enrollment_id = EXCLUDED.paid_enrollment_id,
+    activated_at = now(), updated_at = now();
+  RETURN QUERY SELECT 'resumed'::text, p_enrollment_id,
+    v_paused_id, v_paused_lead_plan_id;
 END;
 $$;
 
--- Checkpoint 3 will replace this progress function with next-day unlocking,
--- undo, missed-day, and video-view behavior. It remains sequential and locked.
-CREATE OR REPLACE FUNCTION public.complete_accelerator_day_atomic(
-  p_enrollment_id uuid, p_program_version text, p_day_number smallint
-) RETURNS TABLE(completed_days smallint[], newly_completed boolean, program_completed boolean)
+-- Selecting the legacy 7-Day Plan pauses a paid run without resetting either
+-- program. A future customer-facing switch warning calls this transaction.
+CREATE OR REPLACE FUNCTION public.activate_lead_plan_atomic(
+  p_customer_id uuid, p_lead_plan_id uuid
+) RETURNS TABLE(outcome text, lead_plan_id uuid, paused_enrollment_id uuid)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_paused_id uuid;
+BEGIN
+  IF p_customer_id IS NULL OR p_lead_plan_id IS NULL THEN RETURN; END IF;
+  PERFORM pg_advisory_xact_lock(hashtextextended(p_customer_id::text, 2));
+
+  PERFORM 1
+    FROM public.customer_lead_plan_links link
+    JOIN public.lead_plans lead ON lead.id = link.lead_plan_id
+   WHERE link.customer_id = p_customer_id AND link.lead_plan_id = p_lead_plan_id
+     AND jsonb_typeof(lead.plan_json->'days') = 'array'
+     AND (SELECT count(*) FROM public.lead_plan_day_completions completion
+           WHERE completion.lead_plan_id = p_lead_plan_id)
+       < jsonb_array_length(lead.plan_json->'days')
+   FOR UPDATE OF link;
+  IF NOT FOUND THEN RETURN; END IF;
+
+  UPDATE public.paid_program_enrollments
+     SET status = 'paused', paused_at = now(), updated_at = now()
+   WHERE customer_id = p_customer_id AND status = 'active'
+  RETURNING id INTO v_paused_id;
+
+  INSERT INTO public.customer_active_programs (
+    customer_id, program_kind, lead_plan_id, paid_enrollment_id
+  ) VALUES (p_customer_id, 'lead_plan', p_lead_plan_id, NULL)
+  ON CONFLICT (customer_id) DO UPDATE SET
+    program_kind = 'lead_plan', lead_plan_id = EXCLUDED.lead_plan_id,
+    paid_enrollment_id = NULL, activated_at = now(), updated_at = now();
+
+  RETURN QUERY SELECT 'activated'::text, p_lead_plan_id, v_paused_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.accelerator_progress_state(
+  p_enrollment_id uuid, p_program_version text
+) RETURNS TABLE(
+  completed_days smallint[], current_day smallint, available_on date,
+  can_complete_current boolean, undo_day smallint, undo_until timestamptz,
+  program_completed boolean
+)
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE
   v_enrollment public.paid_program_enrollments%ROWTYPE;
-  v_inserted_day smallint;
-  v_completed smallint[];
+  v_previous_completed_at timestamptz;
 BEGIN
+  SELECT run.* INTO v_enrollment
+    FROM public.paid_program_enrollments run
+    JOIN public.paid_product_entitlements entitlement ON entitlement.id = run.entitlement_id
+   WHERE run.id = p_enrollment_id AND run.program_version = p_program_version
+     AND run.status IN ('active', 'paused', 'completed')
+     AND entitlement.status = 'active';
+  IF NOT FOUND THEN RETURN; END IF;
+
+  SELECT COALESCE(array_agg(completion.day_number ORDER BY completion.day_number),
+                  ARRAY[]::smallint[])
+    INTO completed_days
+    FROM public.paid_program_day_completions completion
+   WHERE completion.enrollment_id = p_enrollment_id
+     AND completion.program_version = p_program_version;
+
+  SELECT (day.value->>'day')::smallint INTO current_day
+    FROM jsonb_array_elements(v_enrollment.program_snapshot->'days') day(value)
+   WHERE NOT ((day.value->>'day')::smallint = ANY(completed_days))
+   ORDER BY (day.value->>'day')::smallint
+   LIMIT 1;
+
+  program_completed := current_day IS NULL;
+  available_on := NULL;
+  can_complete_current := false;
+  IF current_day IS NOT NULL THEN
+    IF current_day = 1 THEN
+      available_on := (v_enrollment.started_at AT TIME ZONE v_enrollment.customer_time_zone)::date;
+    ELSE
+      SELECT completion.completed_at INTO v_previous_completed_at
+        FROM public.paid_program_day_completions completion
+       WHERE completion.enrollment_id = p_enrollment_id
+         AND completion.day_number = current_day - 1;
+      IF v_previous_completed_at IS NOT NULL THEN
+        available_on :=
+          (v_previous_completed_at AT TIME ZONE v_enrollment.customer_time_zone)::date + 1;
+      END IF;
+    END IF;
+    can_complete_current := v_enrollment.status = 'active'
+      AND available_on IS NOT NULL
+      AND (now() AT TIME ZONE v_enrollment.customer_time_zone)::date >= available_on;
+  END IF;
+
+  SELECT completion.day_number, completion.undo_until
+    INTO undo_day, undo_until
+    FROM public.paid_program_day_completions completion
+   WHERE completion.enrollment_id = p_enrollment_id
+     AND completion.program_version = p_program_version
+     AND completion.undo_until >= now()
+   ORDER BY completion.day_number DESC
+   LIMIT 1;
+
+  RETURN NEXT;
+END;
+$$;
+
+-- Only the earliest unfinished assignment can be completed, and Days 2-28
+-- wait for the next calendar date in the run's captured IANA time zone.
+CREATE OR REPLACE FUNCTION public.complete_accelerator_day_atomic(
+  p_enrollment_id uuid, p_program_version text, p_day_number smallint
+) RETURNS TABLE(
+  completed_days smallint[], newly_completed boolean, program_completed boolean,
+  current_day smallint, available_on date, can_complete_current boolean,
+  undo_day smallint, undo_until timestamptz
+)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_enrollment public.paid_program_enrollments%ROWTYPE;
+  v_customer_id uuid;
+  v_inserted_day smallint;
+  v_current_day smallint;
+  v_previous_completed_at timestamptz;
+  v_total_days integer;
+BEGIN
+  IF p_enrollment_id IS NULL OR p_program_version IS NULL OR p_day_number IS NULL
+  THEN RETURN; END IF;
+  SELECT run.customer_id INTO v_customer_id
+    FROM public.paid_program_enrollments run WHERE run.id = p_enrollment_id;
+  IF v_customer_id IS NULL THEN RETURN; END IF;
+  PERFORM pg_advisory_xact_lock(hashtextextended(v_customer_id::text, 2));
   SELECT n.* INTO v_enrollment FROM public.paid_program_enrollments n
     JOIN public.paid_product_entitlements e ON e.id = n.entitlement_id
    WHERE n.id = p_enrollment_id AND n.program_version = p_program_version
-     AND n.status IN ('active', 'completed') AND e.status = 'active' FOR UPDATE OF n;
+     AND n.status = 'active' AND e.status = 'active' FOR UPDATE OF n;
   IF NOT FOUND THEN RETURN; END IF;
-  IF NOT EXISTS (
-    SELECT 1
-      FROM jsonb_array_elements(v_enrollment.program_snapshot->'days') AS d(value)
-     WHERE (d.value->>'day')::smallint = p_day_number
-  ) THEN RETURN; END IF;
-  IF EXISTS (SELECT 1 FROM generate_series(1, p_day_number - 1) required(day_number)
-    WHERE NOT EXISTS (SELECT 1 FROM public.paid_program_day_completions c
-      WHERE c.enrollment_id = p_enrollment_id AND c.day_number = required.day_number))
-  THEN RETURN; END IF;
 
-  INSERT INTO public.paid_program_day_completions (enrollment_id, program_version, day_number)
-  VALUES (p_enrollment_id, p_program_version, p_day_number)
-  ON CONFLICT (enrollment_id, day_number) DO NOTHING RETURNING day_number INTO v_inserted_day;
-  SELECT array_agg(day_number ORDER BY day_number) INTO v_completed
-    FROM public.paid_program_day_completions WHERE enrollment_id = p_enrollment_id;
-  IF cardinality(v_completed) = jsonb_array_length(v_enrollment.program_snapshot->'days')
-    AND v_enrollment.status <> 'completed'
+  IF EXISTS (SELECT 1 FROM public.paid_program_day_completions completion
+    WHERE completion.enrollment_id = p_enrollment_id
+      AND completion.day_number = p_day_number)
   THEN
+    RETURN QUERY SELECT state.completed_days, false, state.program_completed,
+      state.current_day, state.available_on, state.can_complete_current,
+      state.undo_day, state.undo_until
+      FROM public.accelerator_progress_state(p_enrollment_id, p_program_version) state;
+    RETURN;
+  END IF;
+
+  SELECT (day.value->>'day')::smallint INTO v_current_day
+    FROM jsonb_array_elements(v_enrollment.program_snapshot->'days') day(value)
+   WHERE NOT EXISTS (
+     SELECT 1 FROM public.paid_program_day_completions completion
+      WHERE completion.enrollment_id = p_enrollment_id
+        AND completion.day_number = (day.value->>'day')::smallint
+   )
+   ORDER BY (day.value->>'day')::smallint LIMIT 1;
+  IF v_current_day IS NULL OR p_day_number <> v_current_day THEN RETURN; END IF;
+
+  IF v_current_day > 1 THEN
+    SELECT completion.completed_at INTO v_previous_completed_at
+      FROM public.paid_program_day_completions completion
+     WHERE completion.enrollment_id = p_enrollment_id
+       AND completion.day_number = v_current_day - 1;
+    IF v_previous_completed_at IS NULL
+      OR (now() AT TIME ZONE v_enrollment.customer_time_zone)::date
+        <= (v_previous_completed_at AT TIME ZONE v_enrollment.customer_time_zone)::date
+    THEN RETURN; END IF;
+  END IF;
+
+  INSERT INTO public.paid_program_day_completions (
+    enrollment_id, program_version, day_number, completed_at, undo_until
+  ) VALUES (p_enrollment_id, p_program_version, p_day_number, now(), now() + interval '10 minutes')
+  ON CONFLICT (enrollment_id, day_number) DO NOTHING RETURNING day_number INTO v_inserted_day;
+
+  v_total_days := jsonb_array_length(v_enrollment.program_snapshot->'days');
+  IF (SELECT count(*) FROM public.paid_program_day_completions completion
+       WHERE completion.enrollment_id = p_enrollment_id) = v_total_days THEN
     UPDATE public.paid_program_enrollments SET status = 'completed', paused_at = NULL,
       completed_at = now(), updated_at = now() WHERE id = p_enrollment_id;
+    DELETE FROM public.customer_active_programs
+     WHERE customer_id = v_enrollment.customer_id AND paid_enrollment_id = p_enrollment_id;
   END IF;
-  RETURN QUERY SELECT COALESCE(v_completed, ARRAY[]::smallint[]), v_inserted_day IS NOT NULL,
-    cardinality(v_completed) = jsonb_array_length(v_enrollment.program_snapshot->'days');
+
+  RETURN QUERY SELECT state.completed_days, v_inserted_day IS NOT NULL,
+    state.program_completed, state.current_day, state.available_on,
+    state.can_complete_current, state.undo_day, state.undo_until
+    FROM public.accelerator_progress_state(p_enrollment_id, p_program_version) state;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.undo_accelerator_day_atomic(
+  p_enrollment_id uuid, p_program_version text, p_day_number smallint
+) RETURNS TABLE(
+  completed_days smallint[], undone boolean, program_completed boolean,
+  current_day smallint, available_on date, can_complete_current boolean,
+  undo_day smallint, undo_until timestamptz
+)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_enrollment public.paid_program_enrollments%ROWTYPE;
+  v_latest public.paid_program_day_completions%ROWTYPE;
+  v_customer_id uuid;
+BEGIN
+  SELECT run.customer_id INTO v_customer_id
+    FROM public.paid_program_enrollments run WHERE run.id = p_enrollment_id;
+  IF v_customer_id IS NULL THEN RETURN; END IF;
+  PERFORM pg_advisory_xact_lock(hashtextextended(v_customer_id::text, 2));
+  SELECT run.* INTO v_enrollment
+    FROM public.paid_program_enrollments run
+    JOIN public.paid_product_entitlements entitlement ON entitlement.id = run.entitlement_id
+   WHERE run.id = p_enrollment_id AND run.program_version = p_program_version
+     AND run.status IN ('active', 'completed') AND entitlement.status = 'active'
+   FOR UPDATE OF run;
+  IF NOT FOUND THEN RETURN; END IF;
+
+  SELECT completion.* INTO v_latest
+    FROM public.paid_program_day_completions completion
+   WHERE completion.enrollment_id = p_enrollment_id
+     AND completion.program_version = p_program_version
+   ORDER BY completion.day_number DESC LIMIT 1 FOR UPDATE;
+  IF NOT FOUND OR v_latest.day_number <> p_day_number OR v_latest.undo_until < now()
+  THEN RETURN; END IF;
+
+  IF v_enrollment.status = 'completed' THEN
+    IF EXISTS (SELECT 1 FROM public.paid_program_enrollments other
+      WHERE other.customer_id = v_enrollment.customer_id AND other.status = 'active'
+        AND other.id <> p_enrollment_id)
+      OR EXISTS (SELECT 1 FROM public.customer_active_programs active
+        WHERE active.customer_id = v_enrollment.customer_id
+          AND active.paid_enrollment_id IS DISTINCT FROM p_enrollment_id)
+    THEN RETURN; END IF;
+    UPDATE public.paid_program_enrollments
+       SET status = 'active', completed_at = NULL, updated_at = now()
+     WHERE id = p_enrollment_id;
+    INSERT INTO public.customer_active_programs (
+      customer_id, program_kind, lead_plan_id, paid_enrollment_id
+    ) VALUES (v_enrollment.customer_id, 'paid_run', NULL, p_enrollment_id)
+    ON CONFLICT (customer_id) DO UPDATE SET
+      program_kind = 'paid_run', lead_plan_id = NULL,
+      paid_enrollment_id = EXCLUDED.paid_enrollment_id,
+      activated_at = now(), updated_at = now();
+  END IF;
+
+  DELETE FROM public.paid_program_day_completions WHERE id = v_latest.id;
+  RETURN QUERY SELECT state.completed_days, true, state.program_completed,
+    state.current_day, state.available_on, state.can_complete_current,
+    state.undo_day, state.undo_until
+    FROM public.accelerator_progress_state(p_enrollment_id, p_program_version) state;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.record_accelerator_video_view_atomic(
+  p_enrollment_id uuid, p_program_version text, p_day_number smallint, p_media_key text
+) RETURNS SETOF public.paid_program_video_views
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_completed_days smallint[];
+  v_current_day smallint;
+  v_can_complete_current boolean;
+BEGIN
+  IF p_media_key IS NULL OR length(btrim(p_media_key)) NOT BETWEEN 1 AND 200 THEN RETURN; END IF;
+  PERFORM 1 FROM public.paid_program_enrollments run
+    JOIN public.paid_product_entitlements entitlement ON entitlement.id = run.entitlement_id
+   WHERE run.id = p_enrollment_id AND run.program_version = p_program_version
+     AND run.status IN ('active', 'paused', 'completed') AND entitlement.status = 'active'
+     AND EXISTS (SELECT 1 FROM jsonb_array_elements(run.program_snapshot->'days') day(value)
+       WHERE (day.value->>'day')::smallint = p_day_number)
+   FOR UPDATE OF run;
+  IF NOT FOUND THEN RETURN; END IF;
+
+  SELECT state.completed_days, state.current_day, state.can_complete_current
+    INTO v_completed_days, v_current_day, v_can_complete_current
+    FROM public.accelerator_progress_state(p_enrollment_id, p_program_version) state;
+  IF NOT (p_day_number = ANY(v_completed_days)
+    OR (p_day_number = v_current_day AND v_can_complete_current))
+  THEN RETURN; END IF;
+
+  RETURN QUERY INSERT INTO public.paid_program_video_views (
+    enrollment_id, program_version, day_number, media_key
+  ) VALUES (p_enrollment_id, p_program_version, p_day_number, btrim(p_media_key))
+  ON CONFLICT (enrollment_id, day_number, media_key) DO UPDATE SET
+    last_viewed_at = now(), view_count = paid_program_video_views.view_count + 1,
+    updated_at = now()
+  RETURNING *;
 END;
 $$;
 
@@ -424,18 +752,32 @@ REVOKE ALL ON FUNCTION public.provision_accelerator_ownership(
 GRANT EXECUTE ON FUNCTION public.provision_accelerator_ownership(
   uuid, text, text, text, text, timestamptz, text, integer, text
 ) TO service_role;
-REVOKE ALL ON FUNCTION public.start_program_run_atomic(uuid, uuid, text, jsonb)
+REVOKE ALL ON FUNCTION public.start_program_run_atomic(uuid, uuid, text, jsonb, text)
   FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.start_program_run_atomic(uuid, uuid, text, jsonb) TO service_role;
+GRANT EXECUTE ON FUNCTION public.start_program_run_atomic(uuid, uuid, text, jsonb, text)
+  TO service_role;
 REVOKE ALL ON FUNCTION public.pause_program_run_atomic(uuid, uuid)
   FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.pause_program_run_atomic(uuid, uuid) TO service_role;
 REVOKE ALL ON FUNCTION public.resume_program_run_atomic(uuid, uuid)
   FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.resume_program_run_atomic(uuid, uuid) TO service_role;
+REVOKE ALL ON FUNCTION public.activate_lead_plan_atomic(uuid, uuid)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.activate_lead_plan_atomic(uuid, uuid) TO service_role;
+REVOKE ALL ON FUNCTION public.accelerator_progress_state(uuid, text)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.accelerator_progress_state(uuid, text) TO service_role;
 REVOKE ALL ON FUNCTION public.complete_accelerator_day_atomic(uuid, text, smallint)
   FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.complete_accelerator_day_atomic(uuid, text, smallint) TO service_role;
+REVOKE ALL ON FUNCTION public.undo_accelerator_day_atomic(uuid, text, smallint)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.undo_accelerator_day_atomic(uuid, text, smallint) TO service_role;
+REVOKE ALL ON FUNCTION public.record_accelerator_video_view_atomic(uuid, text, smallint, text)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.record_accelerator_video_view_atomic(uuid, text, smallint, text)
+  TO service_role;
 REVOKE ALL ON FUNCTION public.save_accelerator_weekly_check_in_atomic(
   uuid, text, smallint, numeric, text, numeric, text, text
 ) FROM PUBLIC, anon, authenticated;

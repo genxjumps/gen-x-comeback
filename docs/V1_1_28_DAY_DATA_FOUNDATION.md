@@ -2,10 +2,10 @@
 
 ## Current status
 
-The customer-account, purchase, entitlement, and program-run source foundation is reconciled with
-the approved product contract. Both Accelerator migrations remain unapplied. Do not apply them
-until a later checkpoint deliberately verifies the complete corrected migration chain inside the
-approved development boundary.
+The customer-account, purchase, entitlement, program-run, and program-progress source foundation
+is reconciled with the approved product contract through Checkpoint 3. Both Accelerator migrations
+remain unapplied. Do not apply them until a later checkpoint deliberately verifies the complete
+corrected migration chain inside the approved development boundary.
 
 No public enrollment, checkout, payment-provider call, customer migration, email activation,
 McLovable publication, or browser write is opened by this foundation.
@@ -31,8 +31,11 @@ The account-owned records are:
 - `paid_product_entitlements` - the customer's durable right to use the purchased product.
 - `paid_program_enrollments` - repeatable, versioned program runs. The historical table name is
   retained, but each row now represents one run rather than ownership.
-- `paid_program_day_completions` - existing sequential progress scaffolding that Checkpoint 3 will
-  reconcile.
+- `paid_program_day_completions` - sequential completion facts with a bounded latest-completion
+  undo window.
+- `paid_program_video_views` - video-view facts that remain independent from day completion.
+- `customer_active_programs` - the single active structured-program pointer across linked 7-Day
+  Plans and paid runs.
 - `paid_program_weekly_check_ins` - temporary proof scaffolding that Checkpoint 4 will replace with
   approved measurement history.
 
@@ -76,9 +79,30 @@ The run lifecycle supports:
 Not Started remains an ownership state before a run exists. A paused run must be resumed rather
 than replaced with a duplicate run.
 
-The generic run model is ready to represent free and paid programs. Checkpoint 3 must connect the
-existing 7-Day Plan progress lifecycle to this one-active-program rule before switching behavior is
-considered complete.
+The active-program pointer can select either a linked unfinished 7-Day Plan or a paid run. Switching
+to the 7-Day Plan pauses the active paid run without deleting either program's progress. Starting
+or resuming a paid run replaces the 7-Day selection and reports what was displaced so the future UI
+can show the approved warning.
+
+## Program progress engine
+
+Each paid run captures a validated IANA customer time zone when the customer explicitly starts it.
+The progress transaction uses that fixed run time zone to unlock Days 2 through 28 on the next
+customer-local calendar date after the prior completion.
+
+- Only the earliest unfinished day can be completed.
+- Missing one or more calendar days leaves that same assignment current and never stacks or skips
+  assignments.
+- Completed days remain readable without changing progress.
+- Completing a day creates a ten-minute Undo window for only that latest completion.
+- Day 28 completion closes the run and clears the active pointer. A valid immediate Undo reopens it
+  only when no other structured program has become active.
+- Video views store first view, latest view, and replay count without completing a day.
+- All reads and writes remain server-authorized and service-role only.
+
+The existing live 7-Day completion and lifecycle-email transaction is deliberately unchanged.
+Checkpoint 3 adds safe selection and switching around that history but does not replace or activate
+the live free-plan path.
 
 ## Authorization and security
 
@@ -89,15 +113,6 @@ considered complete.
 - The browser never reads or writes these tables directly.
 
 ## Remaining reconciliation
-
-Checkpoint 3 must replace the existing progress proof with the approved behavior for:
-
-- Customer-local next-calendar-day unlocking.
-- Missed days that preserve the current assignment.
-- Latest-completion undo.
-- Reopening completed days without changing progress.
-- Separate video-view and day-completion facts.
-- Safe switching with the existing 7-Day Plan.
 
 Checkpoint 4 must replace weekly combined check-ins with independent optional weight and waist
 history, corrections, removals, and run-specific starting, newest, and final values.

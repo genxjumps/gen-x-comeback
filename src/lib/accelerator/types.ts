@@ -13,6 +13,7 @@ export type AcceleratorHubData = {
   programVersion: string;
   snapshot: AcceleratorProgramSnapshot;
   completedDays: number[];
+  progress: AcceleratorProgressState;
   checkIns: AcceleratorCheckIn[];
 };
 
@@ -23,8 +24,33 @@ export type AcceleratorProgressResult =
       ok: true;
       completedDays: number[];
       newlyCompleted: boolean;
-      programCompleted: boolean;
+      progress: AcceleratorProgressState;
     }
+  | { ok: false };
+
+export type AcceleratorProgressState = {
+  currentDay: number | null;
+  availableOn: string | null;
+  canCompleteCurrent: boolean;
+  undoDay: number | null;
+  undoUntil: string | null;
+  programCompleted: boolean;
+};
+
+export type UndoAcceleratorDayResult =
+  | { ok: true; completedDays: number[]; undone: true; progress: AcceleratorProgressState }
+  | { ok: false };
+
+export type AcceleratorVideoView = {
+  day: number;
+  mediaKey: string;
+  firstViewedAt: string;
+  lastViewedAt: string;
+  viewCount: number;
+};
+
+export type RecordAcceleratorVideoViewResult =
+  | { ok: true; view: AcceleratorVideoView }
   | { ok: false };
 
 export type SaveAcceleratorCheckInResult =
