@@ -164,12 +164,21 @@ bun run verify
 
 Resume V1.1 from a fresh bounded branch created from `release/v1.1`.
 
-The current 28-Day foundation is governed by
-[`docs/V1_1_28_DAY_PRODUCT_CONTRACT.md`](docs/V1_1_28_DAY_PRODUCT_CONTRACT.md) and
-[`docs/V1_1_28_DAY_DATA_FOUNDATION.md`](docs/V1_1_28_DAY_DATA_FOUNDATION.md). The next checkpoints
-must apply and verify the migration in a controlled development boundary, audit the real workout
-and coaching assets, approve nutrition formulas, and later add a tested checkout handoff. Public
-enrollment remains fail-closed throughout that work.
+The expanded Accelerator experience is governed by
+[`docs/V1_1_28_DAY_PRODUCT_CONTRACT.md`](docs/V1_1_28_DAY_PRODUCT_CONTRACT.md). PR #16's private
+foundation is documented in
+[`docs/V1_1_28_DAY_DATA_FOUNDATION.md`](docs/V1_1_28_DAY_DATA_FOUNDATION.md), but its migration
+remains unapplied and requires reconciliation with the expanded contract before use.
+
+The next checkpoint is a read-only code, test, and migration gap audit. It must identify what the
+foundation already supports, what needs adjustment, and the safest implementation order. No schema
+change should be applied merely to preserve assumptions that the expanded product requirements have
+superseded.
+
+After that reconciliation is approved, later checkpoints may apply and verify a corrected migration
+inside a controlled development boundary, audit real workout and coaching assets, approve nutrition
+formulas, and add a tested checkout handoff. Public enrollment remains fail-closed throughout that
+work.
 
 ## Historical implementation evidence
 
