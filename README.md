@@ -34,6 +34,7 @@ The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Acceler
 - User-requested recovery email
 - Resend delivery integration and signed webhook reconciliation
 - Production-capable scheduler and email safeguards
+- Direct MailerLite subscriber sync foundation for marketing-consented leads
 - PWA manifest and installable-app foundation
 - Current Gen X Jumps V1 visual system
 
@@ -55,7 +56,7 @@ That command runs:
 - Prettier check
 - Production build
 
-Current accepted regression baseline: **472 tests across 25 test files**.
+Current checkpoint regression baseline: **487 tests across 28 test files**.
 
 GitHub Actions runs the same quality gate for changes targeting `main` or `release/v1.1`.
 
@@ -91,6 +92,32 @@ Development rules still apply:
 - Keep real-money and test payment behavior separated when Stripe is added.
 - Keep outbound email testing bounded to intended recipients.
 - Review and clean test state before public launch.
+
+## MailerLite lead sync
+
+The app has a direct, no-Zapier MailerLite sync path. It uses the existing five-minute scheduler,
+but has its own fail-closed environment gate. It does not depend on Resend sending being enabled.
+
+Only a future activation of `marketing_consent_active` creates a durable sync job. Publishing the
+migration does not backfill existing participants. The provider payload contains only:
+
+- Normalized email address
+- First name
+- Marketing-consent timestamp
+- The configured MailerLite group ID
+
+Assessment answers, weight, protein targets, plan details, and progress are never sent to
+MailerLite. The integration never sets MailerLite's `resubscribe` flag, so it cannot reactivate a
+contact MailerLite already marks unsubscribed, bounced, or junk.
+
+Activation requires all three server-only values:
+
+- `MARKETING_SYNC_ENABLED=true`
+- `MAILERLITE_API_TOKEN`
+- `MAILERLITE_GROUP_ID`
+
+Before enabling it, confirm the selected MailerLite group and review any automation attached to
+that group. MailerLite group assignment can itself trigger a campaign automation.
 
 ## Local development
 
