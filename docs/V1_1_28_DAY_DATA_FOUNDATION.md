@@ -1,5 +1,29 @@
 # V1.1 28-Day Paid Enrollment and Progress Foundation
 
+## Reconciliation required before use
+
+This foundation was merged before the broader Accelerator product experience was fully defined.
+The migration remains unapplied and must not be applied until the code, tests, and schema are
+audited against
+[`V1_1_28_DAY_PRODUCT_CONTRACT.md`](V1_1_28_DAY_PRODUCT_CONTRACT.md).
+
+The expanded contract adds or clarifies requirements that may change this foundation, including:
+
+- One cross-device customer account rather than a paid-only access silo.
+- Not Started, Active, Paused, and Completed program-run states.
+- One active structured program at a time and safe program switching.
+- Repeat runs and previous-run history.
+- Next-calendar-day unlocking after completion.
+- A brief undo for only the latest completion.
+- Separate video-view and day-completion facts.
+- Detailed measurement history with independent editing and removal.
+- Starting, latest, and final measurements for each run.
+- In-app reminders, bounded comeback email, and reminder preferences.
+- Todd's private customer-progress view.
+
+The existing foundation remains useful evidence, but it is not yet an accepted final schema. Do not
+silently change product decisions to fit it.
+
 ## Checkpoint outcome
 
 This checkpoint adds the private database-backed foundation for the 28-Day Fat Loss Accelerator.
@@ -48,14 +72,21 @@ Day completion is atomic and server-enforced:
 Because progress is loaded from the database each time, leaving and returning resumes the earliest
 incomplete day.
 
+These behaviors describe the merged foundation. They do not override the newer product requirement
+that the next day unlock on the next calendar day or the broader run-lifecycle requirements.
+
 ## Weekly check-ins
 
-Each week stores weight, waist, and optional progress notes. Week 1 is available at enrollment.
-Weeks 2 through 4 unlock only after the previous seven-day block is complete. Re-saving a week
-updates that week's record instead of creating a duplicate.
+Each week currently stores weight, waist, and optional progress notes. Week 1 is available at
+enrollment. Weeks 2 through 4 unlock only after the previous seven-day block is complete. Re-saving
+a week updates that week's record instead of creating a duplicate.
 
 The first private UI uses pounds and inches. The database and server contract also support kilograms
 and centimeters for a later UI choice.
+
+These behaviors describe the current foundation. The final model must be reconciled with the
+approved detailed measurement history, independent optional fields, corrections, removals,
+run-specific start and finish values, and the decision not to require notes.
 
 ## Still closed and inactive
 
