@@ -142,6 +142,17 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         const authentication = await authenticateProductionScheduler(request);
         if (!authentication.ok) return unauthorized();
 
+        // MailerLite contact sync shares the already-authenticated five-minute
+        // scheduler tick, but has a separate fail-closed environment gate. A
+        // MailerLite failure never blocks or enables Resend lifecycle delivery.
+        let marketingSync: Record<string, unknown>;
+        try {
+          const { runProductionMarketingSync } = await import("@/lib/marketing/runtime.server");
+          marketingSync = await runProductionMarketingSync();
+        } catch {
+          marketingSync = { enabled: true, error: "dispatch_failed" };
+        }
+
         const gate = await readProductionDispatchGate();
         if (!gate.enabled) {
           await finishSchedulerInvocation({
@@ -159,6 +170,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
               activation_boundary: gate.activationBoundary,
               claimed: 0,
               provider_submissions: 0,
+              marketing_sync: marketingSync,
             },
             { headers: { "cache-control": "no-store" } },
           );
@@ -184,6 +196,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
               missing_configuration: runtime.missing,
               claimed: 0,
               provider_submissions: 0,
+              marketing_sync: marketingSync,
             },
             { status: 200, headers: { "cache-control": "no-store" } },
           );
@@ -226,6 +239,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
               activation_boundary: gate.activationBoundary,
               provider_submission_limit: gate.providerSubmissionLimit,
               provider_submissions: providerSubmissions,
+              marketing_sync: marketingSync,
               ...cycle.planReady,
               claimed,
               stale_alerts: cycle.staleAlerts,
