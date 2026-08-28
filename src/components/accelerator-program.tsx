@@ -1,19 +1,14 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Check, LockKeyhole, Play, Video } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   acceleratorDayAccessForDays,
   type AcceleratorDay,
   type AcceleratorWeek,
 } from "@/lib/accelerator/program";
-import {
-  completeAcceleratorDay,
-  getAcceleratorHub,
-  saveAcceleratorCheckIn,
-} from "@/lib/accelerator/functions";
+import { completeAcceleratorDay, getAcceleratorHub } from "@/lib/accelerator/functions";
 import type { AcceleratorHubData } from "@/lib/accelerator/types";
 
 function PrivateAccessDenied() {
@@ -57,16 +52,11 @@ function MediaPlaceholder({ day, label }: { day: AcceleratorDay; label: string }
 export function AcceleratorProgram() {
   const loadHub = useServerFn(getAcceleratorHub);
   const completeDay = useServerFn(completeAcceleratorDay);
-  const saveCheckIn = useServerFn(saveAcceleratorCheckIn);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
   const [hub, setHub] = useState<AcceleratorHubData | null>(null);
   const [displayWeek, setDisplayWeek] = useState<AcceleratorWeek>(1);
   const [savingDay, setSavingDay] = useState(false);
-  const [savingCheckIn, setSavingCheckIn] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [weight, setWeight] = useState("");
-  const [waist, setWaist] = useState("");
-  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -91,13 +81,6 @@ export function AcceleratorProgram() {
       cancelled = true;
     };
   }, [loadHub]);
-
-  useEffect(() => {
-    const saved = hub?.checkIns.find((checkIn) => checkIn.week === displayWeek);
-    setWeight(saved ? String(saved.weight.value) : "");
-    setWaist(saved ? String(saved.waist.value) : "");
-    setNotes(saved?.notes ?? "");
-  }, [displayWeek, hub?.checkIns]);
 
   const daysWithAccess = useMemo(
     () =>
@@ -129,7 +112,6 @@ export function AcceleratorProgram() {
   const progressPercent = Math.round((completedCount / hub.snapshot.days.length) * 100);
   const focus = hub.snapshot.weekFocus.find(({ week }) => week === displayWeek)!;
   const currentLabel = currentDay ? hub.snapshot.assignments[currentDay.assignment].label : null;
-  const checkInUnlocked = completedCount >= (displayWeek - 1) * 7;
 
   async function markCurrentComplete() {
     if (!currentDay || savingDay) return;
@@ -156,50 +138,6 @@ export function AcceleratorProgram() {
       setMessage("That day couldn't be saved. Try again.");
     } finally {
       setSavingDay(false);
-    }
-  }
-
-  async function submitCheckIn(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!checkInUnlocked || savingCheckIn) return;
-    const weightValue = Number(weight);
-    const waistValue = Number(waist);
-    if (!(weightValue > 0) || !(waistValue > 0)) {
-      setMessage("Enter both weight and waist measurements.");
-      return;
-    }
-
-    setSavingCheckIn(true);
-    setMessage(null);
-    try {
-      const result = await saveCheckIn({
-        data: {
-          week: displayWeek,
-          weight: { value: weightValue, unit: "lb" },
-          waist: { value: waistValue, unit: "in" },
-          notes,
-        },
-      });
-      if (!result.ok) {
-        setMessage("That check-in isn't available yet or couldn't be saved.");
-        return;
-      }
-      setHub((previous) =>
-        previous
-          ? {
-              ...previous,
-              checkIns: [
-                ...previous.checkIns.filter((item) => item.week !== result.checkIn.week),
-                result.checkIn,
-              ].sort((a, b) => a.week - b.week),
-            }
-          : previous,
-      );
-      setMessage(`Week ${displayWeek} check-in saved.`);
-    } catch {
-      setMessage("That check-in couldn't be saved. Try again.");
-    } finally {
-      setSavingCheckIn(false);
     }
   }
 
@@ -322,60 +260,15 @@ export function AcceleratorProgram() {
             </div>
           </section>
 
-          <form className="rounded-lg border border-border bg-card p-4" onSubmit={submitCheckIn}>
+          <section className="rounded-lg border border-border bg-card p-4">
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-              Week {displayWeek} Check-In
+              Measurements
             </p>
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <label className="text-xs font-medium">
-                Weight - lb
-                <Input
-                  className="mt-1"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={weight}
-                  disabled={!checkInUnlocked}
-                  onChange={(event) => setWeight(event.target.value)}
-                />
-              </label>
-              <label className="text-xs font-medium">
-                Waist - in
-                <Input
-                  className="mt-1"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={waist}
-                  disabled={!checkInUnlocked}
-                  onChange={(event) => setWaist(event.target.value)}
-                />
-              </label>
-            </div>
-            <label className="mt-3 block text-xs font-medium">
-              Progress notes - optional
-              <textarea
-                className="mt-1 min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                maxLength={1000}
-                value={notes}
-                disabled={!checkInUnlocked}
-                onChange={(event) => setNotes(event.target.value)}
-              />
-            </label>
-            <Button
-              type="submit"
-              size="sm"
-              className="mt-3 w-full"
-              disabled={!checkInUnlocked || savingCheckIn}
-            >
-              {savingCheckIn ? "Saving..." : "Save Check-In"}
-            </Button>
-            {!checkInUnlocked ? (
-              <p className="mt-2 text-xs text-muted-foreground">
-                Complete the previous week to unlock this check-in.
-              </p>
-            ) : null}
-          </form>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Weight and waist are saved independently. The customer-facing history and editing
+              screens arrive in the later Progress checkpoint.
+            </p>
+          </section>
 
           <section className="rounded-lg border border-border bg-card p-4">
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">

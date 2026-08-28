@@ -28,10 +28,11 @@ describe("28-Day program preview shell", () => {
     expect(preview).toContain("Runtime pending");
   });
 
-  it("uses the confirmed equipment and simple weekly tracking direction", () => {
+  it("uses the confirmed equipment and independent measurement direction", () => {
     expect(preview).toContain("ACCELERATOR_EQUIPMENT.program");
     expect(preview).toContain("No dumbbells, bench, or gym equipment required");
-    expect(preview).toContain("Weekly Check-In");
+    expect(preview).toContain("Your Measurements");
+    expect(preview).toContain("Add weight, waist, both, or neither");
     expect(preview).toContain("Weight");
     expect(preview).toContain("Waist");
   });

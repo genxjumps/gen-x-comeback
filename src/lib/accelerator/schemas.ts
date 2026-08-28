@@ -69,14 +69,37 @@ export const acceleratorVideoViewInputSchema = z.object({
   mediaKey: z.string().trim().min(1).max(200),
 });
 
-export const acceleratorCheckInInputSchema = z.object({
-  week: z.number().int().min(1).max(4),
-  weight: z.object({ value: z.number().positive(), unit: z.enum(["lb", "kg"]) }),
-  waist: z.object({ value: z.number().positive(), unit: z.enum(["in", "cm"]) }),
+const measurementValueSchema = z
+  .object({
+    kind: z.enum(["weight", "waist"]),
+    value: z.number().positive(),
+    unit: z.enum(["lb", "kg", "in", "cm"]),
+  })
+  .superRefine((measurement, context) => {
+    if (
+      (measurement.kind === "weight" && !["lb", "kg"].includes(measurement.unit)) ||
+      (measurement.kind === "waist" && !["in", "cm"].includes(measurement.unit))
+    ) {
+      context.addIssue({ code: z.ZodIssueCode.custom, path: ["unit"], message: "Invalid unit" });
+    }
+  });
+
+const measurementDetailsSchema = z.object({
   notes: z
     .string()
     .trim()
     .max(1000)
     .transform((value) => value || null)
     .nullable(),
+  measuredAt: z.string().datetime(),
 });
+
+export const addAcceleratorMeasurementInputSchema = measurementValueSchema.and(
+  measurementDetailsSchema.extend({ context: z.enum(["starting", "progress", "final"]) }),
+);
+
+export const correctMeasurementInputSchema = measurementValueSchema.and(
+  measurementDetailsSchema.extend({ measurementId: z.string().uuid() }),
+);
+
+export const removeMeasurementInputSchema = z.object({ measurementId: z.string().uuid() });

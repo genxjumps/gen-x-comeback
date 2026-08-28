@@ -89,7 +89,9 @@ describe("account-owned Accelerator and program-run foundation", () => {
       "complete_accelerator_day_atomic",
       "undo_accelerator_day_atomic",
       "record_accelerator_video_view_atomic",
-      "save_accelerator_weekly_check_in_atomic",
+      "add_customer_measurement_atomic",
+      "correct_customer_measurement_atomic",
+      "remove_customer_measurement_atomic",
     ]) {
       expect(migration).toContain(`GRANT EXECUTE ON FUNCTION public.${fn}`);
     }

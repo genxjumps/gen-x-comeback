@@ -1,11 +1,31 @@
-import type { AcceleratorProgramSnapshot, AcceleratorWeek } from "@/lib/accelerator/program";
+import type { AcceleratorProgramSnapshot } from "@/lib/accelerator/program";
 
-export type AcceleratorCheckIn = {
-  week: AcceleratorWeek;
-  weight: { value: number; unit: "lb" | "kg" };
-  waist: { value: number; unit: "in" | "cm" };
+export type MeasurementKind = "weight" | "waist";
+export type MeasurementUnit = "lb" | "kg" | "in" | "cm";
+export type MeasurementContext = "general" | "starting" | "progress" | "final";
+
+export type CustomerMeasurement = {
+  id: string;
+  enrollmentId: string | null;
+  kind: MeasurementKind;
+  value: number;
+  unit: MeasurementUnit;
+  context: MeasurementContext;
   notes: string | null;
-  recordedAt: string;
+  measuredAt: string;
+  createdAt: string;
+};
+
+export type MeasurementPair = {
+  weight: CustomerMeasurement | null;
+  waist: CustomerMeasurement | null;
+};
+
+export type MeasurementSummary = {
+  globalLatest: MeasurementPair;
+  runStarting: MeasurementPair;
+  runNewest: MeasurementPair;
+  runFinal: MeasurementPair;
 };
 
 export type AcceleratorHubData = {
@@ -14,7 +34,8 @@ export type AcceleratorHubData = {
   snapshot: AcceleratorProgramSnapshot;
   completedDays: number[];
   progress: AcceleratorProgressState;
-  checkIns: AcceleratorCheckIn[];
+  measurements: CustomerMeasurement[];
+  measurementSummary: MeasurementSummary;
 };
 
 export type AcceleratorHubResult = { ok: true; data: AcceleratorHubData } | { ok: false };
@@ -53,6 +74,7 @@ export type RecordAcceleratorVideoViewResult =
   | { ok: true; view: AcceleratorVideoView }
   | { ok: false };
 
-export type SaveAcceleratorCheckInResult =
-  | { ok: true; checkIn: AcceleratorCheckIn }
+export type SaveMeasurementResult = { ok: true; measurement: CustomerMeasurement } | { ok: false };
+export type RemoveMeasurementResult =
+  | { ok: true; measurementId: string; removed: true }
   | { ok: false };

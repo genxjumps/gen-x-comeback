@@ -14,7 +14,7 @@ and release.
 
 The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Accelerator is the active
 next development phase. Its product contract, deterministic sequence, private paid-domain data
-model, saved sequential progress, and weekly check-in foundation now exist in source. Checkout,
+model, calendar-based progress, and independent measurement history now exist in source. Checkout,
 public enrollment, paid email, and the public offer remain unimplemented.
 
 `main` and `release/v1.1` are kept aligned as the accepted pre-launch baseline before new V1.1 checkpoints begin.
@@ -45,7 +45,7 @@ public enrollment, paid email, and the public offer remain unimplemented.
 - Repeatable, versioned program runs with one active structured run per account
 - Not Started ownership plus Active, Paused, and Completed run behavior
 - Server-enforced Day 1 through Day 28 completion and resume behavior
-- Saved weekly weight, waist, and optional progress notes
+- Independent optional weight and waist history with corrections and removals
 
 The existing email and scheduler infrastructure has been heavily staged and verified, but that does **not** mean the overall product has launched to customers.
 
@@ -181,11 +181,15 @@ at source level. Customer-local next-day unlocking, missed-day persistence, boun
 completed-day reopening, separate video views, and safe 7-Day Plan switching are represented and
 tested. Both migrations remain unapplied and every public entry point remains closed.
 
-The next checkpoint is independent optional weight and waist history with safe corrections,
-removals, and run-specific starting, newest, and final values. Later checkpoints may apply and
-verify the corrected migration chain inside a controlled development boundary, audit real workout
-and coaching assets, approve nutrition formulas, and add a tested checkout handoff. Public
-enrollment remains fail-closed throughout that work.
+Independent optional weight and waist history is also complete at source level, including safe
+corrections, removals, account-wide latest values, and run-specific starting, newest, and final
+values.
+
+The next checkpoint is the real program-content readiness audit for Workouts A-F, runtime,
+equipment, orientation, daily instructions, weekly coaching, and Cloudflare media. Later
+checkpoints may apply and verify the corrected migration chain inside a controlled development
+boundary, approve nutrition formulas, and add a tested checkout handoff. Public enrollment remains
+fail-closed throughout that work.
 
 ## Historical implementation evidence
 
