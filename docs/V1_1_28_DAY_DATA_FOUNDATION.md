@@ -2,10 +2,10 @@
 
 ## Current status
 
-The customer-account, purchase, entitlement, program-run, and program-progress source foundation
-is reconciled with the approved product contract through Checkpoint 3. Both Accelerator migrations
-remain unapplied. Do not apply them until a later checkpoint deliberately verifies the complete
-corrected migration chain inside the approved development boundary.
+The customer-account, purchase, entitlement, program-run, program-progress, and measurement-history
+source foundation is reconciled with the approved product contract through Checkpoint 4. Both
+Accelerator migrations remain unapplied. Do not apply them until a later checkpoint deliberately
+verifies the complete corrected migration chain inside the approved development boundary.
 
 No public enrollment, checkout, payment-provider call, customer migration, email activation,
 McLovable publication, or browser write is opened by this foundation.
@@ -36,8 +36,9 @@ The account-owned records are:
 - `paid_program_video_views` - video-view facts that remain independent from day completion.
 - `customer_active_programs` - the single active structured-program pointer across linked 7-Day
   Plans and paid runs.
-- `paid_program_weekly_check_ins` - temporary proof scaffolding that Checkpoint 4 will replace with
-  approved measurement history.
+- `customer_measurements` - independent active weight or waist entries associated with the overall
+  account or one program run.
+- `customer_measurement_revisions` - append-only creation, correction, and removal history.
 
 `provision_accelerator_ownership` is a service-role-only transaction for a future trusted checkout
 adapter. It accepts only the locked `$37 USD` Accelerator offer and records the purchase plus
@@ -112,10 +113,29 @@ the live free-plan path.
 - Every ownership and run-lifecycle transaction is service-role only.
 - The browser never reads or writes these tables directly.
 
+## Measurement history
+
+Checkpoint 4 replaces the combined weekly check-in proof with independent weight and waist
+entries. Either kind may be added, corrected, or removed without requiring or changing the other.
+Removed values no longer appear in the active customer history, while append-only revisions retain
+what was created, corrected, or removed.
+
+The active history supports four deliberately distinct views:
+
+- Latest weight and waist across the customer's whole account.
+- Starting weight and waist for one run.
+- Newest weight and waist associated with one run.
+- Explicit final weight and waist for a completed run.
+
+Starting and final values are limited to one active logical entry per run and measurement kind.
+Removing one permits a replacement while retaining the removed entry's revisions. Direct
+service-role mutation is revoked; the account-bound add, correct, and remove transactions are the
+write boundary.
+
 ## Remaining reconciliation
 
-Checkpoint 4 must replace weekly combined check-ins with independent optional weight and waist
-history, corrections, removals, and run-specific starting, newest, and final values.
+Checkpoint 5 must verify the real program content, media, runtime, equipment, orientation, daily
+instructions, and weekly coaching snapshot before customer-facing program work uses it.
 
 ## Still closed and inactive
 

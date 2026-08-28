@@ -271,7 +271,7 @@ export function AcceleratorProgramPreview() {
 
           <section className="rounded-lg border border-border bg-card p-4">
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-              Weekly Check-In
+              Your Measurements
             </p>
             <p className="mt-2 text-sm font-semibold">Make progress visible</p>
             <dl className="mt-3 grid grid-cols-2 gap-2">
@@ -285,8 +285,8 @@ export function AcceleratorProgramPreview() {
               </div>
             </dl>
             <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-              One simple weekly check-in for measurements and progress notes. Nothing is saved in
-              this layout preview.
+              Add weight, waist, both, or neither. Each measurement keeps its own history. Nothing
+              is saved in this layout preview.
             </p>
           </section>
 

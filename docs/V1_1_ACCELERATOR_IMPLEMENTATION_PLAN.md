@@ -28,7 +28,7 @@ migration remains unapplied and must not be applied before reconciliation.
 - Existing Supabase passwordless-auth client and middleware groundwork.
 - Existing scanner-safe return, recovery, email scheduling, consent, and delivery safeguards.
 
-### Reconciled through Checkpoint 3
+### Reconciled through Checkpoint 4
 
 - Purchase grants Not Started ownership without starting a run.
 - One entitlement supports repeatable, versioned runs and preserved history.
@@ -37,17 +37,19 @@ migration remains unapplied and must not be applied before reconciliation.
 - One active structured-program pointer coordinates linked 7-Day Plans and paid runs.
 - Customer-local next-day unlocking, missed-day persistence, latest-completion Undo, completed-day
   reopening, and separate video-view facts are represented and tested.
+- Independent optional weight and waist history preserves corrections and removals while supporting
+  account-wide latest and run-specific starting, newest, and final values.
 
 ### Reconcile or replace next
 
-- Weekly check-ins require both measurements, overwrite one weekly row, and cannot preserve the
-  approved detailed history.
+- The program snapshot still contains placeholders and unverified workout, runtime, equipment,
+  orientation, coaching, and media details.
 - The current private Accelerator page is a proof screen, not the approved platform navigation or
   customer experience.
 
 ### Still required
 
-- Measurement, reminder, and preference models.
+- Reminder and preference models.
 - Home, My Programs, Daily Assignment, Your Progress, Your Nutrition, Explore Programs, and the
   notification inbox.
 - Customer-facing setup, pause, resume, switching, repeat runs, previous-run history, and Day 28

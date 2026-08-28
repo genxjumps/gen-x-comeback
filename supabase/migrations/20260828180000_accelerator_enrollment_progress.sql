@@ -129,22 +129,53 @@ CREATE TABLE public.customer_active_programs (
   )
 );
 
--- Retained only for the existing private proof. Checkpoint 4 replaces this
--- shape with the approved independent measurement history.
-CREATE TABLE public.paid_program_weekly_check_ins (
+-- Weight and waist are independent logical entries. The current row powers the
+-- customer view; append-only revisions preserve corrections and removals.
+CREATE TABLE public.customer_measurements (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  enrollment_id uuid NOT NULL REFERENCES public.paid_program_enrollments(id) ON DELETE CASCADE,
-  program_version text NOT NULL,
-  week_number smallint NOT NULL CHECK (week_number BETWEEN 1 AND 4),
-  weight_value numeric(7,2) NOT NULL CHECK (weight_value > 0),
-  weight_unit text NOT NULL CHECK (weight_unit IN ('lb', 'kg')),
-  waist_value numeric(7,2) NOT NULL CHECK (waist_value > 0),
-  waist_unit text NOT NULL CHECK (waist_unit IN ('in', 'cm')),
+  customer_id uuid NOT NULL REFERENCES public.customer_accounts(id) ON DELETE RESTRICT,
+  enrollment_id uuid REFERENCES public.paid_program_enrollments(id) ON DELETE RESTRICT,
+  measurement_kind text NOT NULL CHECK (measurement_kind IN ('weight', 'waist')),
+  value numeric(7,2) NOT NULL CHECK (value > 0),
+  unit text NOT NULL CHECK (
+    (measurement_kind = 'weight' AND unit IN ('lb', 'kg'))
+    OR (measurement_kind = 'waist' AND unit IN ('in', 'cm'))
+  ),
+  measurement_context text NOT NULL CHECK (
+    measurement_context IN ('general', 'starting', 'progress', 'final')
+  ),
+  status text NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'removed')),
+  revision integer NOT NULL DEFAULT 1 CHECK (revision > 0),
   notes text CHECK (notes IS NULL OR length(notes) <= 1000),
-  recorded_at timestamptz NOT NULL DEFAULT now(),
+  measured_at timestamptz NOT NULL DEFAULT now(),
+  removed_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT paid_program_weekly_check_ins_unique UNIQUE (enrollment_id, week_number)
+  CONSTRAINT customer_measurements_context_check CHECK (
+    (measurement_context = 'general' AND enrollment_id IS NULL)
+    OR (measurement_context IN ('starting', 'progress', 'final') AND enrollment_id IS NOT NULL)
+  ),
+  CONSTRAINT customer_measurements_removal_check CHECK (
+    (status = 'active' AND removed_at IS NULL)
+    OR (status = 'removed' AND removed_at IS NOT NULL)
+  )
+);
+
+CREATE UNIQUE INDEX customer_measurements_one_run_boundary_value_idx
+  ON public.customer_measurements (enrollment_id, measurement_kind, measurement_context)
+  WHERE status = 'active' AND measurement_context IN ('starting', 'final');
+
+CREATE TABLE public.customer_measurement_revisions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  measurement_id uuid NOT NULL REFERENCES public.customer_measurements(id) ON DELETE RESTRICT,
+  revision integer NOT NULL CHECK (revision > 0),
+  action text NOT NULL CHECK (action IN ('created', 'corrected', 'removed')),
+  value numeric(7,2) NOT NULL CHECK (value > 0),
+  unit text NOT NULL CHECK (unit IN ('lb', 'kg', 'in', 'cm')),
+  notes text CHECK (notes IS NULL OR length(notes) <= 1000),
+  measured_at timestamptz NOT NULL,
+  recorded_at timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT customer_measurement_revisions_unique UNIQUE (measurement_id, revision)
 );
 
 CREATE INDEX paid_purchases_customer_id_idx ON public.paid_purchases (customer_id);
@@ -156,8 +187,13 @@ CREATE INDEX paid_program_day_completions_enrollment_id_idx
   ON public.paid_program_day_completions (enrollment_id, day_number);
 CREATE INDEX paid_program_video_views_enrollment_id_idx
   ON public.paid_program_video_views (enrollment_id, day_number, last_viewed_at DESC);
-CREATE INDEX paid_program_weekly_check_ins_enrollment_id_idx
-  ON public.paid_program_weekly_check_ins (enrollment_id, week_number);
+CREATE INDEX customer_measurements_customer_history_idx
+  ON public.customer_measurements (customer_id, measured_at DESC, created_at DESC);
+CREATE INDEX customer_measurements_enrollment_history_idx
+  ON public.customer_measurements (enrollment_id, measured_at DESC, created_at DESC)
+  WHERE enrollment_id IS NOT NULL;
+CREATE INDEX customer_measurement_revisions_measurement_id_idx
+  ON public.customer_measurement_revisions (measurement_id, revision);
 
 CREATE OR REPLACE FUNCTION public.protect_paid_program_enrollment_history()
 RETURNS trigger LANGUAGE plpgsql SET search_path = public AS $$
@@ -184,7 +220,7 @@ BEGIN
   FOREACH t IN ARRAY ARRAY[
     'paid_purchases', 'paid_product_entitlements', 'paid_program_enrollments',
     'paid_program_day_completions', 'paid_program_video_views',
-    'paid_program_weekly_check_ins', 'customer_active_programs'
+    'customer_measurements', 'customer_measurement_revisions', 'customer_active_programs'
   ]
   LOOP
     EXECUTE format('ALTER TABLE public.%I ENABLE ROW LEVEL SECURITY', t);
@@ -710,37 +746,114 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION public.save_accelerator_weekly_check_in_atomic(
-  p_enrollment_id uuid, p_program_version text, p_week_number smallint,
-  p_weight_value numeric, p_weight_unit text, p_waist_value numeric,
-  p_waist_unit text, p_notes text
-) RETURNS SETOF public.paid_program_weekly_check_ins
+CREATE OR REPLACE FUNCTION public.add_customer_measurement_atomic(
+  p_customer_id uuid, p_enrollment_id uuid, p_measurement_kind text,
+  p_value numeric, p_unit text, p_measurement_context text,
+  p_notes text, p_measured_at timestamptz
+) RETURNS SETOF public.customer_measurements
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-DECLARE v_completed_count integer;
+DECLARE
+  v_measurement public.customer_measurements%ROWTYPE;
 BEGIN
-  IF p_week_number NOT BETWEEN 1 AND 4 OR p_weight_value <= 0
-    OR p_weight_unit NOT IN ('lb', 'kg') OR p_waist_value <= 0
-    OR p_waist_unit NOT IN ('in', 'cm') OR length(COALESCE(p_notes, '')) > 1000
+  IF p_customer_id IS NULL OR p_value <= 0 OR p_measured_at IS NULL
+    OR p_measured_at > now() + interval '5 minutes'
+    OR p_measurement_kind NOT IN ('weight', 'waist')
+    OR (p_measurement_kind = 'weight' AND p_unit NOT IN ('lb', 'kg'))
+    OR (p_measurement_kind = 'waist' AND p_unit NOT IN ('in', 'cm'))
+    OR p_measurement_context NOT IN ('general', 'starting', 'progress', 'final')
+    OR (p_measurement_context = 'general' AND p_enrollment_id IS NOT NULL)
+    OR (p_measurement_context <> 'general' AND p_enrollment_id IS NULL)
+    OR length(COALESCE(p_notes, '')) > 1000
   THEN RETURN; END IF;
-  PERFORM 1 FROM public.paid_program_enrollments n
-    JOIN public.paid_product_entitlements e ON e.id = n.entitlement_id
-   WHERE n.id = p_enrollment_id AND n.program_version = p_program_version
-     AND n.status IN ('active', 'completed') AND e.status = 'active' FOR UPDATE OF n;
-  IF NOT FOUND THEN RETURN; END IF;
-  SELECT count(*)::integer INTO v_completed_count FROM public.paid_program_day_completions
-   WHERE enrollment_id = p_enrollment_id AND program_version = p_program_version;
-  IF v_completed_count < ((p_week_number - 1) * 7) THEN RETURN; END IF;
-  RETURN QUERY INSERT INTO public.paid_program_weekly_check_ins (
-    enrollment_id, program_version, week_number, weight_value, weight_unit,
-    waist_value, waist_unit, notes
+
+  IF p_measurement_context = 'general' THEN
+    PERFORM 1 FROM public.customer_accounts customer WHERE customer.id = p_customer_id;
+    IF NOT FOUND THEN RETURN; END IF;
+  ELSE
+    PERFORM 1 FROM public.paid_program_enrollments run
+      JOIN public.paid_product_entitlements entitlement ON entitlement.id = run.entitlement_id
+     WHERE run.id = p_enrollment_id AND run.customer_id = p_customer_id
+       AND run.status IN ('active', 'paused', 'completed') AND entitlement.status = 'active'
+     FOR UPDATE OF run;
+    IF NOT FOUND THEN RETURN; END IF;
+    IF p_measurement_context = 'final' AND NOT EXISTS (
+      SELECT 1 FROM public.paid_program_enrollments run
+       WHERE run.id = p_enrollment_id AND run.status = 'completed'
+    ) THEN RETURN; END IF;
+  END IF;
+
+  INSERT INTO public.customer_measurements (
+    customer_id, enrollment_id, measurement_kind, value, unit,
+    measurement_context, notes, measured_at
   ) VALUES (
-    p_enrollment_id, p_program_version, p_week_number, p_weight_value, p_weight_unit,
-    p_waist_value, p_waist_unit, NULLIF(btrim(p_notes), '')
-  ) ON CONFLICT (enrollment_id, week_number) DO UPDATE SET
-    weight_value = EXCLUDED.weight_value, weight_unit = EXCLUDED.weight_unit,
-    waist_value = EXCLUDED.waist_value, waist_unit = EXCLUDED.waist_unit,
-    notes = EXCLUDED.notes, recorded_at = now(), updated_at = now()
-  RETURNING *;
+    p_customer_id, p_enrollment_id, p_measurement_kind, p_value, p_unit,
+    p_measurement_context, NULLIF(btrim(p_notes), ''), p_measured_at
+  ) RETURNING * INTO v_measurement;
+
+  INSERT INTO public.customer_measurement_revisions (
+    measurement_id, revision, action, value, unit, notes, measured_at
+  ) VALUES (
+    v_measurement.id, v_measurement.revision, 'created', v_measurement.value,
+    v_measurement.unit, v_measurement.notes, v_measurement.measured_at
+  );
+  RETURN NEXT v_measurement;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.correct_customer_measurement_atomic(
+  p_customer_id uuid, p_measurement_id uuid, p_value numeric, p_unit text,
+  p_notes text, p_measured_at timestamptz
+) RETURNS SETOF public.customer_measurements
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_measurement public.customer_measurements%ROWTYPE;
+BEGIN
+  SELECT * INTO v_measurement FROM public.customer_measurements measurement
+   WHERE measurement.id = p_measurement_id AND measurement.customer_id = p_customer_id
+     AND measurement.status = 'active' FOR UPDATE;
+  IF NOT FOUND OR p_value <= 0 OR p_measured_at IS NULL
+    OR p_measured_at > now() + interval '5 minutes'
+    OR (v_measurement.measurement_kind = 'weight' AND p_unit NOT IN ('lb', 'kg'))
+    OR (v_measurement.measurement_kind = 'waist' AND p_unit NOT IN ('in', 'cm'))
+    OR length(COALESCE(p_notes, '')) > 1000
+  THEN RETURN; END IF;
+
+  UPDATE public.customer_measurements SET
+    value = p_value, unit = p_unit, notes = NULLIF(btrim(p_notes), ''),
+    measured_at = p_measured_at, revision = revision + 1, updated_at = now()
+   WHERE id = p_measurement_id RETURNING * INTO v_measurement;
+  INSERT INTO public.customer_measurement_revisions (
+    measurement_id, revision, action, value, unit, notes, measured_at
+  ) VALUES (
+    v_measurement.id, v_measurement.revision, 'corrected', v_measurement.value,
+    v_measurement.unit, v_measurement.notes, v_measurement.measured_at
+  );
+  RETURN NEXT v_measurement;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.remove_customer_measurement_atomic(
+  p_customer_id uuid, p_measurement_id uuid
+) RETURNS TABLE(measurement_id uuid, removed boolean)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE
+  v_measurement public.customer_measurements%ROWTYPE;
+BEGIN
+  SELECT * INTO v_measurement FROM public.customer_measurements measurement
+   WHERE measurement.id = p_measurement_id AND measurement.customer_id = p_customer_id
+     AND measurement.status = 'active' FOR UPDATE;
+  IF NOT FOUND THEN RETURN; END IF;
+
+  UPDATE public.customer_measurements SET
+    status = 'removed', removed_at = now(), revision = revision + 1, updated_at = now()
+   WHERE id = p_measurement_id RETURNING * INTO v_measurement;
+  INSERT INTO public.customer_measurement_revisions (
+    measurement_id, revision, action, value, unit, notes, measured_at
+  ) VALUES (
+    v_measurement.id, v_measurement.revision, 'removed', v_measurement.value,
+    v_measurement.unit, v_measurement.notes, v_measurement.measured_at
+  );
+  RETURN QUERY SELECT v_measurement.id, true;
 END;
 $$;
 
@@ -778,9 +891,20 @@ REVOKE ALL ON FUNCTION public.record_accelerator_video_view_atomic(uuid, text, s
   FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.record_accelerator_video_view_atomic(uuid, text, smallint, text)
   TO service_role;
-REVOKE ALL ON FUNCTION public.save_accelerator_weekly_check_in_atomic(
-  uuid, text, smallint, numeric, text, numeric, text, text
+REVOKE INSERT, UPDATE, DELETE ON TABLE public.customer_measurements FROM service_role;
+REVOKE INSERT, UPDATE, DELETE ON TABLE public.customer_measurement_revisions FROM service_role;
+REVOKE ALL ON FUNCTION public.add_customer_measurement_atomic(
+  uuid, uuid, text, numeric, text, text, text, timestamptz
 ) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.save_accelerator_weekly_check_in_atomic(
-  uuid, text, smallint, numeric, text, numeric, text, text
+GRANT EXECUTE ON FUNCTION public.add_customer_measurement_atomic(
+  uuid, uuid, text, numeric, text, text, text, timestamptz
 ) TO service_role;
+REVOKE ALL ON FUNCTION public.correct_customer_measurement_atomic(
+  uuid, uuid, numeric, text, text, timestamptz
+) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.correct_customer_measurement_atomic(
+  uuid, uuid, numeric, text, text, timestamptz
+) TO service_role;
+REVOKE ALL ON FUNCTION public.remove_customer_measurement_atomic(uuid, uuid)
+  FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.remove_customer_measurement_atomic(uuid, uuid) TO service_role;

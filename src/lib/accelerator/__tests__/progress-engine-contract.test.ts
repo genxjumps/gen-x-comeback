@@ -48,9 +48,7 @@ describe("Accelerator progress engine contract", () => {
   it("stores video views separately and never treats them as completion", () => {
     const videoFunction = migration.slice(
       migration.indexOf("CREATE OR REPLACE FUNCTION public.record_accelerator_video_view_atomic"),
-      migration.indexOf(
-        "CREATE OR REPLACE FUNCTION public.save_accelerator_weekly_check_in_atomic",
-      ),
+      migration.indexOf("CREATE OR REPLACE FUNCTION public.add_customer_measurement_atomic"),
     );
     expect(migration).toContain("CREATE TABLE public.paid_program_video_views");
     expect(videoFunction).toContain("INSERT INTO public.paid_program_video_views");

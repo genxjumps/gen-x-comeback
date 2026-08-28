@@ -996,52 +996,109 @@ export type Database = {
           },
         ];
       };
-      paid_program_weekly_check_ins: {
+      customer_measurement_revisions: {
         Row: {
-          created_at: string;
-          enrollment_id: string;
+          action: string;
           id: string;
+          measured_at: string;
+          measurement_id: string;
           notes: string | null;
-          program_version: string;
           recorded_at: string;
-          updated_at: string;
-          waist_unit: string;
-          waist_value: number;
-          week_number: number;
-          weight_unit: string;
-          weight_value: number;
+          revision: number;
+          unit: string;
+          value: number;
         };
         Insert: {
-          created_at?: string;
-          enrollment_id: string;
+          action: string;
           id?: string;
+          measured_at: string;
+          measurement_id: string;
           notes?: string | null;
-          program_version: string;
           recorded_at?: string;
-          updated_at?: string;
-          waist_unit: string;
-          waist_value: number;
-          week_number: number;
-          weight_unit: string;
-          weight_value: number;
+          revision: number;
+          unit: string;
+          value: number;
         };
         Update: {
-          created_at?: string;
-          enrollment_id?: string;
+          action?: string;
           id?: string;
+          measured_at?: string;
+          measurement_id?: string;
           notes?: string | null;
-          program_version?: string;
           recorded_at?: string;
-          updated_at?: string;
-          waist_unit?: string;
-          waist_value?: number;
-          week_number?: number;
-          weight_unit?: string;
-          weight_value?: number;
+          revision?: number;
+          unit?: string;
+          value?: number;
         };
         Relationships: [
           {
-            foreignKeyName: "paid_program_weekly_check_ins_enrollment_id_fkey";
+            foreignKeyName: "customer_measurement_revisions_measurement_id_fkey";
+            columns: ["measurement_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_measurements";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      customer_measurements: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          enrollment_id: string | null;
+          id: string;
+          measured_at: string;
+          measurement_context: string;
+          measurement_kind: string;
+          notes: string | null;
+          removed_at: string | null;
+          revision: number;
+          status: string;
+          unit: string;
+          updated_at: string;
+          value: number;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          enrollment_id?: string | null;
+          id?: string;
+          measured_at?: string;
+          measurement_context: string;
+          measurement_kind: string;
+          notes?: string | null;
+          removed_at?: string | null;
+          revision?: number;
+          status?: string;
+          unit: string;
+          updated_at?: string;
+          value: number;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          enrollment_id?: string | null;
+          id?: string;
+          measured_at?: string;
+          measurement_context?: string;
+          measurement_kind?: string;
+          notes?: string | null;
+          removed_at?: string | null;
+          revision?: number;
+          status?: string;
+          unit?: string;
+          updated_at?: string;
+          value?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "customer_measurements_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "customer_measurements_enrollment_id_fkey";
             columns: ["enrollment_id"];
             isOneToOne: false;
             referencedRelation: "paid_program_enrollments";
@@ -1678,24 +1735,45 @@ export type Database = {
           replayed: boolean;
         }[];
       };
-      save_accelerator_weekly_check_in_atomic: {
+      add_customer_measurement_atomic: {
         Args: {
-          p_enrollment_id: string;
+          p_customer_id: string;
+          p_enrollment_id: string | null;
+          p_measured_at: string;
+          p_measurement_context: string;
+          p_measurement_kind: string;
           p_notes: string | null;
-          p_program_version: string;
-          p_waist_unit: string;
-          p_waist_value: number;
-          p_week_number: number;
-          p_weight_unit: string;
-          p_weight_value: number;
+          p_unit: string;
+          p_value: number;
         };
-        Returns: Database["public"]["Tables"]["paid_program_weekly_check_ins"]["Row"][];
+        Returns: Database["public"]["Tables"]["customer_measurements"]["Row"][];
         SetofOptions: {
           from: "*";
-          to: "paid_program_weekly_check_ins";
+          to: "customer_measurements";
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      correct_customer_measurement_atomic: {
+        Args: {
+          p_customer_id: string;
+          p_measured_at: string;
+          p_measurement_id: string;
+          p_notes: string | null;
+          p_unit: string;
+          p_value: number;
+        };
+        Returns: Database["public"]["Tables"]["customer_measurements"]["Row"][];
+        SetofOptions: {
+          from: "*";
+          to: "customer_measurements";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      remove_customer_measurement_atomic: {
+        Args: { p_customer_id: string; p_measurement_id: string };
+        Returns: { measurement_id: string; removed: boolean }[];
       };
       start_program_run_atomic: {
         Args: {

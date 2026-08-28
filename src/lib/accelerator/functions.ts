@@ -1,23 +1,27 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import type { AcceleratorProgramSnapshot, AcceleratorWeek } from "@/lib/accelerator/program";
+import type { AcceleratorProgramSnapshot } from "@/lib/accelerator/program";
 import {
-  acceleratorCheckInInputSchema,
+  addAcceleratorMeasurementInputSchema,
   acceleratorProgramSnapshotSchema,
   acceleratorAccountInputSchema,
   acceleratorVideoViewInputSchema,
   completeAcceleratorDayInputSchema,
+  correctMeasurementInputSchema,
+  removeMeasurementInputSchema,
   undoAcceleratorDayInputSchema,
 } from "@/lib/accelerator/schemas";
 import type {
-  AcceleratorCheckIn,
   AcceleratorHubResult,
   AcceleratorProgressResult,
   AcceleratorProgressState,
+  CustomerMeasurement,
   RecordAcceleratorVideoViewResult,
-  SaveAcceleratorCheckInResult,
+  RemoveMeasurementResult,
+  SaveMeasurementResult,
   UndoAcceleratorDayResult,
 } from "@/lib/accelerator/types";
+import { measurementSummary } from "@/lib/accelerator/measurements";
 
 async function authorize() {
   const { currentAuthorizationHeader } = await import("@/lib/account/customer-account.server");
@@ -25,21 +29,27 @@ async function authorize() {
   return resolveAcceleratorAccess(await currentAuthorizationHeader());
 }
 
-function toCheckIn(row: {
-  week_number: number;
-  weight_value: number;
-  weight_unit: string;
-  waist_value: number;
-  waist_unit: string;
+function toMeasurement(row: {
+  id: string;
+  enrollment_id: string | null;
+  measurement_kind: string;
+  value: number;
+  unit: string;
+  measurement_context: string;
   notes: string | null;
-  recorded_at: string;
-}): AcceleratorCheckIn {
+  measured_at: string;
+  created_at: string;
+}): CustomerMeasurement {
   return {
-    week: row.week_number as AcceleratorWeek,
-    weight: { value: Number(row.weight_value), unit: row.weight_unit as "lb" | "kg" },
-    waist: { value: Number(row.waist_value), unit: row.waist_unit as "in" | "cm" },
+    id: row.id,
+    enrollmentId: row.enrollment_id,
+    kind: row.measurement_kind as CustomerMeasurement["kind"],
+    value: Number(row.value),
+    unit: row.unit as CustomerMeasurement["unit"],
+    context: row.measurement_context as CustomerMeasurement["context"],
     notes: row.notes,
-    recordedAt: row.recorded_at,
+    measuredAt: row.measured_at,
+    createdAt: row.created_at,
   };
 }
 
@@ -68,7 +78,7 @@ export const getAcceleratorHub = createServerFn({ method: "POST" })
     if (!access) return { ok: false };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [enrollmentResult, progressResult, checkInResult] = await Promise.all([
+    const [enrollmentResult, progressResult, measurementResult] = await Promise.all([
       supabaseAdmin
         .from("paid_program_enrollments")
         .select("program_snapshot, program_version")
@@ -80,21 +90,23 @@ export const getAcceleratorHub = createServerFn({ method: "POST" })
         p_program_version: access.programVersion,
       }),
       supabaseAdmin
-        .from("paid_program_weekly_check_ins")
+        .from("customer_measurements")
         .select(
-          "week_number, weight_value, weight_unit, waist_value, waist_unit, notes, recorded_at",
+          "id, enrollment_id, measurement_kind, value, unit, measurement_context, notes, measured_at, created_at",
         )
-        .eq("enrollment_id", access.enrollmentId)
-        .eq("program_version", access.programVersion)
-        .order("week_number", { ascending: true }),
+        .eq("customer_id", access.customerAccountId)
+        .eq("status", "active")
+        .order("measured_at", { ascending: false })
+        .order("created_at", { ascending: false }),
     ]);
 
     if (enrollmentResult.error) throw new Error(enrollmentResult.error.message);
     if (progressResult.error) throw new Error(progressResult.error.message);
-    if (checkInResult.error) throw new Error(checkInResult.error.message);
+    if (measurementResult.error) throw new Error(measurementResult.error.message);
     const enrollment = enrollmentResult.data?.[0];
     const progress = progressResult.data?.[0];
     if (!enrollment || !progress) return { ok: false };
+    const measurements = (measurementResult.data ?? []).map(toMeasurement);
 
     return {
       ok: true,
@@ -106,7 +118,8 @@ export const getAcceleratorHub = createServerFn({ method: "POST" })
         ) as AcceleratorProgramSnapshot,
         completedDays: progress.completed_days,
         progress: toProgressState(progress),
-        checkIns: (checkInResult.data ?? []).map(toCheckIn),
+        measurements,
+        measurementSummary: measurementSummary(measurements, access.enrollmentId),
       },
     };
   });
@@ -186,28 +199,61 @@ export const recordAcceleratorVideoView = createServerFn({ method: "POST" })
     };
   });
 
-export const saveAcceleratorCheckIn = createServerFn({ method: "POST" })
-  .validator((data: unknown) => acceleratorCheckInInputSchema.parse(data))
-  .handler(async ({ data }): Promise<SaveAcceleratorCheckInResult> => {
+export const addAcceleratorMeasurement = createServerFn({ method: "POST" })
+  .validator((data: unknown) => addAcceleratorMeasurementInputSchema.parse(data))
+  .handler(async ({ data }): Promise<SaveMeasurementResult> => {
     const access = await authorize();
     if (!access) return { ok: false };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: rows, error } = await supabaseAdmin.rpc(
-      "save_accelerator_weekly_check_in_atomic",
-      {
-        p_enrollment_id: access.enrollmentId,
-        p_program_version: access.programVersion,
-        p_week_number: data.week,
-        p_weight_value: data.weight.value,
-        p_weight_unit: data.weight.unit,
-        p_waist_value: data.waist.value,
-        p_waist_unit: data.waist.unit,
-        p_notes: data.notes,
-      },
-    );
+    const { data: rows, error } = await supabaseAdmin.rpc("add_customer_measurement_atomic", {
+      p_customer_id: access.customerAccountId,
+      p_enrollment_id: access.enrollmentId,
+      p_measurement_kind: data.kind,
+      p_value: data.value,
+      p_unit: data.unit,
+      p_measurement_context: data.context,
+      p_notes: data.notes,
+      p_measured_at: data.measuredAt,
+    });
     if (error) throw new Error(error.message);
     const row = rows?.[0];
     if (!row) return { ok: false };
-    return { ok: true, checkIn: toCheckIn(row) };
+    return { ok: true, measurement: toMeasurement(row) };
+  });
+
+export const correctCustomerMeasurement = createServerFn({ method: "POST" })
+  .validator((data: unknown) => correctMeasurementInputSchema.parse(data))
+  .handler(async ({ data }): Promise<SaveMeasurementResult> => {
+    const access = await authorize();
+    if (!access) return { ok: false };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.rpc("correct_customer_measurement_atomic", {
+      p_customer_id: access.customerAccountId,
+      p_measurement_id: data.measurementId,
+      p_value: data.value,
+      p_unit: data.unit,
+      p_notes: data.notes,
+      p_measured_at: data.measuredAt,
+    });
+    if (error) throw new Error(error.message);
+    const row = rows?.[0];
+    if (!row) return { ok: false };
+    return { ok: true, measurement: toMeasurement(row) };
+  });
+
+export const removeCustomerMeasurement = createServerFn({ method: "POST" })
+  .validator((data: unknown) => removeMeasurementInputSchema.parse(data))
+  .handler(async ({ data }): Promise<RemoveMeasurementResult> => {
+    const access = await authorize();
+    if (!access) return { ok: false };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.rpc("remove_customer_measurement_atomic", {
+      p_customer_id: access.customerAccountId,
+      p_measurement_id: data.measurementId,
+    });
+    if (error) throw new Error(error.message);
+    const row = rows?.[0];
+    if (!row || !row.removed) return { ok: false };
+    return { ok: true, measurementId: row.measurement_id, removed: true };
   });
