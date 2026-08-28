@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
+import { IntakeClosed } from "@/components/intake-closed";
+import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
 import {
   Select,
   SelectContent,
@@ -260,6 +262,14 @@ function Assessment() {
       window.scrollTo({ top: 0 });
     }
   };
+
+  if (!NEW_PLAN_INTAKE_OPEN) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
+        <IntakeClosed />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">

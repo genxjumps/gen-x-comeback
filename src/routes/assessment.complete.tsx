@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { IntakeClosed } from "@/components/intake-closed";
 import { Separator } from "@/components/ui/separator";
 import { buildPlan, isCompleteDraft, readAnswers, type Answers } from "@/lib/plan";
 import { ACCESS_TOKEN_STORAGE_KEY, CONSENT_COPY, RAW_TOKEN_RE } from "@/lib/lead-plan";
 import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
 import { getSubmissionId, mintCredential } from "@/lib/plan-submission";
 import { readStoredToken } from "@/lib/access-token";
+import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
@@ -250,7 +252,9 @@ function ResultsPage() {
             follow the plan in order.
           </p>
         </section>
-      ) : checkingAccess ? null : (
+      ) : checkingAccess ? null : !NEW_PLAN_INTAKE_OPEN ? (
+        <IntakeClosed />
+      ) : (
         <section>
           <h2 className="text-lg font-semibold tracking-tight">
             Unlock Your Full 7-Day Workout Plan

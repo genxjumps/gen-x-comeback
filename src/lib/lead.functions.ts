@@ -24,6 +24,7 @@ import {
   regenerateInputSchema,
   tokenOnlyInputSchema,
 } from "@/lib/lead-schemas";
+import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
 
 /**
  * Resolves authorized access for a protected call: same-browser access token or
@@ -195,6 +196,10 @@ async function requestFingerprint(parts: Array<string | null>): Promise<string> 
 export const saveLeadPlan = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => leadInputSchema.parse(data))
   .handler(async ({ data }): Promise<SaveLeadPlanResult> => {
+    // Fail closed before generating or storing anything. Existing-plan actions
+    // use separate authenticated handlers and remain available during pre-launch.
+    if (!NEW_PLAN_INTAKE_OPEN) throw new Error("New plan intake is closed");
+
     const answers = data.assessment as Answers;
     const { plan, snapshot } = planFromAnswers(answers);
     const emailNormalized = data.email.toLowerCase();
