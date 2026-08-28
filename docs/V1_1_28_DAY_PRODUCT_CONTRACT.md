@@ -495,7 +495,7 @@ All requirements remain unverified until a future checkpoint attaches concrete e
 | Nutrition targets                  | Unverified             | Approved calorie and protein logic implemented and tested   |
 | Measurement behavior               | Foundation needs audit | Final private UI and accepted history behavior are verified |
 | Customer account and access        | Foundation needs audit | Cross-device passwordless account behavior is verified      |
-| Program-run lifecycle              | Foundation needs audit | Start, pause, resume, repeat, and history are verified       |
+| Program-run lifecycle              | Foundation needs audit | Start, pause, resume, repeat, and history are verified      |
 | Checkout handoff                   | Unverified             | $37 test purchase creates the intended ownership and access |
 | Refund path                        | Unverified             | Seven-day request path and policy are operational           |
 | Comeback messaging                 | Unverified             | In-app and bounded email behavior are verified              |
