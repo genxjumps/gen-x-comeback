@@ -13,9 +13,9 @@ their saved access or request a recovery link. Reopening intake requires a revie
 and release.
 
 The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Accelerator is the active
-next development phase. Its first bounded checkpoint defines the product contract, deterministic
-28-day sequence, and fail-closed launch requirements; checkout, paid access, and the public offer
-remain unimplemented.
+next development phase. Its product contract, deterministic sequence, private paid-domain data
+model, saved sequential progress, and weekly check-in foundation now exist in source. Checkout,
+public enrollment, paid email, and the public offer remain unimplemented.
 
 `main` and `release/v1.1` are kept aligned as the accepted pre-launch baseline before new V1.1 checkpoints begin.
 
@@ -40,6 +40,9 @@ remain unimplemented.
 - Direct MailerLite subscriber sync foundation for marketing-consented leads
 - PWA manifest and installable-app foundation
 - Current Gen X Jumps V1 visual system
+- Private, versioned 28-Day enrollment and saved-progress foundation
+- Server-enforced Day 1 through Day 28 completion and resume behavior
+- Saved weekly weight, waist, and optional progress notes
 
 The existing email and scheduler infrastructure has been heavily staged and verified, but that does **not** mean the overall product has launched to customers.
 
@@ -162,12 +165,11 @@ bun run verify
 Resume V1.1 from a fresh bounded branch created from `release/v1.1`.
 
 The current 28-Day foundation is governed by
-[`docs/V1_1_28_DAY_PRODUCT_CONTRACT.md`](docs/V1_1_28_DAY_PRODUCT_CONTRACT.md). The next checkpoint
-must inventory and verify the real workout, coaching, equipment, runtime, and nutrition inputs
-before implementing customer-facing program delivery. Carry forward only still-approved
-architecture and product decisions from prior planning. The older draft V1.1 architecture PR was
-intentionally closed because its mandatory isolated-staging assumption no longer matches the
-current pre-launch environment.
+[`docs/V1_1_28_DAY_PRODUCT_CONTRACT.md`](docs/V1_1_28_DAY_PRODUCT_CONTRACT.md) and
+[`docs/V1_1_28_DAY_DATA_FOUNDATION.md`](docs/V1_1_28_DAY_DATA_FOUNDATION.md). The next checkpoints
+must apply and verify the migration in a controlled development boundary, audit the real workout
+and coaching assets, approve nutrition formulas, and later add a tested checkout handoff. Public
+enrollment remains fail-closed throughout that work.
 
 ## Historical implementation evidence
 
