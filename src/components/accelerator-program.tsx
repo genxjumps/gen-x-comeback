@@ -100,10 +100,20 @@ export function AcceleratorProgram() {
   }, [displayWeek, hub?.checkIns]);
 
   const daysWithAccess = useMemo(
-    () => (hub ? acceleratorDayAccessForDays(hub.snapshot.days, new Set(hub.completedDays)) : []),
+    () =>
+      hub
+        ? acceleratorDayAccessForDays(hub.snapshot.days, new Set(hub.completedDays)).map((day) =>
+            day.access === "current" && !hub.progress.canCompleteCurrent
+              ? { ...day, access: "locked" as const }
+              : day,
+          )
+        : [],
     [hub],
   );
   const currentDay = daysWithAccess.find((day) => day.access === "current") ?? null;
+  const waitingDay = hub?.progress.currentDay
+    ? (hub.snapshot.days.find((day) => day.day === hub.progress.currentDay) ?? null)
+    : null;
   const displayedDays = daysWithAccess.filter((day) => day.week === displayWeek);
 
   if (status === "checking") {
@@ -132,7 +142,9 @@ export function AcceleratorProgram() {
         return;
       }
       setHub((previous) =>
-        previous ? { ...previous, completedDays: result.completedDays } : previous,
+        previous
+          ? { ...previous, completedDays: result.completedDays, progress: result.progress }
+          : previous,
       );
       const nextWeek =
         result.completedDays.length >= 28
@@ -198,7 +210,11 @@ export function AcceleratorProgram() {
           28-Day Fat Loss Accelerator
         </p>
         <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight sm:text-4xl">
-          {currentDay ? `Day ${currentDay.day}: ${currentLabel}` : "You Finished"}
+          {currentDay
+            ? `Day ${currentDay.day}: ${currentLabel}`
+            : hub.progress.programCompleted
+              ? "You Finished"
+              : `Day ${waitingDay?.day ?? "Next"} unlocks tomorrow`}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {hub.firstName}, you&rsquo;ve completed {completedCount} of 28 days. Missed time never
@@ -243,9 +259,17 @@ export function AcceleratorProgram() {
                     : `Acknowledge Day ${currentDay.day}`}
               </Button>
             </section>
-          ) : (
+          ) : hub.progress.programCompleted ? (
             <section className="rounded-lg border border-border bg-gxj-mint p-6">
               <h2 className="text-xl font-semibold tracking-tight">28-Day Program Complete</h2>
+            </section>
+          ) : (
+            <section className="rounded-lg border border-border bg-card p-6">
+              <h2 className="text-xl font-semibold tracking-tight">Today is complete</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Day {waitingDay?.day} unlocks on your next calendar day. Missing time won&rsquo;t
+                skip your place.
+              </p>
             </section>
           )}
 

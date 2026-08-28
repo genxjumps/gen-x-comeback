@@ -85,6 +85,55 @@ export type Database = {
         };
         Relationships: [];
       };
+      customer_active_programs: {
+        Row: {
+          activated_at: string;
+          customer_id: string;
+          lead_plan_id: string | null;
+          paid_enrollment_id: string | null;
+          program_kind: string;
+          updated_at: string;
+        };
+        Insert: {
+          activated_at?: string;
+          customer_id: string;
+          lead_plan_id?: string | null;
+          paid_enrollment_id?: string | null;
+          program_kind: string;
+          updated_at?: string;
+        };
+        Update: {
+          activated_at?: string;
+          customer_id?: string;
+          lead_plan_id?: string | null;
+          paid_enrollment_id?: string | null;
+          program_kind?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "customer_active_programs_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: true;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "customer_active_programs_lead_plan_id_fkey";
+            columns: ["lead_plan_id"];
+            isOneToOne: true;
+            referencedRelation: "lead_plans";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "customer_active_programs_paid_enrollment_id_fkey";
+            columns: ["paid_enrollment_id"];
+            isOneToOne: true;
+            referencedRelation: "paid_program_enrollments";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       customer_lead_plan_links: {
         Row: {
           customer_id: string;
@@ -801,6 +850,7 @@ export type Database = {
           enrollment_id: string;
           id: string;
           program_version: string;
+          undo_until: string;
         };
         Insert: {
           completed_at?: string;
@@ -809,6 +859,7 @@ export type Database = {
           enrollment_id: string;
           id?: string;
           program_version: string;
+          undo_until?: string;
         };
         Update: {
           completed_at?: string;
@@ -817,6 +868,7 @@ export type Database = {
           enrollment_id?: string;
           id?: string;
           program_version?: string;
+          undo_until?: string;
         };
         Relationships: [
           {
@@ -833,6 +885,7 @@ export type Database = {
           completed_at: string | null;
           created_at: string;
           customer_id: string;
+          customer_time_zone: string;
           entitlement_id: string;
           id: string;
           paused_at: string | null;
@@ -849,6 +902,7 @@ export type Database = {
           completed_at?: string | null;
           created_at?: string;
           customer_id: string;
+          customer_time_zone: string;
           entitlement_id: string;
           id?: string;
           paused_at?: string | null;
@@ -865,6 +919,7 @@ export type Database = {
           completed_at?: string | null;
           created_at?: string;
           customer_id?: string;
+          customer_time_zone?: string;
           entitlement_id?: string;
           id?: string;
           paused_at?: string | null;
@@ -890,6 +945,53 @@ export type Database = {
             columns: ["entitlement_id"];
             isOneToOne: false;
             referencedRelation: "paid_product_entitlements";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      paid_program_video_views: {
+        Row: {
+          created_at: string;
+          day_number: number;
+          enrollment_id: string;
+          first_viewed_at: string;
+          id: string;
+          last_viewed_at: string;
+          media_key: string;
+          program_version: string;
+          updated_at: string;
+          view_count: number;
+        };
+        Insert: {
+          created_at?: string;
+          day_number: number;
+          enrollment_id: string;
+          first_viewed_at?: string;
+          id?: string;
+          last_viewed_at?: string;
+          media_key: string;
+          program_version: string;
+          updated_at?: string;
+          view_count?: number;
+        };
+        Update: {
+          created_at?: string;
+          day_number?: number;
+          enrollment_id?: string;
+          first_viewed_at?: string;
+          id?: string;
+          last_viewed_at?: string;
+          media_key?: string;
+          program_version?: string;
+          updated_at?: string;
+          view_count?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_program_video_views_enrollment_id_fkey";
+            columns: ["enrollment_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_program_enrollments";
             referencedColumns: ["id"];
           },
         ];
@@ -1376,6 +1478,26 @@ export type Database = {
           source: string;
         }[];
       };
+      accelerator_progress_state: {
+        Args: { p_enrollment_id: string; p_program_version: string };
+        Returns: {
+          available_on: string | null;
+          can_complete_current: boolean;
+          completed_days: number[];
+          current_day: number | null;
+          program_completed: boolean;
+          undo_day: number | null;
+          undo_until: string | null;
+        }[];
+      };
+      activate_lead_plan_atomic: {
+        Args: { p_customer_id: string; p_lead_plan_id: string };
+        Returns: {
+          lead_plan_id: string;
+          outcome: string;
+          paused_enrollment_id: string | null;
+        }[];
+      };
       complete_accelerator_day_atomic: {
         Args: {
           p_day_number: number;
@@ -1383,9 +1505,14 @@ export type Database = {
           p_program_version: string;
         };
         Returns: {
+          available_on: string | null;
+          can_complete_current: boolean;
           completed_days: number[];
+          current_day: number | null;
           newly_completed: boolean;
           program_completed: boolean;
+          undo_day: number | null;
+          undo_until: string | null;
         }[];
       };
       complete_plan_day_atomic: {
@@ -1513,7 +1640,23 @@ export type Database = {
           enrollment_id: string;
           outcome: string;
           paused_enrollment_id: string | null;
+          paused_lead_plan_id: string | null;
         }[];
+      };
+      record_accelerator_video_view_atomic: {
+        Args: {
+          p_day_number: number;
+          p_enrollment_id: string;
+          p_media_key: string;
+          p_program_version: string;
+        };
+        Returns: Database["public"]["Tables"]["paid_program_video_views"]["Row"][];
+        SetofOptions: {
+          from: "*";
+          to: "paid_program_video_views";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       request_plan_recovery: {
         Args: { p_email_normalized: string; p_request_id: string };
@@ -1557,6 +1700,7 @@ export type Database = {
       start_program_run_atomic: {
         Args: {
           p_customer_id: string;
+          p_customer_time_zone: string;
           p_entitlement_id: string;
           p_program_snapshot: Json;
           p_program_version: string;
@@ -1565,7 +1709,25 @@ export type Database = {
           enrollment_id: string;
           outcome: string;
           paused_enrollment_id: string | null;
+          paused_lead_plan_id: string | null;
           run_number: number;
+        }[];
+      };
+      undo_accelerator_day_atomic: {
+        Args: {
+          p_day_number: number;
+          p_enrollment_id: string;
+          p_program_version: string;
+        };
+        Returns: {
+          available_on: string | null;
+          can_complete_current: boolean;
+          completed_days: number[];
+          current_day: number | null;
+          program_completed: boolean;
+          undo_day: number | null;
+          undo_until: string | null;
+          undone: boolean;
         }[];
       };
       record_email_scheduler_auth_attempt: {

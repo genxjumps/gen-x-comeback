@@ -5,13 +5,18 @@ import {
   acceleratorCheckInInputSchema,
   acceleratorProgramSnapshotSchema,
   acceleratorAccountInputSchema,
+  acceleratorVideoViewInputSchema,
   completeAcceleratorDayInputSchema,
+  undoAcceleratorDayInputSchema,
 } from "@/lib/accelerator/schemas";
 import type {
   AcceleratorCheckIn,
   AcceleratorHubResult,
   AcceleratorProgressResult,
+  AcceleratorProgressState,
+  RecordAcceleratorVideoViewResult,
   SaveAcceleratorCheckInResult,
+  UndoAcceleratorDayResult,
 } from "@/lib/accelerator/types";
 
 async function authorize() {
@@ -38,6 +43,24 @@ function toCheckIn(row: {
   };
 }
 
+function toProgressState(row: {
+  current_day: number | null;
+  available_on: string | null;
+  can_complete_current: boolean;
+  undo_day: number | null;
+  undo_until: string | null;
+  program_completed: boolean;
+}): AcceleratorProgressState {
+  return {
+    currentDay: row.current_day,
+    availableOn: row.available_on,
+    canCompleteCurrent: row.can_complete_current,
+    undoDay: row.undo_day,
+    undoUntil: row.undo_until,
+    programCompleted: row.program_completed,
+  };
+}
+
 export const getAcceleratorHub = createServerFn({ method: "POST" })
   .validator((data: unknown) => acceleratorAccountInputSchema.parse(data))
   .handler(async ({ data }): Promise<AcceleratorHubResult> => {
@@ -45,19 +68,17 @@ export const getAcceleratorHub = createServerFn({ method: "POST" })
     if (!access) return { ok: false };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [enrollmentResult, completionResult, checkInResult] = await Promise.all([
+    const [enrollmentResult, progressResult, checkInResult] = await Promise.all([
       supabaseAdmin
         .from("paid_program_enrollments")
         .select("program_snapshot, program_version")
         .eq("id", access.enrollmentId)
         .eq("program_version", access.programVersion)
         .limit(1),
-      supabaseAdmin
-        .from("paid_program_day_completions")
-        .select("day_number")
-        .eq("enrollment_id", access.enrollmentId)
-        .eq("program_version", access.programVersion)
-        .order("day_number", { ascending: true }),
+      supabaseAdmin.rpc("accelerator_progress_state", {
+        p_enrollment_id: access.enrollmentId,
+        p_program_version: access.programVersion,
+      }),
       supabaseAdmin
         .from("paid_program_weekly_check_ins")
         .select(
@@ -69,10 +90,11 @@ export const getAcceleratorHub = createServerFn({ method: "POST" })
     ]);
 
     if (enrollmentResult.error) throw new Error(enrollmentResult.error.message);
-    if (completionResult.error) throw new Error(completionResult.error.message);
+    if (progressResult.error) throw new Error(progressResult.error.message);
     if (checkInResult.error) throw new Error(checkInResult.error.message);
     const enrollment = enrollmentResult.data?.[0];
-    if (!enrollment) return { ok: false };
+    const progress = progressResult.data?.[0];
+    if (!enrollment || !progress) return { ok: false };
 
     return {
       ok: true,
@@ -82,7 +104,8 @@ export const getAcceleratorHub = createServerFn({ method: "POST" })
         snapshot: acceleratorProgramSnapshotSchema.parse(
           enrollment.program_snapshot,
         ) as AcceleratorProgramSnapshot,
-        completedDays: (completionResult.data ?? []).map((row) => row.day_number),
+        completedDays: progress.completed_days,
+        progress: toProgressState(progress),
         checkIns: (checkInResult.data ?? []).map(toCheckIn),
       },
     };
@@ -108,7 +131,58 @@ export const completeAcceleratorDay = createServerFn({ method: "POST" })
       ok: true,
       completedDays: row.completed_days,
       newlyCompleted: row.newly_completed,
-      programCompleted: row.program_completed,
+      progress: toProgressState(row),
+    };
+  });
+
+export const undoAcceleratorDay = createServerFn({ method: "POST" })
+  .validator((data: unknown) => undoAcceleratorDayInputSchema.parse(data))
+  .handler(async ({ data }): Promise<UndoAcceleratorDayResult> => {
+    const access = await authorize();
+    if (!access) return { ok: false };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.rpc("undo_accelerator_day_atomic", {
+      p_enrollment_id: access.enrollmentId,
+      p_program_version: access.programVersion,
+      p_day_number: data.day,
+    });
+    if (error) throw new Error(error.message);
+    const row = rows?.[0];
+    if (!row || !row.undone) return { ok: false };
+    return {
+      ok: true,
+      completedDays: row.completed_days,
+      undone: true,
+      progress: toProgressState(row),
+    };
+  });
+
+export const recordAcceleratorVideoView = createServerFn({ method: "POST" })
+  .validator((data: unknown) => acceleratorVideoViewInputSchema.parse(data))
+  .handler(async ({ data }): Promise<RecordAcceleratorVideoViewResult> => {
+    const access = await authorize();
+    if (!access) return { ok: false };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin.rpc("record_accelerator_video_view_atomic", {
+      p_enrollment_id: access.enrollmentId,
+      p_program_version: access.programVersion,
+      p_day_number: data.day,
+      p_media_key: data.mediaKey,
+    });
+    if (error) throw new Error(error.message);
+    const row = rows?.[0];
+    if (!row) return { ok: false };
+    return {
+      ok: true,
+      view: {
+        day: row.day_number,
+        mediaKey: row.media_key,
+        firstViewedAt: row.first_viewed_at,
+        lastViewedAt: row.last_viewed_at,
+        viewCount: row.view_count,
+      },
     };
   });
 

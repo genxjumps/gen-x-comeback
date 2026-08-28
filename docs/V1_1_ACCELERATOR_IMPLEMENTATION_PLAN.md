@@ -28,16 +28,18 @@ migration remains unapplied and must not be applied before reconciliation.
 - Existing Supabase passwordless-auth client and middleware groundwork.
 - Existing scanner-safe return, recovery, email scheduling, consent, and delivery safeguards.
 
-### Reconcile or replace
+### Reconciled through Checkpoint 3
 
-- Purchase currently creates and starts an enrollment instead of granting Not Started ownership.
-- One entitlement currently permits only one enrollment, blocking repeat runs and run history.
-- Paid access is tied to a separate enrollment token instead of one customer account.
-- Free-plan identity and paid-customer identity are separate.
-- Enrollment states omit Not Started and Paused behavior.
-- One active structured program is not enforced across free and paid programs.
-- Completion unlocks the next day immediately instead of on the next customer-local calendar day.
-- There is no bounded undo for the latest completion or separate video-view record.
+- Purchase grants Not Started ownership without starting a run.
+- One entitlement supports repeatable, versioned runs and preserved history.
+- Free and paid ownership resolve through one verified customer account.
+- Not Started, Active, Paused, Completed, and Revoked states are represented.
+- One active structured-program pointer coordinates linked 7-Day Plans and paid runs.
+- Customer-local next-day unlocking, missed-day persistence, latest-completion Undo, completed-day
+  reopening, and separate video-view facts are represented and tested.
+
+### Reconcile or replace next
+
 - Weekly check-ins require both measurements, overwrite one weekly row, and cannot preserve the
   approved detailed history.
 - The current private Accelerator page is a proof screen, not the approved platform navigation or
@@ -45,10 +47,11 @@ migration remains unapplied and must not be applied before reconciliation.
 
 ### Still required
 
-- Unified account, ownership, program-run, progress, measurement, reminder, and preference models.
+- Measurement, reminder, and preference models.
 - Home, My Programs, Daily Assignment, Your Progress, Your Nutrition, Explore Programs, and the
   notification inbox.
-- Setup, pause, resume, switching, repeat runs, previous-run history, and Day 28 completion.
+- Customer-facing setup, pause, resume, switching, repeat runs, previous-run history, and Day 28
+  completion screens.
 - Real program media, runtime, equipment, instructions, coaching, and orientation content.
 - Approved nutrition guidance and deliberately reviewed target formulas.
 - Todd's private customer-progress view.

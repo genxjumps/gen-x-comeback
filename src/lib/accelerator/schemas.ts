@@ -62,6 +62,13 @@ export const completeAcceleratorDayInputSchema = z.object({
   day: z.number().int().min(1).max(28),
 });
 
+export const undoAcceleratorDayInputSchema = completeAcceleratorDayInputSchema;
+
+export const acceleratorVideoViewInputSchema = z.object({
+  day: z.number().int().min(1).max(28),
+  mediaKey: z.string().trim().min(1).max(200),
+});
+
 export const acceleratorCheckInInputSchema = z.object({
   week: z.number().int().min(1).max(4),
   weight: z.object({ value: z.number().positive(), unit: z.enum(["lb", "kg"]) }),
