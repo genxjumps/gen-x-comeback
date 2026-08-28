@@ -1,9 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  generateAcceleratorAccessToken,
-  provisionAcceleratorEnrollment,
-} from "../provision.server";
+import { provisionAcceleratorOwnership } from "../provision.server";
 
 const { rpc } = vi.hoisted(() => ({ rpc: vi.fn() }));
 
@@ -12,52 +9,53 @@ vi.mock("@/integrations/supabase/client.server", () => ({
 }));
 
 const PURCHASE = {
+  customerAccountId: "00000000-0000-4000-8000-000000000001",
   idempotencyKey: "checkout-event-1",
-  email: "  Todd@Example.com ",
-  firstName: " Todd ",
   purchaseSource: "future_test_checkout",
   sourceReference: "purchase-1",
   purchasedAt: "2026-08-28T18:00:00.000Z",
-  rawAccessToken: "a".repeat(43),
 };
 
-describe("trusted Accelerator enrollment provisioning", () => {
+describe("trusted Accelerator ownership provisioning", () => {
   beforeEach(() => {
     rpc.mockReset();
     rpc.mockResolvedValue({
-      data: [{ outcome: "created", enrollment_id: "enrollment-1", replayed: false }],
+      data: [
+        {
+          outcome: "created",
+          purchase_id: "purchase-1",
+          entitlement_id: "entitlement-1",
+          replayed: false,
+        },
+      ],
       error: null,
     });
   });
 
-  it("normalizes identity and sends the locked offer and version snapshot", async () => {
-    const result = await provisionAcceleratorEnrollment(PURCHASE);
+  it("records the locked offer against the unified customer account", async () => {
+    const result = await provisionAcceleratorOwnership(PURCHASE);
 
     expect(result).toEqual({
-      enrollmentId: "enrollment-1",
-      rawAccessToken: PURCHASE.rawAccessToken,
+      purchaseId: "purchase-1",
+      entitlementId: "entitlement-1",
       replayed: false,
     });
     expect(rpc).toHaveBeenCalledTimes(1);
     const [name, input] = rpc.mock.calls[0];
-    expect(name).toBe("provision_accelerator_enrollment");
+    expect(name).toBe("provision_accelerator_ownership");
     expect(input).toMatchObject({
-      p_email_normalized: "todd@example.com",
-      p_email_original: "Todd@Example.com",
-      p_first_name: "Todd",
+      p_customer_id: PURCHASE.customerAccountId,
       p_product_code: "accelerator_28",
       p_amount_cents: 3700,
       p_currency: "USD",
-      p_program_version: "accelerator_28_v1",
     });
-    expect(input.p_program_snapshot.days).toHaveLength(28);
-    expect(input.p_access_token_hash).toMatch(/^[a-f0-9]{64}$/);
+    expect(input).not.toHaveProperty("p_program_version");
+    expect(input).not.toHaveProperty("p_program_snapshot");
   });
 
   it("creates the same request fingerprint for an exact retry", async () => {
-    await provisionAcceleratorEnrollment(PURCHASE);
-    await provisionAcceleratorEnrollment(PURCHASE);
-
+    await provisionAcceleratorOwnership(PURCHASE);
+    await provisionAcceleratorOwnership(PURCHASE);
     expect(rpc.mock.calls[0][1].p_request_fingerprint).toBe(
       rpc.mock.calls[1][1].p_request_fingerprint,
     );
@@ -65,15 +63,8 @@ describe("trusted Accelerator enrollment provisioning", () => {
 
   it("rejects malformed trusted input before touching the database", async () => {
     await expect(
-      provisionAcceleratorEnrollment({ ...PURCHASE, email: "not-an-email" }),
-    ).rejects.toThrow();
-    await expect(
-      provisionAcceleratorEnrollment({ ...PURCHASE, rawAccessToken: "too-short" }),
+      provisionAcceleratorOwnership({ ...PURCHASE, customerAccountId: "not-a-uuid" }),
     ).rejects.toThrow();
     expect(rpc).not.toHaveBeenCalled();
-  });
-
-  it("generates 32-byte opaque base64url credentials", () => {
-    expect(generateAcceleratorAccessToken()).toMatch(/^[A-Za-z0-9_-]{43}$/);
   });
 });

@@ -1,125 +1,117 @@
-# V1.1 28-Day Paid Enrollment and Progress Foundation
+# V1.1 28-Day Data Foundation
 
-## Reconciliation required before use
+## Current status
 
-This foundation was merged before the broader Accelerator product experience was fully defined.
-The migration remains unapplied and must not be applied until the code, tests, and schema are
-audited against
-[`V1_1_28_DAY_PRODUCT_CONTRACT.md`](V1_1_28_DAY_PRODUCT_CONTRACT.md).
+The customer-account, purchase, entitlement, and program-run source foundation is reconciled with
+the approved product contract. Both Accelerator migrations remain unapplied. Do not apply them
+until a later checkpoint deliberately verifies the complete corrected migration chain inside the
+approved development boundary.
 
-The expanded contract adds or clarifies requirements that may change this foundation, including:
+No public enrollment, checkout, payment-provider call, customer migration, email activation,
+McLovable publication, or browser write is opened by this foundation.
 
-- One cross-device customer account rather than a paid-only access silo.
-- Not Started, Active, Paused, and Completed program-run states.
-- One active structured program at a time and safe program switching.
-- Repeat runs and previous-run history.
-- Next-calendar-day unlocking after completion.
-- A brief undo for only the latest completion.
+## Unified customer identity
+
+The earlier customer-account migration establishes:
+
+- One customer account per provider-verified Supabase Auth user.
+- One normalized verified email per account.
+- Safe legacy 7-Day Plan links without changing plan or consent state.
+- Service-role-only, idempotent account resolution.
+
+Paid access now uses that customer account. The former separate `paid_customers` identity and
+paid-program browser-token tables have been removed from the unapplied Accelerator migration.
+
+## Purchase and permanent ownership
+
+The account-owned records are:
+
+- `paid_purchases` - independently verified purchase facts and the seven-day refund-request
+  deadline.
+- `paid_product_entitlements` - the customer's durable right to use the purchased product.
+- `paid_program_enrollments` - repeatable, versioned program runs. The historical table name is
+  retained, but each row now represents one run rather than ownership.
+- `paid_program_day_completions` - existing sequential progress scaffolding that Checkpoint 3 will
+  reconcile.
+- `paid_program_weekly_check_ins` - temporary proof scaffolding that Checkpoint 4 will replace with
+  approved measurement history.
+
+`provision_accelerator_ownership` is a service-role-only transaction for a future trusted checkout
+adapter. It accepts only the locked `$37 USD` Accelerator offer and records the purchase plus
+entitlement. It deliberately does not create a program run, start Day 1, send access email, or
+expose checkout.
+
+The transaction remains idempotent and conflict-aware. An exact retry returns the existing purchase
+and entitlement. Reusing an idempotency key or purchase reference with different facts fails
+closed.
+
+## Not Started and program runs
+
+Purchase ownership with no program run is the customer-facing **Not Started** state. The customer
+must explicitly start the program before Day 1 begins.
+
+`start_program_run_atomic` creates a run only after verifying active ownership. Each run records:
+
+- Its own run number.
+- The exact program version.
+- An immutable content snapshot.
+- Start, pause, completion, and revocation facts.
+
+A completed purchased program can be repeated without another purchase. Each repeat creates the
+next run number. Previous runs are never reset or overwritten.
+
+## One active structured program
+
+The database permits only one active program run per customer account. Starting or resuming another
+owned program pauses the active run inside the same locked transaction. Pausing preserves the
+version, snapshot, progress, and run identity.
+
+The run lifecycle supports:
+
+- Active.
+- Paused.
+- Completed.
+- Revoked.
+
+Not Started remains an ownership state before a run exists. A paused run must be resumed rather
+than replaced with a duplicate run.
+
+The generic run model is ready to represent free and paid programs. Checkpoint 3 must connect the
+existing 7-Day Plan progress lifecycle to this one-active-program rule before switching behavior is
+considered complete.
+
+## Authorization and security
+
+- Customer access derives from the verified unified account.
+- A separate paid-program browser credential is no longer authorization.
+- All tables use row-level security and are restricted to the service role.
+- Every ownership and run-lifecycle transaction is service-role only.
+- The browser never reads or writes these tables directly.
+
+## Remaining reconciliation
+
+Checkpoint 3 must replace the existing progress proof with the approved behavior for:
+
+- Customer-local next-calendar-day unlocking.
+- Missed days that preserve the current assignment.
+- Latest-completion undo.
+- Reopening completed days without changing progress.
 - Separate video-view and day-completion facts.
-- Detailed measurement history with independent editing and removal.
-- Starting, latest, and final measurements for each run.
-- In-app reminders, bounded comeback email, and reminder preferences.
-- Todd's private customer-progress view.
+- Safe switching with the existing 7-Day Plan.
 
-The existing foundation remains useful evidence, but it is not yet an accepted final schema. Do not
-silently change product decisions to fit it.
-
-## Unified customer-account correction
-
-The first reconciliation checkpoint adds a separate, still-unapplied customer-account migration
-that sorts before the Accelerator migration. It establishes:
-
-- One customer account per verified Supabase Auth user.
-- One normalized verified email per customer account.
-- Service-role-only account creation and resolution.
-- Idempotent account resolution from a provider-verified identity.
-- Safe linking of matching legacy 7-Day Plan records without changing their plan or consent state.
-
-This source foundation does not yet make the existing paid tables final. The next data checkpoint
-must replace the paid-only customer and access silo with account-owned purchases, entitlements, and
-repeatable program runs before either unapplied migration is used.
-
-No public route invokes the new account resolver. No authentication email, customer migration, or
-database migration is activated by this checkpoint.
-
-## Checkpoint outcome
-
-This checkpoint adds the private database-backed foundation for the 28-Day Fat Loss Accelerator.
-It does not open enrollment or connect money, video, email, or marketing providers.
-
-## Paid-domain records
-
-The paid program is intentionally separate from the free plan's `lead_plans` lifecycle:
-
-- `paid_customers` - normalized customer identity
-- `paid_purchases` - one verified purchase record with a seven-day refund-request deadline
-- `paid_product_entitlements` - the customer's active or revoked right to the product
-- `paid_program_enrollments` - one exact program version and immutable content snapshot
-- `paid_program_access_sessions` - hashed opaque access credentials only
-- `paid_program_day_completions` - one saved completion per enrollment day
-- `paid_program_weekly_check_ins` - one saved weight, waist, and optional note per week
-
-All tables use row-level security and are restricted to the service role. The browser never reads or
-writes the paid tables directly.
-
-## Trusted enrollment boundary
-
-`provision_accelerator_enrollment` is a service-role-only transaction for a future trusted checkout
-adapter. It accepts only the locked `$37 USD`, `accelerator_28`, and `accelerator_28_v1` values. It
-creates the purchase, entitlement, enrollment, version snapshot, and hashed access session in one
-transaction.
-
-The transaction is idempotent by purchase key and request fingerprint. An exact retry returns the
-existing enrollment. Reusing the key or provider reference with different details returns a
-conflict. No route currently invokes this transaction.
-
-## Saved progress and resume behavior
-
-The private `/accelerator` route reads a separate paid-program credential from the browser and sends
-it to server functions. The server hashes the credential, verifies the active entitlement and
-enrollment, and returns only the authorized version snapshot, completions, and check-ins.
-
-Day completion is atomic and server-enforced:
-
-- The requested enrollment and program version must match.
-- Every earlier day must already be complete.
-- An exact repeated completion is successful without creating a duplicate.
-- Day 28 marks the enrollment complete.
-- No calendar date advances, skips, or expires a day.
-
-Because progress is loaded from the database each time, leaving and returning resumes the earliest
-incomplete day.
-
-These behaviors describe the merged foundation. They do not override the newer product requirement
-that the next day unlock on the next calendar day or the broader run-lifecycle requirements.
-
-## Weekly check-ins
-
-Each week currently stores weight, waist, and optional progress notes. Week 1 is available at
-enrollment. Weeks 2 through 4 unlock only after the previous seven-day block is complete. Re-saving
-a week updates that week's record instead of creating a duplicate.
-
-The first private UI uses pounds and inches. The database and server contract also support kilograms
-and centimeters for a later UI choice.
-
-These behaviors describe the current foundation. The final model must be reconciled with the
-approved detailed measurement history, independent optional fields, corrections, removals,
-run-specific start and finish values, and the decision not to require notes.
+Checkpoint 4 must replace weekly combined check-ins with independent optional weight and waist
+history, corrections, removals, and run-specific starting, newest, and final values.
 
 ## Still closed and inactive
 
-- Public enrollment and navigation
-- Checkout and payment-provider calls
-- Live customer migration
-- Paid-program recovery and email delivery
-- Transactional or marketing email activation
-- Real Cloudflare Stream IDs
-- Four verified weekly coaching videos
-- Calorie or protein formulas
-- Public runtime or equipment claims
-- McLovable publishing
-- The unified customer-account migration
-- The existing Accelerator enrollment and progress migration
+- Applying either unapplied Accelerator migration.
+- Public sign-in, enrollment, or paid navigation.
+- Checkout and payment-provider calls.
+- Live customer migration.
+- Paid-program recovery or email delivery.
+- Transactional or marketing email activation.
+- Real Cloudflare Stream media.
+- Calorie or protein formulas.
+- McLovable review or publication.
 
-The existing `/preview/accelerator` route remains a local-only layout simulator. The new
-`/accelerator` route is private, unlinked, and marked `noindex, nofollow`.
+The `/accelerator` proof route remains private, unlinked, and marked `noindex, nofollow`.
