@@ -116,6 +116,9 @@ Activation requires all three server-only values:
 - `MAILERLITE_API_TOKEN`
 - `MAILERLITE_GROUP_ID`
 
+After changing a McLovable project secret, publish a fresh project version before expecting the
+new value to exist in the live runtime. Preview receives project-secret changes immediately.
+
 Before enabling it, confirm the selected MailerLite group and review any automation attached to
 that group. MailerLite group assignment can itself trigger a campaign automation.
 
