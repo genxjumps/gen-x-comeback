@@ -52,6 +52,75 @@ export type Database = {
           },
         ];
       };
+      customer_accounts: {
+        Row: {
+          auth_user_id: string;
+          created_at: string;
+          email_normalized: string;
+          email_original: string;
+          email_verified_at: string;
+          first_name: string | null;
+          id: string;
+          updated_at: string;
+        };
+        Insert: {
+          auth_user_id: string;
+          created_at?: string;
+          email_normalized: string;
+          email_original: string;
+          email_verified_at: string;
+          first_name?: string | null;
+          id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          auth_user_id?: string;
+          created_at?: string;
+          email_normalized?: string;
+          email_original?: string;
+          email_verified_at?: string;
+          first_name?: string | null;
+          id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      customer_lead_plan_links: {
+        Row: {
+          customer_id: string;
+          lead_plan_id: string;
+          link_source: string;
+          linked_at: string;
+        };
+        Insert: {
+          customer_id: string;
+          lead_plan_id: string;
+          link_source: string;
+          linked_at?: string;
+        };
+        Update: {
+          customer_id?: string;
+          lead_plan_id?: string;
+          link_source?: string;
+          linked_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "customer_lead_plan_links_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "customer_lead_plan_links_lead_plan_id_fkey";
+            columns: ["lead_plan_id"];
+            isOneToOne: true;
+            referencedRelation: "lead_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       email_jobs: {
         Row: {
           alerted_stale_at: string | null;
@@ -1493,6 +1562,22 @@ export type Database = {
       request_plan_recovery: {
         Args: { p_email_normalized: string; p_request_id: string };
         Returns: undefined;
+      };
+      resolve_verified_customer_account: {
+        Args: {
+          p_auth_user_id: string;
+          p_email_normalized: string;
+          p_email_original: string;
+          p_email_verified_at: string;
+          p_first_name: string | null;
+        };
+        Returns: {
+          customer_first_name: string | null;
+          customer_id: string;
+          linked_lead_plans: number;
+          outcome: string;
+          replayed: boolean;
+        }[];
       };
       save_accelerator_weekly_check_in_atomic: {
         Args: {
