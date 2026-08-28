@@ -4,7 +4,7 @@ import type { AcceleratorProgramSnapshot, AcceleratorWeek } from "@/lib/accelera
 import {
   acceleratorCheckInInputSchema,
   acceleratorProgramSnapshotSchema,
-  acceleratorTokenInputSchema,
+  acceleratorAccountInputSchema,
   completeAcceleratorDayInputSchema,
 } from "@/lib/accelerator/schemas";
 import type {
@@ -14,9 +14,10 @@ import type {
   SaveAcceleratorCheckInResult,
 } from "@/lib/accelerator/types";
 
-async function authorize(token: string) {
+async function authorize() {
+  const { currentAuthorizationHeader } = await import("@/lib/account/customer-account.server");
   const { resolveAcceleratorAccess } = await import("@/lib/accelerator/access.server");
-  return resolveAcceleratorAccess(token);
+  return resolveAcceleratorAccess(await currentAuthorizationHeader());
 }
 
 function toCheckIn(row: {
@@ -38,9 +39,9 @@ function toCheckIn(row: {
 }
 
 export const getAcceleratorHub = createServerFn({ method: "POST" })
-  .validator((data: unknown) => acceleratorTokenInputSchema.parse(data))
+  .validator((data: unknown) => acceleratorAccountInputSchema.parse(data))
   .handler(async ({ data }): Promise<AcceleratorHubResult> => {
-    const access = await authorize(data.token);
+    const access = await authorize();
     if (!access) return { ok: false };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -90,7 +91,7 @@ export const getAcceleratorHub = createServerFn({ method: "POST" })
 export const completeAcceleratorDay = createServerFn({ method: "POST" })
   .validator((data: unknown) => completeAcceleratorDayInputSchema.parse(data))
   .handler(async ({ data }): Promise<AcceleratorProgressResult> => {
-    const access = await authorize(data.token);
+    const access = await authorize();
     if (!access) return { ok: false };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -114,7 +115,7 @@ export const completeAcceleratorDay = createServerFn({ method: "POST" })
 export const saveAcceleratorCheckIn = createServerFn({ method: "POST" })
   .validator((data: unknown) => acceleratorCheckInInputSchema.parse(data))
   .handler(async ({ data }): Promise<SaveAcceleratorCheckInResult> => {
-    const access = await authorize(data.token);
+    const access = await authorize();
     if (!access) return { ok: false };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

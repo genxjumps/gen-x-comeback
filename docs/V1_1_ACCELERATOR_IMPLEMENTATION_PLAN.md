@@ -113,6 +113,38 @@ purchase can safely use.
 - Customer migration.
 - McLovable review or publication.
 
+## Checkpoint 2: ownership and program runs
+
+### Outcome
+
+Separate verified purchase, permanent ownership, explicit program start, and repeatable historical
+runs under the unified customer account.
+
+### Acceptance criteria
+
+- A verified purchase records the locked offer and grants durable ownership without starting Day 1.
+- Ownership with no run produces the customer-facing Not Started state.
+- Starting creates a versioned run with an immutable content snapshot.
+- Only one structured run per customer account may be active.
+- Starting or resuming another run atomically pauses the active run without resetting progress.
+- A paused run is resumed rather than replaced.
+- Completing and repeating a purchased program creates a new numbered run without another purchase.
+- Previous runs preserve their version, snapshot, timestamps, and history.
+- Purchase recording is idempotent and conflict-aware.
+- Paid access derives from the unified verified account rather than a paid-only identity or browser
+  credential.
+- Every table and lifecycle transaction remains service-role only.
+- Both migrations remain unapplied.
+
+### Explicit exclusions
+
+- Program-day unlocking, missed-day, undo, completed-day reopening, or video-view behavior.
+- Measurement-history correction.
+- Customer-facing Home, My Programs, setup, or Daily Assignment screens.
+- Checkout, payment-provider, refund, recovery, or email activation.
+- Applying a migration or migrating a customer.
+- Visual redesign, McLovable review, or publication.
+
 ## Drift control
 
 Only the active checkpoint may change source. A new idea is handled in one of three ways:

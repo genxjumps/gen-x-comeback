@@ -742,33 +742,6 @@ export type Database = {
           },
         ];
       };
-      paid_customers: {
-        Row: {
-          created_at: string;
-          email_normalized: string;
-          email_original: string;
-          first_name: string;
-          id: string;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          email_normalized: string;
-          email_original: string;
-          first_name: string;
-          id?: string;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          email_normalized?: string;
-          email_original?: string;
-          first_name?: string;
-          id?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       paid_product_entitlements: {
         Row: {
           created_at: string;
@@ -808,7 +781,7 @@ export type Database = {
             foreignKeyName: "paid_product_entitlements_customer_id_fkey";
             columns: ["customer_id"];
             isOneToOne: false;
-            referencedRelation: "paid_customers";
+            referencedRelation: "customer_accounts";
             referencedColumns: ["id"];
           },
           {
@@ -816,41 +789,6 @@ export type Database = {
             columns: ["purchase_id"];
             isOneToOne: false;
             referencedRelation: "paid_purchases";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
-      paid_program_access_sessions: {
-        Row: {
-          created_at: string;
-          enrollment_id: string;
-          id: string;
-          last_seen_at: string;
-          revoked_at: string | null;
-          token_hash: string;
-        };
-        Insert: {
-          created_at?: string;
-          enrollment_id: string;
-          id?: string;
-          last_seen_at?: string;
-          revoked_at?: string | null;
-          token_hash: string;
-        };
-        Update: {
-          created_at?: string;
-          enrollment_id?: string;
-          id?: string;
-          last_seen_at?: string;
-          revoked_at?: string | null;
-          token_hash?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "paid_program_access_sessions_enrollment_id_fkey";
-            columns: ["enrollment_id"];
-            isOneToOne: false;
-            referencedRelation: "paid_program_enrollments";
             referencedColumns: ["id"];
           },
         ];
@@ -897,10 +835,12 @@ export type Database = {
           customer_id: string;
           entitlement_id: string;
           id: string;
+          paused_at: string | null;
           product_code: string;
           program_snapshot: Json;
           program_version: string;
           revoked_at: string | null;
+          run_number: number;
           started_at: string;
           status: string;
           updated_at: string;
@@ -911,10 +851,12 @@ export type Database = {
           customer_id: string;
           entitlement_id: string;
           id?: string;
+          paused_at?: string | null;
           product_code: string;
           program_snapshot: Json;
           program_version: string;
           revoked_at?: string | null;
+          run_number: number;
           started_at: string;
           status: string;
           updated_at?: string;
@@ -925,10 +867,12 @@ export type Database = {
           customer_id?: string;
           entitlement_id?: string;
           id?: string;
+          paused_at?: string | null;
           product_code?: string;
           program_snapshot?: Json;
           program_version?: string;
           revoked_at?: string | null;
+          run_number?: number;
           started_at?: string;
           status?: string;
           updated_at?: string;
@@ -938,13 +882,13 @@ export type Database = {
             foreignKeyName: "paid_program_enrollments_customer_id_fkey";
             columns: ["customer_id"];
             isOneToOne: false;
-            referencedRelation: "paid_customers";
+            referencedRelation: "customer_accounts";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "paid_program_enrollments_entitlement_id_fkey";
             columns: ["entitlement_id"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "paid_product_entitlements";
             referencedColumns: ["id"];
           },
@@ -1057,7 +1001,7 @@ export type Database = {
             foreignKeyName: "paid_purchases_customer_id_fkey";
             columns: ["customer_id"];
             isOneToOne: false;
-            referencedRelation: "paid_customers";
+            referencedRelation: "customer_accounts";
             referencedColumns: ["id"];
           },
         ];
@@ -1533,18 +1477,23 @@ export type Database = {
         Returns: number;
       };
       pause_email_production_cron: { Args: never; Returns: boolean };
-      provision_accelerator_enrollment: {
+      pause_program_run_atomic: {
+        Args: { p_customer_id: string; p_enrollment_id: string };
+        Returns: Database["public"]["Tables"]["paid_program_enrollments"]["Row"][];
+        SetofOptions: {
+          from: "*";
+          to: "paid_program_enrollments";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      provision_accelerator_ownership: {
         Args: {
-          p_access_token_hash: string;
           p_amount_cents: number;
           p_currency: string;
-          p_email_normalized: string;
-          p_email_original: string;
-          p_first_name: string;
+          p_customer_id: string;
           p_idempotency_key: string;
           p_product_code: string;
-          p_program_snapshot: Json;
-          p_program_version: string;
           p_purchase_source: string;
           p_purchased_at: string;
           p_request_fingerprint: string;
@@ -1552,11 +1501,18 @@ export type Database = {
         };
         Returns: {
           customer_id: string;
-          enrollment_id: string;
           entitlement_id: string;
           outcome: string;
           purchase_id: string;
           replayed: boolean;
+        }[];
+      };
+      resume_program_run_atomic: {
+        Args: { p_customer_id: string; p_enrollment_id: string };
+        Returns: {
+          enrollment_id: string;
+          outcome: string;
+          paused_enrollment_id: string | null;
         }[];
       };
       request_plan_recovery: {
@@ -1597,6 +1553,20 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      start_program_run_atomic: {
+        Args: {
+          p_customer_id: string;
+          p_entitlement_id: string;
+          p_program_snapshot: Json;
+          p_program_version: string;
+        };
+        Returns: {
+          enrollment_id: string;
+          outcome: string;
+          paused_enrollment_id: string | null;
+          run_number: number;
+        }[];
       };
       record_email_scheduler_auth_attempt: {
         Args: {

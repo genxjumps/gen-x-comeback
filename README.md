@@ -41,7 +41,9 @@ public enrollment, paid email, and the public offer remain unimplemented.
 - PWA manifest and installable-app foundation
 - Current Gen X Jumps V1 visual system
 - Source-level verified customer-account and legacy-plan linking foundation; migration unapplied
-- Private, versioned 28-Day enrollment and saved-progress foundation
+- Account-owned Accelerator purchase and permanent-entitlement foundation; migration unapplied
+- Repeatable, versioned program runs with one active structured run per account
+- Not Started ownership plus Active, Paused, and Completed run behavior
 - Server-enforced Day 1 through Day 28 completion and resume behavior
 - Saved weekly weight, waist, and optional progress notes
 
@@ -174,14 +176,15 @@ remains unapplied and requires reconciliation with the expanded contract before 
 The read-only foundation gap audit is complete. The dependency-based build sequence and GitHub
 Actions discipline are recorded in
 [`docs/V1_1_ACCELERATOR_IMPLEMENTATION_PLAN.md`](docs/V1_1_ACCELERATOR_IMPLEMENTATION_PLAN.md).
-The first correction adds a source-level unified customer-account foundation while keeping its
-migration unapplied and every public entry point closed.
+The unified customer-account and ownership/program-run corrections are complete at source level.
+Both migrations remain unapplied and every public entry point remains closed.
 
-The next checkpoint must reconcile purchases, entitlements, and repeatable program runs with that
-unified account before either unapplied migration is used. Later checkpoints may apply and verify a
-corrected migration inside a controlled development boundary, audit real workout and coaching
-assets, approve nutrition formulas, and add a tested checkout handoff. Public enrollment remains
-fail-closed throughout that work.
+The next checkpoint must reconcile the program progress engine, including customer-local next-day
+unlocking, missed days, undo, completed-day reopening, separate video views, and safe switching with
+the existing 7-Day Plan. Later checkpoints may apply and verify the corrected migration chain
+inside a controlled development boundary, audit real workout and coaching assets, approve
+nutrition formulas, and add a tested checkout handoff. Public enrollment remains fail-closed
+throughout that work.
 
 ## Historical implementation evidence
 

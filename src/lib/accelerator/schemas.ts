@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { RAW_TOKEN_RE } from "@/lib/lead-plan";
-
 const acceleratorDaySchema = z.object({
   day: z.number().int().min(1).max(28),
   week: z.number().int().min(1).max(4),
@@ -58,17 +56,13 @@ export const acceleratorProgramSnapshotSchema = z
     });
   });
 
-export const acceleratorTokenSchema = z.string().refine((value) => RAW_TOKEN_RE.test(value));
-
-export const acceleratorTokenInputSchema = z.object({ token: acceleratorTokenSchema });
+export const acceleratorAccountInputSchema = z.object({});
 
 export const completeAcceleratorDayInputSchema = z.object({
-  token: acceleratorTokenSchema,
   day: z.number().int().min(1).max(28),
 });
 
 export const acceleratorCheckInInputSchema = z.object({
-  token: acceleratorTokenSchema,
   week: z.number().int().min(1).max(4),
   weight: z.object({ value: z.number().positive(), unit: z.enum(["lb", "kg"]) }),
   waist: z.object({ value: z.number().positive(), unit: z.enum(["in", "cm"]) }),

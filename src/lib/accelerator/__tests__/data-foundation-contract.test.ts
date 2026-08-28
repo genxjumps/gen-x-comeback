@@ -6,98 +6,80 @@ function source(relativePath: string): string {
   return readFileSync(fileURLToPath(new URL(relativePath, import.meta.url)), "utf8");
 }
 
-const migration = source(
+const rawMigration = source(
   "../../../../supabase/migrations/20260828180000_accelerator_enrollment_progress.sql",
-).replace(/\s+/g, " ");
+);
+const migration = rawMigration.replace(/\s+/g, " ");
 const functions = source("../functions.ts");
 const access = source("../access.server.ts");
+const provision = source("../provision.server.ts");
 const privateRoute = source("../../../routes/accelerator.tsx");
 const privateProgram = source("../../../components/accelerator-program.tsx");
 const home = source("../../../routes/index.tsx");
 
-describe("28-Day paid enrollment and progress foundation", () => {
-  it("keeps the paid domain separate from the free lead plan lifecycle", () => {
-    for (const table of [
-      "paid_customers",
-      "paid_purchases",
-      "paid_product_entitlements",
-      "paid_program_enrollments",
-      "paid_program_access_sessions",
-      "paid_program_day_completions",
-      "paid_program_weekly_check_ins",
-    ]) {
-      expect(migration).toContain(`CREATE TABLE public.${table}`);
-    }
-    const enrollmentTable = migration.slice(
-      migration.indexOf("CREATE TABLE public.paid_program_enrollments"),
-      migration.indexOf("CREATE TABLE public.paid_program_access_sessions"),
-    );
-    expect(enrollmentTable).not.toContain("lead_plans");
-  });
-
-  it("locks provisioning to the approved offer and exact version snapshot", () => {
-    expect(migration).toContain("p_product_code <> 'accelerator_28'");
-    expect(migration).toContain("p_amount_cents <> 3700");
-    expect(migration).toContain("p_currency <> 'USD'");
-    expect(migration).toContain("p_program_version <> 'accelerator_28_v1'");
-    expect(migration).toContain("jsonb_array_length(p_program_snapshot->'days') <> 28");
-    expect(migration).toContain("ARRAY(SELECT generate_series(1, 28)::smallint)");
-    expect(migration).toContain("p_purchased_at + interval '7 days'");
+describe("account-owned Accelerator and program-run foundation", () => {
+  it("uses the unified customer account and removes the paid identity silo", () => {
     expect(migration).toContain(
-      "CREATE TRIGGER protect_paid_program_enrollment_history_before_update",
+      "customer_id uuid NOT NULL REFERENCES public.customer_accounts(id)",
     );
-    expect(migration).toContain("paid program enrollment history is immutable");
+    expect(migration).not.toContain("CREATE TABLE public.paid_customers");
+    expect(migration).not.toContain("CREATE TABLE public.paid_program_access_sessions");
+    expect(access).toContain("resolveCustomerAccount(authorizationHeader)");
+    expect(access).not.toContain("hashAccessToken");
   });
 
-  it("makes enrollment provisioning idempotent and conflict-aware", () => {
+  it("records purchase and durable ownership without starting a run", () => {
+    const ownership = migration.slice(
+      migration.indexOf("CREATE OR REPLACE FUNCTION public.provision_accelerator_ownership"),
+      migration.indexOf("CREATE OR REPLACE FUNCTION public.start_program_run_atomic"),
+    );
+    expect(ownership).toContain("p_product_code <> 'accelerator_28'");
+    expect(ownership).toContain("p_amount_cents <> 3700");
+    expect(ownership).toContain("p_currency <> 'USD'");
+    expect(ownership).toContain("p_purchased_at + interval '7 days'");
+    expect(ownership).toContain("INSERT INTO public.paid_product_entitlements");
+    expect(ownership).not.toContain("INSERT INTO public.paid_program_enrollments");
+    expect(provision).not.toContain("buildAcceleratorProgramSnapshot");
+  });
+
+  it("makes verified purchase recording idempotent and conflict-aware", () => {
     expect(migration).toContain("pg_advisory_xact_lock(hashtextextended(p_idempotency_key, 0))");
     expect(migration).toContain("WHERE idempotency_key = p_idempotency_key FOR UPDATE");
     expect(migration).toContain("v_purchase.request_fingerprint <> p_request_fingerprint");
     expect(migration).toContain("'replayed'::text");
     expect(migration).toContain("'conflict'::text");
+  });
+
+  it("preserves repeat runs and immutable version snapshots", () => {
     expect(migration).toContain(
-      "hashtextextended(p_purchase_source || chr(0) || p_source_reference, 1)",
+      "CONSTRAINT paid_program_enrollments_run_unique UNIQUE (entitlement_id, run_number)",
     );
-  });
-
-  it("stores only hashed opaque credentials and resolves them server-side", () => {
-    expect(migration).toContain("token_hash text NOT NULL UNIQUE");
-    expect(migration).toContain("token_hash ~ '^[a-f0-9]{64}$'");
-    expect(access).toContain("hashAccessToken(rawToken)");
-    expect(access).toContain('.is("revoked_at", null)');
-    expect(privateProgram).not.toContain("token_hash");
-  });
-
-  it("enforces exact-version sequential completion in one locked transaction", () => {
-    const completion = migration.slice(
-      migration.indexOf("CREATE OR REPLACE FUNCTION public.complete_accelerator_day_atomic"),
-      migration.indexOf(
-        "CREATE OR REPLACE FUNCTION public.save_accelerator_weekly_check_in_atomic",
-      ),
+    expect(migration).not.toContain(
+      "CONSTRAINT paid_program_enrollments_entitlement_unique UNIQUE (entitlement_id)",
     );
-    expect(completion).toContain("n.program_version = p_program_version");
-    expect(completion).toContain("FOR UPDATE OF n");
-    expect(completion).toContain("generate_series(1, p_day_number - 1)");
-    expect(completion).toContain("ON CONFLICT (enrollment_id, day_number) DO NOTHING");
-    expect(completion).toContain("cardinality(v_completed) = 28");
+    expect(migration).toContain("SELECT COALESCE(max(run_number), 0) + 1");
+    expect(migration).toContain("paid program run history is immutable");
+    expect(migration).toContain("NEW.program_snapshot, NEW.run_number, NEW.started_at");
   });
 
-  it("saves one weekly check-in and unlocks it from completed work, not dates", () => {
+  it("enforces one active structured run and safe switching", () => {
     expect(migration).toContain(
-      "CONSTRAINT paid_program_weekly_check_ins_unique UNIQUE (enrollment_id, week_number)",
+      "CREATE UNIQUE INDEX paid_program_enrollments_one_active_per_customer_idx",
     );
-    expect(migration).toContain("v_completed_count < ((p_week_number - 1) * 7)");
-    expect(migration).toContain("ON CONFLICT (enrollment_id, week_number) DO UPDATE");
-    expect(migration).toContain(
-      "IF NOT FOUND THEN RETURN QUERY SELECT * FROM public.paid_program_weekly_check_ins",
-    );
-    expect(migration).not.toContain("current_date");
+    expect(migration).toContain("WHERE status = 'active'");
+    expect(migration).toContain("status IN ('active', 'paused', 'completed', 'revoked')");
+    expect(migration).toContain("CREATE OR REPLACE FUNCTION public.pause_program_run_atomic");
+    expect(migration).toContain("CREATE OR REPLACE FUNCTION public.resume_program_run_atomic");
+    expect(migration).toContain("SET status = 'paused', paused_at = now()");
   });
 
-  it("keeps every table and write transaction service-role only", () => {
+  it("keeps every table and lifecycle transaction service-role only", () => {
     expect(migration).toContain("REVOKE ALL ON TABLE public.%I FROM PUBLIC, anon, authenticated");
     for (const fn of [
-      "provision_accelerator_enrollment",
+      "provision_accelerator_ownership",
+      "start_program_run_atomic",
+      "pause_program_run_atomic",
+      "resume_program_run_atomic",
       "complete_accelerator_day_atomic",
       "save_accelerator_weekly_check_in_atomic",
     ]) {
@@ -106,17 +88,11 @@ describe("28-Day paid enrollment and progress foundation", () => {
     expect(functions).toContain('createServerFn({ method: "POST" })');
   });
 
-  it("keeps the database-backed route private and out of public navigation", () => {
+  it("keeps the proof route private and creates no commerce or email activation", () => {
     expect(privateRoute).toContain('name: "robots", content: "noindex, nofollow"');
     expect(home).not.toContain('to="/accelerator"');
     expect(privateProgram).toContain("Public enrollment is still");
-    expect(privateProgram).toContain("Cloudflare Stream ID pending");
-    expect(privateProgram).toContain("Weekly coaching video placeholder");
-    expect(privateProgram).not.toMatch(/youtube\.com|youtu\.be|cloudflarestream\.com/);
-  });
-
-  it("contains no checkout, provider, marketing, or email activation path", () => {
-    expect(privateProgram).not.toMatch(/stripe|checkout|mailer|resend/i);
-    expect(functions).not.toMatch(/stripe|checkout|mailer|resend/i);
+    expect(rawMigration).not.toMatch(/stripe|mailer|resend/i);
+    expect(provision).not.toMatch(/stripe|mailer|resend/i);
   });
 });

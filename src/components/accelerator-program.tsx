@@ -4,7 +4,6 @@ import { Check, LockKeyhole, Play, Video } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { readStoredAcceleratorToken } from "@/lib/accelerator/access";
 import {
   acceleratorDayAccessForDays,
   type AcceleratorDay,
@@ -71,15 +70,9 @@ export function AcceleratorProgram() {
 
   useEffect(() => {
     let cancelled = false;
-    const token = readStoredAcceleratorToken();
-    if (!token) {
-      setStatus("denied");
-      return;
-    }
-
     void (async () => {
       try {
-        const result = await loadHub({ data: { token } });
+        const result = await loadHub({ data: {} });
         if (cancelled) return;
         if (!result.ok) {
           setStatus("denied");
@@ -130,12 +123,10 @@ export function AcceleratorProgram() {
 
   async function markCurrentComplete() {
     if (!currentDay || savingDay) return;
-    const token = readStoredAcceleratorToken();
-    if (!token) return setStatus("denied");
     setSavingDay(true);
     setMessage(null);
     try {
-      const result = await completeDay({ data: { token, day: currentDay.day } });
+      const result = await completeDay({ data: { day: currentDay.day } });
       if (!result.ok) {
         setMessage("That day couldn't be saved. Reload the program and try again.");
         return;
@@ -159,10 +150,8 @@ export function AcceleratorProgram() {
   async function submitCheckIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!checkInUnlocked || savingCheckIn) return;
-    const token = readStoredAcceleratorToken();
     const weightValue = Number(weight);
     const waistValue = Number(waist);
-    if (!token) return setStatus("denied");
     if (!(weightValue > 0) || !(waistValue > 0)) {
       setMessage("Enter both weight and waist measurements.");
       return;
@@ -173,7 +162,6 @@ export function AcceleratorProgram() {
     try {
       const result = await saveCheckIn({
         data: {
-          token,
           week: displayWeek,
           weight: { value: weightValue, unit: "lb" },
           waist: { value: waistValue, unit: "in" },
