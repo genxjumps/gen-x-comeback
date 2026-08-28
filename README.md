@@ -40,6 +40,7 @@ public enrollment, paid email, and the public offer remain unimplemented.
 - Direct MailerLite subscriber sync foundation for marketing-consented leads
 - PWA manifest and installable-app foundation
 - Current Gen X Jumps V1 visual system
+- Source-level verified customer-account and legacy-plan linking foundation; migration unapplied
 - Private, versioned 28-Day enrollment and saved-progress foundation
 - Server-enforced Day 1 through Day 28 completion and resume behavior
 - Saved weekly weight, waist, and optional progress notes
@@ -170,15 +171,17 @@ foundation is documented in
 [`docs/V1_1_28_DAY_DATA_FOUNDATION.md`](docs/V1_1_28_DAY_DATA_FOUNDATION.md), but its migration
 remains unapplied and requires reconciliation with the expanded contract before use.
 
-The next checkpoint is a read-only code, test, and migration gap audit. It must identify what the
-foundation already supports, what needs adjustment, and the safest implementation order. No schema
-change should be applied merely to preserve assumptions that the expanded product requirements have
-superseded.
+The read-only foundation gap audit is complete. The dependency-based build sequence and GitHub
+Actions discipline are recorded in
+[`docs/V1_1_ACCELERATOR_IMPLEMENTATION_PLAN.md`](docs/V1_1_ACCELERATOR_IMPLEMENTATION_PLAN.md).
+The first correction adds a source-level unified customer-account foundation while keeping its
+migration unapplied and every public entry point closed.
 
-After that reconciliation is approved, later checkpoints may apply and verify a corrected migration
-inside a controlled development boundary, audit real workout and coaching assets, approve nutrition
-formulas, and add a tested checkout handoff. Public enrollment remains fail-closed throughout that
-work.
+The next checkpoint must reconcile purchases, entitlements, and repeatable program runs with that
+unified account before either unapplied migration is used. Later checkpoints may apply and verify a
+corrected migration inside a controlled development boundary, audit real workout and coaching
+assets, approve nutrition formulas, and add a tested checkout handoff. Public enrollment remains
+fail-closed throughout that work.
 
 ## Historical implementation evidence
 

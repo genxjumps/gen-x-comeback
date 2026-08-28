@@ -24,6 +24,24 @@ The expanded contract adds or clarifies requirements that may change this founda
 The existing foundation remains useful evidence, but it is not yet an accepted final schema. Do not
 silently change product decisions to fit it.
 
+## Unified customer-account correction
+
+The first reconciliation checkpoint adds a separate, still-unapplied customer-account migration
+that sorts before the Accelerator migration. It establishes:
+
+- One customer account per verified Supabase Auth user.
+- One normalized verified email per customer account.
+- Service-role-only account creation and resolution.
+- Idempotent account resolution from a provider-verified identity.
+- Safe linking of matching legacy 7-Day Plan records without changing their plan or consent state.
+
+This source foundation does not yet make the existing paid tables final. The next data checkpoint
+must replace the paid-only customer and access silo with account-owned purchases, entitlements, and
+repeatable program runs before either unapplied migration is used.
+
+No public route invokes the new account resolver. No authentication email, customer migration, or
+database migration is activated by this checkpoint.
+
 ## Checkpoint outcome
 
 This checkpoint adds the private database-backed foundation for the 28-Day Fat Loss Accelerator.
@@ -100,6 +118,8 @@ run-specific start and finish values, and the decision not to require notes.
 - Calorie or protein formulas
 - Public runtime or equipment claims
 - McLovable publishing
+- The unified customer-account migration
+- The existing Accelerator enrollment and progress migration
 
 The existing `/preview/accelerator` route remains a local-only layout simulator. The new
 `/accelerator` route is private, unlinked, and marked `noindex, nofollow`.
