@@ -2,9 +2,10 @@
 
 ## Checkpoint scope
 
-This document is the current source of truth for the paid-program foundation. This checkpoint
-defines the product and its deterministic schedule. It does not add checkout, enrollment, paid
-access, public sales-page routes, or live provider calls.
+This document is the current source of truth for the paid-program contract. The product definition
+and deterministic schedule are now joined by a private database-backed enrollment and progress
+foundation. It does not add checkout, public enrollment, public sales-page routes, or live provider
+calls. See [`V1_1_28_DAY_DATA_FOUNDATION.md`](V1_1_28_DAY_DATA_FOUNDATION.md).
 
 ## Locked offer
 
@@ -77,17 +78,17 @@ locked. If life interrupts the participant, they resume the same next day when t
 All requirements start as unverified. A future checkpoint must attach concrete evidence before
 public enrollment can be enabled.
 
-| Requirement                        | Current state | Evidence needed                                           |
-| ---------------------------------- | ------------- | --------------------------------------------------------- |
-| Workouts A-E and Active Recovery F | Unverified    | Correct files present, ordered, and playable              |
-| Workout runtimes                   | Unverified    | Final encoded A-E runtimes support the public time claim  |
-| Equipment                          | Unverified    | A-F audit supports rope/bodyweight/no-gym claims          |
-| Weekly coaching                    | Unverified    | Four finished coaching primers placed in the program      |
-| Nutrition targets                  | Unverified    | Approved calorie and protein logic implemented and tested |
-| Weekly progress check-in           | Unverified    | Weight, waist, and notes persist safely and remain simple |
-| Checkout handoff                   | Unverified    | $37 test purchase creates the intended paid access        |
-| Refund path                        | Unverified    | Seven-day request path and policy are operational         |
-| Resume behavior                    | Unverified    | Missed days do not expire, forfeit, or auto-skip          |
+| Requirement                        | Current state    | Evidence needed                                           |
+| ---------------------------------- | ---------------- | --------------------------------------------------------- |
+| Workouts A-E and Active Recovery F | Unverified       | Correct files present, ordered, and playable              |
+| Workout runtimes                   | Unverified       | Final encoded A-E runtimes support the public time claim  |
+| Equipment                          | Unverified       | A-F audit supports rope/bodyweight/no-gym claims          |
+| Weekly coaching                    | Unverified       | Four finished coaching primers placed in the program      |
+| Nutrition targets                  | Unverified       | Approved calorie and protein logic implemented and tested |
+| Weekly progress check-in           | Foundation built | Verify final private UI and accepted data behavior        |
+| Checkout handoff                   | Unverified       | $37 test purchase creates the intended paid access        |
+| Refund path                        | Unverified       | Seven-day request path and policy are operational         |
+| Resume behavior                    | Foundation built | Verify against the applied development database           |
 
 ## Claims that must stay unpublished until verified
 
@@ -108,10 +109,10 @@ results, live-coaching claims, or guaranteed direct access to Todd.
 - Visual redesign
 - Sales-page implementation
 - Stripe or another payment provider
-- Database migrations
-- Paid access links or recovery
+- Applied live database migration
+- Paid access links or recovery email
 - Email delivery
 - Nutrition formulas
-- Progress-measurement storage
+- Public progress-measurement access
 - Video URLs, titles, runtimes, or equipment claims that have not been audited
 - Public intake or paid enrollment activation

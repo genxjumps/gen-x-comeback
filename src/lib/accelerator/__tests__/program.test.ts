@@ -10,6 +10,7 @@ import {
   ACCELERATOR_WEEK_FOCUS,
   acceleratorDayAccess,
   acceleratorLaunchReady,
+  buildAcceleratorProgramSnapshot,
 } from "../program";
 
 describe("28-Day Accelerator product contract", () => {
@@ -109,6 +110,16 @@ describe("28-Day Accelerator product contract", () => {
   it("keeps public enrollment closed while launch evidence is unverified", () => {
     expect(ACCELERATOR_AVAILABILITY.publicEnrollment).toBe(false);
     expect(acceleratorLaunchReady(ACCELERATOR_LAUNCH_REQUIREMENTS)).toBe(false);
+  });
+
+  it("creates a complete versioned enrollment snapshot", () => {
+    const snapshot = buildAcceleratorProgramSnapshot();
+
+    expect(snapshot.productCode).toBe("accelerator_28");
+    expect(snapshot.programVersion).toBe("accelerator_28_v1");
+    expect(snapshot.days).toHaveLength(28);
+    expect(snapshot.assignments.workout_d.label).toBe("Workout D - Intervals");
+    expect(snapshot.equipment).toEqual(ACCELERATOR_EQUIPMENT);
   });
 
   it("requires every named launch requirement before reporting ready", () => {

@@ -673,6 +673,326 @@ export type Database = {
           },
         ];
       };
+      paid_customers: {
+        Row: {
+          created_at: string;
+          email_normalized: string;
+          email_original: string;
+          first_name: string;
+          id: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          email_normalized: string;
+          email_original: string;
+          first_name: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          email_normalized?: string;
+          email_original?: string;
+          first_name?: string;
+          id?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      paid_product_entitlements: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          granted_at: string;
+          id: string;
+          product_code: string;
+          purchase_id: string;
+          revoked_at: string | null;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          granted_at: string;
+          id?: string;
+          product_code: string;
+          purchase_id: string;
+          revoked_at?: string | null;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          granted_at?: string;
+          id?: string;
+          product_code?: string;
+          purchase_id?: string;
+          revoked_at?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_product_entitlements_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_customers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "paid_product_entitlements_purchase_id_fkey";
+            columns: ["purchase_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_purchases";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      paid_program_access_sessions: {
+        Row: {
+          created_at: string;
+          enrollment_id: string;
+          id: string;
+          last_seen_at: string;
+          revoked_at: string | null;
+          token_hash: string;
+        };
+        Insert: {
+          created_at?: string;
+          enrollment_id: string;
+          id?: string;
+          last_seen_at?: string;
+          revoked_at?: string | null;
+          token_hash: string;
+        };
+        Update: {
+          created_at?: string;
+          enrollment_id?: string;
+          id?: string;
+          last_seen_at?: string;
+          revoked_at?: string | null;
+          token_hash?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_program_access_sessions_enrollment_id_fkey";
+            columns: ["enrollment_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_program_enrollments";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      paid_program_day_completions: {
+        Row: {
+          completed_at: string;
+          created_at: string;
+          day_number: number;
+          enrollment_id: string;
+          id: string;
+          program_version: string;
+        };
+        Insert: {
+          completed_at?: string;
+          created_at?: string;
+          day_number: number;
+          enrollment_id: string;
+          id?: string;
+          program_version: string;
+        };
+        Update: {
+          completed_at?: string;
+          created_at?: string;
+          day_number?: number;
+          enrollment_id?: string;
+          id?: string;
+          program_version?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_program_day_completions_enrollment_id_fkey";
+            columns: ["enrollment_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_program_enrollments";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      paid_program_enrollments: {
+        Row: {
+          completed_at: string | null;
+          created_at: string;
+          customer_id: string;
+          entitlement_id: string;
+          id: string;
+          product_code: string;
+          program_snapshot: Json;
+          program_version: string;
+          revoked_at: string | null;
+          started_at: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          completed_at?: string | null;
+          created_at?: string;
+          customer_id: string;
+          entitlement_id: string;
+          id?: string;
+          product_code: string;
+          program_snapshot: Json;
+          program_version: string;
+          revoked_at?: string | null;
+          started_at: string;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          completed_at?: string | null;
+          created_at?: string;
+          customer_id?: string;
+          entitlement_id?: string;
+          id?: string;
+          product_code?: string;
+          program_snapshot?: Json;
+          program_version?: string;
+          revoked_at?: string | null;
+          started_at?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_program_enrollments_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_customers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "paid_program_enrollments_entitlement_id_fkey";
+            columns: ["entitlement_id"];
+            isOneToOne: true;
+            referencedRelation: "paid_product_entitlements";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      paid_program_weekly_check_ins: {
+        Row: {
+          created_at: string;
+          enrollment_id: string;
+          id: string;
+          notes: string | null;
+          program_version: string;
+          recorded_at: string;
+          updated_at: string;
+          waist_unit: string;
+          waist_value: number;
+          week_number: number;
+          weight_unit: string;
+          weight_value: number;
+        };
+        Insert: {
+          created_at?: string;
+          enrollment_id: string;
+          id?: string;
+          notes?: string | null;
+          program_version: string;
+          recorded_at?: string;
+          updated_at?: string;
+          waist_unit: string;
+          waist_value: number;
+          week_number: number;
+          weight_unit: string;
+          weight_value: number;
+        };
+        Update: {
+          created_at?: string;
+          enrollment_id?: string;
+          id?: string;
+          notes?: string | null;
+          program_version?: string;
+          recorded_at?: string;
+          updated_at?: string;
+          waist_unit?: string;
+          waist_value?: number;
+          week_number?: number;
+          weight_unit?: string;
+          weight_value?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_program_weekly_check_ins_enrollment_id_fkey";
+            columns: ["enrollment_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_program_enrollments";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      paid_purchases: {
+        Row: {
+          amount_cents: number;
+          created_at: string;
+          currency: string;
+          customer_id: string;
+          id: string;
+          idempotency_key: string;
+          product_code: string;
+          purchase_source: string;
+          purchased_at: string;
+          refund_request_deadline_at: string;
+          request_fingerprint: string;
+          source_reference: string;
+          status: string;
+          updated_at: string;
+        };
+        Insert: {
+          amount_cents: number;
+          created_at?: string;
+          currency: string;
+          customer_id: string;
+          id?: string;
+          idempotency_key: string;
+          product_code: string;
+          purchase_source: string;
+          purchased_at: string;
+          refund_request_deadline_at: string;
+          request_fingerprint: string;
+          source_reference: string;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount_cents?: number;
+          created_at?: string;
+          currency?: string;
+          customer_id?: string;
+          id?: string;
+          idempotency_key?: string;
+          product_code?: string;
+          purchase_source?: string;
+          purchased_at?: string;
+          refund_request_deadline_at?: string;
+          request_fingerprint?: string;
+          source_reference?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_purchases_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_customers";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       plan_access_sessions: {
         Row: {
           created_at: string;
@@ -1043,6 +1363,18 @@ export type Database = {
           source: string;
         }[];
       };
+      complete_accelerator_day_atomic: {
+        Args: {
+          p_day_number: number;
+          p_enrollment_id: string;
+          p_program_version: string;
+        };
+        Returns: {
+          completed_days: number[];
+          newly_completed: boolean;
+          program_completed: boolean;
+        }[];
+      };
       complete_plan_day_atomic: {
         Args: {
           p_day_number: number;
@@ -1132,9 +1464,54 @@ export type Database = {
         Returns: number;
       };
       pause_email_production_cron: { Args: never; Returns: boolean };
+      provision_accelerator_enrollment: {
+        Args: {
+          p_access_token_hash: string;
+          p_amount_cents: number;
+          p_currency: string;
+          p_email_normalized: string;
+          p_email_original: string;
+          p_first_name: string;
+          p_idempotency_key: string;
+          p_product_code: string;
+          p_program_snapshot: Json;
+          p_program_version: string;
+          p_purchase_source: string;
+          p_purchased_at: string;
+          p_request_fingerprint: string;
+          p_source_reference: string;
+        };
+        Returns: {
+          customer_id: string;
+          enrollment_id: string;
+          entitlement_id: string;
+          outcome: string;
+          purchase_id: string;
+          replayed: boolean;
+        }[];
+      };
       request_plan_recovery: {
         Args: { p_email_normalized: string; p_request_id: string };
         Returns: undefined;
+      };
+      save_accelerator_weekly_check_in_atomic: {
+        Args: {
+          p_enrollment_id: string;
+          p_notes: string | null;
+          p_program_version: string;
+          p_waist_unit: string;
+          p_waist_value: number;
+          p_week_number: number;
+          p_weight_unit: string;
+          p_weight_value: number;
+        };
+        Returns: Database["public"]["Tables"]["paid_program_weekly_check_ins"]["Row"][];
+        SetofOptions: {
+          from: "*";
+          to: "paid_program_weekly_check_ins";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       record_email_scheduler_auth_attempt: {
         Args: {

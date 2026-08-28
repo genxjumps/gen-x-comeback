@@ -145,6 +145,35 @@ export const ACCELERATOR_DAYS: ReadonlyArray<AcceleratorDay> = Array.from(
   },
 );
 
+export type AcceleratorProgramSnapshot = {
+  productCode: typeof ACCELERATOR_PRODUCT_CODE;
+  programVersion: typeof ACCELERATOR_PROGRAM_VERSION;
+  days: AcceleratorDay[];
+  weekFocus: Array<{ week: AcceleratorWeek; title: string }>;
+  assignments: Record<AcceleratorAssignmentCode, { label: string; focus: string }>;
+  equipment: typeof ACCELERATOR_EQUIPMENT;
+};
+
+/**
+ * Enrollment-time content snapshot. Paid enrollments persist this exact value
+ * so later source edits cannot rewrite an active participant's history.
+ */
+export function buildAcceleratorProgramSnapshot(): AcceleratorProgramSnapshot {
+  return {
+    productCode: ACCELERATOR_PRODUCT_CODE,
+    programVersion: ACCELERATOR_PROGRAM_VERSION,
+    days: ACCELERATOR_DAYS.map((day) => ({ ...day })),
+    weekFocus: ACCELERATOR_WEEK_FOCUS.map((week) => ({ ...week })),
+    assignments: Object.fromEntries(
+      Object.entries(ACCELERATOR_ASSIGNMENTS).map(([code, assignment]) => [
+        code,
+        { ...assignment },
+      ]),
+    ) as AcceleratorProgramSnapshot["assignments"],
+    equipment: { ...ACCELERATOR_EQUIPMENT },
+  };
+}
+
 export type AcceleratorDayAccess = "completed" | "current" | "locked";
 
 /**
@@ -154,14 +183,21 @@ export type AcceleratorDayAccess = "completed" | "current" | "locked";
 export function acceleratorDayAccess(
   completedDays: ReadonlySet<number>,
 ): ReadonlyArray<AcceleratorDay & { access: AcceleratorDayAccess }> {
+  return acceleratorDayAccessForDays(ACCELERATOR_DAYS, completedDays);
+}
+
+export function acceleratorDayAccessForDays(
+  days: ReadonlyArray<AcceleratorDay>,
+  completedDays: ReadonlySet<number>,
+): ReadonlyArray<AcceleratorDay & { access: AcceleratorDayAccess }> {
   let completedPrefix = 0;
 
-  for (let day = 1; day <= ACCELERATOR_DAYS.length; day += 1) {
+  for (let day = 1; day <= days.length; day += 1) {
     if (!completedDays.has(day)) break;
     completedPrefix = day;
   }
 
-  return ACCELERATOR_DAYS.map((entry) => ({
+  return days.map((entry) => ({
     ...entry,
     access:
       entry.day <= completedPrefix
