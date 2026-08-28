@@ -3,7 +3,9 @@ import { Check, LockKeyhole, Play, Utensils, Video } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
+  ACCELERATOR_ASSIGNMENTS,
   ACCELERATOR_DAYS,
+  ACCELERATOR_EQUIPMENT,
   ACCELERATOR_WEEK_FOCUS,
   acceleratorDayAccess,
   type AcceleratorDay,
@@ -18,18 +20,8 @@ const PREVIEW_STATES = [
   { label: "Finished", completed: 28 },
 ] as const;
 
-const ASSIGNMENT_LABELS = {
-  workout_a: "Workout A",
-  workout_b: "Workout B",
-  workout_c: "Workout C",
-  workout_d: "Workout D",
-  workout_e: "Workout E",
-  active_recovery_f: "Active Recovery F",
-  rest: "Rest Day",
-} as const;
-
 function assignmentLabel(day: AcceleratorDay): string {
-  return ASSIGNMENT_LABELS[day.assignment];
+  return ACCELERATOR_ASSIGNMENTS[day.assignment].label;
 }
 
 function DayStatusIcon({ access }: { access: "completed" | "current" | "locked" }) {
@@ -176,9 +168,12 @@ export function AcceleratorProgramPreview() {
                   <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
                     Equipment
                   </h3>
-                  <p className="mt-2 text-sm font-semibold">Audit pending</p>
+                  <p className="mt-2 text-sm font-semibold">
+                    {currentDay.kind === "rest" ? "None" : ACCELERATOR_EQUIPMENT.program}
+                  </p>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    Final equipment will be added after each video is checked.
+                    No dumbbells, bench, or gym equipment required. Final video-by-video audit is
+                    still required before launch.
                   </p>
                 </div>
                 <div className="rounded-lg border border-border bg-card p-4">
@@ -186,10 +181,10 @@ export function AcceleratorProgramPreview() {
                     Today&rsquo;s focus
                   </h3>
                   <p className="mt-2 text-sm font-semibold">
-                    {ACCELERATOR_WEEK_FOCUS[currentDay.week - 1].title}
+                    {ACCELERATOR_ASSIGNMENTS[currentDay.assignment].focus}
                   </p>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    Day-specific guidance placeholder.
+                    Week {currentDay.week}: {ACCELERATOR_WEEK_FOCUS[currentDay.week - 1].title}
                   </p>
                 </div>
               </div>
@@ -272,6 +267,27 @@ export function AcceleratorProgramPreview() {
             <div className="mt-3 flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted/60 px-4 text-center">
               <p className="text-xs text-muted-foreground">Weekly coaching video placeholder</p>
             </div>
+          </section>
+
+          <section className="rounded-lg border border-border bg-card p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Weekly Check-In
+            </p>
+            <p className="mt-2 text-sm font-semibold">Make progress visible</p>
+            <dl className="mt-3 grid grid-cols-2 gap-2">
+              <div className="rounded-md bg-muted/60 p-3">
+                <dt className="text-xs text-muted-foreground">Weight</dt>
+                <dd className="mt-1 text-sm font-semibold">Not recorded</dd>
+              </div>
+              <div className="rounded-md bg-muted/60 p-3">
+                <dt className="text-xs text-muted-foreground">Waist</dt>
+                <dd className="mt-1 text-sm font-semibold">Not recorded</dd>
+              </div>
+            </dl>
+            <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+              One simple weekly check-in for measurements and progress notes. Nothing is saved in
+              this layout preview.
+            </p>
           </section>
 
           <section className="rounded-lg border border-border bg-card p-4">

@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import {
   ACCELERATOR_AVAILABILITY,
+  ACCELERATOR_ASSIGNMENTS,
   ACCELERATOR_DAYS,
+  ACCELERATOR_EQUIPMENT,
   ACCELERATOR_LAUNCH_REQUIREMENTS,
   ACCELERATOR_OFFER,
   ACCELERATOR_WEEK_FOCUS,
@@ -35,6 +37,22 @@ describe("28-Day Accelerator product contract", () => {
     for (const week of [1, 2, 3, 4]) {
       expect(ACCELERATOR_DAYS.filter((day) => day.week === week)).toHaveLength(7);
     }
+  });
+
+  it("preserves the approved workout formats and equipment direction", () => {
+    expect(Object.values(ACCELERATOR_ASSIGNMENTS).map(({ label }) => label)).toEqual([
+      "Workout A - Classic Intervals",
+      "Workout B - EMOM",
+      "Workout C - Lower Body Ladder",
+      "Workout D - Intervals",
+      "Workout E - Pyramid Challenge",
+      "Workout F - Active Recovery",
+      "Rest Day",
+    ]);
+    expect(ACCELERATOR_EQUIPMENT).toEqual({
+      program: "Jump rope + bodyweight",
+      gymRequired: false,
+    });
   });
 
   it("repeats five workouts, optional-video recovery, and rest each week", () => {

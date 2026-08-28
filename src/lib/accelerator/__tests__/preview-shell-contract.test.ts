@@ -23,10 +23,17 @@ describe("28-Day program preview shell", () => {
     expect(preview).not.toMatch(/youtube\.com|youtu\.be|cloudflarestream\.com/);
   });
 
-  it("does not invent nutrition targets, runtimes, or equipment", () => {
+  it("does not invent nutrition targets or workout runtimes", () => {
     expect(preview).toContain("Formula pending");
     expect(preview).toContain("Runtime pending");
-    expect(preview).toContain("Audit pending");
+  });
+
+  it("uses the confirmed equipment and simple weekly tracking direction", () => {
+    expect(preview).toContain("ACCELERATOR_EQUIPMENT.program");
+    expect(preview).toContain("No dumbbells, bench, or gym equipment required");
+    expect(preview).toContain("Weekly Check-In");
+    expect(preview).toContain("Weight");
+    expect(preview).toContain("Waist");
   });
 
   it("has no server writes or live enrollment behavior", () => {
