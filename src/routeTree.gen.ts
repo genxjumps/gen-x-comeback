@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
 import { Route as PreviewW01RouteImport } from './routes/preview.w01'
+import { Route as PreviewAcceleratorRouteImport } from './routes/preview.accelerator'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
@@ -69,6 +70,11 @@ const PreviewW01Route = PreviewW01RouteImport.update({
   path: '/preview/w01',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PreviewAcceleratorRoute = PreviewAcceleratorRouteImport.update({
+  id: '/preview/accelerator',
+  path: '/preview/accelerator',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AssessmentStartRoute = AssessmentStartRouteImport.update({
   id: '/assessment/start',
   path: '/assessment/start',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/preview/accelerator'
     | '/preview/w01'
     | '/assessment/'
     | '/your-plan/'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/preview/accelerator'
     | '/preview/w01'
     | '/assessment'
     | '/your-plan'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/preview/accelerator'
     | '/preview/w01'
     | '/assessment/'
     | '/your-plan/'
@@ -204,6 +216,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentStartRoute: typeof AssessmentStartRoute
+  PreviewAcceleratorRoute: typeof PreviewAcceleratorRoute
   PreviewW01Route: typeof PreviewW01Route
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreviewW01RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/preview/accelerator': {
+      id: '/preview/accelerator'
+      path: '/preview/accelerator'
+      fullPath: '/preview/accelerator'
+      preLoaderRoute: typeof PreviewAcceleratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/assessment/start': {
       id: '/assessment/start'
       path: '/assessment/start'
@@ -324,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentStartRoute: AssessmentStartRoute,
+  PreviewAcceleratorRoute: PreviewAcceleratorRoute,
   PreviewW01Route: PreviewW01Route,
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,

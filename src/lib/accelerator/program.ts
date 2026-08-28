@@ -56,6 +56,42 @@ export type AcceleratorAssignmentCode =
   | "active_recovery_f"
   | "rest";
 
+export const ACCELERATOR_ASSIGNMENTS = {
+  workout_a: {
+    label: "Workout A - Classic Intervals",
+    focus: "Push + Legs",
+  },
+  workout_b: {
+    label: "Workout B - EMOM",
+    focus: "Conditioning + Core",
+  },
+  workout_c: {
+    label: "Workout C - Lower Body Ladder",
+    focus: "Legs + Muscular Endurance",
+  },
+  workout_d: {
+    label: "Workout D - Intervals",
+    focus: "Jump Conditioning + Full-Body Conditioning",
+  },
+  workout_e: {
+    label: "Workout E - Pyramid Challenge",
+    focus: "Total-Body Muscular Endurance + Conditioning",
+  },
+  active_recovery_f: {
+    label: "Workout F - Active Recovery",
+    focus: "Mobility + Recovery",
+  },
+  rest: {
+    label: "Rest Day",
+    focus: "Complete recovery",
+  },
+} as const satisfies Record<AcceleratorAssignmentCode, { label: string; focus: string }>;
+
+export const ACCELERATOR_EQUIPMENT = {
+  program: "Jump rope + bodyweight",
+  gymRequired: false,
+} as const;
+
 export type AcceleratorDayKind = "primary_workout" | "active_recovery" | "rest";
 
 export type AcceleratorDay = {
@@ -143,6 +179,7 @@ export type AcceleratorLaunchRequirement = {
     | "equipment_audit"
     | "weekly_coaching"
     | "nutrition_targets"
+    | "progress_tracking"
     | "checkout_handoff"
     | "refund_path"
     | "resume_behavior";
@@ -159,6 +196,7 @@ export const ACCELERATOR_LAUNCH_REQUIREMENTS: ReadonlyArray<AcceleratorLaunchReq
   { code: "equipment_audit", status: "unverified" },
   { code: "weekly_coaching", status: "unverified" },
   { code: "nutrition_targets", status: "unverified" },
+  { code: "progress_tracking", status: "unverified" },
   { code: "checkout_handoff", status: "unverified" },
   { code: "refund_path", status: "unverified" },
   { code: "resume_behavior", status: "unverified" },

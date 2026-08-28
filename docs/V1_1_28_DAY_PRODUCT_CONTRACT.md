@@ -36,6 +36,21 @@ The same seven-day sequence repeats for Weeks 2 through 4. Repetition is an inte
 the product - the participant improves execution, pace, control, capacity, and consistency rather
 than receiving 28 unrelated workouts.
 
+The approved training formats and focus are:
+
+| Assignment        | Format            | Focus                                        |
+| ----------------- | ----------------- | -------------------------------------------- |
+| Workout A         | Classic Intervals | Push + Legs                                  |
+| Workout B         | EMOM              | Conditioning + Core                          |
+| Workout C         | Lower Body Ladder | Legs + Muscular Endurance                    |
+| Workout D         | Intervals         | Jump Conditioning + Full-Body Conditioning   |
+| Workout E         | Pyramid Challenge | Total-Body Muscular Endurance + Conditioning |
+| Active Recovery F | Active Recovery   | Mobility + Recovery                          |
+
+The program-level equipment direction is jump rope plus bodyweight. Dumbbells, a bench, and gym
+equipment are not part of the approved product. The launch gate still requires a video-by-video
+audit before that claim is published.
+
 The weekly coaching focus is:
 
 1. Set Your Baseline
@@ -69,6 +84,7 @@ public enrollment can be enabled.
 | Equipment                          | Unverified    | A-F audit supports rope/bodyweight/no-gym claims          |
 | Weekly coaching                    | Unverified    | Four finished coaching primers placed in the program      |
 | Nutrition targets                  | Unverified    | Approved calorie and protein logic implemented and tested |
+| Weekly progress check-in           | Unverified    | Weight, waist, and notes persist safely and remain simple |
 | Checkout handoff                   | Unverified    | $37 test purchase creates the intended paid access        |
 | Refund path                        | Unverified    | Seven-day request path and policy are operational         |
 | Resume behavior                    | Unverified    | Missed days do not expire, forfeit, or auto-skip          |
@@ -79,6 +95,7 @@ public enrollment can be enabled.
 - Final equipment requirements
 - Availability of four weekly coaching videos
 - Availability or formula of `Your Nutrition Targets`
+- Working weekly weight, waist, and progress-note tracking
 - Working purchase-to-app access
 - Working refund handling
 - Public enrollment availability
@@ -95,5 +112,6 @@ results, live-coaching claims, or guaranteed direct access to Todd.
 - Paid access links or recovery
 - Email delivery
 - Nutrition formulas
+- Progress-measurement storage
 - Video URLs, titles, runtimes, or equipment claims that have not been audited
 - Public intake or paid enrollment activation
