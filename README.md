@@ -185,11 +185,14 @@ Independent optional weight and waist history is also complete at source level, 
 corrections, removals, account-wide latest values, and run-specific starting, newest, and final
 values.
 
-The next checkpoint is the real program-content readiness audit for Workouts A-F, runtime,
-equipment, orientation, daily instructions, weekly coaching, and Cloudflare media. Later
-checkpoints may apply and verify the corrected migration chain inside a controlled development
-boundary, approve nutrition formulas, and add a tested checkout handoff. Public enrollment remains
-fail-closed throughout that work.
+The read-only program-content source audit is complete and recorded in
+[`docs/V1_1_ACCELERATOR_PROGRAM_CONTENT_AUDIT.md`](docs/V1_1_ACCELERATOR_PROGRAM_CONTENT_AUDIT.md).
+Workouts A-E provide a usable foundation, but source corrections, an Accelerator-specific Active
+Recovery F, the welcome/orientation, and four weekly coaching primers are still required. Final
+files will be transferred to Cloudflare Stream once, after the source package is approved, and then
+recorded in the immutable V1 program snapshot. Later checkpoints may apply and verify the corrected
+migration chain inside a controlled development boundary, approve nutrition formulas, and add a
+tested checkout handoff. Public enrollment remains fail-closed throughout that work.
 
 ## Historical implementation evidence
 

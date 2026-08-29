@@ -70,6 +70,16 @@ describe("independent customer measurement history", () => {
     expect(functions).toContain("remove_customer_measurement_atomic");
   });
 
+  it("binds new entries to the exact run loaded on screen", () => {
+    expect(functions).toContain("access.enrollmentId !== data.enrollmentId");
+    expect(functions).toContain("p_enrollment_id: data.enrollmentId");
+  });
+
+  it("does not reopen Day 28 after final results have been saved", () => {
+    expect(migration).toContain("measurement.measurement_context = 'final'");
+    expect(migration).toContain("measurement.status = 'active'");
+  });
+
   it("loads active global history while keeping removed revisions in the backend", () => {
     expect(functions).toContain('.from("customer_measurements")');
     expect(functions).toContain('.eq("customer_id", access.customerAccountId)');

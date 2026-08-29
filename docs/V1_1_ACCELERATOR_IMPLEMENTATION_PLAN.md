@@ -65,22 +65,42 @@ migration remains unapplied and must not be applied before reconciliation.
 Each checkpoint is one bounded branch and pull request unless a real implementation dependency
 requires Todd to approve a change in sequence.
 
-| #   | Checkpoint                          | Bounded outcome                                                                                                                                                                                   | Depends on |
-| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| 0   | Canonical baseline                  | Merge the approved product contract, complete the read-only PR #16 gap audit, and lock this implementation plan.                                                                                  | None       |
-| 1   | Unified customer account            | Establish one verified passwordless customer identity that can own free and paid programs across supported devices.                                                                               | 0          |
-| 2   | Ownership and program runs          | Separate purchase, entitlement, program start, and individual runs; support Not Started, Active, Paused, Completed, repeat runs, version history, and one active structured program.              | 1          |
-| 3   | Program progress engine             | Implement start, pause, resume, switching, customer-local next-day unlocking, missed-day persistence, completion, latest-completion undo, completed-day reopening, and separate video-view facts. | 2          |
-| 4   | Measurement history                 | Support independent optional weight and waist entries, additions, corrections, removals, global latest values, and run-specific starting, newest, and final values.                               | 2-3        |
-| 5   | Program content readiness           | Audit Workouts A-F, runtime, equipment, orientation, daily instructions, weekly coaching, and Cloudflare media; produce the complete V1 program snapshot.                                         | 2          |
-| 6   | Nutrition approval                  | Finish Protein First content and deliberately approve any calorie or protein logic before it becomes product behavior.                                                                            | 0          |
-| 7   | Platform shell                      | Build the authenticated app structure and functional navigation for Home, My Programs, Your Progress, Your Nutrition, Explore Programs, and notifications.                                        | 1-3        |
-| 8   | My Programs and setup               | Build customer-facing program states, previous runs, completed 7-Day access, Accelerator orientation, optional starting measurements, explicit starting, and safe switching warnings.             | 2-5, 7     |
-| 9   | Daily Assignment                    | Deliver the current assignment, program schedule, locked previews, real video, practical instructions, rest and recovery handling, completion, undo, and missed-day messaging.                    | 3, 5, 7-8  |
-| 10  | Progress, nutrition, and completion | Build simple progress views, detailed history, Your Nutrition, optional Day 28 measurements, completion summary, repeat-program action, and other-program recommendations.                        | 4, 6, 8-9  |
-| 11  | Engagement and private admin        | Add in-app reminders, measurement-reminder dismissal, reminder preferences, the four-day and ten-day platform comeback sequence, and Todd's private customer-progress view.                       | 3-4, 7-10  |
-| 12  | Commerce and access delivery        | Connect test-mode checkout, verified purchase handoff, durable ownership, backup access email, customer recovery, and refund-request handling.                                                    | 1-3, 8-11  |
-| 13  | Release hardening                   | Run end-to-end verification, complete the functional-first visual pass, decide the production backend boundary, verify every launch gate, and prepare controlled publication.                     | 1-12       |
+| #   | Checkpoint                          | Bounded outcome                                                                                                                                                                                                                                 | Depends on |
+| --- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| 0   | Canonical baseline                  | Merge the approved product contract, complete the read-only PR #16 gap audit, and lock this implementation plan.                                                                                                                                | None       |
+| 1   | Unified customer account            | Establish one verified passwordless customer identity that can own free and paid programs across supported devices.                                                                                                                             | 0          |
+| 2   | Ownership and program runs          | Separate purchase, entitlement, program start, and individual runs; support Not Started, Active, Paused, Completed, repeat runs, version history, and one active structured program.                                                            | 1          |
+| 3   | Program progress engine             | Implement start, pause, resume, switching, customer-local next-day unlocking, missed-day persistence, completion, latest-completion undo, completed-day reopening, and separate video-view facts.                                               | 2          |
+| 4   | Measurement history                 | Support independent optional weight and waist entries, additions, corrections, removals, global latest values, and run-specific starting, newest, and final values.                                                                             | 2-3        |
+| 5   | Program content readiness           | Audit Workouts A-F, runtime, equipment, orientation, daily instructions, weekly coaching, and Cloudflare media; produce the complete V1 program snapshot.                                                                                       | 2          |
+| 6   | Nutrition approval                  | Finish Protein First content and deliberately approve any calorie or protein logic before it becomes product behavior.                                                                                                                          | 0          |
+| 7   | Platform shell                      | Build the authenticated app structure and functional navigation for Home, My Programs, Your Progress, Your Nutrition, Explore Programs, and notifications.                                                                                      | 1-3        |
+| 8   | My Programs and setup               | Build customer-facing program states, previous runs, completed 7-Day access, Accelerator orientation, optional starting measurements, explicit starting, and safe switching warnings. Placeholder media is allowed during the functional build. | 2-3, 7     |
+| 9   | Daily Assignment                    | Deliver the current assignment, program schedule, locked previews, placeholder-to-real media slots, practical instructions, rest and recovery handling, completion, undo, and missed-day messaging.                                             | 3, 7-8     |
+| 10  | Progress, nutrition, and completion | Build simple progress views, detailed history, Your Nutrition, optional Day 28 measurements, completion summary, repeat-program action, and other-program recommendations.                                                                      | 4, 6, 8-9  |
+| 11  | Engagement and private admin        | Add in-app reminders, measurement-reminder dismissal, reminder preferences, the four-day and ten-day platform comeback sequence, and Todd's private customer-progress view.                                                                     | 3-4, 7-10  |
+| 12  | Commerce and access delivery        | Connect test-mode checkout, verified purchase handoff, durable ownership, backup access email, customer recovery, and refund-request handling.                                                                                                  | 1-3, 8-11  |
+| 13  | Release hardening                   | Run end-to-end verification, complete the functional-first visual pass, decide the production backend boundary, verify every launch gate, and prepare controlled publication.                                                                   | 1-12       |
+
+### Checkpoint 5 working sequence
+
+The read-only source-video audit is recorded in
+[`V1_1_ACCELERATOR_PROGRAM_CONTENT_AUDIT.md`](V1_1_ACCELERATOR_PROGRAM_CONTENT_AUDIT.md). It found
+usable A-E foundations, a mislabeled Workout D source, customer-visible cue inconsistencies, no
+final Accelerator-specific Active Recovery F, and no orientation or weekly coaching videos.
+The recording scripts, Workout F outline, and practical daily instructions are maintained in
+[`V1_1_ACCELERATOR_CONTENT_PRODUCTION_BRIEF.md`](V1_1_ACCELERATOR_CONTENT_PRODUCTION_BRIEF.md).
+
+Checkpoint 5 therefore proceeds in three bounded parts before one final media gate:
+
+1. Source repair and missing-content production.
+2. One final Cloudflare Stream transfer and playback audit.
+3. Immutable V1 program snapshot, tests, and local verification.
+
+Cloudflare upload waits for final source approval so replaced encodes do not create avoidable cost
+or duplicate verification work. Placeholder media is the approved functional-build default, so
+Checkpoints 7-10 may proceed without waiting for filming or Cloudflare. Checkpoint 5's final media
+integration remains required before release hardening can pass.
 
 ## Checkpoint 1: unified customer-account foundation
 

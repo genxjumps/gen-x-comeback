@@ -30,7 +30,10 @@ export type MeasurementSummary = {
 
 export type AcceleratorHubData = {
   firstName: string;
+  entitlementId: string;
+  enrollmentId: string;
   programVersion: string;
+  runStatus: "active" | "paused" | "completed";
   snapshot: AcceleratorProgramSnapshot;
   completedDays: number[];
   progress: AcceleratorProgressState;
@@ -56,6 +59,7 @@ export type AcceleratorProgressState = {
   undoDay: number | null;
   undoUntil: string | null;
   programCompleted: boolean;
+  daysWaiting: number;
 };
 
 export type UndoAcceleratorDayResult =
@@ -77,4 +81,50 @@ export type RecordAcceleratorVideoViewResult =
 export type SaveMeasurementResult = { ok: true; measurement: CustomerMeasurement } | { ok: false };
 export type RemoveMeasurementResult =
   | { ok: true; measurementId: string; removed: true }
+  | { ok: false };
+
+export type CustomerProgramStatus = "not_started" | "active" | "paused" | "completed";
+
+export type CustomerProgramRunSummary = {
+  enrollmentId: string;
+  runNumber: number;
+  programVersion: string;
+  status: Exclude<CustomerProgramStatus, "not_started">;
+  completedDays: number;
+  startedAt: string;
+  completedAt: string | null;
+  measurementSummary: MeasurementSummary;
+};
+
+export type AcceleratorProgramCard = {
+  entitlementId: string;
+  status: CustomerProgramStatus;
+  currentRun: CustomerProgramRunSummary | null;
+  previousRuns: CustomerProgramRunSummary[];
+};
+
+export type LeadPlanCard = {
+  leadPlanId: string;
+  status: "active" | "paused" | "completed";
+  completedDays: number;
+  totalDays: number;
+};
+
+export type MyProgramsResult =
+  | {
+      ok: true;
+      firstName: string;
+      accelerator: AcceleratorProgramCard | null;
+      leadPlans: LeadPlanCard[];
+      activeProgram: "accelerator" | "lead_plan" | "other_program" | null;
+      latestMeasurements: MeasurementPair;
+    }
+  | { ok: false };
+
+export type BeginAcceleratorResult =
+  | { ok: true; enrollmentId: string }
+  | { ok: false; reason: "unauthorized" | "rejected" };
+
+export type ProgramRunActionResult =
+  | { ok: true; enrollmentId: string; pausedAnotherProgram: boolean }
   | { ok: false };

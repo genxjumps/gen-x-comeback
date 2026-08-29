@@ -2,6 +2,7 @@ import { resolveCustomerAccount } from "@/lib/account/customer-account.server";
 
 export type AcceleratorAccess = {
   customerAccountId: string;
+  entitlementId: string;
   enrollmentId: string;
   programVersion: string;
   firstName: string;
@@ -31,18 +32,22 @@ export async function resolveAcceleratorAccess(
 
   const { data: runs, error: runError } = await supabaseAdmin
     .from("paid_program_enrollments")
-    .select("id, program_version")
+    .select("id, program_version, status")
     .eq("customer_id", accountResult.account.id)
     .eq("entitlement_id", entitlement.id)
     .in("status", ["active", "paused", "completed"])
     .order("run_number", { ascending: false })
-    .limit(1);
+    .limit(100);
   if (runError) throw new Error(runError.message);
-  const run = runs?.[0];
+  const run =
+    runs?.find(({ status }) => status === "active") ??
+    runs?.find(({ status }) => status === "paused") ??
+    runs?.[0];
   if (!run) return null;
 
   return {
     customerAccountId: accountResult.account.id,
+    entitlementId: entitlement.id,
     enrollmentId: run.id,
     programVersion: run.program_version,
     firstName: accountResult.account.firstName ?? "Jumper",

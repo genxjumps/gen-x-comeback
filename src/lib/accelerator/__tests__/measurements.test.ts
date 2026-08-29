@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { measurementSummary } from "../measurements";
+import { latestMeasurementPair, measurementChange, measurementSummary } from "../measurements";
 import type { CustomerMeasurement } from "../types";
 
 const RUN = "00000000-0000-4000-8000-000000000001";
@@ -37,6 +37,17 @@ describe("measurement summaries", () => {
     expect(summary.runStarting.waist).toBeNull();
   });
 
+  it("selects the latest available weight and waist independently for repeat setup", () => {
+    const latest = latestMeasurementPair([
+      measurement("old-weight", "weight", 190, "starting", "2026-08-01T12:00:00Z"),
+      measurement("new-waist", "waist", 36.5, "final", "2026-08-28T12:01:00Z"),
+      measurement("new-weight", "weight", 184, "final", "2026-08-28T12:00:00Z"),
+    ]);
+
+    expect(latest.weight?.id).toBe("new-weight");
+    expect(latest.waist?.id).toBe("new-waist");
+  });
+
   it("distinguishes global latest, run starting, run newest, and run final", () => {
     const summary = measurementSummary(
       [
@@ -68,5 +79,16 @@ describe("measurement summaries", () => {
     const summary = measurementSummary([corrected], RUN);
     expect(summary.runNewest.weight?.value).toBe(186.5);
     expect(summary.runNewest.waist).toBeNull();
+  });
+
+  it("calculates start-to-finish changes in the final measurement unit", () => {
+    const pounds = measurement("start-lb", "weight", 220.462, "starting", "2026-08-01T12:00:00Z");
+    const kilograms = {
+      ...measurement("final-kg", "weight", 95, "final", "2026-08-28T12:00:00Z"),
+      unit: "kg" as const,
+    };
+    const change = measurementChange(pounds, kilograms);
+    expect(change?.unit).toBe("kg");
+    expect(change?.value).toBeCloseTo(-5, 2);
   });
 });

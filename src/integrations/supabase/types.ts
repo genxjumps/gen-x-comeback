@@ -1754,6 +1754,26 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      begin_accelerator_run_atomic: {
+        Args: {
+          p_customer_id: string;
+          p_customer_time_zone: string;
+          p_entitlement_id: string;
+          p_program_snapshot: Json;
+          p_program_version: string;
+          p_starting_waist: number | null;
+          p_starting_weight: number | null;
+          p_waist_unit: string | null;
+          p_weight_unit: string | null;
+        };
+        Returns: {
+          enrollment_id: string | null;
+          outcome: string;
+          paused_enrollment_id: string | null;
+          paused_lead_plan_id: string | null;
+          run_number: number | null;
+        }[];
+      };
       correct_customer_measurement_atomic: {
         Args: {
           p_customer_id: string;
