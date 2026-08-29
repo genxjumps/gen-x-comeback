@@ -24,6 +24,7 @@ import { Route as AcceleratorRouteImport } from './routes/accelerator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
+import { Route as Start7DayRouteImport } from './routes/start.7-day'
 import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as PreviewAcceleratorRouteImport } from './routes/preview.accelerator'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
@@ -109,6 +110,11 @@ const AssessmentIndexRoute = AssessmentIndexRouteImport.update({
   path: '/assessment/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Start7DayRoute = Start7DayRouteImport.update({
+  id: '/start/7-day',
+  path: '/start/7-day',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PreviewW01Route = PreviewW01RouteImport.update({
   id: '/preview/w01',
   path: '/preview/w01',
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
+  '/start/7-day': typeof Start7DayRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
@@ -201,6 +208,7 @@ export interface FileRoutesByTo {
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
+  '/start/7-day': typeof Start7DayRoute
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
@@ -228,6 +236,7 @@ export interface FileRoutesById {
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
+  '/start/7-day': typeof Start7DayRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/assessment/start'
     | '/preview/accelerator'
     | '/preview/w01'
+    | '/start/7-day'
     | '/assessment/'
     | '/your-plan/'
     | '/my-programs/accelerator/runs'
@@ -282,6 +292,7 @@ export interface FileRouteTypes {
     | '/assessment/start'
     | '/preview/accelerator'
     | '/preview/w01'
+    | '/start/7-day'
     | '/assessment'
     | '/your-plan'
     | '/my-programs/accelerator/runs'
@@ -308,6 +319,7 @@ export interface FileRouteTypes {
     | '/assessment/start'
     | '/preview/accelerator'
     | '/preview/w01'
+    | '/start/7-day'
     | '/assessment/'
     | '/your-plan/'
     | '/my-programs/accelerator/runs'
@@ -335,6 +347,7 @@ export interface RootRouteChildren {
   AssessmentStartRoute: typeof AssessmentStartRoute
   PreviewAcceleratorRoute: typeof PreviewAcceleratorRoute
   PreviewW01Route: typeof PreviewW01Route
+  Start7DayRoute: typeof Start7DayRoute
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
@@ -449,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/start/7-day': {
+      id: '/start/7-day'
+      path: '/start/7-day'
+      fullPath: '/start/7-day'
+      preLoaderRoute: typeof Start7DayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/preview/w01': {
       id: '/preview/w01'
       path: '/preview/w01'
@@ -547,6 +567,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentStartRoute: AssessmentStartRoute,
   PreviewAcceleratorRoute: PreviewAcceleratorRoute,
   PreviewW01Route: PreviewW01Route,
+  Start7DayRoute: Start7DayRoute,
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,

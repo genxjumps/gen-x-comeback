@@ -21,10 +21,11 @@ public enrollment, paid email, and the public offer remain unimplemented.
 
 ## What currently works
 
-- Mobile-first entry experience
+- Direct website-to-signup route for the free 7-Day Plan
+- Front-of-flow name, email, and approved consent capture before personalization
 - Multi-step fitness assessment
 - Personalized 3-, 4-, 5-, and 7-workout schedules
-- Results preview before lead capture
+- Automatic enrollment and plan opening after the assessment
 - Lead, consent, assessment, and plan persistence
 - Day 1 through Day 7 assignment flow
 - Server-enforced sequential completion
@@ -48,6 +49,14 @@ public enrollment, paid email, and the public offer remain unimplemented.
 - Independent optional weight and waist history with corrections and removals
 
 The existing email and scheduler infrastructure has been heavily staged and verified, but that does **not** mean the overall product has launched to customers.
+
+The website's free-plan CTA should target `/start/7-day`. New visitors see the signup form
+immediately instead of the general app landing page. Their valid signup is held only in session
+storage while they complete the safety check and personalization questions. The existing atomic
+lead, consent, assessment, plan, access, and Plan Ready transaction then runs once and opens the
+saved plan. Returning participants with valid access bypass signup and continue to their existing
+plan. The older completion-page form remains as a failure-safe fallback when no valid front-of-flow
+handoff exists.
 
 ## Verification baseline
 

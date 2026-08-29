@@ -10,6 +10,7 @@ function source(relativePath: string): string {
 
 const leadFunctions = source("../lead.functions.ts");
 const home = source("../../routes/index.tsx");
+const signup = source("../../routes/start.7-day.tsx");
 const start = source("../../routes/assessment.start.tsx");
 const assessment = source("../../routes/assessment.index.tsx");
 const complete = source("../../routes/assessment.complete.tsx");
@@ -33,6 +34,7 @@ describe("pre-launch intake gate", () => {
 
   it("blocks every public entry surface without blocking existing-plan actions", () => {
     expect(home).toContain("!NEW_PLAN_INTAKE_OPEN && !hasPlan");
+    expect(signup).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
     expect(start).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
     expect(assessment).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
     expect(complete).toContain("!NEW_PLAN_INTAKE_OPEN");
