@@ -190,7 +190,9 @@ but does not automatically replace or start the current active program.
 - The customer receives immediate access plus a backup access email.
 - Purchased programs remain owned without expiration.
 - Purchase and program start are separate facts.
-- Program access and marketing consent remain separate.
+- The free 7-Day signup uses one required, explicit checkbox covering plan-related emails and
+  occasional Gen X Jumps marketing emails. Those consent records remain separately stored and
+  independently withdrawable after signup.
 - Public enrollment stays fail-closed until the full launch boundary is verified.
 
 The paid program must not be forced into the free plan's `lead_plans` lifecycle. Security patterns

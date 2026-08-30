@@ -116,7 +116,9 @@ purchase can safely use.
 - The account model can link the existing free 7-Day Plan and future paid entitlements without
   forcing either into the other's lifecycle.
 - Linking by email requires verified identity and does not expose account existence.
-- Program access consent and marketing consent remain separate from account identity.
+- The free 7-Day signup uses one required, explicit checkbox covering plan-related emails and
+  occasional Gen X Jumps marketing emails. Plan-email consent and marketing consent remain
+  separately stored, independently withdrawable, and separate from account identity.
 - Server-side authorization derives the customer from authenticated claims, not a paid-program
   browser token.
 - The existing free-plan return and recovery behavior remains functional until a later approved

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { parseLeadIntakeDraft, validEmail, validFirstName } from "@/lib/lead-intake-draft";
+import { CONSENT_COPY } from "@/lib/lead-plan";
 
 const readSource = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -27,6 +28,12 @@ describe("website-to-7-day intake", () => {
       }),
     ).toBeNull();
     expect(parseLeadIntakeDraft("bad draft")).toBeNull();
+  });
+
+  it("plainly discloses that free Plan signup includes occasional marketing emails", () => {
+    expect(CONSENT_COPY).toBe(
+      "By signing up for the free 7-Day Plan, I agree to receive plan-related emails and occasional marketing emails from Gen X Jumps. I can unsubscribe at any time.",
+    );
   });
 
   it("routes new website traffic directly to signup and preserves one enrollment transaction", () => {
