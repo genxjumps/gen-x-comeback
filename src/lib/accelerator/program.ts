@@ -2,6 +2,7 @@ import {
   ACCELERATOR_ASSIGNMENT_CONTENT,
   ACCELERATOR_ORIENTATION,
   ACCELERATOR_WEEKLY_COACHING,
+  type AcceleratorMediaPlaceholder,
 } from "./content";
 
 export const ACCELERATOR_PRODUCT_CODE = "accelerator_28" as const;
@@ -158,9 +159,21 @@ export type AcceleratorProgramSnapshot = {
   weekFocus: Array<{ week: AcceleratorWeek; title: string }>;
   assignments: Record<AcceleratorAssignmentCode, { label: string; focus: string }>;
   equipment: typeof ACCELERATOR_EQUIPMENT;
-  orientation: typeof ACCELERATOR_ORIENTATION;
-  weeklyCoaching: Array<(typeof ACCELERATOR_WEEKLY_COACHING)[number]>;
-  assignmentContent: typeof ACCELERATOR_ASSIGNMENT_CONTENT;
+  orientation: {
+    title: string;
+    writtenExplanation: string[];
+    media: AcceleratorMediaPlaceholder;
+  };
+  weeklyCoaching: Array<{
+    week: AcceleratorWeek;
+    title: string;
+    guidance: string[];
+    media: AcceleratorMediaPlaceholder;
+  }>;
+  assignmentContent: Record<
+    AcceleratorAssignmentCode,
+    { instructions: string; media: AcceleratorMediaPlaceholder | null }
+  >;
 };
 
 /**
