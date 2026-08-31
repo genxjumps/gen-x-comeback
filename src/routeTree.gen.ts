@@ -12,17 +12,26 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReturnRouteImport } from './routes/return'
 import { Route as RecoverRouteImport } from './routes/recover'
+import { Route as ProgressRouteImport } from './routes/progress'
+import { Route as ProgramsRouteImport } from './routes/programs'
+import { Route as NutritionRouteImport } from './routes/nutrition'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MyProgramsRouteImport } from './routes/my-programs'
 import { Route as JumpRopesRouteImport } from './routes/jump-ropes'
+import { Route as HomeRouteImport } from './routes/home'
 import { Route as EmailPreferencesRouteImport } from './routes/email-preferences'
 import { Route as AcceleratorRouteImport } from './routes/accelerator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
+import { Route as Start7DayRouteImport } from './routes/start.7-day'
 import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as PreviewAcceleratorRouteImport } from './routes/preview.accelerator'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
+import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs.accelerator.setup'
+import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs.accelerator.runs'
 import { Route as ApiPublicEmailWebhookRouteImport } from './routes/api/public/email/webhook'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 
@@ -41,9 +50,39 @@ const RecoverRoute = RecoverRouteImport.update({
   path: '/recover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProgressRoute = ProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProgramsRoute = ProgramsRouteImport.update({
+  id: '/programs',
+  path: '/programs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NutritionRoute = NutritionRouteImport.update({
+  id: '/nutrition',
+  path: '/nutrition',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyProgramsRoute = MyProgramsRouteImport.update({
+  id: '/my-programs',
+  path: '/my-programs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JumpRopesRoute = JumpRopesRouteImport.update({
   id: '/jump-ropes',
   path: '/jump-ropes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmailPreferencesRoute = EmailPreferencesRouteImport.update({
@@ -71,6 +110,11 @@ const AssessmentIndexRoute = AssessmentIndexRouteImport.update({
   path: '/assessment/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Start7DayRoute = Start7DayRouteImport.update({
+  id: '/start/7-day',
+  path: '/start/7-day',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PreviewW01Route = PreviewW01RouteImport.update({
   id: '/preview/w01',
   path: '/preview/w01',
@@ -96,6 +140,18 @@ const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
   path: '/your-plan/day/$day',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MyProgramsAcceleratorSetupRoute =
+  MyProgramsAcceleratorSetupRouteImport.update({
+    id: '/accelerator/setup',
+    path: '/accelerator/setup',
+    getParentRoute: () => MyProgramsRoute,
+  } as any)
+const MyProgramsAcceleratorRunsRoute =
+  MyProgramsAcceleratorRunsRouteImport.update({
+    id: '/accelerator/runs',
+    path: '/accelerator/runs',
+    getParentRoute: () => MyProgramsRoute,
+  } as any)
 const ApiPublicEmailWebhookRoute = ApiPublicEmailWebhookRouteImport.update({
   id: '/api/public/email/webhook',
   path: '/api/public/email/webhook',
@@ -111,7 +167,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accelerator': typeof AcceleratorRoute
   '/email-preferences': typeof EmailPreferencesRoute
+  '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/my-programs': typeof MyProgramsRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/nutrition': typeof NutritionRoute
+  '/programs': typeof ProgramsRoute
+  '/progress': typeof ProgressRoute
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -119,8 +181,11 @@ export interface FileRoutesByFullPath {
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
+  '/start/7-day': typeof Start7DayRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
+  '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
+  '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
@@ -129,7 +194,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accelerator': typeof AcceleratorRoute
   '/email-preferences': typeof EmailPreferencesRoute
+  '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/my-programs': typeof MyProgramsRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/nutrition': typeof NutritionRoute
+  '/programs': typeof ProgramsRoute
+  '/progress': typeof ProgressRoute
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -137,8 +208,11 @@ export interface FileRoutesByTo {
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
+  '/start/7-day': typeof Start7DayRoute
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
+  '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
+  '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
@@ -148,7 +222,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/accelerator': typeof AcceleratorRoute
   '/email-preferences': typeof EmailPreferencesRoute
+  '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/my-programs': typeof MyProgramsRouteWithChildren
+  '/notifications': typeof NotificationsRoute
+  '/nutrition': typeof NutritionRoute
+  '/programs': typeof ProgramsRoute
+  '/progress': typeof ProgressRoute
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -156,8 +236,11 @@ export interface FileRoutesById {
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
+  '/start/7-day': typeof Start7DayRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
+  '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
+  '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
@@ -168,7 +251,13 @@ export interface FileRouteTypes {
     | '/'
     | '/accelerator'
     | '/email-preferences'
+    | '/home'
     | '/jump-ropes'
+    | '/my-programs'
+    | '/notifications'
+    | '/nutrition'
+    | '/programs'
+    | '/progress'
     | '/recover'
     | '/return'
     | '/sitemap.xml'
@@ -176,8 +265,11 @@ export interface FileRouteTypes {
     | '/assessment/start'
     | '/preview/accelerator'
     | '/preview/w01'
+    | '/start/7-day'
     | '/assessment/'
     | '/your-plan/'
+    | '/my-programs/accelerator/runs'
+    | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
     | '/api/public/email/webhook'
@@ -186,7 +278,13 @@ export interface FileRouteTypes {
     | '/'
     | '/accelerator'
     | '/email-preferences'
+    | '/home'
     | '/jump-ropes'
+    | '/my-programs'
+    | '/notifications'
+    | '/nutrition'
+    | '/programs'
+    | '/progress'
     | '/recover'
     | '/return'
     | '/sitemap.xml'
@@ -194,8 +292,11 @@ export interface FileRouteTypes {
     | '/assessment/start'
     | '/preview/accelerator'
     | '/preview/w01'
+    | '/start/7-day'
     | '/assessment'
     | '/your-plan'
+    | '/my-programs/accelerator/runs'
+    | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
     | '/api/public/email/webhook'
@@ -204,7 +305,13 @@ export interface FileRouteTypes {
     | '/'
     | '/accelerator'
     | '/email-preferences'
+    | '/home'
     | '/jump-ropes'
+    | '/my-programs'
+    | '/notifications'
+    | '/nutrition'
+    | '/programs'
+    | '/progress'
     | '/recover'
     | '/return'
     | '/sitemap.xml'
@@ -212,8 +319,11 @@ export interface FileRouteTypes {
     | '/assessment/start'
     | '/preview/accelerator'
     | '/preview/w01'
+    | '/start/7-day'
     | '/assessment/'
     | '/your-plan/'
+    | '/my-programs/accelerator/runs'
+    | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
     | '/api/public/email/webhook'
@@ -223,7 +333,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcceleratorRoute: typeof AcceleratorRoute
   EmailPreferencesRoute: typeof EmailPreferencesRoute
+  HomeRoute: typeof HomeRoute
   JumpRopesRoute: typeof JumpRopesRoute
+  MyProgramsRoute: typeof MyProgramsRouteWithChildren
+  NotificationsRoute: typeof NotificationsRoute
+  NutritionRoute: typeof NutritionRoute
+  ProgramsRoute: typeof ProgramsRoute
+  ProgressRoute: typeof ProgressRoute
   RecoverRoute: typeof RecoverRoute
   ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -231,6 +347,7 @@ export interface RootRouteChildren {
   AssessmentStartRoute: typeof AssessmentStartRoute
   PreviewAcceleratorRoute: typeof PreviewAcceleratorRoute
   PreviewW01Route: typeof PreviewW01Route
+  Start7DayRoute: typeof Start7DayRoute
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
@@ -261,11 +378,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecoverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/progress': {
+      id: '/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/programs': {
+      id: '/programs'
+      path: '/programs'
+      fullPath: '/programs'
+      preLoaderRoute: typeof ProgramsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nutrition': {
+      id: '/nutrition'
+      path: '/nutrition'
+      fullPath: '/nutrition'
+      preLoaderRoute: typeof NutritionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-programs': {
+      id: '/my-programs'
+      path: '/my-programs'
+      fullPath: '/my-programs'
+      preLoaderRoute: typeof MyProgramsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jump-ropes': {
       id: '/jump-ropes'
       path: '/jump-ropes'
       fullPath: '/jump-ropes'
       preLoaderRoute: typeof JumpRopesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/email-preferences': {
@@ -303,6 +462,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/start/7-day': {
+      id: '/start/7-day'
+      path: '/start/7-day'
+      fullPath: '/start/7-day'
+      preLoaderRoute: typeof Start7DayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/preview/w01': {
       id: '/preview/w01'
       path: '/preview/w01'
@@ -338,6 +504,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof YourPlanDayDayRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/my-programs/accelerator/setup': {
+      id: '/my-programs/accelerator/setup'
+      path: '/accelerator/setup'
+      fullPath: '/my-programs/accelerator/setup'
+      preLoaderRoute: typeof MyProgramsAcceleratorSetupRouteImport
+      parentRoute: typeof MyProgramsRoute
+    }
+    '/my-programs/accelerator/runs': {
+      id: '/my-programs/accelerator/runs'
+      path: '/accelerator/runs'
+      fullPath: '/my-programs/accelerator/runs'
+      preLoaderRoute: typeof MyProgramsAcceleratorRunsRouteImport
+      parentRoute: typeof MyProgramsRoute
+    }
     '/api/public/email/webhook': {
       id: '/api/public/email/webhook'
       path: '/api/public/email/webhook'
@@ -355,11 +535,31 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface MyProgramsRouteChildren {
+  MyProgramsAcceleratorRunsRoute: typeof MyProgramsAcceleratorRunsRoute
+  MyProgramsAcceleratorSetupRoute: typeof MyProgramsAcceleratorSetupRoute
+}
+
+const MyProgramsRouteChildren: MyProgramsRouteChildren = {
+  MyProgramsAcceleratorRunsRoute: MyProgramsAcceleratorRunsRoute,
+  MyProgramsAcceleratorSetupRoute: MyProgramsAcceleratorSetupRoute,
+}
+
+const MyProgramsRouteWithChildren = MyProgramsRoute._addFileChildren(
+  MyProgramsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcceleratorRoute: AcceleratorRoute,
   EmailPreferencesRoute: EmailPreferencesRoute,
+  HomeRoute: HomeRoute,
   JumpRopesRoute: JumpRopesRoute,
+  MyProgramsRoute: MyProgramsRouteWithChildren,
+  NotificationsRoute: NotificationsRoute,
+  NutritionRoute: NutritionRoute,
+  ProgramsRoute: ProgramsRoute,
+  ProgressRoute: ProgressRoute,
   RecoverRoute: RecoverRoute,
   ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -367,6 +567,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentStartRoute: AssessmentStartRoute,
   PreviewAcceleratorRoute: PreviewAcceleratorRoute,
   PreviewW01Route: PreviewW01Route,
+  Start7DayRoute: Start7DayRoute,
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,

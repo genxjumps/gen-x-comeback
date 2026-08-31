@@ -21,10 +21,11 @@ public enrollment, paid email, and the public offer remain unimplemented.
 
 ## What currently works
 
-- Mobile-first entry experience
+- Direct website-to-signup route for the free 7-Day Plan
+- Front-of-flow name, email, and approved consent capture before personalization
 - Multi-step fitness assessment
 - Personalized 3-, 4-, 5-, and 7-workout schedules
-- Results preview before lead capture
+- Automatic enrollment and plan opening after the assessment
 - Lead, consent, assessment, and plan persistence
 - Day 1 through Day 7 assignment flow
 - Server-enforced sequential completion
@@ -48,6 +49,14 @@ public enrollment, paid email, and the public offer remain unimplemented.
 - Independent optional weight and waist history with corrections and removals
 
 The existing email and scheduler infrastructure has been heavily staged and verified, but that does **not** mean the overall product has launched to customers.
+
+The website's free-plan CTA should target `/start/7-day`. New visitors see the signup form
+immediately instead of the general app landing page. Their valid signup is held only in session
+storage while they complete the safety check and personalization questions. The existing atomic
+lead, consent, assessment, plan, access, and Plan Ready transaction then runs once and opens the
+saved plan. Returning participants with valid access bypass signup and continue to their existing
+plan. The older completion-page form remains as a failure-safe fallback when no valid front-of-flow
+handoff exists.
 
 ## Verification baseline
 
@@ -185,11 +194,14 @@ Independent optional weight and waist history is also complete at source level, 
 corrections, removals, account-wide latest values, and run-specific starting, newest, and final
 values.
 
-The next checkpoint is the real program-content readiness audit for Workouts A-F, runtime,
-equipment, orientation, daily instructions, weekly coaching, and Cloudflare media. Later
-checkpoints may apply and verify the corrected migration chain inside a controlled development
-boundary, approve nutrition formulas, and add a tested checkout handoff. Public enrollment remains
-fail-closed throughout that work.
+The read-only program-content source audit is complete and recorded in
+[`docs/V1_1_ACCELERATOR_PROGRAM_CONTENT_AUDIT.md`](docs/V1_1_ACCELERATOR_PROGRAM_CONTENT_AUDIT.md).
+Workouts A-E provide a usable foundation, but source corrections, an Accelerator-specific Active
+Recovery F, the welcome/orientation, and four weekly coaching primers are still required. Final
+files will be transferred to Cloudflare Stream once, after the source package is approved, and then
+recorded in the immutable V1 program snapshot. Later checkpoints may apply and verify the corrected
+migration chain inside a controlled development boundary, approve nutrition formulas, and add a
+tested checkout handoff. Public enrollment remains fail-closed throughout that work.
 
 ## Historical implementation evidence
 

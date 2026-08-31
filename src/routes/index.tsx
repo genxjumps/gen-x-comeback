@@ -66,7 +66,7 @@ function Index() {
   }, [verifyToken]);
 
   const ctaLabel = hasPlan ? "Continue My Plan" : "Build My 7-Day Plan";
-  const ctaTo = hasPlan ? "/your-plan" : "/assessment/start";
+  const ctaTo = hasPlan ? "/your-plan" : "/start/7-day";
 
   if (!NEW_PLAN_INTAKE_OPEN && !hasPlan) {
     return (

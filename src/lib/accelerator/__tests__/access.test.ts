@@ -43,18 +43,42 @@ describe("unified-account Accelerator access", () => {
       .mockReturnValueOnce(chain({ data: [{ id: "entitlement-1" }], error: null }))
       .mockReturnValueOnce(
         chain({
-          data: [{ id: "run-2", program_version: "accelerator_28_v1" }],
+          data: [{ id: "run-2", program_version: "accelerator_28_v1", status: "active" }],
           error: null,
         }),
       );
 
     await expect(resolveAcceleratorAccess("Bearer verified.jwt.token")).resolves.toEqual({
       customerAccountId: "account-1",
+      entitlementId: "entitlement-1",
       enrollmentId: "run-2",
       programVersion: "accelerator_28_v1",
       firstName: "Todd",
     });
     expect(from).toHaveBeenNthCalledWith(1, "paid_product_entitlements");
     expect(from).toHaveBeenNthCalledWith(2, "paid_program_enrollments");
+  });
+
+  it("prefers an active unfinished run over a newer completed run", async () => {
+    resolveCustomerAccount.mockResolvedValue({
+      ok: true,
+      account: { id: "account-1", firstName: "Todd", email: "t@example.com", linkedLeadPlans: 1 },
+      replayed: true,
+    });
+    from
+      .mockReturnValueOnce(chain({ data: [{ id: "entitlement-1" }], error: null }))
+      .mockReturnValueOnce(
+        chain({
+          data: [
+            { id: "run-3", program_version: "accelerator_28_v1", status: "completed" },
+            { id: "run-2", program_version: "accelerator_28_v1", status: "active" },
+          ],
+          error: null,
+        }),
+      );
+
+    await expect(resolveAcceleratorAccess("Bearer verified.jwt.token")).resolves.toMatchObject({
+      enrollmentId: "run-2",
+    });
   });
 });

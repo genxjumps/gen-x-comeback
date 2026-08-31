@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, LockKeyhole, Play, Utensils, Video } from "lucide-react";
+import { ArrowRight, Check, LockKeyhole, Play, Utensils, Video } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -52,9 +52,11 @@ function MediaPlaceholder({ day }: { day: AcceleratorDay }) {
   );
 }
 
-export function AcceleratorProgramPreview() {
-  const [completedCount, setCompletedCount] = useState(0);
-  const [displayWeek, setDisplayWeek] = useState<AcceleratorWeek>(1);
+export function AcceleratorProgramPreview({ initialCompleted = 0 }: { initialCompleted?: number }) {
+  const [completedCount, setCompletedCount] = useState(initialCompleted);
+  const [displayWeek, setDisplayWeek] = useState<AcceleratorWeek>(
+    initialCompleted >= 28 ? 4 : ((Math.floor(initialCompleted / 7) + 1) as AcceleratorWeek),
+  );
 
   const daysWithAccess = useMemo(
     () =>
@@ -83,7 +85,7 @@ export function AcceleratorProgramPreview() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-12">
+    <div className="mx-auto w-full max-w-5xl px-5 py-8 sm:px-8 sm:py-12">
       <section className="rounded-lg border border-dashed border-border bg-muted/40 p-4">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
           Internal layout preview
@@ -115,12 +117,12 @@ export function AcceleratorProgramPreview() {
             <h1 className="gxj-display-title text-3xl leading-tight tracking-tight sm:text-4xl">
               {currentDay
                 ? `Day ${currentDay.day}: ${assignmentLabel(currentDay)}`
-                : "You Finished"}
+                : "Accelerator Complete"}
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               {currentDay
                 ? "Do the assigned day, mark it complete, and the next day unlocks. Missed time never skips your place."
-                : "All 28 days are complete. Your completion summary and next step will appear here."}
+                : "All 28 days are complete. Review your optional final results or choose what comes next."}
             </p>
           </div>
           <p className="text-sm font-semibold">{completedCount} of 28 days complete</p>
@@ -197,10 +199,45 @@ export function AcceleratorProgramPreview() {
             </section>
           ) : (
             <section className="rounded-lg border border-border bg-gxj-mint p-6">
-              <h2 className="text-xl font-semibold tracking-tight">28-Day Program Complete</h2>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Completion summary and purchased-library access will live here.
+              <div className="flex size-10 items-center justify-center rounded-full bg-gxj-teal text-white">
+                <Check aria-hidden="true" className="size-5" />
+              </div>
+              <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
+                Program complete
               </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+                You Completed All 28 Days
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                That is the full Accelerator - one day at a time, all the way through.
+              </p>
+              <dl className="mt-6 grid gap-3 sm:grid-cols-3">
+                {[
+                  ["Final progress", "28 of 28 days"],
+                  ["Weight change", "Down 6 lb"],
+                  ["Waist change", "Down 1.5 in"],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-md bg-background/80 p-4">
+                    <dt className="text-xs text-muted-foreground">{label}</dt>
+                    <dd className="mt-1 font-semibold">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="mt-6 rounded-lg border border-border bg-background/80 p-4">
+                <h3 className="font-semibold">Optional Final Measurements</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Add either one, both, or skip them. Your program is already complete.
+                </p>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <Button type="button">
+                  Start Another Run
+                  <ArrowRight aria-hidden="true" className="size-4" />
+                </Button>
+                <Button type="button" variant="outline">
+                  Explore Other Programs
+                </Button>
+              </div>
             </section>
           )}
 
@@ -327,6 +364,6 @@ export function AcceleratorProgramPreview() {
           </section>
         </aside>
       </div>
-    </main>
+    </div>
   );
 }
