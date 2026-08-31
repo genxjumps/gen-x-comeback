@@ -1,3 +1,10 @@
+import {
+  ACCELERATOR_ASSIGNMENT_CONTENT,
+  ACCELERATOR_ORIENTATION,
+  ACCELERATOR_WEEKLY_COACHING,
+  type AcceleratorMediaPlaceholder,
+} from "./content";
+
 export const ACCELERATOR_PRODUCT_CODE = "accelerator_28" as const;
 export const ACCELERATOR_PROGRAM_VERSION = "accelerator_28_v1" as const;
 
@@ -152,6 +159,21 @@ export type AcceleratorProgramSnapshot = {
   weekFocus: Array<{ week: AcceleratorWeek; title: string }>;
   assignments: Record<AcceleratorAssignmentCode, { label: string; focus: string }>;
   equipment: typeof ACCELERATOR_EQUIPMENT;
+  orientation: {
+    title: string;
+    writtenExplanation: string[];
+    media: AcceleratorMediaPlaceholder;
+  };
+  weeklyCoaching: Array<{
+    week: AcceleratorWeek;
+    title: string;
+    guidance: string[];
+    media: AcceleratorMediaPlaceholder;
+  }>;
+  assignmentContent: Record<
+    AcceleratorAssignmentCode,
+    { instructions: string; media: AcceleratorMediaPlaceholder | null }
+  >;
 };
 
 /**
@@ -171,6 +193,25 @@ export function buildAcceleratorProgramSnapshot(): AcceleratorProgramSnapshot {
       ]),
     ) as AcceleratorProgramSnapshot["assignments"],
     equipment: { ...ACCELERATOR_EQUIPMENT },
+    orientation: {
+      ...ACCELERATOR_ORIENTATION,
+      writtenExplanation: [...ACCELERATOR_ORIENTATION.writtenExplanation],
+      media: { ...ACCELERATOR_ORIENTATION.media },
+    },
+    weeklyCoaching: ACCELERATOR_WEEKLY_COACHING.map((week) => ({
+      ...week,
+      guidance: [...week.guidance],
+      media: { ...week.media },
+    })),
+    assignmentContent: Object.fromEntries(
+      Object.entries(ACCELERATOR_ASSIGNMENT_CONTENT).map(([code, content]) => [
+        code,
+        {
+          ...content,
+          media: content.media ? { ...content.media } : null,
+        },
+      ]),
+    ) as AcceleratorProgramSnapshot["assignmentContent"],
   };
 }
 
