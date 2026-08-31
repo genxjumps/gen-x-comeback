@@ -34,8 +34,9 @@ describe("28-Day Accelerator content readiness", () => {
       "pending_recording",
     );
     expect(ACCELERATOR_ORIENTATION.media.readiness).toBe("pending_recording");
-    expect(ACCELERATOR_WEEKLY_COACHING.every(({ media }) => media.readiness === "pending_recording"))
-      .toBe(true);
+    expect(
+      ACCELERATOR_WEEKLY_COACHING.every(({ media }) => media.readiness === "pending_recording"),
+    ).toBe(true);
   });
 
   it("keeps rest as a non-video assignment", () => {
