@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ACCELERATOR_ORIENTATION } from "@/lib/accelerator/content";
 import { beginAccelerator, getMyPrograms } from "@/lib/accelerator/functions";
 import type { MeasurementUnit } from "@/lib/accelerator/types";
 
@@ -38,15 +39,9 @@ function AcceleratorSetup() {
   const [error, setError] = useState<string | null>(null);
   const [willPauseAnother, setWillPauseAnother] = useState(false);
   const [repeatRun, setRepeatRun] = useState(false);
-  const [currentWeight, setCurrentWeight] = useState<{ value: number; unit: "lb" | "kg" } | null>(
-    null,
-  );
-  const [currentWaist, setCurrentWaist] = useState<{ value: number; unit: "in" | "cm" } | null>(
-    null,
-  );
-  const [measurementChoice, setMeasurementChoice] = useState<
-    "undecided" | "current" | "changed" | "skipped"
-  >("undecided");
+  const [currentWeight, setCurrentWeight] = useState<{ value: number; unit: "lb" | "kg" } | null>(null);
+  const [currentWaist, setCurrentWaist] = useState<{ value: number; unit: "in" | "cm" } | null>(null);
+  const [measurementChoice, setMeasurementChoice] = useState<"undecided" | "current" | "changed" | "skipped">("undecided");
 
   useEffect(() => {
     let active = true;
@@ -113,114 +108,55 @@ function AcceleratorSetup() {
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
-        Program Setup
-      </p>
-      <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight sm:text-4xl">
-        Start Your 28-Day Accelerator
-      </h1>
+      <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">Program Setup</p>
+      <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight sm:text-4xl">Start Your 28-Day Accelerator</h1>
       <section className="mt-8 rounded-lg border border-border bg-card p-5 sm:p-6">
-        <h2 className="text-xl font-semibold">Welcome From Todd</h2>
+        <h2 className="text-xl font-semibold">{ACCELERATOR_ORIENTATION.title}</h2>
         <div className="mt-4 flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted/60 px-5 text-center">
           <div>
             <Video className="mx-auto size-7 text-muted-foreground" />
-            <p className="mt-3 text-sm font-semibold">Orientation video placeholder</p>
+            <p className="mt-3 text-sm font-semibold">Orientation video pending recording</p>
           </div>
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          You’ll repeat six assignments and one rest day for four weeks. Complete one day at a time.
-          Missing a day never skips your place, and your access doesn’t expire.
-        </p>
+        <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+          {ACCELERATOR_ORIENTATION.writtenExplanation.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
       </section>
       <section className="mt-4 rounded-lg border border-border bg-card p-5 sm:p-6">
         <h2 className="text-xl font-semibold">Starting Measurements</h2>
         {repeatRun && (currentWeight || currentWaist) ? (
           <div className="mt-3 rounded-md border border-border bg-muted/50 p-4">
-            <p className="text-sm font-semibold">
-              Use your current measurements as the starting point for this run?
-            </p>
+            <p className="text-sm font-semibold">Use your current measurements as the starting point for this run?</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {[
-                currentWeight ? `${currentWeight.value} ${currentWeight.unit}` : null,
-                currentWaist ? `${currentWaist.value} ${currentWaist.unit} waist` : null,
-              ]
-                .filter(Boolean)
-                .join(" - ")}
+              {[currentWeight ? `${currentWeight.value} ${currentWeight.unit}` : null, currentWaist ? `${currentWaist.value} ${currentWaist.unit} waist` : null].filter(Boolean).join(" - ")}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant={measurementChoice === "current" ? "default" : "outline"}
-                aria-pressed={measurementChoice === "current"}
-                onClick={useCurrentMeasurements}
-              >
-                Use Current Measurements
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant={measurementChoice === "skipped" ? "default" : "outline"}
-                aria-pressed={measurementChoice === "skipped"}
-                onClick={skipCurrentMeasurements}
-              >
-                Skip Measurements
-              </Button>
+              <Button type="button" size="sm" variant={measurementChoice === "current" ? "default" : "outline"} aria-pressed={measurementChoice === "current"} onClick={useCurrentMeasurements}>Use Current Measurements</Button>
+              <Button type="button" size="sm" variant={measurementChoice === "skipped" ? "default" : "outline"} aria-pressed={measurementChoice === "skipped"} onClick={skipCurrentMeasurements}>Skip Measurements</Button>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              You can change or clear either number below before starting.
-            </p>
+            <p className="mt-3 text-xs text-muted-foreground">You can change or clear either number below before starting.</p>
           </div>
         ) : (
-          <p className="mt-2 text-sm text-muted-foreground">
-            Both are optional. Skip either one or both and start anyway.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Both are optional. Skip either one or both and start anyway.</p>
         )}
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="starting-weight">Weight - {weightUnit}</Label>
-            <Input
-              id="starting-weight"
-              type="number"
-              min="1"
-              step="0.1"
-              value={weight}
-              onChange={(event) => {
-                setWeight(event.target.value);
-                if (repeatRun) setMeasurementChoice("changed");
-              }}
-              placeholder="Optional"
-              className="mt-2"
-            />
+            <Input id="starting-weight" type="number" min="1" step="0.1" value={weight} onChange={(event) => { setWeight(event.target.value); if (repeatRun) setMeasurementChoice("changed"); }} placeholder="Optional" className="mt-2" />
           </div>
           <div>
             <Label htmlFor="starting-waist">Waist - {waistUnit}</Label>
-            <Input
-              id="starting-waist"
-              type="number"
-              min="1"
-              step="0.1"
-              value={waist}
-              onChange={(event) => {
-                setWaist(event.target.value);
-                if (repeatRun) setMeasurementChoice("changed");
-              }}
-              placeholder="Optional"
-              className="mt-2"
-            />
+            <Input id="starting-waist" type="number" min="1" step="0.1" value={waist} onChange={(event) => { setWaist(event.target.value); if (repeatRun) setMeasurementChoice("changed"); }} placeholder="Optional" className="mt-2" />
           </div>
         </div>
       </section>
       {error ? <p className="mt-4 text-sm font-medium">{error}</p> : null}
       {willPauseAnother ? (
-        <p className="mt-4 rounded-md border border-border bg-muted/50 p-4 text-sm leading-relaxed">
-          Starting this program will pause your current structured program. Its progress will be
-          saved.
-        </p>
+        <p className="mt-4 rounded-md border border-border bg-muted/50 p-4 text-sm leading-relaxed">Starting this program will pause your current structured program. Its progress will be saved.</p>
       ) : null}
-      <Button type="button" size="lg" className="mt-6 w-full" disabled={saving} onClick={begin}>
-        {saving ? "Starting..." : "Begin Day 1"}
-      </Button>
+      <Button type="button" size="lg" className="mt-6 w-full" disabled={saving} onClick={begin}>{saving ? "Starting..." : "Begin Day 1"}</Button>
     </div>
   );
 }
