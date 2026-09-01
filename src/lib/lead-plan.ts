@@ -3,7 +3,7 @@ import { buildPlan, type Answers, type Plan } from "@/lib/plan";
 
 export const CONSENT_VERSION = "v1";
 export const CONSENT_COPY =
-  "I agree to receive my personalized Gen X Jumps 7-Day Plan emails and general Gen X Jumps marketing emails. I can unsubscribe from either at any time.";
+  "By signing up for the free 7-Day Plan, I agree to receive plan-related emails and occasional marketing emails from Gen X Jumps. I can unsubscribe at any time.";
 export const PLAN_LOGIC_VERSION = "plan-engine-v1";
 export const ASSESSMENT_LOGIC_VERSION = "assessment-v1";
 export const PLAN_FAMILY_LOGIC_VERSION = "plan-family-v1";

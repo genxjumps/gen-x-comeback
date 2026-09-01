@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
 import { getSubmissionId, mintCredential } from "@/lib/plan-submission";
 import { readStoredToken } from "@/lib/access-token";
 import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
+import { clearLeadIntakeDraft, readLeadIntakeDraft } from "@/lib/lead-intake-draft";
+import type { LeadIntakeDraft } from "@/lib/lead-intake-draft";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
@@ -60,6 +62,7 @@ function ResultsPage() {
   const regenerate = useServerFn(regeneratePlanWithToken);
 
   const [answers, setAnswers] = useState<Answers | null>(null);
+  const [intakeDraft, setIntakeDraft] = useState<LeadIntakeDraft | null>(null);
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
@@ -69,6 +72,7 @@ function ResultsPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [recognized, setRecognized] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const frontEnrollmentAttempted = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,6 +82,13 @@ function ResultsPage() {
       return;
     }
     setAnswers(a);
+    const draft = readLeadIntakeDraft();
+    if (draft) {
+      setIntakeDraft(draft);
+      setFirstName(draft.firstName);
+      setEmail(draft.email);
+      setConsent(draft.consentGranted);
+    }
 
     const recoveryToken = takeRecoveryTokenFromUrl();
     const token = recoveryToken ?? readStoredToken();
@@ -123,6 +134,49 @@ function ResultsPage() {
       cancelled = true;
     };
   }, [navigate, regenerate]);
+
+  useEffect(() => {
+    if (
+      !answers ||
+      !intakeDraft ||
+      checkingAccess ||
+      unlocked ||
+      frontEnrollmentAttempted.current
+    ) {
+      return;
+    }
+    frontEnrollmentAttempted.current = true;
+    setSaving(true);
+    setError(null);
+    void (async () => {
+      try {
+        const access = await mintCredential();
+        await save({
+          data: {
+            submissionId: getSubmissionId(answers),
+            sessionTokenHash: access.hash,
+            firstName: intakeDraft.firstName,
+            email: intakeDraft.email,
+            consentGranted: true,
+            assessment: answers,
+          },
+        });
+        try {
+          window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, access.raw);
+        } catch {
+          /* ignore storage errors */
+        }
+        clearLeadIntakeDraft();
+        setUnlocked(true);
+        navigate({ to: "/your-plan", replace: true });
+      } catch {
+        setIntakeDraft(null);
+        setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
+      } finally {
+        setSaving(false);
+      }
+    })();
+  }, [answers, checkingAccess, intakeDraft, navigate, save, unlocked]);
 
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
 
@@ -252,7 +306,14 @@ function ResultsPage() {
             follow the plan in order.
           </p>
         </section>
-      ) : checkingAccess ? null : !NEW_PLAN_INTAKE_OPEN ? (
+      ) : checkingAccess || intakeDraft ? (
+        <section className="rounded-lg border border-border bg-card p-4" aria-live="polite">
+          <h2 className="text-lg font-semibold tracking-tight">Opening Your 7-Day Plan</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Your answers are complete. We&rsquo;re saving your plan now.
+          </p>
+        </section>
+      ) : !NEW_PLAN_INTAKE_OPEN ? (
         <IntakeClosed />
       ) : (
         <section>
@@ -308,6 +369,7 @@ function ResultsPage() {
                 } catch {
                   /* ignore storage errors */
                 }
+                clearLeadIntakeDraft();
                 setUnlocked(true);
                 navigate({ to: "/your-plan" });
               } catch {

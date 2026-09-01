@@ -1,4 +1,4 @@
-export type AcceleratorMediaReadiness = "ready_for_cloudflare" | "pending_recording";
+export type AcceleratorMediaReadiness = "ready_for_cloudflare" | "uploaded" | "pending_recording";
 
 export type AcceleratorMediaPlaceholder = {
   readiness: AcceleratorMediaReadiness;
@@ -86,45 +86,45 @@ export const ACCELERATOR_ASSIGNMENT_CONTENT = {
     instructions:
       "Complete Workout A. Work hard, scale pace, reps, range of motion, and rest when needed, then complete the day when you are finished.",
     media: {
-      readiness: "ready_for_cloudflare",
-      cloudflareStreamUid: null,
-      runtimeSeconds: null,
+      readiness: "uploaded",
+      cloudflareStreamUid: "767c2265f63d67fb5dc3b1c5f3a3e44e",
+      runtimeSeconds: 1543,
     },
   },
   workout_b: {
     instructions:
       "Complete Workout B. Stay controlled through each minute, scale reps or rest when needed, then complete the day when you are finished.",
     media: {
-      readiness: "ready_for_cloudflare",
-      cloudflareStreamUid: null,
-      runtimeSeconds: null,
+      readiness: "uploaded",
+      cloudflareStreamUid: "a863bce8634666b5766ff277685b6b83",
+      runtimeSeconds: 1650,
     },
   },
   workout_c: {
     instructions:
       "Complete Workout C. Keep the lower-body work controlled, scale reps or range of motion when needed, then complete the day when you are finished.",
     media: {
-      readiness: "ready_for_cloudflare",
-      cloudflareStreamUid: null,
-      runtimeSeconds: null,
+      readiness: "uploaded",
+      cloudflareStreamUid: "bce4346d2ec59177ed09934e26512bb8",
+      runtimeSeconds: 1447,
     },
   },
   workout_d: {
     instructions:
       "Complete Workout D using the timed intervals as shown. Scale pace or rest when needed, then complete the day when you are finished.",
     media: {
-      readiness: "ready_for_cloudflare",
-      cloudflareStreamUid: null,
-      runtimeSeconds: null,
+      readiness: "uploaded",
+      cloudflareStreamUid: "b0a32ba5f5f64fb2e8d5829cde007656",
+      runtimeSeconds: 1584,
     },
   },
   workout_e: {
     instructions:
       "Complete Workout E. Keep the rope work consistent while the bodyweight work builds through the pyramid, scaling reps or rest when needed.",
     media: {
-      readiness: "ready_for_cloudflare",
-      cloudflareStreamUid: null,
-      runtimeSeconds: null,
+      readiness: "uploaded",
+      cloudflareStreamUid: "9b80d965a884486cf5e38b26d1ff671f",
+      runtimeSeconds: 1507,
     },
   },
   active_recovery_f: {

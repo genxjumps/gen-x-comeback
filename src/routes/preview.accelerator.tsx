@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { AcceleratorProgramPreview } from "@/components/accelerator-program-preview";
+import { AcceleratorFlowPreview } from "@/components/accelerator-flow-preview";
 
 export const Route = createFileRoute("/preview/accelerator")({
   head: () => ({
@@ -13,5 +13,5 @@ export const Route = createFileRoute("/preview/accelerator")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: AcceleratorProgramPreview,
+  component: AcceleratorFlowPreview,
 });

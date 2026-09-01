@@ -11,6 +11,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { PlatformAccessBoundary } from "@/components/platform-access-boundary";
+import { PlatformShell } from "@/components/platform-shell";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -124,6 +126,28 @@ function RootComponent() {
   const inAssessment = pathname === "/assessment" || pathname.startsWith("/assessment/");
   const inPlan = pathname === "/your-plan" || pathname.startsWith("/your-plan/");
   const inJumpRopes = pathname === "/jump-ropes";
+  const inPlatform =
+    pathname === "/home" ||
+    pathname === "/my-programs" ||
+    pathname === "/my-programs/accelerator/setup" ||
+    pathname === "/my-programs/accelerator/runs" ||
+    pathname === "/progress" ||
+    pathname === "/nutrition" ||
+    pathname === "/programs" ||
+    pathname === "/notifications" ||
+    pathname === "/accelerator";
+
+  if (inPlatform) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <PlatformAccessBoundary>
+          <PlatformShell>
+            <Outlet />
+          </PlatformShell>
+        </PlatformAccessBoundary>
+      </QueryClientProvider>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
