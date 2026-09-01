@@ -21,10 +21,23 @@ const acceleratorDaySchema = z.object({
 const assignmentSchema = z.object({
   label: z.string().min(1),
   focus: z.string().min(1),
+});
+
+const mediaReadinessSchema = z.enum([
+  "ready_for_cloudflare",
+  "uploaded",
+  "pending_recording",
+]);
+
+const mediaPlaceholderSchema = z.object({
+  readiness: mediaReadinessSchema,
+  cloudflareStreamUid: z.string().trim().min(1).max(200).nullable(),
+  runtimeSeconds: z.number().int().positive().nullable(),
+});
+
+const assignmentContentSchema = z.object({
   instructions: z.string().min(1),
-  equipment: z.string().min(1),
-  runtimeLabel: z.string().min(1),
-  mediaKey: z.string().trim().min(1).max(200).nullable(),
+  media: mediaPlaceholderSchema.nullable(),
 });
 
 export const acceleratorProgramSnapshotSchema = z
@@ -45,6 +58,30 @@ export const acceleratorProgramSnapshotSchema = z
       rest: assignmentSchema,
     }),
     equipment: z.object({ program: z.string().min(1), gymRequired: z.boolean() }),
+    orientation: z.object({
+      title: z.string().min(1),
+      writtenExplanation: z.array(z.string().min(1)).min(1),
+      media: mediaPlaceholderSchema,
+    }),
+    weeklyCoaching: z
+      .array(
+        z.object({
+          week: z.number().int().min(1).max(4),
+          title: z.string().min(1),
+          guidance: z.array(z.string().min(1)).min(1),
+          media: mediaPlaceholderSchema,
+        }),
+      )
+      .length(4),
+    assignmentContent: z.object({
+      workout_a: assignmentContentSchema,
+      workout_b: assignmentContentSchema,
+      workout_c: assignmentContentSchema,
+      workout_d: assignmentContentSchema,
+      workout_e: assignmentContentSchema,
+      active_recovery_f: assignmentContentSchema,
+      rest: assignmentContentSchema,
+    }),
   })
   .superRefine((snapshot, context) => {
     snapshot.days.forEach((day, index) => {
