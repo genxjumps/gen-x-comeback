@@ -10,6 +10,7 @@ import {
 } from "@/lib/accelerator/program";
 import { completeAcceleratorDay, getAcceleratorHub } from "@/lib/accelerator/functions";
 import type { AcceleratorHubData } from "@/lib/accelerator/types";
+import { acceleratorVideoSrc } from "@/lib/accelerator/video";
 
 function PrivateAccessDenied() {
   return (
@@ -31,7 +32,32 @@ function DayStatusIcon({ access }: { access: "completed" | "current" | "locked" 
   return <Play aria-hidden="true" className="size-3.5" />;
 }
 
-function MediaPlaceholder({ day, label }: { day: AcceleratorDay; label: string }) {
+function VideoArea({
+  day,
+  label,
+  cloudflareStreamUid,
+}: {
+  day: AcceleratorDay;
+  label: string;
+  cloudflareStreamUid: string | null;
+}) {
+  const src = acceleratorVideoSrc(cloudflareStreamUid);
+
+  if (src) {
+    return (
+      <div className="aspect-video overflow-hidden rounded-lg border border-border bg-muted">
+        <iframe
+          src={src}
+          loading="lazy"
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+          className="h-full w-full border-0"
+          title={`Day ${day.day} - ${label}`}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/60 px-6 text-center">
       {day.kind === "rest" ? null : (
@@ -43,7 +69,7 @@ function MediaPlaceholder({ day, label }: { day: AcceleratorDay; label: string }
       <p className="mt-1 text-xs text-muted-foreground">
         {day.kind === "rest"
           ? "Acknowledge the rest day to continue"
-          : "Cloudflare Stream ID pending"}
+          : "Cloudflare Stream video pending"}
       </p>
     </div>
   );
@@ -112,6 +138,9 @@ export function AcceleratorProgram() {
   const progressPercent = Math.round((completedCount / hub.snapshot.days.length) * 100);
   const focus = hub.snapshot.weekFocus.find(({ week }) => week === displayWeek)!;
   const currentLabel = currentDay ? hub.snapshot.assignments[currentDay.assignment].label : null;
+  const currentMedia = currentDay
+    ? hub.snapshot.assignmentContent[currentDay.assignment].media
+    : null;
 
   async function markCurrentComplete() {
     if (!currentDay || savingDay) return;
@@ -181,7 +210,11 @@ export function AcceleratorProgram() {
                 {currentLabel}
               </h2>
               <div className="mt-4">
-                <MediaPlaceholder day={currentDay} label={currentLabel} />
+                <VideoArea
+                  day={currentDay}
+                  label={currentLabel}
+                  cloudflareStreamUid={currentMedia?.cloudflareStreamUid ?? null}
+                />
               </div>
               <Button
                 type="button"
