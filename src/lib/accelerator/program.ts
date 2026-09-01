@@ -67,77 +67,32 @@ export const ACCELERATOR_ASSIGNMENTS = {
   workout_a: {
     label: "Workout A - Classic Intervals",
     focus: "Push + Legs",
-    instructions:
-      "Alternate timed rope work with push-ups and lower-body movements across three circuits. Use regular bounce or knee push-ups when needed, and take extra breaks without worrying about keeping up with Todd.",
-    equipment: "Jump rope; optional mat or soft surface",
-    runtimeLabel: "Final runtime pending media verification",
-    mediaKey: null,
   },
   workout_b: {
     label: "Workout B - EMOM",
     focus: "Conditioning + Core",
-    instructions:
-      "Warm up before pressing play. Each minute starts with rope skips followed by the assigned movement, and whatever time remains is recovery. Reduce the skips or reps when needed so you can stay in control.",
-    equipment: "Jump rope; optional mat or soft surface",
-    runtimeLabel: "Final runtime pending media verification",
-    mediaKey: null,
   },
   workout_c: {
     label: "Workout C - Lower Body Ladder",
     focus: "Legs + Muscular Endurance",
-    instructions:
-      "Work through the rope-and-lower-body ladders, then finish with the short lower-body and core circuit. Move through each rep with control and use the scheduled breaks as real recovery.",
-    equipment: "Jump rope; optional mat or soft surface",
-    runtimeLabel: "Final runtime pending media verification",
-    mediaKey: null,
   },
   workout_d: {
     label: "Workout D - Intervals",
     focus: "Jump Conditioning + Full-Body Conditioning",
-    instructions:
-      "Alternate rope or cardio intervals with controlled bodyweight work. Choose regular bounce or another comfortable rope step whenever a variation is too complex. Good form matters more than reaching every suggested rep.",
-    equipment: "Jump rope; optional mat or soft surface",
-    runtimeLabel: "Final runtime pending media verification",
-    mediaKey: null,
   },
   workout_e: {
     label: "Workout E - Pyramid Challenge",
     focus: "Total-Body Muscular Endurance + Conditioning",
-    instructions:
-      "Complete the three up-and-down pyramids, then finish with the rope, glute-bridge, and plank-shoulder-tap circuit. Reduce skips or bodyweight reps when needed and treat the single-leg option as optional.",
-    equipment: "Jump rope; optional mat or soft surface",
-    runtimeLabel: "Final runtime pending media verification",
-    mediaKey: null,
   },
   active_recovery_f: {
     label: "Workout F - Active Recovery",
     focus: "Mobility + Recovery",
-    instructions:
-      "Keep the effort easy enough to speak in full sentences. Easy rope, ghost rope, marching, and walking are equal options. The purpose is light movement and mobility, not another hard training day.",
-    equipment: "Jump rope optional; no gym equipment",
-    runtimeLabel: "Final runtime pending media verification",
-    mediaKey: null,
   },
   rest: {
     label: "Rest Day",
     focus: "Complete recovery",
-    instructions:
-      "No workout is assigned. Take the full recovery day, then complete the day in the app when you are ready to continue.",
-    equipment: "None",
-    runtimeLabel: "No workout",
-    mediaKey: null,
   },
-} as const satisfies Record<
-  AcceleratorAssignmentCode,
-  {
-    label: string;
-    focus: string;
-    instructions: string;
-    equipment: string;
-    runtimeLabel: string;
-    mediaKey: string | null;
-  }
->;
+} as const satisfies Record<AcceleratorAssignmentCode, { label: string; focus: string }>;
 
 export const ACCELERATOR_EQUIPMENT = {
   program: "Jump rope + bodyweight",
@@ -202,17 +157,7 @@ export type AcceleratorProgramSnapshot = {
   programVersion: typeof ACCELERATOR_PROGRAM_VERSION;
   days: AcceleratorDay[];
   weekFocus: Array<{ week: AcceleratorWeek; title: string }>;
-  assignments: Record<
-    AcceleratorAssignmentCode,
-    {
-      label: string;
-      focus: string;
-      instructions: string;
-      equipment: string;
-      runtimeLabel: string;
-      mediaKey: string | null;
-    }
-  >;
+  assignments: Record<AcceleratorAssignmentCode, { label: string; focus: string }>;
   equipment: typeof ACCELERATOR_EQUIPMENT;
   orientation: {
     title: string;
