@@ -683,14 +683,6 @@ BEGIN
   THEN RETURN; END IF;
 
   IF v_enrollment.status = 'completed' THEN
-    -- Saving final results moves the customer beyond the brief Day 28 Undo step.
-    -- Do not reopen a run and leave final-only measurements attached to it.
-    IF EXISTS (
-      SELECT 1 FROM public.customer_measurements measurement
-       WHERE measurement.enrollment_id = p_enrollment_id
-         AND measurement.measurement_context = 'final'
-         AND measurement.status = 'active'
-    ) THEN RETURN; END IF;
     IF EXISTS (SELECT 1 FROM public.paid_program_enrollments other
       WHERE other.customer_id = v_enrollment.customer_id AND other.status = 'active'
         AND other.id <> p_enrollment_id)
@@ -808,63 +800,6 @@ BEGIN
 END;
 $$;
 
--- Starting a run and recording optional setup measurements is one transaction.
--- Any measurement failure raises an exception and rolls back the new run.
-CREATE OR REPLACE FUNCTION public.begin_accelerator_run_atomic(
-  p_customer_id uuid, p_entitlement_id uuid, p_program_version text,
-  p_program_snapshot jsonb, p_customer_time_zone text,
-  p_starting_weight numeric, p_weight_unit text,
-  p_starting_waist numeric, p_waist_unit text
-) RETURNS TABLE(
-  outcome text, enrollment_id uuid, run_number integer,
-  paused_enrollment_id uuid, paused_lead_plan_id uuid
-)
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
-DECLARE
-  v_run record;
-  v_saved integer;
-BEGIN
-  IF (p_starting_weight IS NOT NULL AND (p_starting_weight <= 0 OR p_weight_unit IS NULL OR p_weight_unit NOT IN ('lb', 'kg')))
-    OR (p_starting_weight IS NULL AND p_weight_unit IS NOT NULL)
-    OR (p_starting_waist IS NOT NULL AND (p_starting_waist <= 0 OR p_waist_unit IS NULL OR p_waist_unit NOT IN ('in', 'cm')))
-    OR (p_starting_waist IS NULL AND p_waist_unit IS NOT NULL)
-  THEN RETURN; END IF;
-
-  SELECT * INTO v_run FROM public.start_program_run_atomic(
-    p_customer_id, p_entitlement_id, p_program_version,
-    p_program_snapshot, p_customer_time_zone
-  );
-  IF NOT FOUND OR v_run.outcome <> 'started' THEN
-    IF FOUND THEN
-      RETURN QUERY SELECT v_run.outcome, v_run.enrollment_id, v_run.run_number,
-        v_run.paused_enrollment_id, v_run.paused_lead_plan_id;
-    END IF;
-    RETURN;
-  END IF;
-
-  IF p_starting_weight IS NOT NULL THEN
-    PERFORM * FROM public.add_customer_measurement_atomic(
-      p_customer_id, v_run.enrollment_id, 'weight', p_starting_weight,
-      p_weight_unit, 'starting', NULL, now()
-    );
-    GET DIAGNOSTICS v_saved = ROW_COUNT;
-    IF v_saved <> 1 THEN RAISE EXCEPTION 'Starting weight was not saved'; END IF;
-  END IF;
-
-  IF p_starting_waist IS NOT NULL THEN
-    PERFORM * FROM public.add_customer_measurement_atomic(
-      p_customer_id, v_run.enrollment_id, 'waist', p_starting_waist,
-      p_waist_unit, 'starting', NULL, now()
-    );
-    GET DIAGNOSTICS v_saved = ROW_COUNT;
-    IF v_saved <> 1 THEN RAISE EXCEPTION 'Starting waist was not saved'; END IF;
-  END IF;
-
-  RETURN QUERY SELECT v_run.outcome, v_run.enrollment_id, v_run.run_number,
-    v_run.paused_enrollment_id, v_run.paused_lead_plan_id;
-END;
-$$;
-
 CREATE OR REPLACE FUNCTION public.correct_customer_measurement_atomic(
   p_customer_id uuid, p_measurement_id uuid, p_value numeric, p_unit text,
   p_notes text, p_measured_at timestamptz
@@ -963,12 +898,6 @@ REVOKE ALL ON FUNCTION public.add_customer_measurement_atomic(
 ) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.add_customer_measurement_atomic(
   uuid, uuid, text, numeric, text, text, text, timestamptz
-) TO service_role;
-REVOKE ALL ON FUNCTION public.begin_accelerator_run_atomic(
-  uuid, uuid, text, jsonb, text, numeric, text, numeric, text
-) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.begin_accelerator_run_atomic(
-  uuid, uuid, text, jsonb, text, numeric, text, numeric, text
 ) TO service_role;
 REVOKE ALL ON FUNCTION public.correct_customer_measurement_atomic(
   uuid, uuid, numeric, text, text, timestamptz
