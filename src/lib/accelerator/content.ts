@@ -1,7 +1,4 @@
-export type AcceleratorMediaReadiness =
-  | "ready_for_cloudflare"
-  | "uploaded"
-  | "pending_recording";
+export type AcceleratorMediaReadiness = "ready_for_cloudflare" | "uploaded" | "pending_recording";
 
 export type AcceleratorMediaPlaceholder = {
   readiness: AcceleratorMediaReadiness;
