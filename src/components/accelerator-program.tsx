@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Check, LockKeyhole, Play, RotateCcw, Video } from "lucide-react";
+import { ArrowRight, Check, LockKeyhole, Play, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { AcceleratorCompletion } from "@/components/accelerator-completion";
@@ -20,6 +20,7 @@ import {
 import type { AcceleratorHubData } from "@/lib/accelerator/types";
 import type { CustomerMeasurement } from "@/lib/accelerator/types";
 import { measurementSummary } from "@/lib/accelerator/measurements";
+import { acceleratorVideoSrc } from "@/lib/accelerator/video";
 
 type DisplayDay = AcceleratorDay & { access: AcceleratorDayAccess };
 
@@ -43,15 +44,22 @@ function DayStatusIcon({ access }: { access: AcceleratorDayAccess }) {
   return <Play aria-hidden="true" className="size-3.5" />;
 }
 
+function formatRuntime(runtimeSeconds: number | null | undefined): string {
+  if (!runtimeSeconds) return "Runtime pending";
+  const minutes = Math.floor(runtimeSeconds / 60);
+  const seconds = runtimeSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 function MediaSlot({
   day,
   label,
-  mediaKey,
+  cloudflareStreamUid,
   access,
 }: {
   day: AcceleratorDay;
   label: string;
-  mediaKey: string | null;
+  cloudflareStreamUid: string | null;
   access: AcceleratorDayAccess;
 }) {
   if (day.kind === "rest") {
@@ -75,16 +83,26 @@ function MediaSlot({
     );
   }
 
+  const src = acceleratorVideoSrc(cloudflareStreamUid);
+  if (src) {
+    return (
+      <div className="aspect-video overflow-hidden rounded-lg border border-border bg-muted">
+        <iframe
+          src={src}
+          loading="lazy"
+          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+          allowFullScreen
+          className="h-full w-full border-0"
+          title={`Day ${day.day} - ${label}`}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div
-      className="flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/60 px-6 text-center"
-      data-media-key={mediaKey ?? undefined}
-    >
-      <Video aria-hidden="true" className="size-8 text-muted-foreground" />
-      <p className="mt-3 text-sm font-semibold">{label} video placeholder</p>
-      <p className="mt-1 text-xs text-muted-foreground">
-        {mediaKey ? "Media player connection pending" : "Cloudflare Stream ID pending"}
-      </p>
+    <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/60 px-6 text-center">
+      <p className="text-sm font-semibold">{label}</p>
+      <p className="mt-1 text-xs text-muted-foreground">Cloudflare Stream video pending</p>
     </div>
   );
 }
@@ -189,6 +207,10 @@ export function AcceleratorProgram() {
     : (actionableDay ?? nextDay ?? daysWithAccess.at(-1) ?? null);
   const displayedDays = daysWithAccess.filter((day) => day.week === displayWeek);
   const selectedDetails = selectedDay ? hub.snapshot.assignments[selectedDay.assignment] : null;
+  const selectedContent = selectedDay
+    ? hub.snapshot.assignmentContent[selectedDay.assignment]
+    : null;
+  const selectedRuntime = formatRuntime(selectedContent?.media?.runtimeSeconds);
   const focus = hub.snapshot.weekFocus.find(({ week }) => week === displayWeek)!;
   const hasFinalMeasurement = Boolean(
     hub.measurementSummary.runFinal.weight || hub.measurementSummary.runFinal.waist,
@@ -386,7 +408,7 @@ export function AcceleratorProgram() {
                 <Link to="/my-programs">Open My Programs</Link>
               </Button>
             </section>
-          ) : selectedDay && selectedDetails ? (
+          ) : selectedDay && selectedDetails && selectedContent ? (
             <section aria-labelledby="assignment-title">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
@@ -404,7 +426,7 @@ export function AcceleratorProgram() {
                   </h2>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Week {selectedDay.week} - {selectedDetails.runtimeLabel}
+                  Week {selectedDay.week} - {selectedRuntime}
                 </p>
               </div>
 
@@ -412,7 +434,7 @@ export function AcceleratorProgram() {
                 <MediaSlot
                   day={selectedDay}
                   label={selectedDetails.label}
-                  mediaKey={selectedDetails.mediaKey}
+                  cloudflareStreamUid={selectedContent.media?.cloudflareStreamUid ?? null}
                   access={selectedDay.access}
                 />
               </div>
@@ -428,7 +450,7 @@ export function AcceleratorProgram() {
                   <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
                     Equipment
                   </h3>
-                  <p className="mt-2 text-sm font-semibold">{selectedDetails.equipment}</p>
+                  <p className="mt-2 text-sm font-semibold">{hub.snapshot.equipment.program}</p>
                 </div>
               </div>
 
@@ -437,7 +459,7 @@ export function AcceleratorProgram() {
                   Practical instructions
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {selectedDetails.instructions}
+                  {selectedContent.instructions}
                 </p>
               </div>
 
