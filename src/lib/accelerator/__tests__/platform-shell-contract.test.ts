@@ -44,13 +44,15 @@ describe("authenticated platform shell source contract", () => {
     expect(access).toContain("enrollment is still closed during development");
   });
 
-  it("keeps unfinished provider behavior inactive and visible as placeholders", () => {
+  it("keeps unfinished provider behavior inactive while using the real assignment state", () => {
     const home = readSource("../../../routes/home.tsx");
     const nutrition = readSource("../../../routes/nutrition.tsx");
     const programs = readSource("../../../routes/programs.tsx");
     const notifications = readSource("../../../routes/notifications.tsx");
 
-    expect(home).toContain("Assignment video placeholder");
+    expect(home).toContain("getAcceleratorHub");
+    expect(home).toContain("acceleratorHub.progress.currentDay");
+    expect(home).toContain("acceleratorHub.progress.canCompleteCurrent");
     expect(home).toContain("programs.activeProgram");
     expect(home).toContain('to: "/accelerator"');
     expect(home).toContain('to: "/your-plan"');
