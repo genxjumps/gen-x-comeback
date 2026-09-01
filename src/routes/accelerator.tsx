@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { AcceleratorProgram } from "@/components/accelerator-program";
+import { AcceleratorVideoTracker } from "@/components/accelerator-video-tracker";
 
 export const Route = createFileRoute("/accelerator")({
   head: () => ({
@@ -10,5 +11,14 @@ export const Route = createFileRoute("/accelerator")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: AcceleratorProgram,
+  component: AcceleratorPage,
 });
+
+function AcceleratorPage() {
+  return (
+    <>
+      <AcceleratorVideoTracker />
+      <AcceleratorProgram />
+    </>
+  );
+}
