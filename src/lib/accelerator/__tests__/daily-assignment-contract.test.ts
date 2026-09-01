@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const readSource = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const assignment = readSource("../../../components/accelerator-program.tsx");
+const acceleratorRoute = readSource("../../../routes/accelerator.tsx");
 const content = readSource("../content.ts");
 const functions = readSource("../functions.ts");
 const videoTracker = readSource("../../../components/accelerator-video-tracker.tsx");
@@ -24,9 +25,11 @@ describe("customer-facing Daily Assignment contract", () => {
     expect(content).toContain("b0a32ba5f5f64fb2e8d5829cde007656");
     expect(content).toContain("9b80d965a884486cf5e38b26d1ff671f");
     expect(content).toContain('readiness: "pending_recording"');
-    expect(assignment).toContain("<AcceleratorVideoTracker");
+    expect(acceleratorRoute).toContain("<AcceleratorVideoTracker />");
     expect(assignment).toContain("Cloudflare Stream video pending");
     expect(videoTracker).toContain('addEventListener("play"');
+    expect(videoTracker).toContain('removeEventListener("play"');
+    expect(videoTracker).toContain("observer.disconnect()");
   });
 
   it("supports canonical recovery guidance, rest, completion, brief Undo, and a path Home", () => {
