@@ -214,9 +214,9 @@ export function AcceleratorProgram() {
   );
   const canUndo = Boolean(
     !hasFinalMeasurement &&
-      hub.progress.undoDay &&
-      hub.progress.undoUntil &&
-      Date.parse(hub.progress.undoUntil) > clock,
+    hub.progress.undoDay &&
+    hub.progress.undoUntil &&
+    Date.parse(hub.progress.undoUntil) > clock,
   );
   const returnMessage = missedDayMessage(hub.progress.daysWaiting);
   const latestWeight = hub.measurementSummary.globalLatest.weight;

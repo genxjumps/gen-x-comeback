@@ -5,11 +5,7 @@ import { ArrowRight, Check, Pause, Play, Video } from "lucide-react";
 import { PlatformPage } from "@/components/platform-page";
 import { Button } from "@/components/ui/button";
 import { activateLeadPlan } from "@/lib/accelerator/activate-lead-plan";
-import {
-  getMyPrograms,
-  pauseAccelerator,
-  resumeAccelerator,
-} from "@/lib/accelerator/functions";
+import { getMyPrograms, pauseAccelerator, resumeAccelerator } from "@/lib/accelerator/functions";
 import type { MyProgramsResult } from "@/lib/accelerator/types";
 
 export const Route = createFileRoute("/my-programs")({

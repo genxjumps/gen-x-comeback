@@ -153,9 +153,7 @@ export const beginAcceleratorInputSchema = z.object({
   entitlementId: z.string().uuid(),
   customerTimeZone: z.string().trim().min(1).max(100),
   weight: z.object({ value: z.number().positive(), unit: z.enum(["lb", "kg"]) }).nullable(),
-  waist: z
-    .object({ value: z.number().positive(), unit: z.enum(["in", "cm"]) })
-    .nullable(),
+  waist: z.object({ value: z.number().positive(), unit: z.enum(["in", "cm"]) }).nullable(),
 });
 
 export const programRunActionInputSchema = z.object({ enrollmentId: z.string().uuid() });
