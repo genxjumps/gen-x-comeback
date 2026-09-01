@@ -4,9 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Apple, ChartNoAxesColumnIncreasing, Compass, Dumbbell } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getMyPrograms } from "@/lib/accelerator/functions";
-import { ACCELERATOR_DAYS, ACCELERATOR_ASSIGNMENTS } from "@/lib/accelerator/program";
-import type { MyProgramsResult } from "@/lib/accelerator/types";
+import { getAcceleratorHub, getMyPrograms } from "@/lib/accelerator/functions";
+import type { AcceleratorHubData, MyProgramsResult } from "@/lib/accelerator/types";
 
 export const Route = createFileRoute("/home")({
   head: () => ({
@@ -54,19 +53,36 @@ type DailyAssignmentCard = {
   media: string;
 };
 
+function friendlyDate(value: string | null): string {
+  if (!value) return "the next calendar day";
+  return new Date(`${value}T00:00:00Z`).toLocaleDateString(undefined, {
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
 function PlatformHome() {
   const loadPrograms = useServerFn(getMyPrograms);
+  const loadAccelerator = useServerFn(getAcceleratorHub);
   const [programs, setPrograms] = useState<MyProgramsResult | null>(null);
+  const [acceleratorHub, setAcceleratorHub] = useState<AcceleratorHubData | null>(null);
 
   useEffect(() => {
     let active = true;
-    void loadPrograms({ data: {} })
-      .then((result) => active && setPrograms(result))
-      .catch(() => active && setPrograms({ ok: false }));
+    void Promise.allSettled([loadPrograms({ data: {} }), loadAccelerator({ data: {} })]).then(
+      ([programResult, acceleratorResult]) => {
+        if (!active) return;
+        setPrograms(programResult.status === "fulfilled" ? programResult.value : { ok: false });
+        if (acceleratorResult.status === "fulfilled" && acceleratorResult.value.ok) {
+          setAcceleratorHub(acceleratorResult.value.data);
+        }
+      },
+    );
     return () => {
       active = false;
     };
-  }, [loadPrograms]);
+  }, [loadAccelerator, loadPrograms]);
 
   let dailyAssignment: DailyAssignmentCard = {
     title: "Choose Your Current Program",
@@ -79,19 +95,36 @@ function PlatformHome() {
   if (
     programs?.ok &&
     programs.activeProgram === "accelerator" &&
-    programs.accelerator?.currentRun
+    acceleratorHub?.progress.currentDay
   ) {
-    const nextDayNumber = Math.min(programs.accelerator.currentRun.completedDays + 1, 28);
-    const day = ACCELERATOR_DAYS.find(({ day }) => day === nextDayNumber);
+    const day = acceleratorHub.snapshot.days.find(
+      ({ day }) => day === acceleratorHub.progress.currentDay,
+    );
     if (day) {
+      const assignment = acceleratorHub.snapshot.assignments[day.assignment];
+      const waiting = !acceleratorHub.progress.canCompleteCurrent;
       dailyAssignment = {
-        title: `Day ${day.day}: ${ACCELERATOR_ASSIGNMENTS[day.assignment].label}`,
-        description: `Week ${day.week} of the 28-Day Fat Loss Accelerator. Your place is saved even when life interrupts the schedule.`,
+        title: `Day ${day.day}: ${assignment.label}`,
+        description: waiting
+          ? `You completed today's work. Day ${day.day} opens ${friendlyDate(acceleratorHub.progress.availableOn)}.`
+          : `Week ${day.week} of the 28-Day Fat Loss Accelerator. Your place is saved even when life interrupts the schedule.`,
         to: "/accelerator",
-        button: "Open Daily Assignment",
-        media: day.kind === "rest" ? "Rest-day guidance" : "Assignment video placeholder",
+        button: waiting ? "View Next Assignment" : "Open Daily Assignment",
+        media: day.kind === "rest" ? "Rest-day guidance" : "Current workout video",
       };
     }
+  } else if (
+    programs?.ok &&
+    programs.activeProgram === "accelerator" &&
+    acceleratorHub?.progress.programCompleted
+  ) {
+    dailyAssignment = {
+      title: "28-Day Accelerator Complete",
+      description: "Your completed run and results remain saved in My Programs and Your Progress.",
+      to: "/accelerator",
+      button: "Open Completed Program",
+      media: "Completed program",
+    };
   } else if (programs?.ok && programs.activeProgram === "lead_plan") {
     const plan = programs.leadPlans.find(({ status }) => status === "active");
     if (plan) {
