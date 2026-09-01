@@ -23,14 +23,14 @@ describe("customer-facing Daily Assignment contract", () => {
     expect(content).toContain("bce4346d2ec59177ed09934e26512bb8");
     expect(content).toContain("b0a32ba5f5f64fb2e8d5829cde007656");
     expect(content).toContain("9b80d965a884486cf5e38b26d1ff671f");
-    expect(content).toContain('status: "pending"');
+    expect(content).toContain('readiness: "pending_recording"');
     expect(assignment).toContain("<AcceleratorVideoTracker");
     expect(assignment).toContain("Cloudflare Stream video pending");
     expect(videoTracker).toContain('player.on("play"');
   });
 
   it("supports canonical recovery guidance, rest, completion, brief Undo, and a path Home", () => {
-    expect(content).toContain("Keep the effort easy enough to speak in full sentences");
+    expect(content).toContain("Use the Active Recovery session if it helps");
     expect(assignment).toContain("Take the full recovery day");
     expect(assignment).toContain("Day {justCompletedDay} Complete");
     expect(assignment).toContain('to="/home"');
