@@ -5,7 +5,11 @@ import { ArrowRight, Check, Pause, Play, Video } from "lucide-react";
 import { PlatformPage } from "@/components/platform-page";
 import { Button } from "@/components/ui/button";
 import { activateLeadPlan } from "@/lib/accelerator/activate-lead-plan";
-import { getMyPrograms, pauseAccelerator, resumeAccelerator } from "@/lib/accelerator/functions";
+import {
+  getMyPrograms,
+  pauseAccelerator,
+  resumeAccelerator,
+} from "@/lib/accelerator/functions";
 import type { MyProgramsResult } from "@/lib/accelerator/types";
 
 export const Route = createFileRoute("/my-programs")({
@@ -176,13 +180,25 @@ function MyPrograms() {
                   <div className="mt-4 rounded-md border border-border bg-muted/50 p-4">
                     <p className="text-sm font-semibold">Resume this Accelerator run?</p>
                     <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                      If another structured program is active, it will be paused. Neither program loses progress.
+                      If another structured program is active, it will be paused. Neither program
+                      loses progress.
                     </p>
                     <div className="mt-3 flex gap-2">
-                      <Button type="button" size="sm" disabled={acting} onClick={() => void updateRun("resume")}>
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={acting}
+                        onClick={() => void updateRun("resume")}
+                      >
                         {acting ? "Resuming..." : "Yes, Resume"}
                       </Button>
-                      <Button type="button" size="sm" variant="outline" disabled={acting} onClick={() => setConfirmResume(false)}>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        disabled={acting}
+                        onClick={() => setConfirmResume(false)}
+                      >
                         Cancel
                       </Button>
                     </div>
@@ -197,7 +213,10 @@ function MyPrograms() {
         {result.leadPlans.map((plan) => {
           const needsSwitch = plan.status === "paused" && result.activeProgram !== null;
           return (
-            <section key={plan.leadPlanId} className="rounded-lg border border-border bg-card p-5 sm:p-6">
+            <section
+              key={plan.leadPlanId}
+              className="rounded-lg border border-border bg-card p-5 sm:p-6"
+            >
               <div className="flex items-start gap-4">
                 <div className="grid size-11 shrink-0 place-items-center rounded-md bg-muted">
                   <Video className="size-5 text-muted-foreground" />
@@ -211,7 +230,13 @@ function MyPrograms() {
                     {plan.completedDays} of {plan.totalDays} days complete
                   </p>
                   {needsSwitch ? (
-                    <Button type="button" variant="outline" className="mt-4 w-full sm:w-auto" disabled={acting} onClick={() => setConfirmLeadPlanId(plan.leadPlanId)}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="mt-4 w-full sm:w-auto"
+                      disabled={acting}
+                      onClick={() => setConfirmLeadPlanId(plan.leadPlanId)}
+                    >
                       Switch to 7-Day Plan
                     </Button>
                   ) : (
@@ -223,13 +248,25 @@ function MyPrograms() {
                     <div className="mt-4 rounded-md border border-border bg-muted/50 p-4">
                       <p className="text-sm font-semibold">Switch to your 7-Day Plan?</p>
                       <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        Your current structured program will be paused. Progress in both programs stays saved.
+                        Your current structured program will be paused. Progress in both programs
+                        stays saved.
                       </p>
                       <div className="mt-3 flex gap-2">
-                        <Button type="button" size="sm" disabled={acting} onClick={() => void switchToLeadPlan(plan.leadPlanId)}>
+                        <Button
+                          type="button"
+                          size="sm"
+                          disabled={acting}
+                          onClick={() => void switchToLeadPlan(plan.leadPlanId)}
+                        >
                           {acting ? "Switching..." : "Yes, Switch"}
                         </Button>
-                        <Button type="button" size="sm" variant="outline" disabled={acting} onClick={() => setConfirmLeadPlanId(null)}>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          disabled={acting}
+                          onClick={() => setConfirmLeadPlanId(null)}
+                        >
                           Cancel
                         </Button>
                       </div>
