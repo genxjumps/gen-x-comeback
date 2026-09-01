@@ -26,7 +26,7 @@ describe("customer-facing Daily Assignment contract", () => {
     expect(content).toContain('readiness: "pending_recording"');
     expect(assignment).toContain("<AcceleratorVideoTracker");
     expect(assignment).toContain("Cloudflare Stream video pending");
-    expect(videoTracker).toContain('player.on("play"');
+    expect(videoTracker).toContain('addEventListener("play"');
   });
 
   it("supports canonical recovery guidance, rest, completion, brief Undo, and a path Home", () => {
