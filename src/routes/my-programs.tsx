@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Check, Pause, Play, Video } from "lucide-react";
 import { PlatformPage } from "@/components/platform-page";
 import { Button } from "@/components/ui/button";
+import { activateLeadPlan } from "@/lib/accelerator/activate-lead-plan";
 import { getMyPrograms, pauseAccelerator, resumeAccelerator } from "@/lib/accelerator/functions";
 import type { MyProgramsResult } from "@/lib/accelerator/types";
 
@@ -28,10 +29,14 @@ function MyPrograms() {
   const loadPrograms = useServerFn(getMyPrograms);
   const pauseRun = useServerFn(pauseAccelerator);
   const resumeRun = useServerFn(resumeAccelerator);
+  const activateSevenDay = useServerFn(activateLeadPlan);
+  const navigate = useNavigate();
   const [result, setResult] = useState<MyProgramsResult | null>(null);
   const [confirmResume, setConfirmResume] = useState(false);
+  const [confirmLeadPlanId, setConfirmLeadPlanId] = useState<string | null>(null);
   const [acting, setActing] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+
   useEffect(() => {
     let active = true;
     void loadPrograms({ data: {} })
@@ -64,6 +69,25 @@ function MyPrograms() {
       }
     } catch {
       setActionError("That change couldn’t be saved. Reload My Programs and try again.");
+    } finally {
+      setActing(false);
+    }
+  }
+
+  async function switchToLeadPlan(leadPlanId: string) {
+    if (acting) return;
+    setActing(true);
+    setActionError(null);
+    try {
+      const response = await activateSevenDay({ data: { leadPlanId } });
+      if (!response.ok) {
+        setActionError("That program couldn’t be activated. Reload My Programs and try again.");
+        return;
+      }
+      setConfirmLeadPlanId(null);
+      await navigate({ to: "/your-plan" });
+    } catch {
+      setActionError("That program couldn’t be activated. Reload My Programs and try again.");
     } finally {
       setActing(false);
     }
@@ -152,25 +176,13 @@ function MyPrograms() {
                   <div className="mt-4 rounded-md border border-border bg-muted/50 p-4">
                     <p className="text-sm font-semibold">Resume this Accelerator run?</p>
                     <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                      If another structured program is active, it will be paused. Neither program
-                      loses progress.
+                      If another structured program is active, it will be paused. Neither program loses progress.
                     </p>
                     <div className="mt-3 flex gap-2">
-                      <Button
-                        type="button"
-                        size="sm"
-                        disabled={acting}
-                        onClick={() => void updateRun("resume")}
-                      >
+                      <Button type="button" size="sm" disabled={acting} onClick={() => void updateRun("resume")}>
                         {acting ? "Resuming..." : "Yes, Resume"}
                       </Button>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        disabled={acting}
-                        onClick={() => setConfirmResume(false)}
-                      >
+                      <Button type="button" size="sm" variant="outline" disabled={acting} onClick={() => setConfirmResume(false)}>
                         Cancel
                       </Button>
                     </div>
@@ -182,30 +194,52 @@ function MyPrograms() {
           </section>
         ) : null}
 
-        {result.leadPlans.map((plan) => (
-          <section
-            key={plan.leadPlanId}
-            className="rounded-lg border border-border bg-card p-5 sm:p-6"
-          >
-            <div className="flex items-start gap-4">
-              <div className="grid size-11 shrink-0 place-items-center rounded-md bg-muted">
-                <Video className="size-5 text-muted-foreground" />
+        {result.leadPlans.map((plan) => {
+          const needsSwitch = plan.status === "paused" && result.activeProgram !== null;
+          return (
+            <section key={plan.leadPlanId} className="rounded-lg border border-border bg-card p-5 sm:p-6">
+              <div className="flex items-start gap-4">
+                <div className="grid size-11 shrink-0 place-items-center rounded-md bg-muted">
+                  <Video className="size-5 text-muted-foreground" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
+                    {statusLabels[plan.status]}
+                  </p>
+                  <h2 className="mt-1 text-lg font-semibold">7-Day Comeback Plan</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {plan.completedDays} of {plan.totalDays} days complete
+                  </p>
+                  {needsSwitch ? (
+                    <Button type="button" variant="outline" className="mt-4 w-full sm:w-auto" disabled={acting} onClick={() => setConfirmLeadPlanId(plan.leadPlanId)}>
+                      Switch to 7-Day Plan
+                    </Button>
+                  ) : (
+                    <Button asChild variant="outline" className="mt-4 w-full sm:w-auto">
+                      <Link to="/your-plan">Open Plan</Link>
+                    </Button>
+                  )}
+                  {confirmLeadPlanId === plan.leadPlanId ? (
+                    <div className="mt-4 rounded-md border border-border bg-muted/50 p-4">
+                      <p className="text-sm font-semibold">Switch to your 7-Day Plan?</p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        Your current structured program will be paused. Progress in both programs stays saved.
+                      </p>
+                      <div className="mt-3 flex gap-2">
+                        <Button type="button" size="sm" disabled={acting} onClick={() => void switchToLeadPlan(plan.leadPlanId)}>
+                          {acting ? "Switching..." : "Yes, Switch"}
+                        </Button>
+                        <Button type="button" size="sm" variant="outline" disabled={acting} onClick={() => setConfirmLeadPlanId(null)}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
               </div>
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
-                  {statusLabels[plan.status]}
-                </p>
-                <h2 className="mt-1 text-lg font-semibold">7-Day Comeback Plan</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {plan.completedDays} of {plan.totalDays} days complete
-                </p>
-                <Button asChild variant="outline" className="mt-4 w-full sm:w-auto">
-                  <Link to="/your-plan">Open Plan</Link>
-                </Button>
-              </div>
-            </div>
-          </section>
-        ))}
+            </section>
+          );
+        })}
         {!accelerator && result.leadPlans.length === 0 ? (
           <p className="rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">
             No programs are linked to this account yet.
