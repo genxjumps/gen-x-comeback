@@ -19,14 +19,32 @@ describe("28-Day Accelerator content readiness", () => {
     ]);
   });
 
-  it("marks completed A-E videos ready for Cloudflare without inventing media ids or runtimes", () => {
-    for (const code of ["workout_a", "workout_b", "workout_c", "workout_d", "workout_e"] as const) {
-      expect(ACCELERATOR_ASSIGNMENT_CONTENT[code].media).toEqual({
-        readiness: "ready_for_cloudflare",
-        cloudflareStreamUid: null,
-        runtimeSeconds: null,
-      });
-    }
+  it("stores the verified Cloudflare media for completed Workouts A-E", () => {
+    expect(ACCELERATOR_ASSIGNMENT_CONTENT.workout_a.media).toEqual({
+      readiness: "uploaded",
+      cloudflareStreamUid: "767c2265f63d67fb5dc3b1c5f3a3e44e",
+      runtimeSeconds: 1543,
+    });
+    expect(ACCELERATOR_ASSIGNMENT_CONTENT.workout_b.media).toEqual({
+      readiness: "uploaded",
+      cloudflareStreamUid: "a863bce8634666b5766ff277685b6b83",
+      runtimeSeconds: 1650,
+    });
+    expect(ACCELERATOR_ASSIGNMENT_CONTENT.workout_c.media).toEqual({
+      readiness: "uploaded",
+      cloudflareStreamUid: "bce4346d2ec59177ed09934e26512bb8",
+      runtimeSeconds: 1447,
+    });
+    expect(ACCELERATOR_ASSIGNMENT_CONTENT.workout_d.media).toEqual({
+      readiness: "uploaded",
+      cloudflareStreamUid: "b0a32ba5f5f64fb2e8d5829cde007656",
+      runtimeSeconds: 1584,
+    });
+    expect(ACCELERATOR_ASSIGNMENT_CONTENT.workout_e.media).toEqual({
+      readiness: "uploaded",
+      cloudflareStreamUid: "9b80d965a884486cf5e38b26d1ff671f",
+      runtimeSeconds: 1507,
+    });
   });
 
   it("keeps Workout F and coaching media visibly pending recording", () => {
@@ -49,6 +67,9 @@ describe("28-Day Accelerator content readiness", () => {
     expect(snapshot.orientation.title).toBe(ACCELERATOR_ORIENTATION.title);
     expect(snapshot.weeklyCoaching).toHaveLength(4);
     expect(snapshot.assignmentContent.workout_a.instructions).toContain("Complete Workout A");
+    expect(snapshot.assignmentContent.workout_a.media.cloudflareStreamUid).toBe(
+      "767c2265f63d67fb5dc3b1c5f3a3e44e",
+    );
     expect(snapshot.assignmentContent.active_recovery_f.media?.cloudflareStreamUid).toBeNull();
   });
 });
