@@ -67,7 +67,7 @@ describe("28-Day Accelerator content readiness", () => {
     expect(snapshot.orientation.title).toBe(ACCELERATOR_ORIENTATION.title);
     expect(snapshot.weeklyCoaching).toHaveLength(4);
     expect(snapshot.assignmentContent.workout_a.instructions).toContain("Complete Workout A");
-    expect(snapshot.assignmentContent.workout_a.media.cloudflareStreamUid).toBe(
+    expect(snapshot.assignmentContent.workout_a.media?.cloudflareStreamUid).toBe(
       "767c2265f63d67fb5dc3b1c5f3a3e44e",
     );
     expect(snapshot.assignmentContent.active_recovery_f.media?.cloudflareStreamUid).toBeNull();
