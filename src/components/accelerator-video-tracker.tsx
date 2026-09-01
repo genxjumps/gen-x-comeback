@@ -5,6 +5,7 @@ import { getAcceleratorHub, recordAcceleratorVideoView } from "@/lib/accelerator
 
 type StreamPlayer = {
   addEventListener: (event: "play", handler: () => void) => void;
+  removeEventListener: (event: "play", handler: () => void) => void;
 };
 
 declare global {
@@ -52,12 +53,14 @@ export function AcceleratorVideoTracker() {
 
   useEffect(() => {
     let cancelled = false;
+    let cleanupRef: (() => void) | undefined;
     const wired = new WeakSet<HTMLIFrameElement>();
 
     void (async () => {
       const [hubResult] = await Promise.all([loadHub({ data: {} }), loadStreamSdk()]);
       if (cancelled || !hubResult.ok || !window.Stream) return;
       const enrollmentId = hubResult.data.enrollmentId;
+      const playerCleanups = new Set<() => void>();
 
       const wirePlayers = () => {
         const iframes = document.querySelectorAll<HTMLIFrameElement>(
@@ -67,11 +70,11 @@ export function AcceleratorVideoTracker() {
           if (wired.has(iframe)) continue;
           const identity = videoIdentity(iframe);
           if (!identity) continue;
-          wired.add(iframe);
           const player = window.Stream?.(iframe);
           if (!player) continue;
+          wired.add(iframe);
           let recorded = false;
-          player.addEventListener("play", () => {
+          const handlePlay = () => {
             if (recorded) return;
             recorded = true;
             void recordView({
@@ -83,21 +86,28 @@ export function AcceleratorVideoTracker() {
             }).catch(() => {
               recorded = false;
             });
-          });
+          };
+          player.addEventListener("play", handlePlay);
+          playerCleanups.add(() => player.removeEventListener("play", handlePlay));
         }
       };
 
       wirePlayers();
       const observer = new MutationObserver(wirePlayers);
       observer.observe(document.body, { childList: true, subtree: true });
-      if (cancelled) observer.disconnect();
-      else return () => observer.disconnect();
-    })().then((cleanup) => {
-      if (cancelled) cleanup?.();
-      else if (cleanup) cleanupRef = cleanup;
-    }).catch(() => undefined);
 
-    let cleanupRef: (() => void) | undefined;
+      return () => {
+        observer.disconnect();
+        for (const cleanup of playerCleanups) cleanup();
+        playerCleanups.clear();
+      };
+    })()
+      .then((cleanup) => {
+        if (cancelled) cleanup?.();
+        else cleanupRef = cleanup;
+      })
+      .catch(() => undefined);
+
     return () => {
       cancelled = true;
       cleanupRef?.();
