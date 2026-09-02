@@ -70,6 +70,13 @@ export const Route = createFileRoute("/return")({
         const destination = result.platformAuthTokenHash
           ? `${result.destination}#gxj_auth=${encodeURIComponent(result.platformAuthTokenHash)}`
           : result.destination;
+        const sessionCookie = `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`;
+
+        // Register the session cookie through TanStack Start's response pipeline
+        // as well as the raw Response header. The framework-native path ensures
+        // deployment adapters preserve the auth cookie across the 303 handoff.
+        const { setResponseHeader } = await import("@tanstack/react-start/server");
+        setResponseHeader("Set-Cookie", sessionCookie);
 
         // 303 to a clean path plus an optional URL fragment. The opaque return
         // token is gone before the app loads, and the Supabase token hash in the
@@ -80,7 +87,7 @@ export const Route = createFileRoute("/return")({
             location: destination,
             "cache-control": "no-store",
             "referrer-policy": "no-referrer",
-            "set-cookie": `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`,
+            "set-cookie": sessionCookie,
           },
         });
       },
