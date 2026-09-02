@@ -150,14 +150,20 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
 
   let platformAuthTokenHash: string | null = null;
   try {
-    const { data: authLink, error: authLinkError } = await supabaseAdmin.auth.admin.generateLink({
-      type: "magiclink",
-      email: lead.email_original,
-    });
-    if (authLinkError) {
-      console.error("[Auth] Could not create the member-session handoff.", authLinkError);
-    } else {
-      platformAuthTokenHash = authLink.properties.hashed_token || null;
+    // Some deterministic unit tests intentionally provide only the database
+    // surface of the admin client. Treat an absent Auth mock the same way as an
+    // unavailable bridge instead of turning those tests into false error logs.
+    const authAdmin = supabaseAdmin.auth?.admin;
+    if (authAdmin) {
+      const { data: authLink, error: authLinkError } = await authAdmin.generateLink({
+        type: "magiclink",
+        email: lead.email_original,
+      });
+      if (authLinkError) {
+        console.error("[Auth] Could not create the member-session handoff.", authLinkError);
+      } else {
+        platformAuthTokenHash = authLink.properties.hashed_token || null;
+      }
     }
   } catch (authError) {
     console.error("[Auth] Could not create the member-session handoff.", authError);
