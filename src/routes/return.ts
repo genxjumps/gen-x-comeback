@@ -25,6 +25,19 @@ function escapeAttr(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 }
 
+async function recordReturnCookieIssueProbe(source: string): Promise<void> {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("canonical_events").insert({
+      event_name: "return_cookie_issue_probe",
+      source,
+      occurred_at: new Date().toISOString(),
+    });
+  } catch {
+    // Diagnostic logging must never affect recovery.
+  }
+}
+
 /** One generic response for invalid, expired, revoked, malformed, and replaced tokens. */
 function genericRecovery(): Response {
   return shell(
@@ -37,9 +50,6 @@ function genericRecovery(): Response {
 export const Route = createFileRoute("/return")({
   server: {
     handlers: {
-      // A raw GET, prefetch, email-security scan, or provider click reaches only
-      // this. Nothing is verified here and nothing submits on its own: the
-      // visitor must deliberately press the button.
       GET: async ({ request }) => {
         const token = new URL(request.url).searchParams.get("token") ?? "";
         return shell(
@@ -53,7 +63,6 @@ export const Route = createFileRoute("/return")({
       },
 
       POST: async ({ request }) => {
-        // Best-effort throttle so an exchange endpoint cannot be brute forced.
         const { callerBucketKey, consumeRateLimit } = await import("@/lib/email/rate-limit.server");
         const allowed = await consumeRateLimit(callerBucketKey("return_post", request), 300, 20);
         if (!allowed.allowed) return genericRecovery();
@@ -72,10 +81,6 @@ export const Route = createFileRoute("/return")({
           : result.destination;
         const serializedCookie = `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`;
 
-        // Register the cookie through TanStack Start's response context so the
-        // hosting adapter preserves it across the redirect. The raw header stays
-        // on the Response as a compatibility fallback for direct handler tests
-        // and runtimes that pass it through unchanged.
         try {
           const { setCookie } = await import("@tanstack/react-start/server");
           setCookie(RETURN_SESSION_COOKIE, result.sessionToken, {
@@ -85,13 +90,13 @@ export const Route = createFileRoute("/return")({
             httpOnly: true,
             sameSite: "lax",
           });
+          await recordReturnCookieIssueProbe("tanstack_set_cookie_ok");
         } catch {
-          // Direct unit tests may invoke this handler without a Start request context.
+          await recordReturnCookieIssueProbe("tanstack_set_cookie_failed");
         }
 
-        // 303 to a clean path plus an optional URL fragment. The opaque return
-        // token is gone before the app loads, and the Supabase token hash in the
-        // fragment is never sent to this server or included in HTTP referrers.
+        await recordReturnCookieIssueProbe("raw_set_cookie_header_added");
+
         return new Response(null, {
           status: 303,
           headers: {
