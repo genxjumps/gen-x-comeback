@@ -10,7 +10,9 @@ const startSource = readFileSync(fileURLToPath(new URL("../../start.ts", import.
 
 describe("fail-soft browser auth middleware contract", () => {
   it("is the global server-function middleware", () => {
-    expect(startSource).toContain('import { attachSupabaseAuthSafely } from "@/lib/safe-supabase-auth-attacher"');
+    expect(startSource).toContain(
+      'import { attachSupabaseAuthSafely } from "@/lib/safe-supabase-auth-attacher"',
+    );
     expect(startSource).toContain("functionMiddleware: [attachSupabaseAuthSafely]");
   });
 
@@ -22,6 +24,8 @@ describe("fail-soft browser auth middleware contract", () => {
   it("continues to next when browser Supabase auth throws", () => {
     expect(middlewareSource).toContain("catch (error)");
     expect(middlewareSource).toContain("return next({");
-    expect(middlewareSource).toContain("headers: token ? { Authorization: `Bearer ${token}` } : {}");
+    expect(middlewareSource).toContain(
+      "headers: token ? { Authorization: `Bearer ${token}` } : {}",
+    );
   });
 });
