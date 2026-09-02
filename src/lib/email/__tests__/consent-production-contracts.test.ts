@@ -130,7 +130,7 @@ describe("Recovery production RPC contract", () => {
     process.env = { ...original };
   });
 
-  it("routes a real Recovery request through the single authoritative consent RPC", async () => {
+  it("routes Recovery through the authoritative consent RPC before waking the production scheduler", async () => {
     const handler = await routeHandler("@/routes/recover", "POST");
     const body = new FormData();
     body.set("email", "  Reader@Example.COM ");
@@ -141,10 +141,12 @@ describe("Recovery production RPC contract", () => {
     });
     expect(response.status).toBe(200);
 
-    // Exactly one production RPC, with the one normalized identity.
-    expect(rpcCalls).toHaveLength(1);
+    // Recovery remains authoritative for consent/queueing, then the existing
+    // production scheduler is woken. The scheduler receives no identity input.
+    expect(rpcCalls).toHaveLength(2);
     expect(rpcCalls[0]!.fn).toBe("request_plan_recovery");
     expect(rpcCalls[0]!.args["p_email_normalized"]).toBe("reader@example.com");
+    expect(rpcCalls[1]!.fn).toBe("invoke_email_dispatch_scheduler");
 
     // The route itself never writes consent columns: the RPC is authoritative.
     expect(tableWrites).toHaveLength(0);
