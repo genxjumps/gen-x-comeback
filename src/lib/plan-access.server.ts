@@ -39,7 +39,11 @@ export async function currentCookieHeader(): Promise<string | null> {
     const header = getRequestHeader("cookie") ?? null;
     const returnCookie = readCookie(header, RETURN_SESSION_COOKIE);
     await recordReturnCookieProbe(
-      !header ? "cookie_header_absent" : returnCookie ? "return_cookie_present" : "return_cookie_absent",
+      !header
+        ? "cookie_header_absent"
+        : returnCookie
+          ? "return_cookie_present"
+          : "return_cookie_absent",
     );
     return header;
   } catch {
