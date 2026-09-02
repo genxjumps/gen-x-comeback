@@ -14,14 +14,25 @@ import {
 } from "@/lib/email/link-exchange-event";
 
 export type ExchangeResult =
-  | { ok: true; sessionToken: string; expiresAt: Date; destination: ReturnDestination }
+  | {
+      ok: true;
+      sessionToken: string;
+      expiresAt: Date;
+      destination: ReturnDestination;
+      platformAuthTokenHash: string | null;
+    }
   | { ok: false };
 
 /**
- * Verifies an opaque return token, refreshes the authorized session, records
- * verification/engagement, and returns the new session token plus the trusted
- * closed destination derived from the token's originating email job.
- * Invalid, expired, revoked, malformed, and replaced tokens all return `{ ok: false }`.
+ * Verifies an opaque return token, refreshes the authorized 7-Day session,
+ * records verification/engagement, and creates a one-time Supabase magic-link
+ * token hash for the same verified email so the browser can establish the
+ * unified member session used by Home / My Programs / Accelerator.
+ *
+ * The platform bridge is best-effort. If Supabase Auth cannot generate the
+ * handoff token, the already-valid 7-Day secure-link flow still succeeds.
+ * Invalid, expired, revoked, malformed, and replaced return tokens all return
+ * `{ ok: false }` before any auth handoff is attempted.
  */
 export async function exchangeReturnToken(rawToken: string | null): Promise<ExchangeResult> {
   if (!rawToken || !RAW_TOKEN_RE.test(rawToken)) return { ok: false };
@@ -48,7 +59,7 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
 
   const { data: leads, error: leadError } = await supabaseAdmin
     .from("lead_plans")
-    .select("id, plan_version_id, email_verified_at")
+    .select("id, plan_version_id, email_verified_at, email_original")
     .eq("id", token.lead_plan_id)
     .limit(1);
   if (leadError) throw new Error(leadError.message);
@@ -137,5 +148,20 @@ export async function exchangeReturnToken(rawToken: string | null): Promise<Exch
     },
   ]);
 
-  return { ok: true, sessionToken, expiresAt, destination };
+  let platformAuthTokenHash: string | null = null;
+  try {
+    const { data: authLink, error: authLinkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: "magiclink",
+      email: lead.email_original,
+    });
+    if (authLinkError) {
+      console.error("[Auth] Could not create the member-session handoff.", authLinkError);
+    } else {
+      platformAuthTokenHash = authLink.properties.hashed_token || null;
+    }
+  } catch (authError) {
+    console.error("[Auth] Could not create the member-session handoff.", authError);
+  }
+
+  return { ok: true, sessionToken, expiresAt, destination, platformAuthTokenHash };
 }
