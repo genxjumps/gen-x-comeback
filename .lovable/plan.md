@@ -1,45 +1,49 @@
-# release/v1.1 preview review — Accelerator member experience
+# Production Recovery Handoff: Root Cause Found (investigation only)
 
-Preview commit reviewed: `c700af7b` (`release/v1.1`). No code, settings, data, or migrations were changed.
+## Verdict
 
-## What could not be reviewed, and exactly why
+The cookie work is fine. The failure is earlier and entirely client-side: **the published production bundle was built without the client Supabase environment variables**, so the global `functionMiddleware` client hook throws before any server-function request is sent. `getPlanHub` is never called, so `authorize()` never runs and `return_cookie_probe` is never written.
 
-The Lovable browser session reports `signed_out`, and `src/components/platform-access-boundary.tsx` gates every member route on a Supabase session. `/home`, `/my-programs`, `/accelerator`, `/progress`, `/nutrition`, `/programs`, `/notifications` and `/my-programs/accelerator/runs` all render the "Private Access" wall instead of content. So the following were **not** visually verified and nothing about them is asserted below: live Workout A–E Cloudflare playback, real Daily Assignment day states, saved measurements, completion/repeat-run behavior, and 7-Day ↔ Accelerator switching. The only reviewable member-facing surface was the internal `/preview/accelerator` mock plus source reading.
+## Hard evidence
 
-## Blockers
+Fetched the live bundle from `https://app.genxjumps.com/assets/index-6C1Job3W.js` (linked from `/your-plan`). The compiled Supabase client factory reads:
 
-1. **`/my-programs/accelerator/setup` crashes with HTTP 500 when `entitlement` is absent.** Verified: no search param returns 500 with the raw Zod payload (`"path": ["entitlement"], "message": "Required"`) in the error page; adding a UUID returns 200. Bookmarking, refreshing after a redirect, or arriving from history hard-crashes the first screen of a paid program and leaks validation internals. Needs a graceful redirect to `/my-programs` instead of a thrown search-validation error.
-2. **Access-denied is a dead end.** The platform boundary screen offers no link or action — no recover link, no way back to a public entry. A member whose session lapses on mobile has nothing to tap, which will read as "my purchase is gone." The 7-Day denial screen does provide actions, so the two paths are inconsistent.
-3. **The only unauthenticated review surface misrepresents the program.** `/preview/accelerator` shows "Cloudflare Stream ID pending" and "Runtime pending" for the daily workout, while `src/lib/accelerator/content.ts` carries real UIDs and runtimes for Workouts A–E. Anyone reviewing (or a member who reaches that route) sees a program that looks unbuilt. It also prints internal copy — "Final video-by-video audit is still required before launch" — which must not be visible in a member-facing route.
+```text
+function jl(){ let e={}.SUPABASE_URL, t={}.SUPABASE_PUBLISHABLE_KEY;
+  if(!e||!t){ ... throw Error("Missing Supabase environment variable(s): ...") } ... }
+```
 
-## Important fixes
+Interpretation of that exact output:
 
-4. **Placeholder media at the paid first impression.** Orientation ("Welcome From Todd"), the four weekly coaching videos, and Active Recovery F have no Cloudflare UID, so the setup screen's largest element is an empty dashed box directly above "Begin Day 1", and each week shows a coaching-video placeholder. Day 1 setup is the moment that must feel finished.
-5. **Empty tabs sit in the primary 5-tab nav.** Nutrition is an explicit placeholder ("Nutrition guidance placeholder / No unapproved target formula is active"), Explore says enrollment is closed, Notifications says nothing has been activated. Three of six taps in the mobile bar lead to nothing. Either hide them for V1.1 or make the empty states state a clear "coming with" promise.
-6. **Nav orientation is lost on Accelerator sub-routes.** `isActivePath` in `platform-shell.tsx` only special-cases `/accelerator`. On `/my-programs/accelerator/setup` and `/my-programs/accelerator/runs`, no tab is highlighted at all, so on mobile the member has no indication of where they are.
-7. **Home does not reflect paused state.** Home's fallback card is generic ("Choose Your Current Program" → Open My Programs) and never mentions that an owned Accelerator run exists but is paused. A member who paused yesterday sees a home screen implying they own nothing in progress, contradicting My Programs.
-8. **Home hero media area is a labelled empty box.** A full `aspect-video` dashed panel captioned with text like the current workout or rest-day guidance takes the top third of the mobile viewport and reads as a broken player rather than a deliberate summary.
-9. **Undo window is invisible until it fails.** Measurement correction/removal only reports "The Undo window has ended" after the member taps. The remaining window should be visible while it is open.
-10. **Locked future days show full instructions with locked media.** The assignment preview presents the workout detail while stating the video unlocks later, which is a mixed message about whether the day is available.
-11. **Duplicate navigation landmark names.** Three regions share `aria-label="Main navigation"` (desktop nav, mobile bar, and one more), so screen-reader landmark navigation cannot distinguish them.
+- Source is `import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL`.
+- Vite statically replaced `import.meta.env.VITE_SUPABASE_URL` and `..._PUBLISHABLE_KEY` with `undefined` (they were absent at production build time), leaving only the `{}.SUPABASE_URL` fallback, which is always `undefined` in the browser.
+- Therefore both checks fail and the factory **always throws** in production.
+- Corroborating: no `https://<ref>.supabase.co` string exists anywhere in the production bundle, and no publishable key literal is inlined — only the generic `sb_publishable_` prefix test. A correctly built bundle would contain both literals.
 
-## Polish
+The local workspace `.env` does contain `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`, which is why preview behaves differently from production.
 
-12. Preview harness controls (six screen buttons plus five state buttons) wrap into ragged rows at 390px and are plain buttons with no selected semantics (`aria-pressed`/tablist).
-13. Typography is inconsistent: hyphens used as dashes ("Weight - lb", "Run 1 - 12 of 28 days complete") alongside proper en dashes and curly apostrophes elsewhere; straight vs curly apostrophes mix across Home and My Programs.
-14. Mobile label mismatch: bottom tab says "Programs" while the page title says "My Programs".
-15. Measurement inputs are `type="number"` without `inputMode="decimal"`, so mobile keyboards and scroll-wheel behavior are not ideal for weight/waist entry.
-16. "View Detailed History" in the preview implies a separate page while Progress uses an inline collapsible.
+## Exact failure point
 
-## Suggested next checkpoint scope (for approval, not yet implemented)
+1. `src/integrations/supabase/client.ts` exports `supabase` as a lazy `Proxy`; the client is constructed on the **first property access**, and construction throws when the env vars are missing.
+2. `src/start.ts` registers `functionMiddleware: [attachSupabaseAuth]` globally — it applies to every server function, including unauthenticated ones like `getPlanHub`.
+3. `src/integrations/supabase/auth-attacher.ts` client hook does `await supabase.auth.getSession()` → first property access → constructor throws → middleware rejects **before** `next()`.
+4. Because the client middleware throws, no HTTP request to the serverFn endpoint is ever made.
+5. `src/routes/your-plan.index.tsx` wraps the call in `try/catch` and sets `status = "denied"` on any throw → `AccessDenied` renders.
+6. Server side is never entered → zero `return_cookie_probe` rows, while `/return` (a plain server route, no client middleware, no `supabase` browser client) still succeeds and logs `tanstack_set_cookie_ok` / `raw_set_cookie_header_added`.
 
-- Fix (1) with a search-validation fallback redirect and a route-level error component; fix (2) by giving the access wall a recover/entry action.
-- Remove internal audit copy and pending-media wording from `/preview/accelerator`, or make it read from `content.ts`.
-- Nav active-path mapping for Accelerator sub-routes; Home paused-run state; unique nav landmark labels; `inputMode` on measurement inputs.
-- Decide separately (product call) on hiding Nutrition/Explore/Notifications and on the remaining unrecorded videos.
+This explains every observed symptom simultaneously, including the asymmetry between `/return` working and `/your-plan` failing. `PlatformAccessBoundary` and `auth-session-bootstrap` would fail identically on production for the same reason.
 
-## Technical notes
+## Ruled out / lower probability
 
-- Crash source: `validateSearch: z.object({ entitlement: z.string().uuid() })` in `src/routes/my-programs.accelerator.setup.tsx` throws during SSR when the param is missing; `__root.tsx` `errorComponent` renders the raw message.
-- Gating source: `platform-access-boundary.tsx` via `supabase.auth.getSession()` + `onAuthStateChange`.
-- Video wiring: `src/lib/accelerator/content.ts` (A–E `uploaded`, orientation/weekly/F `pending_recording`), `src/lib/accelerator/video.ts`, `src/components/accelerator-video-tracker.tsx`.
+- Cookie transport: `/return` logged both cookie writes; the read path was never reached, so it cannot be the cause of zero probes.
+- CSRF (`src/start.ts` `createCsrfMiddleware`): that is a **server** `requestMiddleware`. A CSRF rejection would still produce a request and, being a serverFn rejection before the handler, would also produce no probe — but it cannot explain the absent Supabase literals in the bundle, and `APP_ORIGIN` is already reported as `https://app.genxjumps.com`. Secondary suspect only.
+- Server env (`SUPABASE_URL`, service role): server-side admin writes from `/return` succeeded, so server binding is healthy.
+- Auth storage / `brokeredPreviewStorage`: never reached; construction throws first.
+
+## Published-build question
+
+`https://app.genxjumps.com/` and `/your-plan` return HTTP 200 with `x-deployment-id: psr2.63d4b7ac-ec53-4a69-83fc-710d8ad3eb8d...`. Deployment IDs are opaque and cannot be mapped to a Git commit from outside, so I cannot prove which commit is live. What is provable is that whatever build is live was compiled **without** `VITE_SUPABASE_URL` / `VITE_SUPABASE_PUBLISHABLE_KEY`, which is a build/environment defect rather than a source-code defect.
+
+## Recommended next step (not executed)
+
+Confirm the production build environment supplies `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`, then republish and re-check the bundle for an inlined `supabase.co` URL. A hardening option, separately reviewable: make `attachSupabaseAuth` fail-soft (catch and continue without an `Authorization` header) so a missing browser client can never block unauthenticated server functions. No code, config, or deployment changes were made in this turn.
