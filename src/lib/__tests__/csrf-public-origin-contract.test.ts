@@ -2,10 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-const source = readFileSync(
-  fileURLToPath(new URL("../../start.ts", import.meta.url)),
-  "utf8",
-);
+const source = readFileSync(fileURLToPath(new URL("../../start.ts", import.meta.url)), "utf8");
 
 describe("server-function CSRF public-origin contract", () => {
   it("keeps server-function CSRF filtering enabled", () => {
