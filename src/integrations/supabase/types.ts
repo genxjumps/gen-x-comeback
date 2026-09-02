@@ -91,6 +91,55 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_active_programs: {
+        Row: {
+          activated_at: string
+          customer_id: string
+          lead_plan_id: string | null
+          paid_enrollment_id: string | null
+          program_kind: string
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string
+          customer_id: string
+          lead_plan_id?: string | null
+          paid_enrollment_id?: string | null
+          program_kind: string
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string
+          customer_id?: string
+          lead_plan_id?: string | null
+          paid_enrollment_id?: string | null
+          program_kind?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_active_programs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: true
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_active_programs_lead_plan_id_fkey"
+            columns: ["lead_plan_id"]
+            isOneToOne: true
+            referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_active_programs_paid_enrollment_id_fkey"
+            columns: ["paid_enrollment_id"]
+            isOneToOne: true
+            referencedRelation: "paid_program_enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customer_lead_plan_links: {
         Row: {
           customer_id: string
@@ -123,6 +172,116 @@ export type Database = {
             columns: ["lead_plan_id"]
             isOneToOne: true
             referencedRelation: "lead_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_measurement_revisions: {
+        Row: {
+          action: string
+          id: string
+          measured_at: string
+          measurement_id: string
+          notes: string | null
+          recorded_at: string
+          revision: number
+          unit: string
+          value: number
+        }
+        Insert: {
+          action: string
+          id?: string
+          measured_at: string
+          measurement_id: string
+          notes?: string | null
+          recorded_at?: string
+          revision: number
+          unit: string
+          value: number
+        }
+        Update: {
+          action?: string
+          id?: string
+          measured_at?: string
+          measurement_id?: string
+          notes?: string | null
+          recorded_at?: string
+          revision?: number
+          unit?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_measurement_revisions_measurement_id_fkey"
+            columns: ["measurement_id"]
+            isOneToOne: false
+            referencedRelation: "customer_measurements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_measurements: {
+        Row: {
+          created_at: string
+          customer_id: string
+          enrollment_id: string | null
+          id: string
+          measured_at: string
+          measurement_context: string
+          measurement_kind: string
+          notes: string | null
+          removed_at: string | null
+          revision: number
+          status: string
+          unit: string
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          enrollment_id?: string | null
+          id?: string
+          measured_at?: string
+          measurement_context: string
+          measurement_kind: string
+          notes?: string | null
+          removed_at?: string | null
+          revision?: number
+          status?: string
+          unit: string
+          updated_at?: string
+          value: number
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          enrollment_id?: string | null
+          id?: string
+          measured_at?: string
+          measurement_context?: string
+          measurement_kind?: string
+          notes?: string | null
+          removed_at?: string | null
+          revision?: number
+          status?: string
+          unit?: string
+          updated_at?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_measurements_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_measurements_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "paid_program_enrollments"
             referencedColumns: ["id"]
           },
         ]
@@ -819,6 +978,270 @@ export type Database = {
           },
         ]
       }
+      paid_product_entitlements: {
+        Row: {
+          created_at: string
+          customer_id: string
+          granted_at: string
+          id: string
+          product_code: string
+          purchase_id: string
+          revoked_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          granted_at: string
+          id?: string
+          product_code: string
+          purchase_id: string
+          revoked_at?: string | null
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          granted_at?: string
+          id?: string
+          product_code?: string
+          purchase_id?: string
+          revoked_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paid_product_entitlements_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "paid_product_entitlements_purchase_id_fkey"
+            columns: ["purchase_id"]
+            isOneToOne: false
+            referencedRelation: "paid_purchases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      paid_program_day_completions: {
+        Row: {
+          completed_at: string
+          created_at: string
+          day_number: number
+          enrollment_id: string
+          id: string
+          program_version: string
+          undo_until: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          day_number: number
+          enrollment_id: string
+          id?: string
+          program_version: string
+          undo_until?: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          day_number?: number
+          enrollment_id?: string
+          id?: string
+          program_version?: string
+          undo_until?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paid_program_day_completions_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "paid_program_enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      paid_program_enrollments: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          customer_id: string
+          customer_time_zone: string
+          entitlement_id: string
+          id: string
+          paused_at: string | null
+          product_code: string
+          program_snapshot: Json
+          program_version: string
+          revoked_at: string | null
+          run_number: number
+          started_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          customer_id: string
+          customer_time_zone: string
+          entitlement_id: string
+          id?: string
+          paused_at?: string | null
+          product_code: string
+          program_snapshot: Json
+          program_version: string
+          revoked_at?: string | null
+          run_number: number
+          started_at: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          customer_id?: string
+          customer_time_zone?: string
+          entitlement_id?: string
+          id?: string
+          paused_at?: string | null
+          product_code?: string
+          program_snapshot?: Json
+          program_version?: string
+          revoked_at?: string | null
+          run_number?: number
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paid_program_enrollments_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "paid_program_enrollments_entitlement_id_fkey"
+            columns: ["entitlement_id"]
+            isOneToOne: false
+            referencedRelation: "paid_product_entitlements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      paid_program_video_views: {
+        Row: {
+          created_at: string
+          day_number: number
+          enrollment_id: string
+          first_viewed_at: string
+          id: string
+          last_viewed_at: string
+          media_key: string
+          program_version: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          created_at?: string
+          day_number: number
+          enrollment_id: string
+          first_viewed_at?: string
+          id?: string
+          last_viewed_at?: string
+          media_key: string
+          program_version: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          created_at?: string
+          day_number?: number
+          enrollment_id?: string
+          first_viewed_at?: string
+          id?: string
+          last_viewed_at?: string
+          media_key?: string
+          program_version?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paid_program_video_views_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "paid_program_enrollments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      paid_purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          customer_id: string
+          id: string
+          idempotency_key: string
+          product_code: string
+          purchase_source: string
+          purchased_at: string
+          refund_request_deadline_at: string
+          request_fingerprint: string
+          source_reference: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency: string
+          customer_id: string
+          id?: string
+          idempotency_key: string
+          product_code: string
+          purchase_source: string
+          purchased_at: string
+          refund_request_deadline_at: string
+          request_fingerprint: string
+          source_reference: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          customer_id?: string
+          id?: string
+          idempotency_key?: string
+          product_code?: string
+          purchase_source?: string
+          purchased_at?: string
+          refund_request_deadline_at?: string
+          request_fingerprint?: string
+          source_reference?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paid_purchases_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plan_access_sessions: {
         Row: {
           created_at: string
@@ -1035,6 +1458,60 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accelerator_progress_state: {
+        Args: { p_enrollment_id: string; p_program_version: string }
+        Returns: {
+          available_on: string
+          can_complete_current: boolean
+          completed_days: number[]
+          current_day: number
+          program_completed: boolean
+          undo_day: number
+          undo_until: string
+        }[]
+      }
+      activate_lead_plan_atomic: {
+        Args: { p_customer_id: string; p_lead_plan_id: string }
+        Returns: {
+          lead_plan_id: string
+          outcome: string
+          paused_enrollment_id: string
+        }[]
+      }
+      add_customer_measurement_atomic: {
+        Args: {
+          p_customer_id: string
+          p_enrollment_id: string
+          p_measured_at: string
+          p_measurement_context: string
+          p_measurement_kind: string
+          p_notes: string
+          p_unit: string
+          p_value: number
+        }
+        Returns: {
+          created_at: string
+          customer_id: string
+          enrollment_id: string | null
+          id: string
+          measured_at: string
+          measurement_context: string
+          measurement_kind: string
+          notes: string | null
+          removed_at: string | null
+          revision: number
+          status: string
+          unit: string
+          updated_at: string
+          value: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "customer_measurements"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       admit_genuine_email_plans: { Args: never; Returns: boolean }
       apply_email_delivery_event: {
         Args: {
@@ -1052,6 +1529,26 @@ export type Database = {
           p_secret_sha256: string
         }
         Returns: string
+      }
+      begin_accelerator_run_atomic: {
+        Args: {
+          p_customer_id: string
+          p_customer_time_zone: string
+          p_entitlement_id: string
+          p_program_snapshot: Json
+          p_program_version: string
+          p_starting_waist: number
+          p_starting_weight: number
+          p_waist_unit: string
+          p_weight_unit: string
+        }
+        Returns: {
+          enrollment_id: string
+          outcome: string
+          paused_enrollment_id: string
+          paused_lead_plan_id: string
+          run_number: number
+        }[]
       }
       begin_marketing_sync_attempt: {
         Args: {
@@ -1265,6 +1762,23 @@ export type Database = {
           source: string
         }[]
       }
+      complete_accelerator_day_atomic: {
+        Args: {
+          p_day_number: number
+          p_enrollment_id: string
+          p_program_version: string
+        }
+        Returns: {
+          available_on: string
+          can_complete_current: boolean
+          completed_days: number[]
+          current_day: number
+          newly_completed: boolean
+          program_completed: boolean
+          undo_day: number
+          undo_until: string
+        }[]
+      }
       complete_plan_day_atomic: {
         Args: {
           p_day_number: number
@@ -1296,6 +1810,38 @@ export type Database = {
       consume_rate_limit: {
         Args: { p_bucket: string; p_limit: number; p_window_seconds: number }
         Returns: boolean
+      }
+      correct_customer_measurement_atomic: {
+        Args: {
+          p_customer_id: string
+          p_measured_at: string
+          p_measurement_id: string
+          p_notes: string
+          p_unit: string
+          p_value: number
+        }
+        Returns: {
+          created_at: string
+          customer_id: string
+          enrollment_id: string | null
+          id: string
+          measured_at: string
+          measurement_context: string
+          measurement_kind: string
+          notes: string | null
+          removed_at: string | null
+          revision: number
+          status: string
+          unit: string
+          updated_at: string
+          value: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "customer_measurements"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       count_production_eligible_email_jobs: { Args: never; Returns: number }
       create_email_production_cron: { Args: never; Returns: number }
@@ -1353,9 +1899,81 @@ export type Database = {
         }[]
       }
       pause_email_production_cron: { Args: never; Returns: boolean }
+      pause_program_run_atomic: {
+        Args: { p_customer_id: string; p_enrollment_id: string }
+        Returns: {
+          completed_at: string | null
+          created_at: string
+          customer_id: string
+          customer_time_zone: string
+          entitlement_id: string
+          id: string
+          paused_at: string | null
+          product_code: string
+          program_snapshot: Json
+          program_version: string
+          revoked_at: string | null
+          run_number: number
+          started_at: string
+          status: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "paid_program_enrollments"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      provision_accelerator_ownership: {
+        Args: {
+          p_amount_cents: number
+          p_currency: string
+          p_customer_id: string
+          p_idempotency_key: string
+          p_product_code: string
+          p_purchase_source: string
+          p_purchased_at: string
+          p_request_fingerprint: string
+          p_source_reference: string
+        }
+        Returns: {
+          customer_id: string
+          entitlement_id: string
+          outcome: string
+          purchase_id: string
+          replayed: boolean
+        }[]
+      }
       raise_stale_email_job_alerts: {
         Args: { p_cutoff: string; p_job_type: string }
         Returns: number
+      }
+      record_accelerator_video_view_atomic: {
+        Args: {
+          p_day_number: number
+          p_enrollment_id: string
+          p_media_key: string
+          p_program_version: string
+        }
+        Returns: {
+          created_at: string
+          day_number: number
+          enrollment_id: string
+          first_viewed_at: string
+          id: string
+          last_viewed_at: string
+          media_key: string
+          program_version: string
+          updated_at: string
+          view_count: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "paid_program_video_views"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       record_email_scheduler_auth_attempt: {
         Args: {
@@ -1364,6 +1982,13 @@ export type Database = {
           p_result: string
         }
         Returns: undefined
+      }
+      remove_customer_measurement_atomic: {
+        Args: { p_customer_id: string; p_measurement_id: string }
+        Returns: {
+          measurement_id: string
+          removed: boolean
+        }[]
       }
       request_plan_recovery: {
         Args: { p_email_normalized: string; p_request_id: string }
@@ -1385,6 +2010,15 @@ export type Database = {
           replayed: boolean
         }[]
       }
+      resume_program_run_atomic: {
+        Args: { p_customer_id: string; p_enrollment_id: string }
+        Returns: {
+          enrollment_id: string
+          outcome: string
+          paused_enrollment_id: string
+          paused_lead_plan_id: string
+        }[]
+      }
       set_email_production_controlled_plan: {
         Args: { p_lead_plan_id: string }
         Returns: boolean
@@ -1392,6 +2026,39 @@ export type Database = {
       set_plan_email_consent: {
         Args: { p_active: boolean; p_lead_plan_id: string; p_source: string }
         Returns: boolean
+      }
+      start_program_run_atomic: {
+        Args: {
+          p_customer_id: string
+          p_customer_time_zone: string
+          p_entitlement_id: string
+          p_program_snapshot: Json
+          p_program_version: string
+        }
+        Returns: {
+          enrollment_id: string
+          outcome: string
+          paused_enrollment_id: string
+          paused_lead_plan_id: string
+          run_number: number
+        }[]
+      }
+      undo_accelerator_day_atomic: {
+        Args: {
+          p_day_number: number
+          p_enrollment_id: string
+          p_program_version: string
+        }
+        Returns: {
+          available_on: string
+          can_complete_current: boolean
+          completed_days: number[]
+          current_day: number
+          program_completed: boolean
+          undo_day: number
+          undo_until: string
+          undone: boolean
+        }[]
       }
     }
     Enums: {
