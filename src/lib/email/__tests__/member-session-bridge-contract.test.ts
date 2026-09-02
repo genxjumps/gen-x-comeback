@@ -39,7 +39,10 @@ describe("verified secure-link member-session bridge", () => {
     expect(bootstrap).toContain('PLATFORM_AUTH_FRAGMENT_KEY = "gxj_auth"');
     expect(bootstrap).toContain("window.history.replaceState");
     expect(bootstrap).toContain("supabase.auth");
-    expect(bootstrap).toContain('.verifyOtp({ token_hash: tokenHash, type: "magiclink" })');
+    // Supabase token-hash email verification uses the `email` OTP type even
+    // though the admin handoff is generated as a magic link.
+    expect(bootstrap).toContain('.verifyOtp({ token_hash: tokenHash, type: "email" })');
+    expect(bootstrap).not.toContain('type: "magiclink" })');
     expect(bootstrap.indexOf("window.history.replaceState")).toBeLessThan(
       bootstrap.indexOf(".verifyOtp("),
     );
