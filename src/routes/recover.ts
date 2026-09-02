@@ -57,15 +57,16 @@ function genericAcknowledgement(): Response {
 }
 
 /**
- * Narrowest structural view of the service-role client used here. The RPC is
- * invoked as a method on the client object so the SDK keeps its own receiver
- * context; the generated Supabase types are protected and do not describe this
- * function, so only this local shape is asserted.
+ * Narrowest structural view of the service-role client used here. Calls remain
+ * methods on the client so the SDK keeps its receiver context.
  */
 type RecoveryRpcClient = {
   rpc(
     fn: "request_plan_recovery",
     args: { p_email_normalized: string; p_request_id: string },
+  ): PromiseLike<{ error: { code?: string | null } | null }>;
+  rpc(
+    fn: "invoke_email_dispatch_scheduler",
   ): PromiseLike<{ error: { code?: string | null } | null }>;
 };
 
@@ -146,6 +147,24 @@ export const Route = createFileRoute("/recover")({
           if (error) {
             // Server-only, redacted: stable classification and sanitized code only.
             console.error(`recovery_rpc_error code=${sanitizeErrorCode(error.code)}`);
+          } else {
+            // Wake the existing authenticated production worker immediately.
+            // This RPC uses the scheduler secret from Supabase Vault and the same
+            // production gates, activation boundary, consent/suppression checks,
+            // provider-volume fence, idempotency, and retry path as the normal
+            // five-minute cron. It intentionally runs for both matched and unknown
+            // addresses because request_plan_recovery returns no match signal.
+            // If the wake fails, the queued job remains durable for the cron.
+            try {
+              const { error: wakeError } = await client.rpc("invoke_email_dispatch_scheduler");
+              if (wakeError) {
+                console.error(
+                  `recovery_dispatch_wake_error code=${sanitizeErrorCode(wakeError.code)}`,
+                );
+              }
+            } catch {
+              console.error("recovery_dispatch_wake_exception");
+            }
           }
         } catch {
           // An infrastructure failure must not change the visible response.
