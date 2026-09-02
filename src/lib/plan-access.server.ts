@@ -22,9 +22,8 @@ export function readCookie(cookieHeader: string | null, name: string): string | 
 /** Best-effort read of the incoming request's cookie header inside a server handler. */
 export async function currentCookieHeader(): Promise<string | null> {
   try {
-    const mod = await import("@tanstack/react-start/server");
-    const request = (mod as { getRequest?: () => Request }).getRequest?.();
-    return request?.headers.get("cookie") ?? null;
+    const { getRequestHeader } = await import("@tanstack/react-start/server");
+    return getRequestHeader("cookie") ?? null;
   } catch {
     return null;
   }
