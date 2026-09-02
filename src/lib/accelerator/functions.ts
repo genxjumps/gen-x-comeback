@@ -27,6 +27,7 @@ import type {
   ProgramRunActionResult,
 } from "@/lib/accelerator/types";
 import { latestMeasurementPair, measurementSummary } from "@/lib/accelerator/measurements";
+import { nullableRpcArg } from "@/lib/supabase/nullable-rpc-arg";
 import { daysWaitingFromAvailableOn } from "@/lib/accelerator/daily-assignment";
 
 async function authorize() {
@@ -253,10 +254,10 @@ export const beginAccelerator = createServerFn({ method: "POST" })
       p_program_version: snapshot.programVersion,
       p_program_snapshot: snapshot,
       p_customer_time_zone: data.customerTimeZone,
-      p_starting_weight: data.weight?.value ?? null,
-      p_weight_unit: data.weight?.unit ?? null,
-      p_starting_waist: data.waist?.value ?? null,
-      p_waist_unit: data.waist?.unit ?? null,
+      p_starting_weight: nullableRpcArg(data.weight?.value ?? null),
+      p_weight_unit: nullableRpcArg(data.weight?.unit ?? null),
+      p_starting_waist: nullableRpcArg(data.waist?.value ?? null),
+      p_waist_unit: nullableRpcArg(data.waist?.unit ?? null),
     });
     if (error || !rows?.[0] || rows[0].outcome !== "started" || !rows[0].enrollment_id) {
       return { ok: false, reason: "rejected" };
@@ -439,7 +440,7 @@ export const addAcceleratorMeasurement = createServerFn({ method: "POST" })
       p_value: data.value,
       p_unit: data.unit,
       p_measurement_context: data.context,
-      p_notes: data.notes,
+      p_notes: nullableRpcArg(data.notes),
       p_measured_at: data.measuredAt,
     });
     if (error) throw new Error(error.message);
@@ -459,7 +460,7 @@ export const correctCustomerMeasurement = createServerFn({ method: "POST" })
       p_measurement_id: data.measurementId,
       p_value: data.value,
       p_unit: data.unit,
-      p_notes: data.notes,
+      p_notes: nullableRpcArg(data.notes),
       p_measured_at: data.measuredAt,
     });
     if (error) throw new Error(error.message);

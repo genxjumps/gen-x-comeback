@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 
 import type { CustomerAccountResult } from "@/lib/account/types";
+import { nullableRpcArg } from "@/lib/supabase/nullable-rpc-arg";
 
 export type VerifiedCustomerIdentity = {
   authUserId: string;
@@ -70,7 +71,7 @@ export async function resolveCustomerAccount(
     p_email_normalized: identity.emailNormalized,
     p_email_original: identity.emailOriginal,
     p_email_verified_at: identity.emailVerifiedAt,
-    p_first_name: identity.firstName,
+    p_first_name: nullableRpcArg(identity.firstName),
   });
   if (error) throw new Error(error.message);
   const row = rows?.[0];
