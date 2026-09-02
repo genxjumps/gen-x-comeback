@@ -8,7 +8,7 @@ describe("verified secure-link member-session bridge", () => {
     const exchange = readSource("../return-exchange.server.ts");
 
     expect(exchange).toContain('select("id, plan_version_id, email_verified_at, email_original")');
-    expect(exchange).toContain("supabaseAdmin.auth.admin.generateLink");
+    expect(exchange).toContain("authAdmin.generateLink");
     expect(exchange).toContain('type: "magiclink"');
     expect(exchange).toContain("email: lead.email_original");
     expect(exchange).toContain("authLink.properties.hashed_token");
@@ -16,7 +16,7 @@ describe("verified secure-link member-session bridge", () => {
 
     // The auth handoff stays after the existing return-session and verification
     // writes so rejected/replaced tokens cannot mint a platform login.
-    expect(exchange.indexOf("supabaseAdmin.auth.admin.generateLink")).toBeGreaterThan(
+    expect(exchange.indexOf("authAdmin.generateLink")).toBeGreaterThan(
       exchange.indexOf('event_name: "return_session_started"'),
     );
   });
@@ -39,7 +39,7 @@ describe("verified secure-link member-session bridge", () => {
     expect(bootstrap).toContain('PLATFORM_AUTH_FRAGMENT_KEY = "gxj_auth"');
     expect(bootstrap).toContain("window.history.replaceState");
     expect(bootstrap).toContain("supabase.auth");
-    expect(bootstrap).toContain(".verifyOtp({ token_hash: tokenHash, type: \"magiclink\" })");
+    expect(bootstrap).toContain('.verifyOtp({ token_hash: tokenHash, type: "magiclink" })');
     expect(bootstrap.indexOf("window.history.replaceState")).toBeLessThan(
       bootstrap.indexOf(".verifyOtp("),
     );
