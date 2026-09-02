@@ -50,14 +50,14 @@ Every row below must work without the user understanding sessions, cookies, brow
 | Laptop           | Phone                                          | No session                            | Plan opens and phone gains access                         |
 | Phone            | Laptop                                         | No session                            | Plan opens and laptop gains access                        |
 | Laptop browser A | Laptop browser B                               | No session in B                       | Plan opens and B gains independent access                 |
-| Laptop           | Phone                                          | Laptop already recovered              | Phone also gains access; laptop remains valid              |
-| Phone            | Laptop                                         | Phone already recovered               | Laptop also gains access; phone remains valid              |
+| Laptop           | Phone                                          | Laptop already recovered              | Phone also gains access; laptop remains valid             |
+| Phone            | Laptop                                         | Phone already recovered               | Laptop also gains access; phone remains valid             |
 | Any              | Same link used a second time                   | Existing session                      | Link still works while valid and creates/refreshes access |
 | Any              | Older valid email after newer recovery request | Existing/new session                  | Older valid email still works                             |
 | Any              | Newer recovery email                           | Older valid session on another device | New link works; older session remains valid               |
-| Any              | Two tabs nearly simultaneously                | No session                            | Both settle into the same accessible plan state           |
-| Any              | Already authenticated member                  | Existing platform session             | Recovery does not strand or downgrade the member          |
-| Any              | Expired link                                   | Any                                   | Access denied safely; user can request a new link          |
+| Any              | Two tabs nearly simultaneously                 | No session                            | Both settle into the same accessible plan state           |
+| Any              | Already authenticated member                   | Existing platform session             | Recovery does not strand or downgrade the member          |
+| Any              | Expired link                                   | Any                                   | Access denied safely; user can request a new link         |
 | Any              | Revoked link                                   | Any                                   | Access denied safely                                      |
 | Any              | Link for replaced plan version                 | Any                                   | Old plan is not restored; access denied safely            |
 
