@@ -1,6 +1,6 @@
 // Scanner-safe /return handler.
 // GET renders a static page and verifies nothing. Only a deliberate POST
-// exchange verifies the token, creates the session, and redirects.
+// exchange verifies the token, creates the sessions, and redirects.
 import { createFileRoute } from "@tanstack/react-router";
 import { RETURN_SESSION_COOKIE } from "@/lib/email/types";
 import { renderStaticPage } from "@/lib/static-page";
@@ -67,12 +67,17 @@ export const Route = createFileRoute("/return")({
         if (!result.ok) return genericRecovery();
 
         const maxAge = Math.max(0, Math.floor((result.expiresAt.getTime() - Date.now()) / 1000));
-        // 303 to a clean URL so the bearer token is gone before the app loads.
-        // Destination is the trusted closed value from the exchange, never input.
+        const destination = result.platformAuthTokenHash
+          ? `${result.destination}#gxj_auth=${encodeURIComponent(result.platformAuthTokenHash)}`
+          : result.destination;
+
+        // 303 to a clean path plus an optional URL fragment. The opaque return
+        // token is gone before the app loads, and the Supabase token hash in the
+        // fragment is never sent to this server or included in HTTP referrers.
         return new Response(null, {
           status: 303,
           headers: {
-            location: result.destination,
+            location: destination,
             "cache-control": "no-store",
             "referrer-policy": "no-referrer",
             "set-cookie": `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`,
