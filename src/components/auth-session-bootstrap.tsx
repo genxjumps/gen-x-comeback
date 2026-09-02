@@ -31,7 +31,7 @@ export function AuthSessionBootstrap() {
 
     let active = true;
     void supabase.auth
-      .verifyOtp({ token_hash: tokenHash, type: "magiclink" })
+      .verifyOtp({ token_hash: tokenHash, type: "email" })
       .then(({ error }) => {
         if (error && active) {
           console.error("[Auth] Could not establish the Gen X Jumps member session.", error);
