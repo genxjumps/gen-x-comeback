@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import { AuthSessionBootstrap } from "@/components/auth-session-bootstrap";
 import { Button } from "@/components/ui/button";
 import { PlatformAccessBoundary } from "@/components/platform-access-boundary";
 import { PlatformShell } from "@/components/platform-shell";
@@ -140,6 +141,7 @@ function RootComponent() {
   if (inPlatform) {
     return (
       <QueryClientProvider client={queryClient}>
+        <AuthSessionBootstrap />
         <PlatformAccessBoundary>
           <PlatformShell>
             <Outlet />
@@ -151,6 +153,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthSessionBootstrap />
       <div className="flex min-h-screen flex-col bg-background text-foreground">
         <header className="border-b border-border">
           <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-5 py-4">
