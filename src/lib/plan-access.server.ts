@@ -19,12 +19,31 @@ export function readCookie(cookieHeader: string | null, name: string): string | 
   return null;
 }
 
+async function recordReturnCookieProbe(source: string): Promise<void> {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("canonical_events").insert({
+      event_name: "return_cookie_probe",
+      source,
+      occurred_at: new Date().toISOString(),
+    });
+  } catch {
+    // Diagnostic logging must never affect plan access.
+  }
+}
+
 /** Reads the incoming request's cookie header inside a TanStack Start server handler. */
 export async function currentCookieHeader(): Promise<string | null> {
   try {
     const { getRequestHeader } = await import("@tanstack/react-start/server");
-    return getRequestHeader("cookie") ?? null;
+    const header = getRequestHeader("cookie") ?? null;
+    const returnCookie = readCookie(header, RETURN_SESSION_COOKIE);
+    await recordReturnCookieProbe(
+      !header ? "cookie_header_absent" : returnCookie ? "return_cookie_present" : "return_cookie_absent",
+    );
+    return header;
   } catch {
+    await recordReturnCookieProbe("cookie_reader_failed");
     return null;
   }
 }
@@ -58,7 +77,6 @@ export async function resolvePlanAccess(
       }
     }
 
-    // Legacy same-browser access predating plan_access_sessions.
     const { data: legacy, error: legacyError } = await supabaseAdmin
       .from("lead_plans")
       .select("id, plan_version_id, first_name")
@@ -77,32 +95,43 @@ export async function resolvePlanAccess(
   }
 
   const sessionToken = readCookie(cookieHeader, RETURN_SESSION_COOKIE);
-  if (sessionToken && RAW_TOKEN_RE.test(sessionToken)) {
-    const sessionHash = await hashAccessToken(sessionToken);
-    const nowIso = new Date().toISOString();
-    const { data: rows, error } = await supabaseAdmin
-      .from("return_link_sessions")
-      .select("lead_plan_id, plan_version_id, expires_at")
-      .eq("session_token_hash", sessionHash)
-      .is("revoked_at", null)
-      .gt("expires_at", nowIso)
-      .limit(1);
-    if (error) throw new Error(error.message);
-    const row = rows?.[0];
-    if (row) {
-      const lead = await loadLead(row.lead_plan_id);
-      // A replaced plan version invalidates the session.
-      if (lead && lead.planVersionId === row.plan_version_id) {
-        await supabaseAdmin
-          .from("return_link_sessions")
-          .update({ last_seen_at: nowIso })
-          .eq("session_token_hash", sessionHash);
-        return { ...lead, via: "return_session" };
-      }
-    }
+  if (!sessionToken) {
+    await recordReturnCookieProbe("resolver_cookie_missing");
+    return null;
+  }
+  if (!RAW_TOKEN_RE.test(sessionToken)) {
+    await recordReturnCookieProbe("resolver_cookie_malformed");
+    return null;
   }
 
-  return null;
+  const sessionHash = await hashAccessToken(sessionToken);
+  const nowIso = new Date().toISOString();
+  const { data: rows, error } = await supabaseAdmin
+    .from("return_link_sessions")
+    .select("lead_plan_id, plan_version_id, expires_at")
+    .eq("session_token_hash", sessionHash)
+    .is("revoked_at", null)
+    .gt("expires_at", nowIso)
+    .limit(1);
+  if (error) throw new Error(error.message);
+  const row = rows?.[0];
+  if (!row) {
+    await recordReturnCookieProbe("resolver_cookie_unmatched");
+    return null;
+  }
+
+  const lead = await loadLead(row.lead_plan_id);
+  if (!lead || lead.planVersionId !== row.plan_version_id) {
+    await recordReturnCookieProbe("resolver_cookie_plan_mismatch");
+    return null;
+  }
+
+  await supabaseAdmin
+    .from("return_link_sessions")
+    .update({ last_seen_at: nowIso })
+    .eq("session_token_hash", sessionHash);
+  await recordReturnCookieProbe("resolver_cookie_matched");
+  return { ...lead, via: "return_session" };
 }
 
 async function loadLead(
