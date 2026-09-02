@@ -70,6 +70,24 @@ export const Route = createFileRoute("/return")({
         const destination = result.platformAuthTokenHash
           ? `${result.destination}#gxj_auth=${encodeURIComponent(result.platformAuthTokenHash)}`
           : result.destination;
+        const serializedCookie = `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`;
+
+        // Register the cookie through TanStack Start's response context so the
+        // hosting adapter preserves it across the redirect. The raw header stays
+        // on the Response as a compatibility fallback for direct handler tests
+        // and runtimes that pass it through unchanged.
+        try {
+          const { setCookie } = await import("@tanstack/react-start/server");
+          setCookie(RETURN_SESSION_COOKIE, result.sessionToken, {
+            path: "/",
+            maxAge,
+            secure: true,
+            httpOnly: true,
+            sameSite: "lax",
+          });
+        } catch {
+          // Direct unit tests may invoke this handler without a Start request context.
+        }
 
         // 303 to a clean path plus an optional URL fragment. The opaque return
         // token is gone before the app loads, and the Supabase token hash in the
@@ -80,7 +98,7 @@ export const Route = createFileRoute("/return")({
             location: destination,
             "cache-control": "no-store",
             "referrer-policy": "no-referrer",
-            "set-cookie": `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`,
+            "set-cookie": serializedCookie,
           },
         });
       },
