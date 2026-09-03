@@ -9,15 +9,17 @@ Record the evidence for every production publish. Use `not applicable` with a re
 - [ ] Complete PR Quality Gate is green.
 - [ ] Base branch, exact PR head SHA, changed files, and mergeability were rechecked before merge.
 - [ ] Independent post-merge Quality Gate is green on the release SHA.
+- [ ] `release:preflight` returned `ready-to-publish` immediately before the publish.
 
 ## Source and deployment identity
 
 - [ ] Lovable `latest_commit_sha` exactly matches the green GitHub release SHA.
-- [ ] Publish was triggered once from that exact synced state.
+- [ ] Publish was triggered exactly once through the authenticated Lovable MCP publisher from that exact synced state.
 - [ ] Deployment ID and production JavaScript bundle filename were recorded.
-- [ ] `bun run release:fingerprint` was run against the exact GitHub release tree.
-- [ ] `/api/public/release` reports that exact source fingerprint with `cache-control: no-store`.
-- [ ] The endpoint's `commit` matches the release SHA when available, or is recorded as `null` for a builder without trustworthy Git metadata.
+- [ ] Lovable `latest_commit_sha` was read again immediately after the publish.
+- [ ] `release:verify-production` returned `production-verified` for the accepted deployment ID.
+- [ ] The verifier proved `/api/public/release` reports the exact source fingerprint with `cache-control: no-store`.
+- [ ] The verifier proved the endpoint's `commit` matches the release SHA when available, or recorded fingerprint-only proof for a builder without trustworthy Git metadata.
 
 ## Database and generated files
 
@@ -41,5 +43,5 @@ Record the evidence for every production publish. Use `not applicable` with a re
 - [ ] Changed customer path passes its smallest meaningful end-to-end smoke test.
 - [ ] Recovery/auth changes pass the clean-browser and cross-device contract.
 - [ ] Database writes, email submissions, and other side effects were limited to approved test records.
-- [ ] Release SHA, source fingerprint, deployment ID, schema state, configuration state, smoke-test result, and any follow-up were recorded.
+- [ ] Preflight JSON, production-verification JSON, schema state, configuration state, smoke-test result, and any follow-up were recorded.
 - [ ] Last known-good release and forward-rollback procedure are identified.
