@@ -32,6 +32,8 @@ A release is complete only when the approved code, Lovable source, running produ
 
 Database migration development, history repair, staging application, and production application follow `docs/DATABASE-MIGRATION-PROCESS.md`. An application deploy must not silently apply or repair database history.
 
+Environment separation, staging parity, promotion evidence, and rollback readiness follow `docs/STAGING-AND-ROLLBACK.md`.
+
 ## Controlled publisher
 
 Lovable's deploy operation accepts a project ID, not a Git commit SHA. The release path therefore
