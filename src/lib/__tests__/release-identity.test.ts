@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-import { resolveReleaseSha } from "../../../scripts/release-identity";
+import { resolveReleaseSha, summarizeReleaseEnvironment } from "../../../scripts/release-identity";
 
 const routeSource = readFileSync(
   fileURLToPath(new URL("../../routes/api/public/release.ts", import.meta.url)),
@@ -39,6 +39,19 @@ describe("release identity", () => {
     );
   });
 
+  it("reports only safe release-metadata variable names and SHA shape", () => {
+    expect(
+      summarizeReleaseEnvironment({
+        GITHUB_SHA: gitSha,
+        LOVABLE_COMMIT_SHA: "short",
+        GITLAB_TOKEN: environmentSha,
+        ORDINARY_SETTING: "present",
+        "UNSAFE-NAME-SHA": environmentSha,
+      }),
+    ).toBe("GITHUB_SHA:full-sha, LOVABLE_COMMIT_SHA:not-full-sha");
+    expect(summarizeReleaseEnvironment({ ORDINARY_SETTING: "present" })).toBe("none");
+  });
+
   it("injects the commit into a public no-store release endpoint", () => {
     expect(viteSource).toContain("__GXJ_RELEASE_SHA__: JSON.stringify(releaseSha)");
     expect(routeSource).toContain('createFileRoute("/api/public/release")');
@@ -49,5 +62,6 @@ describe("release identity", () => {
   it("refuses production builds without a verified release SHA", () => {
     expect(buildGuardSource).toContain("releaseSha = resolveReleaseSha()");
     expect(buildGuardSource).toContain("A verified Git release SHA is unavailable");
+    expect(buildGuardSource).toContain("Release metadata variable probe (names and shape only)");
   });
 });

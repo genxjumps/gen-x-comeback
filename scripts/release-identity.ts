@@ -1,6 +1,9 @@
 import { execFileSync } from "node:child_process";
 
 const fullGitSha = /^[0-9a-f]{40}$/i;
+const safeEnvironmentName = /^[A-Z0-9_]{1,80}$/;
+const releaseMetadataName = /(GIT|COMMIT|SHA|REVISION|SOURCE_VERSION)/;
+const sensitiveEnvironmentName = /(AUTH|CREDENTIAL|KEY|PASSWORD|SECRET|TOKEN)/;
 const releaseEnvironmentNames = [
   "GITHUB_SHA",
   "LOVABLE_GIT_COMMIT_SHA",
@@ -10,6 +13,23 @@ const releaseEnvironmentNames = [
 
 type ReleaseEnvironment = Readonly<Record<string, string | undefined>>;
 type GitHeadReader = () => string;
+
+export function summarizeReleaseEnvironment(environment: ReleaseEnvironment = process.env): string {
+  const candidates = Object.entries(environment)
+    .filter(
+      ([name]) =>
+        safeEnvironmentName.test(name) &&
+        releaseMetadataName.test(name) &&
+        !sensitiveEnvironmentName.test(name),
+    )
+    .map(([name, value]) => {
+      const status = fullGitSha.test(value?.trim() ?? "") ? "full-sha" : "not-full-sha";
+      return `${name}:${status}`;
+    })
+    .sort();
+
+  return candidates.length > 0 ? candidates.join(", ") : "none";
+}
 
 function readGitHead(): string {
   return execFileSync("git", ["rev-parse", "HEAD"], {
