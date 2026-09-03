@@ -36,6 +36,8 @@ Because the product is still pre-launch, controlled V1.1 development may use the
 - Do not treat real personal/customer data as test fixtures.
 - Do not commit secrets or local `.env` files.
 - Keep schema changes in version-controlled, forward-only migrations.
+- Never edit, delete, rename, or reorder a migration recorded in `supabase/migration-lock.json`. Add a strictly newer migration, then run `bun run migration:lock`.
+- Migration-history reconciliation and schema application are separate controlled operations. Follow `docs/DATABASE-MIGRATION-PROCESS.md`; never hide them inside an application deploy.
 - Regenerate and review TypeScript database types when schema changes require it.
 - Keep payment-provider test mode and real-money mode explicitly separated when Stripe is added.
 - Keep outbound email test behavior bounded so development does not accidentally message unintended recipients.

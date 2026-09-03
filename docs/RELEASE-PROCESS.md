@@ -6,6 +6,7 @@ GitHub `release/v1.1` is the source of truth for production code. Lovable is the
 
 1. Create an isolated branch from the current `release/v1.1` head.
 2. After changing any build input, run `bun run release:manifest`, then open a PR into `release/v1.1`.
+   If the checkpoint adds a migration, run `bun run migration:lock` first. Existing locked migrations may never be changed or removed.
 3. Do not merge unless the full Quality Gate is green.
 4. Recheck the base branch, exact PR head SHA, changed-file list, and mergeability immediately before merging.
 5. Merge only the exact verified PR head.
@@ -28,6 +29,8 @@ GitHub `release/v1.1` is the source of truth for production code. Lovable is the
 10. Record the verifier's JSON evidence and run the release-specific production smoke tests in `docs/RELEASE-CHECKLIST.md`.
 
 A release is complete only when the approved code, Lovable source, running production identity, schema/configuration state, and smoke-test evidence agree.
+
+Database migration development, history repair, staging application, and production application follow `docs/DATABASE-MIGRATION-PROCESS.md`. An application deploy must not silently apply or repair database history.
 
 ## Controlled publisher
 

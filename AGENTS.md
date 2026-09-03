@@ -24,6 +24,8 @@
 - Production publication uses the authenticated Lovable MCP publisher only after `bun run release:preflight` succeeds. Do not publish through the Lovable dashboard.
 - The app is still pre-launch. The current Lovable/Supabase backend is the development backend until real external users, live payments, or a public launch begin.
 - Development may use the current backend with controlled test data. Never use destructive cleanup as a substitute for forward migrations.
+- Existing files and entries locked by `supabase/migration-lock.json` are immutable. Database changes use strictly newer, forward-only migration files and must pass `bun run migration:check`.
+- Do not apply migration SQL, repair Supabase migration history, or change a linked project without a fresh read-only comparison and explicit approval at the production action boundary. Follow `docs/DATABASE-MIGRATION-PROCESS.md`.
 - Never commit server-only secrets or local override files. The tracked root `.env` is a narrow exception required by Lovable Cloud and may contain only browser-public `VITE_SUPABASE_*` configuration. Keep private values in the backend secret store.
 - Before the first real-user/public release, establish and document the production boundary and decide whether a separate staging backend is warranted by the release risk.
 - Do not force-push, rebase, amend, or squash commits that have already been pushed to a Lovable-synced branch.
