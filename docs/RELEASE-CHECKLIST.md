@@ -2,6 +2,14 @@
 
 Record the evidence for every production publish. Use `not applicable` with a reason rather than silently skipping a control.
 
+## Environment boundary
+
+- [ ] The release is classified as controlled pre-launch validation or genuine-customer production.
+- [ ] Controlled pre-launch validation still blocks genuine-plan email admission, real payments, and unintended customer records.
+- [ ] A genuine-customer production release has passed the separate staging gate in `docs/STAGING-AND-ROLLBACK.md`.
+- [ ] Staging exercised the same hosting adapter, HTTPS cookie/redirect behavior, auth flow, schema migrations, and affected external integrations as production.
+- [ ] The exact staged release SHA and migration-lock state match the production candidate.
+
 ## Approved code
 
 - [ ] Isolated branch and PR target `release/v1.1`.
@@ -50,3 +58,4 @@ Record the evidence for every production publish. Use `not applicable` with a re
 - [ ] Database writes, email submissions, and other side effects were limited to approved test records.
 - [ ] Preflight JSON, production-verification JSON, schema state, configuration state, smoke-test result, and any follow-up were recorded.
 - [ ] Last known-good release and forward-rollback procedure are identified.
+- [ ] The release evidence names the operational gate that can stop external side effects during rollback.
