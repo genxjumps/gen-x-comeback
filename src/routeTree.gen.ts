@@ -32,6 +32,7 @@ import { Route as AssessmentCompleteRouteImport } from './routes/assessment.comp
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
 import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs.accelerator.setup'
 import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs.accelerator.runs'
+import { Route as ApiPublicReleaseRouteImport } from './routes/api/public/release'
 import { Route as ApiPublicEmailWebhookRouteImport } from './routes/api/public/email/webhook'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 
@@ -152,6 +153,11 @@ const MyProgramsAcceleratorRunsRoute =
     path: '/accelerator/runs',
     getParentRoute: () => MyProgramsRoute,
   } as any)
+const ApiPublicReleaseRoute = ApiPublicReleaseRouteImport.update({
+  id: '/api/public/release',
+  path: '/api/public/release',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEmailWebhookRoute = ApiPublicEmailWebhookRouteImport.update({
   id: '/api/public/email/webhook',
   path: '/api/public/email/webhook',
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/start/7-day': typeof Start7DayRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
+  '/api/public/release': typeof ApiPublicReleaseRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/start/7-day': typeof Start7DayRoute
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
+  '/api/public/release': typeof ApiPublicReleaseRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/start/7-day': typeof Start7DayRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
+  '/api/public/release': typeof ApiPublicReleaseRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
@@ -268,6 +277,7 @@ export interface FileRouteTypes {
     | '/start/7-day'
     | '/assessment/'
     | '/your-plan/'
+    | '/api/public/release'
     | '/my-programs/accelerator/runs'
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/start/7-day'
     | '/assessment'
     | '/your-plan'
+    | '/api/public/release'
     | '/my-programs/accelerator/runs'
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/start/7-day'
     | '/assessment/'
     | '/your-plan/'
+    | '/api/public/release'
     | '/my-programs/accelerator/runs'
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
@@ -350,6 +362,7 @@ export interface RootRouteChildren {
   Start7DayRoute: typeof Start7DayRoute
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
+  ApiPublicReleaseRoute: typeof ApiPublicReleaseRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
   ApiPublicEmailWebhookRoute: typeof ApiPublicEmailWebhookRoute
@@ -518,6 +531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyProgramsAcceleratorRunsRouteImport
       parentRoute: typeof MyProgramsRoute
     }
+    '/api/public/release': {
+      id: '/api/public/release'
+      path: '/api/public/release'
+      fullPath: '/api/public/release'
+      preLoaderRoute: typeof ApiPublicReleaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/email/webhook': {
       id: '/api/public/email/webhook'
       path: '/api/public/email/webhook'
@@ -570,6 +590,7 @@ const rootRouteChildren: RootRouteChildren = {
   Start7DayRoute: Start7DayRoute,
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,
+  ApiPublicReleaseRoute: ApiPublicReleaseRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
   ApiPublicEmailWebhookRoute: ApiPublicEmailWebhookRoute,
