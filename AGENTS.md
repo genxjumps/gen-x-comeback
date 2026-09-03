@@ -18,6 +18,7 @@
 - Create work from the current target branch with names such as `agent/<checkpoint>`.
 - Lock the checkpoint scope and acceptance criteria before editing. Implement the complete bounded checkpoint, run the quality gate, and present one final review. Stop mid-checkpoint only for a real conflict, an unsafe live action, or a product decision that changes the approved scope.
 - Run `bun run verify` before requesting merge. GitHub CI must also pass.
+- After changing, adding, removing, or renaming a build input under `.env`, root build configuration, `public/`, `scripts/`, `src/`, or `supabase/`, run `bun run release:manifest` before `bun run verify`.
 - Keep documentation in the same pull request as the behavior it governs.
 - Do not use Lovable chat, visual edits, or code edits for routine development. GitHub is the source of truth. Lovable is used only for controlled visual review and explicitly approved publication.
 - The app is still pre-launch. The current Lovable/Supabase backend is the development backend until real external users, live payments, or a public launch begin.

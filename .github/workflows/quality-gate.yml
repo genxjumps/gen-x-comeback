@@ -43,4 +43,4 @@ jobs:
         run: bun run verify
 
       - name: Confirm protected generated files stayed clean
-        run: git diff --exit-code -- bun.lock src/routeTree.gen.ts
+        run: git diff --exit-code -- bun.lock release-source-manifest.json src/routeTree.gen.ts

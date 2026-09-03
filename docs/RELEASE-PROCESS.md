@@ -5,14 +5,14 @@ GitHub `release/v1.1` is the source of truth for production code. Lovable is the
 ## Production release contract
 
 1. Create an isolated branch from the current `release/v1.1` head.
-2. Open a PR into `release/v1.1`.
+2. After changing any build input, run `bun run release:manifest`, then open a PR into `release/v1.1`.
 3. Do not merge unless the full Quality Gate is green.
 4. Recheck the base branch, exact PR head SHA, changed-file list, and mergeability immediately before merging.
 5. Merge only the exact verified PR head.
 6. Wait for the independent post-merge Quality Gate on the resulting release SHA.
 7. Confirm Lovable's `latest_commit_sha` exactly equals the green GitHub release SHA. Do not edit or reconcile source in Lovable.
 8. Publish once from that exact synced state. Avoid stacking repeated publish requests.
-9. Verify `GET /api/public/release` reports the exact GitHub release SHA.
+9. Run `bun run release:fingerprint` against the exact GitHub release tree and verify `GET /api/public/release` reports the same source fingerprint.
 10. Run the release-specific production smoke tests in `docs/RELEASE-CHECKLIST.md`.
 
 A release is complete only when the approved code, Lovable source, running production identity, schema/configuration state, and smoke-test evidence agree.
@@ -23,15 +23,17 @@ Production builds must contain:
 
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_PUBLISHABLE_KEY`
-- A full Git commit SHA resolved from the checked-out repository or an approved builder-provided commit variable
+- A valid `release-source-manifest.json` matching every tracked build input and every corresponding file digest
 
-`bun run build` runs `scripts/assert-production-env.ts` first. A build with missing client configuration or no trustworthy Git identity must fail instead of replacing the working production release.
+`bun run build` runs `scripts/assert-production-env.ts` first. A build with missing client configuration, a stale manifest, or any source file that differs from its reviewed digest must fail instead of replacing the working production release.
+
+GitHub builds also record the full commit SHA. Lovable Pro omits Git metadata and does not provide a commit environment variable, so Lovable builds use the verified source fingerprint as their fail-closed identity. The fingerprint is mapped back to the exact approved GitHub release tree during production verification.
 
 The tracked `.env` contains only browser-public Lovable Cloud `VITE_SUPABASE_*` configuration. Never add service-role keys, provider credentials, scheduler secrets, or other server-only values to it. CI may override the browser-public values with placeholders to exercise the build path.
 
 ## Deployed-code proof
 
-The build injects its full Git commit SHA into a public, read-only endpoint:
+The build verifies every file listed in `release-source-manifest.json` and injects the resulting SHA-256 source fingerprint into a public, read-only endpoint:
 
 ```text
 GET https://app.genxjumps.com/api/public/release
@@ -39,11 +41,14 @@ GET https://app.genxjumps.com/api/public/release
 
 The response must:
 
-- Return the application name and a full 40-character commit SHA.
+- Return the application name and a `sha256:` source fingerprint.
+- Return the full Git commit SHA when the builder provides trustworthy Git metadata; `commit` may be `null` on Lovable.
 - Use `cache-control: no-store`.
-- Match the exact green `release/v1.1` SHA published through Lovable.
+- Match `bun run release:fingerprint` when run against the exact green `release/v1.1` tree published through Lovable.
 
 A changed JavaScript filename is useful deployment evidence, but it is not sufficient proof of the code revision by itself.
+
+The manifest intentionally excludes itself to avoid a self-referential digest. It covers browser-public environment configuration, dependency locks, build/test configuration, public assets, scripts, application source, and Supabase source/migrations. GitHub builds additionally verify that the manifest's file list exactly matches the tracked build inputs. Run `bun run release:manifest` whenever one of those files is added, removed, renamed, or changed.
 
 ## Lovable source-drift rule
 
@@ -66,7 +71,7 @@ For an application-code incident:
 5. Open a PR, run the complete Quality Gate, and verify the exact PR head.
 6. Merge the revert and wait for the independent post-merge gate.
 7. Confirm Lovable synced to the new revert SHA and publish once.
-8. Verify `/api/public/release` reports the revert SHA and run the affected smoke tests.
+8. Verify `/api/public/release` reports the revert release's source fingerprint and run the affected smoke tests.
 9. Record the bad SHA, revert SHA, deployment ID, impact, and follow-up repair.
 
 Database changes are not rolled back by deleting data or running an unreviewed down migration. Use a verified forward-repair migration. Configuration rollback restores the last known-good values through the appropriate configuration store without exposing private values.

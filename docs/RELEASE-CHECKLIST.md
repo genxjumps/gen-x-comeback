@@ -5,6 +5,7 @@ Record the evidence for every production publish. Use `not applicable` with a re
 ## Approved code
 
 - [ ] Isolated branch and PR target `release/v1.1`.
+- [ ] `bun run release:manifest` was run after the final build-input change.
 - [ ] Complete PR Quality Gate is green.
 - [ ] Base branch, exact PR head SHA, changed files, and mergeability were rechecked before merge.
 - [ ] Independent post-merge Quality Gate is green on the release SHA.
@@ -14,7 +15,9 @@ Record the evidence for every production publish. Use `not applicable` with a re
 - [ ] Lovable `latest_commit_sha` exactly matches the green GitHub release SHA.
 - [ ] Publish was triggered once from that exact synced state.
 - [ ] Deployment ID and production JavaScript bundle filename were recorded.
-- [ ] `/api/public/release` reports the exact release SHA with `cache-control: no-store`.
+- [ ] `bun run release:fingerprint` was run against the exact GitHub release tree.
+- [ ] `/api/public/release` reports that exact source fingerprint with `cache-control: no-store`.
+- [ ] The endpoint's `commit` matches the release SHA when available, or is recorded as `null` for a builder without trustworthy Git metadata.
 
 ## Database and generated files
 
@@ -38,5 +41,5 @@ Record the evidence for every production publish. Use `not applicable` with a re
 - [ ] Changed customer path passes its smallest meaningful end-to-end smoke test.
 - [ ] Recovery/auth changes pass the clean-browser and cross-device contract.
 - [ ] Database writes, email submissions, and other side effects were limited to approved test records.
-- [ ] Release SHA, deployment ID, schema state, configuration state, smoke-test result, and any follow-up were recorded.
+- [ ] Release SHA, source fingerprint, deployment ID, schema state, configuration state, smoke-test result, and any follow-up were recorded.
 - [ ] Last known-good release and forward-rollback procedure are identified.
