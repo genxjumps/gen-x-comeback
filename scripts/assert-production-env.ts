@@ -1,4 +1,4 @@
-import { resolveReleaseSha, summarizeReleaseEnvironment } from "./release-identity";
+import { resolveReleaseIdentity } from "./release-identity";
 
 const requiredClientEnv = ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"] as const;
 
@@ -25,17 +25,15 @@ try {
   process.exit(1);
 }
 
-let releaseSha: string;
+let releaseIdentity: ReturnType<typeof resolveReleaseIdentity>;
 
 try {
-  releaseSha = resolveReleaseSha();
+  releaseIdentity = resolveReleaseIdentity();
 } catch {
-  console.error("[build] Refusing production build. A verified Git release SHA is unavailable.");
-  console.error(
-    `[build] Release metadata variable probe (names and shape only): ${summarizeReleaseEnvironment()}`,
-  );
+  console.error("[build] Refusing production build. Release source verification failed.");
   process.exit(1);
 }
 
 console.log("[build] Required client production environment is present.");
-console.log(`[build] Release commit: ${releaseSha}`);
+console.log(`[build] Release commit: ${releaseIdentity.commit ?? "builder-unavailable"}`);
+console.log(`[build] Release source fingerprint: ${releaseIdentity.sourceFingerprint}`);

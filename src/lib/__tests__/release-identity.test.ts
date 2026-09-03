@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-import { resolveReleaseSha, summarizeReleaseEnvironment } from "../../../scripts/release-identity";
+import { resolveReleaseIdentity, resolveReleaseSha } from "../../../scripts/release-identity";
 
+const projectRoot = fileURLToPath(new URL("../../..", import.meta.url));
 const routeSource = readFileSync(
   fileURLToPath(new URL("../../routes/api/public/release.ts", import.meta.url)),
   "utf8",
@@ -39,29 +40,31 @@ describe("release identity", () => {
     );
   });
 
-  it("reports only safe release-metadata variable names and SHA shape", () => {
-    expect(
-      summarizeReleaseEnvironment({
-        GITHUB_SHA: gitSha,
-        LOVABLE_COMMIT_SHA: "short",
-        GITLAB_TOKEN: environmentSha,
-        ORDINARY_SETTING: "present",
-        "UNSAFE-NAME-SHA": environmentSha,
-      }),
-    ).toBe("GITHUB_SHA:full-sha, LOVABLE_COMMIT_SHA:not-full-sha");
-    expect(summarizeReleaseEnvironment({ ORDINARY_SETTING: "present" })).toBe("none");
+  it("retains a verified source fingerprint when builder commit metadata is unavailable", () => {
+    const identity = resolveReleaseIdentity(
+      {},
+      () => {
+        throw new Error("no git metadata");
+      },
+      projectRoot,
+    );
+
+    expect(identity.commit).toBeNull();
+    expect(identity.sourceFingerprint).toMatch(/^sha256:[0-9a-f]{64}$/);
   });
 
-  it("injects the commit into a public no-store release endpoint", () => {
-    expect(viteSource).toContain("__GXJ_RELEASE_SHA__: JSON.stringify(releaseSha)");
+  it("injects the identity into a public no-store release endpoint", () => {
+    expect(viteSource).toContain("__GXJ_RELEASE_SHA__: JSON.stringify(releaseIdentity.commit)");
+    expect(viteSource).toContain("__GXJ_RELEASE_SOURCE_FINGERPRINT__");
     expect(routeSource).toContain('createFileRoute("/api/public/release")');
     expect(routeSource).toContain("commit: __GXJ_RELEASE_SHA__");
+    expect(routeSource).toContain("sourceFingerprint: __GXJ_RELEASE_SOURCE_FINGERPRINT__");
     expect(routeSource).toContain('"cache-control": "no-store"');
   });
 
-  it("refuses production builds without a verified release SHA", () => {
-    expect(buildGuardSource).toContain("releaseSha = resolveReleaseSha()");
-    expect(buildGuardSource).toContain("A verified Git release SHA is unavailable");
-    expect(buildGuardSource).toContain("Release metadata variable probe (names and shape only)");
+  it("refuses production builds when source verification fails", () => {
+    expect(buildGuardSource).toContain("releaseIdentity = resolveReleaseIdentity()");
+    expect(buildGuardSource).toContain("Release source verification failed");
+    expect(buildGuardSource).toContain("Release source fingerprint");
   });
 });

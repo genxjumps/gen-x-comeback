@@ -5,14 +5,15 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
-import { resolveReleaseSha } from "./scripts/release-identity";
+import { resolveReleaseIdentity } from "./scripts/release-identity";
 
-const releaseSha = resolveReleaseSha();
+const releaseIdentity = resolveReleaseIdentity();
 
 export default defineConfig({
   vite: {
     define: {
-      __GXJ_RELEASE_SHA__: JSON.stringify(releaseSha),
+      __GXJ_RELEASE_SHA__: JSON.stringify(releaseIdentity.commit),
+      __GXJ_RELEASE_SOURCE_FINGERPRINT__: JSON.stringify(releaseIdentity.sourceFingerprint),
     },
   },
   tanstackStart: {

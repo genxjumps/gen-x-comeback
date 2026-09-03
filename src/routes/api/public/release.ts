@@ -8,6 +8,7 @@ export const Route = createFileRoute("/api/public/release")({
           {
             application: "gen-x-comeback",
             commit: __GXJ_RELEASE_SHA__,
+            sourceFingerprint: __GXJ_RELEASE_SOURCE_FINGERPRINT__,
           },
           {
             headers: {
