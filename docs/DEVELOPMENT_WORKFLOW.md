@@ -4,9 +4,9 @@ This is the required workflow for V1.1 and later development. It keeps changes b
 
 ## Current environment status
 
-The app is still pre-launch. There are no real external users or live paid customers using the product yet. The current Lovable/Supabase backend is therefore the development backend.
+The app is still pre-launch. There are no real external users or live paid customers using the product yet. The current Lovable/Supabase backend is therefore the controlled integrated-validation backend even though the app is served on its production domain.
 
-A separate staging backend is not required just to continue V1.1 development. Revisit that decision before the first real-user/public release, or earlier if a checkpoint introduces enough risk that isolation is clearly worth the setup.
+A separate staging backend is not required just to continue controlled V1.1 development. It becomes a hard launch gate before genuine customer email admission, real payment processing, Accelerator public enrollment, or deliberate intake of real customer data. Creating another Lovable project is not authorized by this rule. The staging architecture requires a separate reviewed decision and Todd's approval. See [`STAGING-AND-ROLLBACK.md`](STAGING-AND-ROLLBACK.md).
 
 ## Branch roles
 
@@ -41,7 +41,7 @@ Because the product is still pre-launch, controlled V1.1 development may use the
 - Regenerate and review TypeScript database types when schema changes require it.
 - Keep payment-provider test mode and real-money mode explicitly separated when Stripe is added.
 - Keep outbound email test behavior bounded so development does not accidentally message unintended recipients.
-- Before the first public launch or real-user intake, establish the production boundary, clean test data as appropriate, verify secrets/configuration, and decide whether ongoing development should move to a separate staging backend.
+- Before the first public launch or real-user intake, establish the separate staging boundary, clean test data as appropriate, and verify secrets/configuration. Do not enable the genuine-customer gates first and promise to separate the environments later.
 
 ## Lovable usage
 
@@ -62,7 +62,7 @@ Before the first real public release:
 1. Freeze the accepted release candidate and run the complete quality gate.
 2. Review the full `main...release/v1.1` diff and reconcile Product Blueprint, Technical Specification, Decision Log, and repository documentation.
 3. Verify database migrations, test-data cleanup, secrets, email controls, payment controls, analytics boundaries, and rollback/forward-repair procedures.
-4. Decide whether production and staging now need separate backends based on the real operating risk.
+4. Confirm the separate staging boundary required by `docs/STAGING-AND-ROLLBACK.md` is operational.
 5. Create one release pull request from `release/v1.1` into `main`.
 6. Merge without rewriting published history.
 7. Confirm GitHub `main` and Lovable show the same source revision and no Lovable-generated drift.
