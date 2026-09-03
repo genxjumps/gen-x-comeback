@@ -27,7 +27,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "5a01665f2f08db1ede185036d390b4f9b3f7179418eb3c15dd51c31c9add2f92"
+      "sha256": "ca0be2caa0b7e1d14e9fbbc9af07f830dcc85e8e7286750e97e082a808276ee5"
     },
     {
       "path": "public/favicon.ico",
@@ -46,8 +46,16 @@
       "sha256": "d89ffdf4e3feca13e6791f5a199acadacf0ad91eb6fb58054532d324e8d1e087"
     },
     {
+      "path": "scripts/check-migration-integrity.ts",
+      "sha256": "524fc9e5b7a3475eb46f657c23a4ac876031b61c6244f1985b89fff7d1c0dffc"
+    },
+    {
       "path": "scripts/controlled-release.ts",
       "sha256": "89b8c2e94caf55531f794110b12b9aad5477cd7d121685d6816e950808f44b14"
+    },
+    {
+      "path": "scripts/migration-integrity.ts",
+      "sha256": "7e875c96439bee30900d96d284a28a184e1fe756f91423384f835e2f1ac3a49c"
     },
     {
       "path": "scripts/print-release-source-fingerprint.ts",
@@ -64,6 +72,10 @@
     {
       "path": "scripts/release-preflight.ts",
       "sha256": "1f9f4c648e0050322415d0be49bf1bff1c51b20956576563f4be9573d6d70ddb"
+    },
+    {
+      "path": "scripts/update-migration-lock.ts",
+      "sha256": "166cad26d4a61b26d19300ed28d4032762cc4d155de701f082bf1681928fc36d"
     },
     {
       "path": "scripts/update-release-source-manifest.ts",
@@ -200,6 +212,10 @@
     {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
       "sha256": "0e0a9466e359ab045168063ff58eb9e1e5a1eeb17fde37d9ee50d0fa5f0d3a2a"
+    },
+    {
+      "path": "src/lib/__tests__/migration-integrity.test.ts",
+      "sha256": "56e874a721b8e1367a51354d010a82853e8474e861598e9e0455ec170ca75511"
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
@@ -868,6 +884,10 @@
     {
       "path": "supabase/functions/mailerlite-marketing-sync/index.ts",
       "sha256": "989f2c3e76be7dd837bbf10c1ecefd384acf344f207aaa02d96c6ee504188f10"
+    },
+    {
+      "path": "supabase/migration-lock.json",
+      "sha256": "5fc85e50bb95abad7801f33ec71cd0fb715156edb9af9202ff0493039be18d33"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",

@@ -23,8 +23,13 @@ Record the evidence for every production publish. Use `not applicable` with a re
 
 ## Database and generated files
 
+- [ ] `bun run migration:check` passed, including the CI comparison with the target branch.
+- [ ] Existing locked migration files and lock entries were not modified, deleted, renamed, or reordered.
+- [ ] Every new migration file is strictly newer than the locked history and was appended with `bun run migration:lock`.
 - [ ] Every required migration exists in Git and has an understood production application state.
 - [ ] No unexplained production migration exists outside the repository ledger.
+- [ ] A fresh remote migration list was compared with `supabase/migration-lock.json`; any approved alias or repair evidence was recorded.
+- [ ] Production `db push --dry-run` output was recorded before any approved migration application.
 - [ ] Schema changes are forward-only and were reviewed before application.
 - [ ] Generated Supabase types match the reviewed schema and contain no unrelated formatting churn.
 - [ ] No destructive data cleanup or schema reversal was bundled into the release.

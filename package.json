@@ -10,6 +10,8 @@
     "build": "bun run check:prod-env && vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "migration:check": "bun scripts/check-migration-integrity.ts",
+    "migration:lock": "bun scripts/update-migration-lock.ts",
     "release:fingerprint": "bun scripts/print-release-source-fingerprint.ts",
     "release:manifest": "bun scripts/update-release-source-manifest.ts",
     "release:preflight": "bun scripts/release-preflight.ts",
@@ -19,7 +21,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "verify": "bun run test && bun run typecheck && bun run lint && bun run format:check && bun run build"
+    "verify": "bun run migration:check && bun run test && bun run typecheck && bun run lint && bun run format:check && bun run build"
   },
   "dependencies": {
     "@fontsource/anton": "5.2.7",
