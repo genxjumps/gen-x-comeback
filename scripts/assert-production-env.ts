@@ -17,7 +17,9 @@ try {
     throw new Error("unexpected Supabase URL");
   }
 } catch {
-  console.error("[build] Refusing production build. VITE_SUPABASE_URL is not a valid HTTPS Supabase URL.");
+  console.error(
+    "[build] Refusing production build. VITE_SUPABASE_URL is not a valid HTTPS Supabase URL.",
+  );
   process.exit(1);
 }
 
