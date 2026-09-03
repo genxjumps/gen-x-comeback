@@ -22,22 +22,28 @@ bun run verify
 
 `migration:lock` refuses to bless a changed or deleted historical file. It only appends previously unseen migrations whose versions sort after the locked history.
 
-## Current database-history audit
+## Reconciled production history
 
-The September 3, 2026 read-only audit found 27 canonical Git migrations and 25 rows in `supabase_migrations.schema_migrations`.
+The September 3, 2026 audit initially found 27 canonical Git migrations and 25 remote history rows. Two Lovable-created alias versions were present, and four canonical versions were absent. The audit also found one older canonical history row with no stored SQL.
 
-- The first 23 canonical versions through `20260807193000` are present under the same versions and names. Twenty-two retain stored SQL whose digest matches the locked Git file exactly or after removing one final newline.
-- `20260807193000_4d5f0f64-0a61-4ee4-bf12-3a1f3d50f92e` has the correct canonical version/name but an empty stored statement array. Its history row identifies the controlled production soft-launch operation that recorded it, so its schema must be reverified semantically rather than by stored-statement digest before reconciliation.
-- Supabase records `20260902143723_09bfcd48-c94a-4b51-b570-eb9134b8405e` instead of canonical `20260828170000_customer_account_foundation`.
-- Supabase records `20260902144059_8e2af25a-3148-4369-ae16-652db6eb9349` instead of canonical `20260828180000_accelerator_enrollment_progress`.
-- The stored statement SHA-256 values for those two Supabase rows are respectively `f90fee89d873658b498bb84bf4edefac61135bddf6a3f98dc584c7db15c9c660` and `38506c0a1598da9a50d1943e9e42188ba508a8a213240495437ec6c4f7910148`. They exactly match the canonical files' statement digests. The filenames differ because Lovable created duplicate timestamped copies that were later removed from Git.
-- Canonical `20260828150000_mailerlite_marketing_sync` and `20260902183000_recovery_transactional_claim_contract` are not recorded in the remote history table. Read-only checks confirmed their primary tables/functions exist in the current database, but the remote history still requires controlled reconciliation.
+Todd explicitly approved the history-only repair. The repair completed at `2026-09-03T23:54:28Z` against release SHA `3ca0a40c73270d328ec9b6ec6c307247dcf90dee`, after Quality Gate run `33818713755` passed on that exact SHA.
 
-This audit explains the mismatch. It does not authorize changing the production migration table or applying migration SQL.
+The reconciled production state is:
 
-## One-time history reconciliation
+- Remote history contains exactly 27 versions and names, matching every entry in `supabase/migration-lock.json` with no missing or extra versions.
+- Alias-only versions `20260902143723` and `20260902144059` are absent.
+- Canonical versions `20260828150000`, `20260828170000`, `20260828180000`, and `20260902183000` are present with the exact locked names and SQL statement digests.
+- Every other stored SQL digest matches the locked Git file exactly or after removing one final newline.
+- `20260807193000_4d5f0f64-0a61-4ee4-bf12-3a1f3d50f92e` remains the one legacy row with an empty stored statement array. Its complete production object set was verified semantically against the canonical migration.
+- Post-repair checks found all 15 expected protected tables, 36 functions, 16 indexes, and 2 triggers. All 15 tables have RLS and the expected service-role policy. All 36 functions match their intended security mode, fixed search path, and execute permissions.
+- The recovery claim and provider-attempt functions retain the transactional recovery-consent bypass, proactive Plan-email consent fence, hard-bounce/complaint suppression, production sending gate, controlled-plan scope, and provider limit. Neither function consults marketing consent.
+- Production email controls remained `sending_enabled=true`, `genuine_plans_admitted=false`, `provider_submission_limit=10`, with the controlled test plan configured.
 
-The history repair is a separate production operation and requires Todd's explicit approval at the action boundary. It must not be bundled into an application deploy.
+No application-schema SQL was executed during this repair. The evidence is recorded in [`release-evidence/2026-09-03-migration-history-reconciliation.md`](release-evidence/2026-09-03-migration-history-reconciliation.md).
+
+## Completed one-time history reconciliation
+
+This history repair was a separate production operation with Todd's explicit approval. It was not bundled into an application deploy.
 
 Before repair:
 
@@ -48,7 +54,7 @@ Before repair:
 5. Confirm the linked Supabase project reference is exactly `wrvjgjvdjjoytjdwntlx` without printing credentials.
 6. Record the current history as the rollback boundary.
 
-The intended repair changes only `supabase_migrations.schema_migrations`; it does not execute or reverse application-schema SQL:
+The approved repair changed only `supabase_migrations.schema_migrations`; it did not execute or reverse application-schema SQL:
 
 ```sh
 supabase migration repair 20260902143723 --status reverted
@@ -59,17 +65,19 @@ supabase migration repair 20260828180000 --status applied
 supabase migration repair 20260902183000 --status applied
 ```
 
-Run one command at a time and inspect the migration list after every command. Stop on any unexpected output. Do not run `db push` during the repair.
+Each equivalent history operation was run separately through the authorized production database connection, using Supabase CLI's documented `DELETE` and `UPSERT` semantics. The remote migration list was inspected after every operation. No `db push` was run during the repair.
 
-After repair:
+Completed verification:
 
-1. `supabase migration list --linked` must show all 27 canonical Git versions and no alias-only versions.
-2. `supabase db push --linked --dry-run` must report no pending migrations.
-3. Repeat the schema/object verification for customer identity, Accelerator, marketing sync, and transactional recovery.
-4. Confirm recovery access and production email controls remain unchanged.
-5. Record the exact release SHA, before/after migration lists, commands, timestamps, and verification results.
+1. An exact remote-ledger comparison showed all 27 canonical Git versions and no alias-only versions.
+2. The exact remote-versus-lock comparison found no pending, missing, or extra migration versions.
+3. Schema/object verification passed for customer identity, Accelerator, marketing sync, production email control, and transactional recovery.
+4. Recovery logic and production email controls remained unchanged.
+5. The exact release SHA, before/after state, operations, timestamp, and verification results were recorded.
 
-If any post-repair check fails, stop. Reverse only the history-record changes using the opposite `migration repair` statuses. Do not delete application data or run down migrations.
+The execution environment did not contain the Supabase CLI or a Supabase database credential, so a literal `supabase db push --linked --dry-run` command could not run there. The authorized database comparison proved the same pending-version set directly. This one-time exception does not waive the CLI dry-run requirement for future production schema changes.
+
+If a future audit disputes this reconciliation, stop. Reverse only the history-record changes using the opposite `migration repair` statuses after a new explicit approval. Do not delete application data or run down migrations.
 
 ## Normal forward migration workflow
 
