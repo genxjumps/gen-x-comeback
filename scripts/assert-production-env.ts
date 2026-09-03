@@ -1,3 +1,5 @@
+import { resolveReleaseSha } from "./release-identity";
+
 const requiredClientEnv = ["VITE_SUPABASE_URL", "VITE_SUPABASE_PUBLISHABLE_KEY"] as const;
 
 const missing = requiredClientEnv.filter((name) => !process.env[name]?.trim());
@@ -23,4 +25,14 @@ try {
   process.exit(1);
 }
 
+let releaseSha: string;
+
+try {
+  releaseSha = resolveReleaseSha();
+} catch {
+  console.error("[build] Refusing production build. A verified Git release SHA is unavailable.");
+  process.exit(1);
+}
+
 console.log("[build] Required client production environment is present.");
+console.log(`[build] Release commit: ${releaseSha}`);

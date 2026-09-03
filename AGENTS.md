@@ -21,7 +21,8 @@
 - Keep documentation in the same pull request as the behavior it governs.
 - Do not use Lovable chat, visual edits, or code edits for routine development. GitHub is the source of truth. Lovable is used only for controlled visual review and explicitly approved publication.
 - The app is still pre-launch. The current Lovable/Supabase backend is the development backend until real external users, live payments, or a public launch begin.
-- Development may use the current backend with controlled test data. Never use destructive cleanup as a substitute for forward migrations, and never commit secrets or local environment files.
+- Development may use the current backend with controlled test data. Never use destructive cleanup as a substitute for forward migrations.
+- Never commit server-only secrets or local override files. The tracked root `.env` is a narrow exception required by Lovable Cloud and may contain only browser-public `VITE_SUPABASE_*` configuration. Keep private values in the backend secret store.
 - Before the first real-user/public release, establish and document the production boundary and decide whether a separate staging backend is warranted by the release risk.
 - Do not force-push, rebase, amend, or squash commits that have already been pushed to a Lovable-synced branch.
 - V1.1 is functional-first. Visual design may be reviewed separately when Todd explicitly opens that checkpoint.
