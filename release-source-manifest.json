@@ -27,7 +27,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "cea2c9cb7553b63d8db72660aaa7f04f8930fc93e4ea0e9e9feceb479dc569fd"
+      "sha256": "5a01665f2f08db1ede185036d390b4f9b3f7179418eb3c15dd51c31c9add2f92"
     },
     {
       "path": "public/favicon.ico",
@@ -46,6 +46,10 @@
       "sha256": "d89ffdf4e3feca13e6791f5a199acadacf0ad91eb6fb58054532d324e8d1e087"
     },
     {
+      "path": "scripts/controlled-release.ts",
+      "sha256": "89b8c2e94caf55531f794110b12b9aad5477cd7d121685d6816e950808f44b14"
+    },
+    {
       "path": "scripts/print-release-source-fingerprint.ts",
       "sha256": "939b9a53f55aac3e925dc2cca66a97a1a0c3a6c8c193c461b9264382316c7139"
     },
@@ -58,8 +62,16 @@
       "sha256": "eaf18042dfe799c82e3c3733e7b9a4b420bde1a507112c8d468a063a40d9c299"
     },
     {
+      "path": "scripts/release-preflight.ts",
+      "sha256": "1f9f4c648e0050322415d0be49bf1bff1c51b20956576563f4be9573d6d70ddb"
+    },
+    {
       "path": "scripts/update-release-source-manifest.ts",
       "sha256": "290a81a9068359388211d78f94ccabefd20765e46673ca6ef547c9bccfd3cd9e"
+    },
+    {
+      "path": "scripts/verify-production-release.ts",
+      "sha256": "87a0775fb3d9087ddf19031816861db9b72406550b64d294667004ddef7a527c"
     },
     {
       "path": "src/components/accelerator-completion.tsx",
@@ -168,6 +180,10 @@
     {
       "path": "src/integrations/supabase/types.ts",
       "sha256": "b5d77cc417277b273903abfc87577590b565780e60508e8f69fd3fb939a7a42b"
+    },
+    {
+      "path": "src/lib/__tests__/controlled-release.test.ts",
+      "sha256": "8881441efb18973f615b58154b6f6651ef6998b887507a047063436f4f0e9e58"
     },
     {
       "path": "src/lib/__tests__/csrf-public-origin-contract.test.ts",

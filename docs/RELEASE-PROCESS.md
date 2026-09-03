@@ -10,12 +10,45 @@ GitHub `release/v1.1` is the source of truth for production code. Lovable is the
 4. Recheck the base branch, exact PR head SHA, changed-file list, and mergeability immediately before merging.
 5. Merge only the exact verified PR head.
 6. Wait for the independent post-merge Quality Gate on the resulting release SHA.
-7. Confirm Lovable's `latest_commit_sha` exactly equals the green GitHub release SHA. Do not edit or reconcile source in Lovable.
-8. Publish once from that exact synced state. Avoid stacking repeated publish requests.
-9. Run `bun run release:fingerprint` against the exact GitHub release tree and verify `GET /api/public/release` reports the same source fingerprint.
-10. Run the release-specific production smoke tests in `docs/RELEASE-CHECKLIST.md`.
+7. Read Lovable's `latest_commit_sha` immediately before release and run the controlled preflight from a clean local checkout of `release/v1.1`:
+
+   ```sh
+   bun run release:preflight -- --lovable-sha <lovable-latest-commit-sha>
+   ```
+
+8. Publish once through the authenticated Lovable MCP `deploy_project` operation. Do not publish through the Lovable dashboard or stack repeated publish requests.
+9. Read Lovable's `latest_commit_sha` again, then verify the accepted deployment from the same clean release checkout:
+
+   ```sh
+   bun run release:verify-production -- \
+     --deployment-id <lovable-deployment-id> \
+     --lovable-sha <fresh-lovable-latest-commit-sha>
+   ```
+
+10. Record the verifier's JSON evidence and run the release-specific production smoke tests in `docs/RELEASE-CHECKLIST.md`.
 
 A release is complete only when the approved code, Lovable source, running production identity, schema/configuration state, and smoke-test evidence agree.
+
+## Controlled publisher
+
+Lovable's deploy operation accepts a project ID, not a Git commit SHA. The release path therefore
+fails closed around that operation:
+
+- `release:preflight` resolves the live `origin/release/v1.1` ref without changing it and refuses a
+  dirty checkout, the wrong branch, a SHA mismatch, a stale source manifest, a Lovable SHA mismatch,
+  or the absence of a successful post-merge `Quality Gate` run on the exact release SHA.
+- Only after that preflight succeeds may the authenticated Lovable MCP `deploy_project` operation be
+  called, exactly once.
+- `release:verify-production` repeats the GitHub, checkout, fingerprint, and Lovable SHA checks. It
+  then requires the production identity endpoint to return the exact approved source fingerprint,
+  a matching commit when the builder exposes one, and `cache-control: no-store`.
+- Both commands print non-secret JSON evidence. The post-deploy evidence includes the deployment ID,
+  release SHA, source fingerprint, Lovable SHA, Quality Gate run, production identity, and
+  verification timestamp.
+
+The Lovable SHA passed to either command must come from a fresh authenticated project read. It is
+release evidence, not a user-entered guess. If any check fails, stop. Do not publish, retry, or edit
+Lovable source to make the check pass.
 
 ## Build-time configuration guard
 
@@ -54,6 +87,8 @@ The manifest intentionally excludes itself to avoid a self-referential digest. I
 
 - GitHub source changes reach Lovable only through Git sync from approved commits.
 - Do not use Lovable chat, visual edits, or code edits to repair production source.
+- Do not use the Lovable dashboard Publish button. The controlled path uses the authenticated MCP
+  publisher only after `release:preflight` succeeds.
 - Before publishing, compare Lovable's complete `latest_commit_sha` with the exact GitHub release SHA.
 - If the SHAs differ, stop. Reconcile through GitHub and Git sync - never by copying selected files into Lovable.
 - If Lovable creates a direct release-branch commit, treat it as unapproved drift. Do not publish it. Restore the branch through a reviewed PR or an explicit forward revert without rewriting history.

@@ -21,6 +21,7 @@
 - After changing, adding, removing, or renaming a build input under `.env`, root build configuration, `public/`, `scripts/`, `src/`, or `supabase/`, run `bun run release:manifest` before `bun run verify`.
 - Keep documentation in the same pull request as the behavior it governs.
 - Do not use Lovable chat, visual edits, or code edits for routine development. GitHub is the source of truth. Lovable is used only for controlled visual review and explicitly approved publication.
+- Production publication uses the authenticated Lovable MCP publisher only after `bun run release:preflight` succeeds. Do not publish through the Lovable dashboard.
 - The app is still pre-launch. The current Lovable/Supabase backend is the development backend until real external users, live payments, or a public launch begin.
 - Development may use the current backend with controlled test data. Never use destructive cleanup as a substitute for forward migrations.
 - Never commit server-only secrets or local override files. The tracked root `.env` is a narrow exception required by Lovable Cloud and may contain only browser-public `VITE_SUPABASE_*` configuration. Keep private values in the backend secret store.

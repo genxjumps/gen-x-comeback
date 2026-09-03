@@ -12,6 +12,8 @@
     "preview": "vite preview",
     "release:fingerprint": "bun scripts/print-release-source-fingerprint.ts",
     "release:manifest": "bun scripts/update-release-source-manifest.ts",
+    "release:preflight": "bun scripts/release-preflight.ts",
+    "release:verify-production": "bun scripts/verify-production-release.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
