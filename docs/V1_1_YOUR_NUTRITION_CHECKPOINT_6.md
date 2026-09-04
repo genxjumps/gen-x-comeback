@@ -1,17 +1,16 @@
 # Checkpoint 6 - Your Nutrition approval brief
 
-**Status:** Draft for Todd's product approval. This document defines the smallest credible V1
-experience. It authorizes neither calculations nor customer-facing nutrition behavior until the
-open decisions below are approved.
+**Status:** Product behavior approved by Todd on 2026-09-04. Numerical formulas, safety
+guardrails, final examples, and implementation remain gated by the open decisions below.
 
 ## Purpose
 
-Your Nutrition helps a paid customer turn simple starting targets into a normal day of eating they
-can repeat. It is practical guidance, not a diet plan, recipe product, food diary, or macro
+Your Nutrition helps a paid customer turn personal calorie and macro targets into a normal day of
+eating they can repeat. It is practical guidance, not a food diary, recipe product, or macro
 tracker.
 
-The point is not to make eating more complicated. The point is to give the customer a useful
-starting point, then help them repeat the meals and portions that work.
+The point is to make the numbers visible across a whole day, then help the customer repeat meals
+that are enjoyable, filling, and fit those numbers.
 
 ## Product boundary
 
@@ -61,48 +60,95 @@ prescription, and that the tool does not require food logging.
 
 ### 3. Starting-target setup
 
-The calculator collects only the inputs needed by the approved calculation method:
+The setup asks these direct questions:
 
-- sex
-- age
-- height
-- current weight
-- normal daily movement outside the program workouts
+1. **What is your current fitness goal?**
+   - Lose fat
+   - Add lean muscle and lose fat
+   - Add lean muscle
+   - Maintain your results
+2. **What do you want your body weight to do?**
+   - Lose weight
+   - Maintain my current weight
+   - Gain weight
+3. Current weight and, when weight is changing, goal weight.
+4. Height, age, and sex.
+5. **Outside of workouts, how active is your typical day?**
+   - Mostly sitting
+   - On my feet most of the day
+   - Physically active work
+6. **How are you training right now?**
+   - Jump rope or conditioning
+   - Strength training
+   - Both
+   - Not training right now
 
-It does not ask the person to guess workout calories, workout duration, or training frequency. The
-platform already knows the program context, and V1 does not use exercise-calorie eat-back logic.
+The calculator does not ask people to estimate workout calories, workout duration, or training
+frequency. It does not use exercise-calorie eat-back logic.
 
 The final field labels, units, valid ranges, skip handling, and medical/safety copy depend on the
 formula decision. This screen must not ship until those decisions are approved and tested.
 
 ### 4. Starting targets
 
-The result shows only:
+The result shows:
 
 - starting daily calories
 - daily protein target
-- plain-language carbohydrate and fat guidance without prescribing exact macro ratios
-- protein-per-eating-time guidance based on the customer's chosen meal rhythm
-- a clear statement that the numbers are starting estimates to test against real life and progress
+- daily carbohydrate target
+- daily fat target
+- a clear statement that these are starting targets, to be measured against real life and results
 
-V1 does not display calories burned, exercise calories to eat back, competing goal modes, rigid
-menus, or bodybuilding-style macro targets.
+The customer-facing rule is: **These are your numbers for the whole day. Every meal counts.**
+Targets apply all seven days. There is no weekend mode, cheat-day setting, exercise-calorie credit,
+or carb cycling.
 
 ### 5. Normal Eating Day
 
-The bridge from numbers to behavior asks the customer to choose the eating rhythm that naturally
-fits their life, then save **one to three repeatable default meals**.
+The calculator asks:
 
-Each default meal is a short customer-written template, not a recipe:
+- **On a typical weekday, which of these meals do you eat?**
+  - Breakfast
+  - Lunch
+  - Dinner
+  - Snacks
+- **Which meal tends to be your biggest?**
+  - Breakfast
+  - Lunch
+  - Dinner
+  - They're about the same
 
-- meal name or eating time
-- the protein-centered meal they tend to eat
-- an optional short note about the portion or common calorie-dense item to watch
+The app uses the selected meal occasions and largest meal to divide the daily calorie, protein,
+carbohydrate, and fat targets into a normal meal-by-meal allocation. A larger meal receives a
+larger calorie and carbohydrate share. The final allocation method, especially protein spread,
+requires evidence review before implementation.
 
-The resulting Normal Eating Day is a compact summary of the meal rhythm, targets, and default
-meals. It is editable. It is not a prescribed meal plan and does not require meal-by-meal logging.
+The result teaches the customer how all four numbers operate across a day. It is not a rigid meal
+schedule, a daily checklist, or a meal-by-meal food log.
 
-### 6. Revisit and simple check-in
+### 6. Repeatable meal rotation
+
+The customer is responsible for using labels, serving sizes, and basic nutrition information to
+build meals they enjoy that fit each meal allocation. Basic foods with predictable numbers make
+this easier, including lean meats, eggs, potatoes, rice, beans, vegetables, fruit, yogurt, and
+other foods with clear package or standard nutrition information.
+
+The practical recommendation is a small rotation rather than dietary novelty:
+
+- one or two breakfasts
+- one or two lunches
+- up to three dinners
+- a few snack options
+
+The app does not calculate a customer's individual recipes or claim that a named meal fits their
+numbers. A future saved-rotation interface, if used, stores only customer notes and names; it is
+not a food database or food log.
+
+**Todd's Normal Day** provides one real, fully measured example of how breakfast, lunch, dinner,
+and snacks can add up to a daily target. It is an example of the method, not a prescribed meal
+plan. Its exact foods, servings, and macro totals require Todd's final source data and verification.
+
+### 7. Revisit and simple check-in
 
 The main Your Nutrition page always lets the customer revisit the Protein First guidance, their
 current targets, and their Normal Eating Day. Existing optional weight and waist history remains
@@ -116,7 +162,7 @@ someone has stalled, change targets automatically, or create a target-history da
 
 - mandatory food logging or detailed daily macro tracking
 - calorie or workout "eat back" calculations
-- carb cycling or multiple fitness-goal modes
+- carb cycling, exercise-calorie eat-back, or a weekend-calorie mode
 - rigid meal plans, generated one-day/seven-day menus, or a large recipe library
 - AI meal generation, food checker, grocery list, restaurant guidance, substitutions, or saved
   recipe system
@@ -128,17 +174,19 @@ someone has stalled, change targets automatically, or create a target-history da
 
 These choices must be resolved before implementation begins:
 
-1. **Calorie method:** calculation, movement categories, rounding, floors, maximum deficit, and
+1. **Calorie method:** calculation, goal and goal-weight handling, movement categories, rounding,
+   floors, maximum deficit, and
    what the app says when an estimate is not appropriate.
 2. **Protein method:** weight basis, calculation, rounding, lower/upper guardrails, and how to
    handle substantial excess weight.
 3. **Health and safety boundary:** age suitability, caution/stop copy, and when the app directs a
    customer to a qualified clinician rather than gives a target.
-4. **Meal rhythm:** the exact customer choices and how protein-per-eating-time guidance is derived
-   from them.
-5. **Default meal details:** whether the optional note is enough or whether V1 needs one additional
-   structured prompt to make default meals more actionable.
-6. **Manual review prompt:** the exact customer-facing wording and the point at which the app
+4. **Meal allocation:** the exact calorie, protein, carbohydrate, and fat distribution for selected
+   meal occasions and the largest-meal choice.
+5. **Todd's Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
+6. **Saved rotation:** whether V1 saves only short meal names/notes or launches first with the
+   meal-allocation plan and Todd's example only.
+7. **Manual review prompt:** the exact customer-facing wording and the point at which the app
    invites a customer to reassess portions and calorie-dense foods.
 
 ## Formula guardrail
