@@ -25,7 +25,11 @@ describe("customer program reminder preference contract", () => {
 
     expect(functions).toContain("customer_program_reminder_preferences");
     expect(functions).toContain("return data?.[0]?.program_reminders_enabled ?? true");
-    expect(functions).toContain("if (!(await programRemindersEnabled(account.account.id)))");
+    expect(functions).toContain(
+      "const remindersEnabled = await programRemindersEnabled(account.account.id)",
+    );
+    expect(functions).toContain("programRemindersEnabled: remindersEnabled");
+    expect(functions).toContain("buildComebackReminder");
     expect(functions).toContain("setProgramReminderPreference");
     expect(route).toContain("Program reminders");
     expect(route).toContain("Turning them off");
