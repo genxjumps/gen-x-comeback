@@ -55,6 +55,12 @@ describe("28-Day Accelerator content readiness", () => {
     expect(
       ACCELERATOR_WEEKLY_COACHING.every(({ media }) => media.readiness === "pending_recording"),
     ).toBe(true);
+    expect(ACCELERATOR_ASSIGNMENT_CONTENT.active_recovery_f.steps).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("easy rope, ghost rope, or walking"),
+        expect.stringContaining("Tomorrow is a full rest day"),
+      ]),
+    );
   });
 
   it("keeps rest as a non-video assignment", () => {
@@ -71,5 +77,6 @@ describe("28-Day Accelerator content readiness", () => {
       "767c2265f63d67fb5dc3b1c5f3a3e44e",
     );
     expect(snapshot.assignmentContent.active_recovery_f.media?.cloudflareStreamUid).toBeNull();
+    expect(snapshot.assignmentContent.active_recovery_f.steps).toHaveLength(7);
   });
 });

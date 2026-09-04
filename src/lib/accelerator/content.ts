@@ -129,7 +129,16 @@ export const ACCELERATOR_ASSIGNMENT_CONTENT = {
   },
   active_recovery_f: {
     instructions:
-      "Use the Active Recovery session if it helps, then acknowledge the day when your recovery work is complete.",
+      "Keep this recovery session easy enough to speak in full sentences. Use easy rope, ghost rope, marching, or walking as equal options. The video is optional; this written guide is enough to complete the day.",
+    steps: [
+      "Warm up for 2 minutes: march in place, roll your shoulders forward and backward, add gentle torso turns, and move your calves and ankles.",
+      "Block 1: repeat 3 times - 20 seconds of easy rope, ghost rope, or walking; 20 seconds of marching; then 20 seconds of easy moving rest.",
+      "Mobility reset: take 60 seconds for slow shoulder rolls and relaxed breathing.",
+      "Block 2: repeat 3 times - 20 seconds of easy rope, ghost rope, or walking; 20 seconds of standing torso turns; then 20 seconds of easy moving rest.",
+      "Mobility reset: take 60 seconds for a gentle calf stretch, 30 seconds per side.",
+      "Block 3: repeat 3 times - 20 seconds of easy rope, ghost rope, or walking; 20 seconds of alternating step-back reaches without a deep lunge; then 20 seconds of easy moving rest.",
+      "Cool down for 90 seconds by walking or marching until your breathing feels comfortable. Tomorrow is a full rest day.",
+    ],
     media: {
       readiness: "pending_recording",
       cloudflareStreamUid: null,

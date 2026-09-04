@@ -33,6 +33,7 @@ const mediaPlaceholderSchema = z.object({
 
 const assignmentContentSchema = z.object({
   instructions: z.string().min(1),
+  steps: z.array(z.string().min(1)).min(1).optional(),
   media: mediaPlaceholderSchema.nullable(),
 });
 

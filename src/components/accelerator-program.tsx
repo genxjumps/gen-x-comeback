@@ -456,6 +456,16 @@ export function AcceleratorProgram() {
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {selectedContent.instructions}
                 </p>
+                {selectedContent.steps?.length ? (
+                  <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                    {selectedContent.steps.map((step, index) => (
+                      <li key={step} className="flex gap-3">
+                        <span className="font-semibold text-foreground">{index + 1}.</span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                ) : null}
               </div>
 
               {selectedDay.day === hub.progress.currentDay && !hub.progress.canCompleteCurrent ? (
