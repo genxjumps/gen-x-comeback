@@ -1,5 +1,3 @@
-Checking formatting...
-All matched files use Prettier code style!
 # Checkpoint 6 - Your Nutrition approval brief
 
 **Status:** Product behavior approved by Todd on 2026-09-04. Numerical formulas, safety
@@ -149,6 +147,25 @@ not a food database or food log.
 **Todd's Normal Day** provides one real, fully measured example of how breakfast, lunch, dinner,
 and snacks can add up to a daily target. It is an example of the method, not a prescribed meal
 plan. Its exact foods, servings, and macro totals require Todd's final source data and verification.
+
+### Todd's current example day - source pending label verification
+
+Todd's current routine illustrates the small, deliberate changes between maintenance and a modest
+fat-loss phase. The structure, protein-centered meals, and preferred foods remain the same.
+
+| Eating time | Maintenance version | Fat-loss version |
+| --- | --- | --- |
+| Breakfast | 1 cup egg whites, 3 whole eggs, 1/2 cup uncooked oatmeal, 5 g creatine | 1 cup egg whites, 3 whole eggs, 5 g creatine |
+| Lunch | 1 banana and 25 g protein powder (1 scoop) | 1 banana and 25 g protein powder (1 scoop) |
+| Dinner | 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato, 1/2 can black beans, 1/2 can sweet peas, assorted hot sauces | 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato, 1/2 can black beans, assorted hot sauces |
+| Dessert | 50 g protein powder (2 scoops) | 50 g protein powder (2 scoops) |
+
+The example demonstrates the intended lesson: do not rebuild the whole diet to get leaner. Keep
+the foods and meals that work, then deliberately adjust portions or calorie-dense additions.
+
+Before publication, verify the exact product labels for protein powder and ground chicken, can
+sizes and serving counts, and the measured sweet-potato portion. No inferred macro totals may be
+shown.
 
 ### 7. Revisit and simple check-in
 
