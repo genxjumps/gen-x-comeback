@@ -155,8 +155,10 @@ weight is a valid outcome. In that case, changes in waist, strength, capability,
 fit matter alongside the scale. Nutrition reuses the existing weight and waist records rather than
 creating another tracking system.
 
-The final field labels, units, valid ranges, skip handling, and medical/safety copy depend on the
-formula decision. This screen must not ship until those decisions are approved and tested.
+The approved validation uses the existing 7-Day lb/kg bodyweight picker and bounds, separate
+feet/inches or centimeters height entry, age 18-100, and direction-consistent goal weights. The
+exact rules and stop conditions are recorded in the formula-and-evidence brief and must be covered
+by deterministic tests.
 
 ### 4. Starting targets
 
@@ -311,6 +313,7 @@ starting targets at any time.
 - AI meal generation, food checker, grocery list, restaurant guidance, substitutions, or saved
   recipe system
 - barcode scans or meal-photo analysis
+- saved customer meal rotations or free-text meal notes
 - adherence scores, intake-audit checklists, temporary calorie logs, automatic progress analysis,
   automatic target changes, or target-history dashboards
 
@@ -318,15 +321,7 @@ starting targets at any time.
 
 These choices must be resolved before implementation begins:
 
-1. **Calorie method:** calculation, goal and goal-weight handling, movement categories, rounding,
-   floors, maximum deficit, and what the app says when an estimate is not appropriate. The
-   slow-weight-gain branch must be deliberately conservative and must not become a bulk
-   prescription.
-2. **Input and safety presentation:** exact valid ranges, height-unit handling, and the final
-   caution/stop copy.
-3. **My Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
-4. **Saved rotation:** confirm that V1 launches with the meal-allocation plan and My Normal Day
-   only, without stored customer meal notes.
+1. **My Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
 
 ## Formula guardrail
 
