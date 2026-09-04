@@ -2,15 +2,41 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 
+const PLATFORM_AUTH_FRAGMENT_KEY = "gxj_auth";
+
+function platformAuthTokenHash(): string | null {
+  if (typeof window === "undefined") return null;
+  const fragment = window.location.hash.startsWith("#")
+    ? window.location.hash.slice(1)
+    : window.location.hash;
+  return new URLSearchParams(fragment).get(PLATFORM_AUTH_FRAGMENT_KEY);
+}
+
 export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
 
   useEffect(() => {
     let active = true;
 
-    void supabase.auth.getSession().then(({ data }) => {
+    async function confirmSession() {
+      const tokenHash = platformAuthTokenHash();
+      if (tokenHash) {
+        // The recovery-link handoff lands on a private route with its one-time
+        // token in the fragment. Redeem it before checking the browser session
+        // so this boundary cannot deny access during that brief race.
+        const cleanUrl = `${window.location.pathname}${window.location.search}`;
+        window.history.replaceState(window.history.state, "", cleanUrl);
+        const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" });
+        if (error) {
+          console.error("[Auth] Could not establish the Gen X Jumps member session.", error);
+        }
+      }
+
+      const { data } = await supabase.auth.getSession();
       if (active) setStatus(data.session ? "allowed" : "denied");
-    });
+    }
+
+    void confirmSession();
 
     const {
       data: { subscription },
