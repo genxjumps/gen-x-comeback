@@ -103,13 +103,29 @@ The prior 1.6 g/kg reference-weight proposal is **not approved**. It produced a 
 Todd at 175 lb, which would incorrectly make a lower intake look like the product's muscle-first
 recommendation.
 
-The revised rule must use a clear **protein reference weight in pounds**. It must preserve a
-practical high-protein target for leaner customers training to build muscle and lose fat, while
-avoiding an absurd calculation from every pound of excess body weight. It must be recalibrated and
-approved before implementation.
+The tested replacement candidate uses a clear **protein reference weight in pounds**:
 
-Do not use the prior free-plan one-gram-per-pound target, the prior blanket 1.6 g/kg reference
-weight proposal, or arbitrary 70/180g hard caps without a deliberate replacement decision.
+1. When maintaining body weight, start with current weight.
+2. When losing or adding weight, start with goal weight.
+3. If that weight exceeds the upper end of the standard height-based healthy range, cap the
+   internal reference at the BMI-24.9 weight for that height.
+4. If a goal is below the lower end of the standard healthy range, stop for correction rather than
+   calculate from it.
+5. Baseline target: 1.0 g per pound of protein reference weight.
+6. Regular strength training or combined strength and conditioning: 1.1 g per pound of protein
+   reference weight.
+7. Do not stack separate age, fitness-goal, and training bonuses. The 50+ baseline and one active
+   muscle factor are the complete product rule.
+8. Round the final protein target to the nearest 5 grams.
+
+“Regular strength training” is triggered only by the customer's current-training answer of
+Strength training or Both. A lean-muscle goal without resistance training does not create a fake
+training bonus; the app explains that protein alone does not build muscle.
+
+The 1.0 and 1.1 g/lb levels are deliberate Gen X Jumps muscle-first product standards. They are
+not presented as clinical requirements or as exact thresholds proven for every older adult.
+
+Do not use the prior blanket 1.6 g/kg reference-weight proposal or arbitrary 70/180g hard caps.
 
 ### 5. Carbohydrate and fat targets
 
@@ -138,19 +154,21 @@ These are internal tests, not customer examples or promises.
 
 | Profile | Maintenance | Result | Protein | Carbs | Fat |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Todd: 60M, 6 ft 1, 175 lb, mostly sitting, lose weight | 2,100 | 1,900 | Recalculate | Recalculate | Recalculate |
-| Todd: same inputs, on feet most of the day, lose weight | 2,350 | 2,100 | Recalculate | Recalculate | Recalculate |
-| 55F, 5 ft 4, 205 lb, mostly sitting, lose weight | 1,900 | 1,700 | Recalculate | Recalculate | Recalculate |
-| 60M, 6 ft 1, 235 lb, on feet, lose weight | 2,750 | 2,500 | Recalculate | Recalculate | Recalculate |
-| 65F, 4 ft 11, 200 lb, mostly sitting, lose weight | 1,700 | 1,550 | Recalculate | Recalculate | Recalculate |
-| 58F, 5 ft 6, 155 lb, on feet, maintain | 1,850 | 1,850 | Recalculate | Recalculate | Recalculate |
-| 55M, 5 ft 10, 170 lb, on feet, add weight slowly | 2,300 | 2,300 | Recalculate | Recalculate | Recalculate |
+| Todd: 60M, 6 ft 1, 175 lb, 175 goal, strength, mostly sitting, lose weight | 2,100 | 1,900 | 195 g | 155 g | 55 g |
+| Todd: same inputs, on feet most of the day, lose weight | 2,350 | 2,100 | 195 g | 205 g | 60 g |
+| 55F, 5 ft 4, 205 lb, 160 goal, no strength, sitting, lose weight | 1,900 | 1,700 | 145 g | 180 g | 45 g |
+| Same profile with strength training | 1,900 | 1,700 | 160 g | 165 g | 45 g |
+| 60M, 6 ft 1, 235 lb, 200 goal, strength, on feet, lose weight | 2,750 | 2,500 | 210 g | 260 g | 70 g |
+| 65F, 4 ft 11, 200 lb, 140 goal, strength, sitting, lose weight | 1,700 | 1,550 | 135 g | 150 g | 45 g |
+| 58F, 5 ft 6, 155 lb, strength, on feet, maintain | 1,850 | 1,850 | 170 g | 180 g | 50 g |
+| 55M, 5 ft 10, 170 lb, 180 goal, strength, on feet, add slowly | 2,300 | 2,300 | 190 g | 240 g | 65 g |
 | 70F, 4 ft 10, 110 lb, mostly sitting, lose weight | 1,150 | Dietitian notice | - | - | - |
-| 50M, 6 ft 5, 350 lb, physical work, lose weight | 4,000 | 3,600 | Recalculate | Recalculate | Recalculate |
+| 50M, 6 ft 5, 350 lb, 250 goal, strength, physical work, lose weight | 4,000 | 3,600 | 230 g | 445 g | 100 g |
+| Metric: 60M, 185 cm, 79 kg to 77 kg, strength, sitting, lose weight | 2,100 | 1,900 | 185 g | 165 g | 55 g |
 
 Maintenance is rounded up to the next 50 calories. A fat-loss result is 10% below maintenance,
-capped at 500 calories, then rounded to the nearest 50. The protein rule and dependent carbohydrate
-and fat results must be recalculated after the revised protein decision.
+capped at 500 calories, then rounded to the nearest 50. Protein, carbohydrate, and fat are rounded
+to the nearest 5 grams.
 
 Todd's stated real maintenance routine has generally been in the 2,000-2,300 calorie range. The
 two calibration outputs bracket that lived experience. This is a useful sanity check, not proof of
