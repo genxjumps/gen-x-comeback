@@ -199,10 +199,24 @@ The calculator asks:
   - Dinner
   - They're about the same
 
-The app uses the selected meal occasions and largest meal to divide the daily calorie, protein,
-carbohydrate, and fat targets into a normal meal-by-meal allocation. A larger meal receives a
-larger calorie and carbohydrate share. The final allocation method, especially protein spread,
-requires evidence review before implementation.
+The app starts with a recommended split based on the selected meal occasions and largest main
+meal. A larger main meal receives a larger calorie and carbohydrate share.
+
+The customer can then select **Adjust your day** and shape the split around how they actually eat.
+For example, someone who prefers coffee and a small breakfast can give breakfast a smaller share
+and move more of the day to lunch, dinner, or snacks/dessert. This changes the meal-by-meal
+guidance only. It never changes the daily calorie or macro targets.
+
+The adjustment is one simple meal-size control for each selected eating occasion, with a clear
+**Reset to recommended split** action. When one meal changes, the remaining selected meals
+rebalance automatically. Calories, carbohydrates, and fats follow that meal-size split. The
+default protein guidance is intentionally more evenly distributed across the main meals than
+calories, because a large dinner does not make it useful to ignore protein earlier in the day.
+
+The app does not provide separate sliders for calories, protein, carbohydrates, and fat. That
+would turn a practical planning screen into a spreadsheet. If a customer chooses a very small
+meal, the app simply reminds them that their daily protein target still needs to be handled across
+the rest of the day.
 
 The result teaches the customer how all four numbers operate across a day. It is not a rigid meal
 schedule, a daily checklist, or a meal-by-meal food log.
@@ -282,8 +296,8 @@ These choices must be resolved before implementation begins:
    handle substantial excess weight.
 3. **Health and safety boundary:** age suitability, final caution/stop copy, and when the app
    directs a customer to a registered dietitian rather than gives a target.
-4. **Meal allocation:** the exact calorie, protein, carbohydrate, and fat distribution for selected
-   meal occasions and the largest-meal choice.
+4. **Meal-allocation math:** the exact default distribution, slider limits, automatic rebalance
+   behavior, rounding, and protein-spread behavior for selected meal occasions.
 5. **Todd's Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
 6. **Saved rotation:** whether V1 saves only short meal names/notes or launches first with the
    meal-allocation plan and Todd's example only.
