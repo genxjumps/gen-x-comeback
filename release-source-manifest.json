@@ -191,7 +191,7 @@
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "sha256": "3457668b7c045622f923306a8821648cb204b2fed0449908a082d8879c8c455d"
+      "sha256": "04614b2d4bacfd91fe21c9a9e555089a8a139e001c038db240af4c7569c03db2"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -718,8 +718,12 @@
       "sha256": "179dbec64d316137a172aba2a8920aabe3dcdf4b36508aff170dd69d9b099dc3"
     },
     {
+      "path": "src/lib/notifications/__tests__/reminder-preferences-contract.test.ts",
+      "sha256": "4d72f8ac7afba826e74cc90e168f1e960a9d1fa151be887e3a1afea531136122"
+    },
+    {
       "path": "src/lib/notifications/functions.ts",
-      "sha256": "cabb3185b67d3c72e66bb3092884f3e58a56ddeecfb7309a0414f193acba49ab"
+      "sha256": "6d46c1384d62fc68ecc119313244ef4c5ff333cecee2c4f146de7287a912c3d8"
     },
     {
       "path": "src/lib/notifications/measurement-reminder.ts",
@@ -727,11 +731,11 @@
     },
     {
       "path": "src/lib/notifications/schemas.ts",
-      "sha256": "5c3d5a2df42d42bf1357dadb11ddbc2a1176be859a44c2323168788794822d81"
+      "sha256": "847c654f0df48d83e77ce453c5b08c694fadfce5d370929ba586909293efec05"
     },
     {
       "path": "src/lib/notifications/types.ts",
-      "sha256": "5095b2270019b5183f047a9d3908cd11dbd025fa36c7b745b1289c1a433e14eb"
+      "sha256": "902817ec05c51a0ae7e28b5b66bbd44d9e0ca98dd17113f7ba319f787b0ef9d1"
     },
     {
       "path": "src/lib/plan-access.server.ts",
@@ -847,7 +851,7 @@
     },
     {
       "path": "src/routes/notifications.tsx",
-      "sha256": "a1a16af4d20191a9433d1ee717dae9ebccc4ed387bf3998ae010f21975899929"
+      "sha256": "a6a8523456f318869ba25a1db18a8961652e3d2cf3fcf7a0bc7643d621c3fca9"
     },
     {
       "path": "src/routes/nutrition.tsx",
@@ -915,7 +919,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "7742b268bb279cbdd55e128d9635d0f636765109b85318141d4ed33e79574843"
+      "sha256": "263382aa38890efc1d2dacad313057ced54d0653330d4a0eedc9ac7045414af6"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1028,6 +1032,10 @@
     {
       "path": "supabase/migrations/20260904100000_program_week_measurement_reminders.sql",
       "sha256": "739cfa5988cd1f983a58939510b6d8c6a01690b177331375573030ef55f8c1ca"
+    },
+    {
+      "path": "supabase/migrations/20260904110000_customer_program_reminder_preferences.sql",
+      "sha256": "260a92ddcfeea57486ef9a4496d7dc851b9ca3949ce9c75d3c07f44960fb4be6"
     },
     {
       "path": "tsconfig.json",
