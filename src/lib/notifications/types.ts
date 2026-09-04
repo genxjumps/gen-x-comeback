@@ -5,3 +5,7 @@ export type PlatformNotificationsResult =
   | { ok: false };
 
 export type DismissMeasurementReminderResult = { ok: true; dismissed: true } | { ok: false };
+
+export type ProgramReminderPreferenceResult =
+  | { ok: true; programRemindersEnabled: boolean }
+  | { ok: false };

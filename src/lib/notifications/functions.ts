@@ -5,11 +5,27 @@ import { buildMeasurementReminder } from "@/lib/notifications/measurement-remind
 import {
   dismissMeasurementReminderInputSchema,
   platformNotificationsInputSchema,
+  setProgramReminderPreferenceInputSchema,
 } from "@/lib/notifications/schemas";
 import type {
   DismissMeasurementReminderResult,
   PlatformNotificationsResult,
+  ProgramReminderPreferenceResult,
 } from "@/lib/notifications/types";
+
+async function programRemindersEnabled(customerId: string): Promise<boolean> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("customer_program_reminder_preferences")
+    .select("program_reminders_enabled")
+    .eq("customer_id", customerId)
+    .limit(1);
+  if (error) throw new Error(error.message);
+
+  // An absent row keeps the default on. This makes the preference additive for
+  // existing accounts and gives later reminder channels one shared control.
+  return data?.[0]?.program_reminders_enabled ?? true;
+}
 
 async function loadMeasurementReminder() {
   const { currentAuthorizationHeader, resolveCustomerAccount } =
@@ -18,6 +34,10 @@ async function loadMeasurementReminder() {
   if (!account.ok) return { authorized: false as const, customerId: null, reminder: null };
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  if (!(await programRemindersEnabled(account.account.id))) {
+    return { authorized: true as const, customerId: account.account.id, reminder: null };
+  }
+
   const { data: activeRows, error: activeError } = await supabaseAdmin
     .from("customer_active_programs")
     .select("program_kind, paid_enrollment_id")
@@ -133,4 +153,40 @@ export const dismissMeasurementReminder = createServerFn({ method: "POST" })
     });
     if (error && error.code !== "23505") throw new Error(error.message);
     return { ok: true, dismissed: true };
+  });
+
+export const getProgramReminderPreference = createServerFn({ method: "POST" })
+  .validator((data: unknown) => platformNotificationsInputSchema.parse(data))
+  .handler(async (): Promise<ProgramReminderPreferenceResult> => {
+    const { currentAuthorizationHeader, resolveCustomerAccount } =
+      await import("@/lib/account/customer-account.server");
+    const account = await resolveCustomerAccount(await currentAuthorizationHeader());
+    if (!account.ok) return { ok: false };
+
+    return {
+      ok: true,
+      programRemindersEnabled: await programRemindersEnabled(account.account.id),
+    };
+  });
+
+export const setProgramReminderPreference = createServerFn({ method: "POST" })
+  .validator((data: unknown) => setProgramReminderPreferenceInputSchema.parse(data))
+  .handler(async ({ data }): Promise<ProgramReminderPreferenceResult> => {
+    const { currentAuthorizationHeader, resolveCustomerAccount } =
+      await import("@/lib/account/customer-account.server");
+    const account = await resolveCustomerAccount(await currentAuthorizationHeader());
+    if (!account.ok) return { ok: false };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("customer_program_reminder_preferences").upsert(
+      {
+        customer_id: account.account.id,
+        program_reminders_enabled: data.programRemindersEnabled,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "customer_id" },
+    );
+    if (error) throw new Error(error.message);
+
+    return { ok: true, programRemindersEnabled: data.programRemindersEnabled };
   });
