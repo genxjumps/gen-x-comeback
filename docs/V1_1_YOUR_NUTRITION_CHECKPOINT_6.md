@@ -189,11 +189,11 @@ context rather than presenting scale change as the only score.
 
 The calculator asks:
 
-- **On a typical weekday, which of these meals do you eat?**
+- **On a typical weekday, which of these eating occasions do you use?**
   - Breakfast
   - Lunch
   - Dinner
-  - Snacks
+  - Snacks, shakes, or dessert
 - **Which meal tends to be your biggest?**
   - Breakfast
   - Lunch
@@ -214,20 +214,30 @@ shows the resulting percentage, calories, protein, carbohydrates, and fat direct
 meal.
 
 The sliders represent relative meal size. Customers never have to make four percentages add to
-100%. When one slider moves, the app automatically recalculates every selected meal while keeping
-the daily calorie and macro totals fixed.
+100%. Each slider has five positions from Smaller to Larger. The internal relative values are
+implementation details; the customer sees the resulting share and nutrition numbers.
+
+The recommended defaults are:
+
+- each selected main meal: middle position
+- selected largest main meal: one position above the middle
+- Snacks, shakes, or dessert: one position below the middle
+- They're about the same: every selected main meal stays in the middle
+
+When one slider moves, the app automatically recalculates every selected eating occasion while
+keeping the daily calorie and macro totals fixed. Calories, protein, carbohydrates, and fat all
+follow the same visible meal share. The implementation distributes rounding remainders
+deterministically so the displayed meal values always add back to the displayed daily totals.
 
 The app does not provide separate sliders for calories, protein, carbohydrates, and fat. One meal
 slider updates all four numbers together. If a customer makes breakfast very small, the app moves
-that portion of the daily targets into the remaining meals. The recommended starting split still
-teaches a more deliberate protein spread, but the customer can shape the day around how they
-actually eat.
+that portion of the daily targets into the remaining eating occasions.
 
-A customer may select only one meal. Nutrition does not require a minimum meal frequency or force
-breakfast, lunch, dinner, or snacks. With one selected eating occasion, that meal receives the
-whole daily allocation and no slider is shown because there is nothing else to rebalance. If the
-customer also uses a shake, snack, or dessert, selecting Snacks creates a second eating occasion
-and activates both sliders.
+A customer may select only one eating occasion. Nutrition does not require a minimum meal
+frequency or force breakfast, lunch, dinner, or snacks. With one selected eating occasion, it
+receives the whole daily allocation, the largest-meal question is skipped, and no slider is shown
+because there is nothing else to rebalance. If the customer also uses a shake, snack, or dessert,
+selecting Snacks, shakes, or dessert creates a second eating occasion and activates both sliders.
 
 The one-meal result states the consequence directly: the full daily calorie and macro targets must
 fit that eating occasion. It does not block the customer or pretend that a single-meal pattern is
@@ -310,12 +320,10 @@ These choices must be resolved before implementation begins:
    prescription.
 2. **Input and safety presentation:** exact valid ranges, height-unit handling, and the final
    caution/stop copy.
-3. **Meal-allocation math:** the exact default distribution, adjustment limits, automatic
-   rebalance behavior, rounding, and protein-spread behavior for selected meal occasions.
-4. **My Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
-5. **Saved rotation:** confirm that V1 launches with the meal-allocation plan and My Normal Day
+3. **My Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
+4. **Saved rotation:** confirm that V1 launches with the meal-allocation plan and My Normal Day
    only, without stored customer meal notes.
-6. **Manual review prompt:** the exact customer-facing wording and the point at which the app
+5. **Manual review prompt:** the exact customer-facing wording and the point at which the app
    invites a customer to reassess portions and calorie-dense foods.
 
 ## Formula guardrail
