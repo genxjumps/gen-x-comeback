@@ -29,35 +29,12 @@ import type {
 import { latestMeasurementPair, measurementSummary } from "@/lib/accelerator/measurements";
 import { nullableRpcArg } from "@/lib/supabase/nullable-rpc-arg";
 import { daysWaitingFromAvailableOn } from "@/lib/accelerator/daily-assignment";
+import { toCustomerMeasurement } from "@/lib/accelerator/measurement-row";
 
 async function authorize() {
   const { currentAuthorizationHeader } = await import("@/lib/account/customer-account.server");
   const { resolveAcceleratorAccess } = await import("@/lib/accelerator/access.server");
   return resolveAcceleratorAccess(await currentAuthorizationHeader());
-}
-
-function toMeasurement(row: {
-  id: string;
-  enrollment_id: string | null;
-  measurement_kind: string;
-  value: number;
-  unit: string;
-  measurement_context: string;
-  notes: string | null;
-  measured_at: string;
-  created_at: string;
-}): CustomerMeasurement {
-  return {
-    id: row.id,
-    enrollmentId: row.enrollment_id,
-    kind: row.measurement_kind as CustomerMeasurement["kind"],
-    value: Number(row.value),
-    unit: row.unit as CustomerMeasurement["unit"],
-    context: row.measurement_context as CustomerMeasurement["context"],
-    notes: row.notes,
-    measuredAt: row.measured_at,
-    createdAt: row.created_at,
-  };
 }
 
 function toProgressState(
@@ -165,7 +142,7 @@ export const getMyPrograms = createServerFn({ method: "POST" })
     }
 
     const active = activeResult.data?.[0] ?? null;
-    const measurements = (measurementResult.data ?? []).map(toMeasurement);
+    const measurements = (measurementResult.data ?? []).map(toCustomerMeasurement);
     const latestMeasurements = latestMeasurementPair(measurements);
     const runSummaries = runs.map((run) => ({
       enrollmentId: run.id,
@@ -330,7 +307,7 @@ export const getAcceleratorHub = createServerFn({ method: "POST" })
     const enrollment = enrollmentResult.data?.[0];
     const progress = progressResult.data?.[0];
     if (!enrollment || !progress) return { ok: false };
-    const measurements = (measurementResult.data ?? []).map(toMeasurement);
+    const measurements = (measurementResult.data ?? []).map(toCustomerMeasurement);
 
     return {
       ok: true,
@@ -446,7 +423,7 @@ export const addAcceleratorMeasurement = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     const row = rows?.[0];
     if (!row) return { ok: false };
-    return { ok: true, measurement: toMeasurement(row) };
+    return { ok: true, measurement: toCustomerMeasurement(row) };
   });
 
 export const correctCustomerMeasurement = createServerFn({ method: "POST" })
@@ -466,7 +443,7 @@ export const correctCustomerMeasurement = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     const row = rows?.[0];
     if (!row) return { ok: false };
-    return { ok: true, measurement: toMeasurement(row) };
+    return { ok: true, measurement: toCustomerMeasurement(row) };
   });
 
 export const removeCustomerMeasurement = createServerFn({ method: "POST" })

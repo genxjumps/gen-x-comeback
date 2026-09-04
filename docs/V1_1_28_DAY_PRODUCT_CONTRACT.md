@@ -174,8 +174,10 @@ Detailed measurement history and previous program runs remain available behind a
 
 ### Your Nutrition
 
-The nutrition section is named **Your Nutrition**. Its launch behavior is defined later in this
-document.
+The nutrition section is named **Your Nutrition**. It is a separate account-level paid-platform
+feature, not a step inside the Accelerator. Owning the Accelerator may unlock it, but nutrition does
+not start, pause, advance, complete, or otherwise control an Accelerator run. Its behavior requires
+separate approval before implementation.
 
 ### Explore Programs
 
@@ -386,6 +388,11 @@ future work, but completion history must support retroactive awards.
 In-app messaging is the primary reminder system. Email is a light rescue channel for customers who
 have clearly stopped returning.
 
+The first in-app behavior is an optional program-week measurement reminder in Weeks 2-4. It appears
+only after the prior seven-day block is complete and the next program day is available. Adding
+either a progress weight or waist entry satisfies the check-in. Dismissing it silences only the
+current program week; it does not hide measurement entry or change progress.
+
 Use one platform-wide comeback policy rather than creating overlapping campaigns for every owned
 program:
 
@@ -406,8 +413,10 @@ Production activation remains a separate controlled checkpoint.
 
 ## Your Nutrition and Protein First
 
-The full Protein First guide is available from Day 1. Short reminders may appear during the
-program, but nutrition actions never block program progress.
+Your Nutrition is separate from the Accelerator experience. It may be unlocked by ownership of the
+Accelerator or another qualifying paid program, but it lives in the platform's **Your Nutrition**
+section. It is not mixed into daily assignments, weekly coaching, completion, or Accelerator
+reminders, and nutrition actions never block program progress.
 
 Protein First teaches:
 
@@ -494,7 +503,7 @@ All requirements remain unverified until a future checkpoint attaches concrete e
 | Workout runtimes                   | Unverified             | Final encoded A-E runtimes support the public time claim    |
 | Equipment                          | Unverified             | A-F audit supports rope/bodyweight/no-gym claims            |
 | Weekly coaching                    | Unverified             | Four finished coaching primers placed in the program        |
-| Nutrition targets                  | Unverified             | Approved calorie and protein logic implemented and tested   |
+| Paid-platform nutrition            | Separately scoped      | Approved access, content, and any target logic tested       |
 | Measurement behavior               | Foundation needs audit | Final private UI and accepted history behavior are verified |
 | Customer account and access        | Foundation needs audit | Cross-device passwordless account behavior is verified      |
 | Program-run lifecycle              | Foundation needs audit | Start, pause, resume, repeat, and history are verified      |
@@ -509,7 +518,7 @@ All requirements remain unverified until a future checkpoint attaches concrete e
 - Exact workout runtimes.
 - Final equipment requirements.
 - Availability of four weekly coaching videos.
-- Availability or formula of Your Nutrition targets.
+- Availability, eligibility, or formula of Your Nutrition targets.
 - Working measurement and history behavior.
 - Working purchase-to-account access.
 - Working refund handling.

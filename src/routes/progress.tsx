@@ -306,6 +306,7 @@ function Progress() {
         return false;
       }
       replaceMeasurement(result.measurement);
+      window.dispatchEvent(new CustomEvent("gxj:notifications-changed", { detail: { count: 0 } }));
       setMessage(`${kind === "weight" ? "Weight" : "Waist"} saved.`);
       return true;
     } catch {
