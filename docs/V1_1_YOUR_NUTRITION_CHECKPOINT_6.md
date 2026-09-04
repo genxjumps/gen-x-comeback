@@ -1,3 +1,5 @@
+Checking formatting...
+All matched files use Prettier code style!
 # Checkpoint 6 - Your Nutrition approval brief
 
 **Status:** Product behavior approved by Todd on 2026-09-04. Numerical formulas, safety
@@ -161,8 +163,7 @@ someone has stalled, change targets automatically, or create a target-history da
 ## Explicitly out of V1
 
 - mandatory food logging or detailed daily macro tracking
-- calorie or workout "eat back" calculations
-- carb cycling, exercise-calorie eat-back, or a weekend-calorie mode
+- calorie or workout "eat back" calculations, carb cycling, or a weekend-calorie mode
 - rigid meal plans, generated one-day/seven-day menus, or a large recipe library
 - AI meal generation, food checker, grocery list, restaurant guidance, substitutions, or saved
   recipe system
@@ -175,8 +176,7 @@ someone has stalled, change targets automatically, or create a target-history da
 These choices must be resolved before implementation begins:
 
 1. **Calorie method:** calculation, goal and goal-weight handling, movement categories, rounding,
-   floors, maximum deficit, and
-   what the app says when an estimate is not appropriate.
+   floors, maximum deficit, and what the app says when an estimate is not appropriate.
 2. **Protein method:** weight basis, calculation, rounding, lower/upper guardrails, and how to
    handle substantial excess weight.
 3. **Health and safety boundary:** age suitability, caution/stop copy, and when the app directs a
