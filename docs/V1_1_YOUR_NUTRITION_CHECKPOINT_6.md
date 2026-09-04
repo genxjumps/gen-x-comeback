@@ -239,14 +239,15 @@ The app does not calculate a customer's individual recipes or claim that a named
 numbers. A future saved-rotation interface, if used, stores only customer notes and names; it is
 not a food database or food log.
 
-**Todd's Normal Day** provides one real, fully measured example of how breakfast, lunch, dinner,
-and snacks can add up to a daily target. It is an example of the method, not a prescribed meal
-plan. Its exact foods, servings, and macro totals require Todd's final source data and verification.
+**My Normal Day** gives customers one real example of how I keep meals simple and make a daily
+target work. It is an example of the method, not a prescribed meal plan. Its exact foods, servings,
+and macro totals require final source data and verification.
 
-### Todd's current example day - source pending label verification
+### My current example day - source pending label verification
 
-Todd's current routine illustrates the small, deliberate changes between maintenance and a modest
-fat-loss phase. The structure, protein-centered meals, and preferred foods remain the same.
+Most of my meals stay the same when I want to lean out. I do not rebuild my whole diet. I remove
+or reduce the parts adding extra calories while keeping the protein-centered structure and foods I
+already like.
 
 | Eating time | Maintenance version | Fat-loss version |
 | --- | --- | --- |
@@ -255,8 +256,8 @@ fat-loss phase. The structure, protein-centered meals, and preferred foods remai
 | Dinner | 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato, 1/2 can black beans, 1/2 can sweet peas, assorted hot sauces | 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato, 1/2 can black beans, assorted hot sauces |
 | Dessert | 50 g protein powder (2 scoops) | 50 g protein powder (2 scoops) |
 
-The example demonstrates the intended lesson: do not rebuild the whole diet to get leaner. Keep
-the foods and meals that work, then deliberately adjust portions or calorie-dense additions.
+This is how I use the method. It is not a command for you to eat the same foods I eat. Find foods
+you like, check the labels and serving sizes, and make them fit your own targets.
 
 Before publication, verify the exact product labels for protein powder and ground chicken, can
 sizes and serving counts, and the measured sweet-potato portion. No inferred macro totals may be
