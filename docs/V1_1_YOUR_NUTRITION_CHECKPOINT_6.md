@@ -223,6 +223,16 @@ that portion of the daily targets into the remaining meals. The recommended star
 teaches a more deliberate protein spread, but the customer can shape the day around how they
 actually eat.
 
+A customer may select only one meal. Nutrition does not require a minimum meal frequency or force
+breakfast, lunch, dinner, or snacks. With one selected eating occasion, that meal receives the
+whole daily allocation and no slider is shown because there is nothing else to rebalance. If the
+customer also uses a shake, snack, or dessert, selecting Snacks creates a second eating occasion
+and activates both sliders.
+
+The one-meal result states the consequence directly: the full daily calorie and macro targets must
+fit that eating occasion. It does not block the customer or pretend that a single-meal pattern is
+the app's prescribed schedule.
+
 The result teaches the customer how all four numbers operate across a day. It is not a rigid meal
 schedule, a daily checklist, or a meal-by-meal food log.
 
