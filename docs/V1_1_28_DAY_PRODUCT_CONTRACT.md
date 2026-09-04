@@ -453,6 +453,11 @@ logic.
 The launch includes a simple private customer-progress view for Todd. It is not a full analytics
 dashboard.
 
+The view is account-bound through a server-only private allow-list. It does not appear in the
+customer navigation, and a signed-in customer who is not on that allow-list receives no customer
+data. It is read-only and excludes editing programs, purchases, refunds, email, reminders, or
+customer access.
+
 For each customer or run, it shows enough information to identify:
 
 - Enrolled but not started.
@@ -461,6 +466,11 @@ For each customer or run, it shows enough information to identify:
 - Last completed day and completion date.
 - Paused or inactive.
 - Completed.
+- Starting, latest, and final weight and waist when recorded.
+
+The first view is limited to active Accelerator ownerships. Its filters are All, Active, Paused,
+Completed, and Active but inactive for four or more days. It is intentionally not a replacement
+for a future support, payments, or analytics system.
 
 The underlying system should save enough detail to support later program funnel and retention
 analysis without crowding the first admin view.

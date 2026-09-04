@@ -29,6 +29,7 @@ import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as PreviewAcceleratorRouteImport } from './routes/preview.accelerator'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
+import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
 import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs.accelerator.setup'
 import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs.accelerator.runs'
@@ -136,6 +137,11 @@ const AssessmentCompleteRoute = AssessmentCompleteRouteImport.update({
   path: '/assessment/complete',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCustomersRoute = AdminCustomersRouteImport.update({
+  id: '/admin/customers',
+  path: '/admin/customers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
   id: '/your-plan/day/$day',
   path: '/your-plan/day/$day',
@@ -183,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
@@ -240,6 +248,7 @@ export interface FileRoutesById {
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
     | '/preview/accelerator'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
     | '/preview/accelerator'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
     | '/preview/accelerator'
@@ -355,6 +367,7 @@ export interface RootRouteChildren {
   RecoverRoute: typeof RecoverRoute
   ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AdminCustomersRoute: typeof AdminCustomersRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentStartRoute: typeof AssessmentStartRoute
   PreviewAcceleratorRoute: typeof PreviewAcceleratorRoute
@@ -510,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentCompleteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/customers': {
+      id: '/admin/customers'
+      path: '/admin/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminCustomersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/your-plan/day/$day': {
       id: '/your-plan/day/$day'
       path: '/your-plan/day/$day'
@@ -583,6 +603,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecoverRoute: RecoverRoute,
   ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AdminCustomersRoute: AdminCustomersRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentStartRoute: AssessmentStartRoute,
   PreviewAcceleratorRoute: PreviewAcceleratorRoute,
