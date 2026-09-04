@@ -267,7 +267,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "c297585aa9205349d83214c37d70060c3f00be7dc79c397d8775789d264877c8"
+      "sha256": "cf1a3a670477c32860c3b26c94c02f7f4dd0e3bb18d30fcb5c0d791401ef823a"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -770,6 +770,38 @@
       "sha256": "432a6c441c2293b91ffc28462b7ab4ced0553a1a85dae95e5a39353b303589c7"
     },
     {
+      "path": "src/lib/nutrition/__tests__/access.test.ts",
+      "sha256": "05095e826699c940be7434b0a55229c43d05d78aabc8c939eed6a62992605b93"
+    },
+    {
+      "path": "src/lib/nutrition/__tests__/calculator.test.ts",
+      "sha256": "98a763c4d553f997af799a4b6ba33c047029fc430a4feaa5863ca0a93dcb2dfe"
+    },
+    {
+      "path": "src/lib/nutrition/__tests__/nutrition-contract.test.ts",
+      "sha256": "30063d660335bce905b8267ce0b801c9cacb2b4381c87816d8b88e9331f275d9"
+    },
+    {
+      "path": "src/lib/nutrition/access.server.ts",
+      "sha256": "50d4a2774f72b971d2800aa2440f540dfac23c1dd1779f385edda252a161eb98"
+    },
+    {
+      "path": "src/lib/nutrition/calculator.ts",
+      "sha256": "fb120fd624add61fb0cf8d0b9187e00db9705f7d62972028d0166575cce7727e"
+    },
+    {
+      "path": "src/lib/nutrition/functions.ts",
+      "sha256": "4adf2d8ed312668bde7c7e75eb5f7c45d8421966e76e85d618a3f26b9d5682cc"
+    },
+    {
+      "path": "src/lib/nutrition/schemas.ts",
+      "sha256": "3fabb65b9175f3b657e8408f6756d4bce30e20b9a316cff4943ac2d30c704e81"
+    },
+    {
+      "path": "src/lib/nutrition/types.ts",
+      "sha256": "b021d44a723e5bf25719f2992a7022c5c4f327f0a9d8a45a5b64ce7f3893150d"
+    },
+    {
       "path": "src/lib/plan-access.server.ts",
       "sha256": "41c50fd64c202c4c436697e6558a3c7e45251b4760d867ed9540ba7cad49b822"
     },
@@ -891,7 +923,7 @@
     },
     {
       "path": "src/routes/nutrition.tsx",
-      "sha256": "93339c14f8461c107679e0c5e9c3482087e4b5f5c0679840752618630a4f37fb"
+      "sha256": "f0c5120857427d5406572e4e613a2c489fcbbb32752b1e7d4709e2b8c8dc0956"
     },
     {
       "path": "src/routes/preview.accelerator.tsx",
@@ -955,7 +987,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "76327dbbaec480deca416b859a5b19066b49a6c5976850188666dda637c6cd64"
+      "sha256": "fbd76c91d04a18825b8fcd69fffdd67528f8ac5746d32716cea90f9c3f2d7a0b"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1076,6 +1108,10 @@
     {
       "path": "supabase/migrations/20260904120000_private_customer_progress_admins.sql",
       "sha256": "4034d44adf35db2b787e2052bb328bac83a7a8156af28282b1981ebedb9b23ea"
+    },
+    {
+      "path": "supabase/migrations/20260904140000_customer_nutrition_profiles.sql",
+      "sha256": "e3ae27b616158a8f853f1c86de06103aaf1512fabc6f6d9fa1cc368a9910a1f1"
     },
     {
       "path": "tsconfig.json",

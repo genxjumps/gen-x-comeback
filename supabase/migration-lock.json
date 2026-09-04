@@ -209,6 +209,13 @@
       "sha256": "4034d44adf35db2b787e2052bb328bac83a7a8156af28282b1981ebedb9b23ea",
       "statementSha256": "09db9069a18c1a10c35f30dd89134ea77f7ecdf3a4b4d2b3a05520ceb7c61a3f",
       "version": "20260904120000"
+    },
+    {
+      "file": "20260904140000_customer_nutrition_profiles.sql",
+      "name": "customer_nutrition_profiles",
+      "sha256": "e3ae27b616158a8f853f1c86de06103aaf1512fabc6f6d9fa1cc368a9910a1f1",
+      "statementSha256": "5f0bcb8019b823c8540dfd5d0ce48ac2d753a54adbb110ea2cba7ae4d0fbfd93",
+      "version": "20260904140000"
     }
   ],
   "version": 1
