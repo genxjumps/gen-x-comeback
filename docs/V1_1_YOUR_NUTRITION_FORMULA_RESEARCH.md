@@ -1,9 +1,9 @@
 # Checkpoint 6 - Nutrition formula and evidence
 
-**Status:** Calorie direction, safety boundary, and the tested muscle-first protein method were
-approved by Todd on 2026-09-04. Final customer copy, remaining interaction rules, implementation,
-and release are still gated. This remains general nutrition guidance, not individualized medical
-nutrition care.
+**Status:** Calorie direction, safety boundary, tested muscle-first protein method, customer copy,
+and interaction rules were approved by Todd on 2026-09-04. The bounded implementation and
+deterministic tests are complete in draft PR #63. Migration application, merge, and release remain
+gated. This remains general nutrition guidance, not individualized medical nutrition care.
 
 ## What this proposal is trying to do
 
@@ -47,8 +47,8 @@ determine whether it was close enough.
 - Current training type
 - Typical meal occasions and largest meal
 
-Goal weight confirms the direction of change and gives the existing Progress experience useful
-context. It does **not** directly set the starting calorie or protein number. A goal weight without
+Goal weight confirms the direction of change and supplies the approved protein reference weight
+when body weight is changing. It does **not** directly set starting calories. A goal weight without
 a time frame cannot responsibly determine a daily energy target.
 
 Training type remains useful for protein and education. It does **not** add assumed exercise
@@ -60,21 +60,21 @@ Use Mifflin-St Jeor resting energy expenditure, then only this conservative dail
 calibration:
 
 | Typical day outside workouts | Proposed multiplier |
-| --- | ---: |
-| Mostly sitting | 1.25 |
-| On your feet most of the day | 1.40 |
-| Physically active work | 1.55 |
+| ---------------------------- | ------------------: |
+| Mostly sitting               |                1.25 |
+| On your feet most of the day |                1.40 |
+| Physically active work       |                1.55 |
 
 Round estimated maintenance **up** to the nearest 50 calories. The multipliers are product
 calibration choices, not claims of individual precision.
 
 ### 3. Calorie result by goal
 
-| Customer situation | Proposed starting calorie behavior |
-| --- | --- |
-| Any goal paired with Lose weight | Maintenance minus 10%, with an internal maximum reduction of 500 calories |
-| Any goal paired with Maintain current weight | Estimated maintenance |
-| Any goal paired with Add weight slowly | Estimated maintenance. No automatic bulk surplus. |
+| Customer situation                           | Proposed starting calorie behavior                                        |
+| -------------------------------------------- | ------------------------------------------------------------------------- |
+| Any goal paired with Lose weight             | Maintenance minus 10%, with an internal maximum reduction of 500 calories |
+| Any goal paired with Maintain current weight | Estimated maintenance                                                     |
+| Any goal paired with Add weight slowly       | Estimated maintenance. No automatic bulk surplus.                         |
 
 The 500-calorie maximum is a ceiling, not a promise of universal safety and not the default
 reduction. The 10% calculation controls most starting results.
@@ -169,19 +169,19 @@ and deliberately recalculate starting targets at any time.
 
 These are internal tests, not customer examples or promises.
 
-| Profile | Maintenance | Result | Protein | Carbs | Fat |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Todd: 60M, 6 ft 1, 175 lb, 175 goal, strength, mostly sitting, lose weight | 2,100 | 1,900 | 195 g | 155 g | 55 g |
-| Todd: same inputs, on feet most of the day, lose weight | 2,350 | 2,100 | 195 g | 205 g | 60 g |
-| 55F, 5 ft 4, 205 lb, 160 goal, no strength, sitting, lose weight | 1,900 | 1,700 | 145 g | 180 g | 45 g |
-| Same profile with strength training | 1,900 | 1,700 | 160 g | 165 g | 45 g |
-| 60M, 6 ft 1, 235 lb, 200 goal, strength, on feet, lose weight | 2,750 | 2,500 | 210 g | 260 g | 70 g |
-| 65F, 4 ft 11, 200 lb, 140 goal, strength, sitting, lose weight | 1,700 | 1,550 | 135 g | 150 g | 45 g |
-| 58F, 5 ft 6, 155 lb, strength, on feet, maintain | 1,850 | 1,850 | 170 g | 180 g | 50 g |
-| 55M, 5 ft 10, 170 lb, 180 goal, strength, on feet, add slowly | 2,300 | 2,300 | 190 g | 240 g | 65 g |
-| 70F, 4 ft 10, 110 lb, mostly sitting, lose weight | 1,150 | Dietitian notice | - | - | - |
-| 50M, 6 ft 5, 350 lb, 250 goal, strength, physical work, lose weight | 4,000 | 3,600 | 230 g | 445 g | 100 g |
-| Metric: 60M, 185 cm, 79 kg to 77 kg, strength, sitting, lose weight | 2,100 | 1,900 | 185 g | 165 g | 55 g |
+| Profile                                                                                | Maintenance |           Result | Protein | Carbs |   Fat |
+| -------------------------------------------------------------------------------------- | ----------: | ---------------: | ------: | ----: | ----: |
+| Todd calibration: 60M, 6 ft 1, 176 lb, 175 goal, strength, mostly sitting, lose weight |       2,100 |            1,900 |   195 g | 155 g |  55 g |
+| Todd: same inputs, on feet most of the day, lose weight                                |       2,350 |            2,100 |   195 g | 195 g |  60 g |
+| 55F, 5 ft 4, 205 lb, 160 goal, no strength, sitting, lose weight                       |       1,900 |            1,700 |   145 g | 180 g |  45 g |
+| Same profile with strength training                                                    |       1,900 |            1,700 |   160 g | 165 g |  45 g |
+| 60M, 6 ft 1, 235 lb, 200 goal, strength, on feet, lose weight                          |       2,750 |            2,500 |   210 g | 260 g |  70 g |
+| 65F, 4 ft 11, 200 lb, 140 goal, strength, sitting, lose weight                         |       1,700 |            1,550 |   135 g | 150 g |  45 g |
+| 58F, 5 ft 6, 155 lb, strength, on feet, maintain                                       |       1,850 |            1,850 |   170 g | 180 g |  50 g |
+| 55M, 5 ft 10, 170 lb, 180 goal, strength, on feet, add slowly                          |       2,300 |            2,300 |   190 g | 240 g |  65 g |
+| 70F, 4 ft 10, 110 lb, mostly sitting, lose weight                                      |       1,150 | Dietitian notice |       - |     - |     - |
+| 50M, 6 ft 5, 350 lb, 250 goal, strength, physical work, lose weight                    |       4,000 |            3,600 |   230 g | 445 g | 100 g |
+| Metric: 60M, 185 cm, 79 kg to 77 kg, strength, sitting, lose weight                    |       2,100 |            1,900 |   185 g | 165 g |  55 g |
 
 Maintenance is rounded up to the next 50 calories. A fat-loss result is 10% below maintenance,
 capped at 500 calories, then rounded to the nearest 50. Protein, carbohydrate, and fat are rounded
@@ -192,10 +192,11 @@ two calibration outputs bracket that lived experience. This is a useful sanity c
 accuracy for other customers. The short, older profile proves the boundary behavior: the app shows
 the dietitian notice instead of inventing a low-calorie target.
 
-## Still open before implementation
+## Implementation verification
 
-1. Convert the approved calorie, protein, carbohydrate, fat, input-validation, and boundary cases
-   into deterministic tests during implementation.
-2. Convert the approved meal-slider defaults, recalculation, and rounding behavior into
-   deterministic tests during implementation.
-3. Verify My Normal Day labels and portions before publishing its totals.
+1. The approved calorie, protein, carbohydrate, fat, input-validation, and boundary cases are
+   covered by deterministic tests.
+2. The approved meal-slider defaults, recalculation, one-meal behavior, and rounding behavior are
+   covered by deterministic tests.
+3. My Normal Day labels and portions still require verification before calculated totals can be
+   published. The current implementation does not infer or display those totals.

@@ -1,8 +1,9 @@
 # Checkpoint 6 - Your Nutrition approval brief
 
-**Status:** Product behavior, calorie direction, safety boundary, and the calibrated muscle-first
-protein method were approved by Todd on 2026-09-04. Meal-allocation math, final examples,
-implementation, and release remain gated by the open decisions below.
+**Status:** Product behavior, calorie direction, safety boundary, calibrated muscle-first protein
+method, and meal-allocation behavior were approved by Todd on 2026-09-04. The bounded V1
+implementation is complete in draft PR #63. Final My Normal Day source verification, migration
+application, merge, and release remain gated.
 
 ## Purpose
 
@@ -276,12 +277,12 @@ Most of my meals stay the same when I want to lean out. I do not rebuild my whol
 or reduce the parts adding extra calories while keeping the protein-centered structure and foods I
 already like.
 
-| Eating time | Maintenance version | Fat-loss version |
-| --- | --- | --- |
-| Breakfast | 1 cup egg whites, 3 whole eggs, 1/2 cup uncooked oatmeal, 5 g creatine | 1 cup egg whites, 3 whole eggs, 5 g creatine |
-| Lunch | 1 banana and 25 g protein powder (1 scoop) | 1 banana and 25 g protein powder (1 scoop) |
-| Dinner | 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato, 1/2 can black beans, 1/2 can sweet peas, assorted hot sauces | 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato, 1/2 can black beans, assorted hot sauces |
-| Dessert | 50 g protein powder (2 scoops) | 50 g protein powder (2 scoops) |
+| Eating time | Maintenance version                                                                                                   | Fat-loss version                                                                                  |
+| ----------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Breakfast   | 1 cup egg whites, 3 whole eggs, 1/2 cup uncooked oatmeal, 5 g creatine                                                | 1 cup egg whites, 3 whole eggs, 5 g creatine                                                      |
+| Lunch       | 1 banana and 25 g protein powder (1 scoop)                                                                            | 1 banana and 25 g protein powder (1 scoop)                                                        |
+| Dinner      | 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato, 1/2 can black beans, 1/2 can sweet peas, assorted hot sauces | 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato, 1/2 can black beans, assorted hot sauces |
+| Dessert     | 50 g protein powder (2 scoops)                                                                                        | 50 g protein powder (2 scoops)                                                                    |
 
 This is how I use the method. It is not a command for you to eat the same foods I eat. Find foods
 you like, check the labels and serving sizes, and make them fit your own targets.
@@ -319,13 +320,16 @@ starting targets at any time.
 
 ## Decisions that remain open
 
-These choices must be resolved before implementation begins:
+This item remains open before release:
 
-1. **My Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
+1. **My Normal Day source check:** verify final product labels and portions before publishing any
+   calculated totals. The V1 implementation shows the approved foods and portions without inferred
+   totals.
 
 ## Formula guardrail
 
-No numerical calorie or protein logic is approved by this document.
+The approved numerical behavior is defined in
+`docs/V1_1_YOUR_NUTRITION_FORMULA_RESEARCH.md` and must be implemented with deterministic tests.
 
 The eventual calorie method must use a **responsible starting deficit**: enough to create a
 meaningful fat-loss trend, but not so aggressive that it treats rapid scale loss as the goal or
@@ -333,11 +337,10 @@ makes normal eating, training, and recovery harder than necessary. It must not a
 workout calories when the app does not know how often or how long a customer actually trains.
 Real weight, waist, and adherence data remain the check on the initial estimate.
 
-Do not reuse the free 7-Day one-gram-per-pound language. The earlier working approximately
-1.6 g/kg idea, its rounding, and its proposed minimum/maximum are historical discussion only, not
-approved customer-facing logic. Any selected method must be researched for adults 50+, evaluated
-for customers carrying substantial excess weight, reviewed by Todd, and covered by deterministic
-tests before release.
+Do not reuse the free 7-Day one-gram-per-pound language or the earlier blanket approximately
+1.6 g/kg proposal. The approved muscle-first reference-weight method deliberately handles adults
+50+, current strength training, and substantial excess weight without exposing g/kg or g/lb math
+to customers.
 
 ## Approval path
 

@@ -56,7 +56,9 @@ describe("authenticated platform shell source contract", () => {
     expect(home).toContain("programs.activeProgram");
     expect(home).toContain('to: "/accelerator"');
     expect(home).toContain('to: "/your-plan"');
-    expect(nutrition).toContain("No unapproved target formula is active");
+    expect(nutrition).toContain("getNutritionProfile");
+    expect(nutrition).toContain("saveNutritionProfile");
+    expect(nutrition).not.toMatch(/checkout|stripe|sendEmail/);
     expect(programs).toContain("without opening checkout");
     expect(notifications).toContain("getPlatformNotifications");
     expect(notifications).toContain("dismissMeasurementReminder");
