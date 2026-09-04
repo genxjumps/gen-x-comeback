@@ -89,7 +89,7 @@ function PlatformHome() {
     description: "Start or resume an owned program from My Programs.",
     to: "/my-programs",
     button: "Open My Programs",
-    media: "No active assignment",
+    media: "No active workout",
   };
 
   if (
@@ -109,7 +109,7 @@ function PlatformHome() {
           ? `You completed today's work. Day ${day.day} opens ${friendlyDate(acceleratorHub.progress.availableOn)}.`
           : `Week ${day.week} of the 28-Day Fat Loss Accelerator. Your place is saved even when life interrupts the schedule.`,
         to: "/accelerator",
-        button: waiting ? "View Next Assignment" : "Open Daily Assignment",
+        button: waiting ? "View Next Workout" : "Open Today’s Workout",
         media: day.kind === "rest" ? "Rest-day guidance" : "Current workout video",
       };
     }
@@ -133,8 +133,8 @@ function PlatformHome() {
         title: `Day ${nextDay}: 7-Day Comeback Plan`,
         description: `${plan.completedDays} of ${plan.totalDays} days complete. Continue the same saved plan you already own.`,
         to: "/your-plan",
-        button: "Open Daily Assignment",
-        media: "Current Comeback Plan assignment",
+        button: "Open Today’s Workout",
+        media: "Current Comeback Plan workout",
       };
     }
   }
@@ -152,10 +152,10 @@ function PlatformHome() {
         <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_16rem] md:items-center">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
-              Daily Assignment
+              Today’s Workout
             </p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              {!programs ? "Loading Your Assignment..." : dailyAssignment.title}
+              {!programs ? "Loading Your Workout..." : dailyAssignment.title}
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
               {programs?.ok
@@ -173,7 +173,7 @@ function PlatformHome() {
           </div>
           <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted/60 px-5 text-center md:aspect-square">
             <p className="text-xs font-medium text-muted-foreground">
-              {programs?.ok ? dailyAssignment.media : "Current assignment"}
+              {programs?.ok ? dailyAssignment.media : "Current workout"}
             </p>
           </div>
         </div>
