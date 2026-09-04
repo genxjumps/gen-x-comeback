@@ -99,6 +99,23 @@ use g/kg when a source uses that unit, but the unit must always be spelled out. 
 conversion for calorie math is implementation-only and must use explicit unit names in code and
 tests.
 
+### Approved input validation
+
+- Current and goal weight reuse the existing 7-Day bounds: 70-700 lb or 32-318 kg.
+- Age: 18-100.
+- Height: 4 ft 0 in-7 ft 0 in or 122-213 cm.
+- Current and goal weight use the same selected unit.
+- Lose weight requires a goal below current weight.
+- Maintain current weight does not require a goal weight.
+- Add weight slowly requires a goal above current weight.
+- A goal below the standard height-based healthy range stops the calculation.
+- Any calculated calorie target below 1,200 stops the calculation.
+- Invalid or stopped calculations never invent a replacement number. They show the short
+  registered-dietitian notice.
+
+These are typo and suitability guardrails, not a claim that every person inside the ranges is
+automatically suitable for generalized nutrition targets.
+
 The prior 1.6 g/kg reference-weight proposal is **not approved**. It produced a 125 g target for
 Todd at 175 lb, which would incorrectly make a lower intake look like the product's muscle-first
 recommendation.
@@ -177,12 +194,8 @@ the dietitian notice instead of inventing a low-calorie target.
 
 ## Still open before implementation
 
-1. Run and approve deterministic calibration and boundary cases, including low-calorie, short,
-   tall, high-bodyweight, and goal-direction combinations.
-2. Confirm input ranges, reuse of the existing lb/kg picker, height-unit handling, and the exact
-   short registered-dietitian notice.
-3. Convert the approved protein, carbohydrate, and fat calibration cases into deterministic tests
-   during implementation.
-4. Convert the approved meal-slider defaults, recalculation, and rounding behavior into
+1. Convert the approved calorie, protein, carbohydrate, fat, input-validation, and boundary cases
+   into deterministic tests during implementation.
+2. Convert the approved meal-slider defaults, recalculation, and rounding behavior into
    deterministic tests during implementation.
-5. Verify My Normal Day labels and portions before publishing its totals.
+3. Verify My Normal Day labels and portions before publishing its totals.
