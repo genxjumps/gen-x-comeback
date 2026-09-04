@@ -39,6 +39,7 @@ The customer sees and can revisit this guidance:
 - Do not obsess over exact carbohydrate and fat ratios.
 - Avoid obvious calorie bombs.
 - Watch liquid calories and calorie-dense extras, especially dressings and mayo.
+- Know the difference between total carbs and added sugars. Read the label.
 - Repeat simple meals that work.
 - Protein supports muscle preservation, recovery, and hunger control.
 - If fat loss stalls, adjust portions or calorie-dense foods before rebuilding the whole diet.
@@ -55,6 +56,27 @@ The guidance gives customers a direct check before they change their whole diet:
 
 Zero-calorie drinks are not treated as a problem. The lesson is to account for drinks and extras
 that actually contain calories.
+
+### Read the label: carbs, sugar, and serving size
+
+The app teaches this distinction without turning carbs into the enemy:
+
+- Sugars and most starches are digested into glucose, which the body uses for energy.
+- That does **not** make a potato, oats, beans, fruit, or rice the same as soda, candy, or a
+  heavily sweetened packaged food. Whole foods often bring fiber, volume, and other nutrients.
+- **Total Carbohydrate** tells the customer how much carbohydrate is in a serving.
+- **Added Sugars** tells them how much sugar was added during processing or preparation. It is the
+  fastest useful number to check on a modern Nutrition Facts label.
+- **Fiber** is a useful sign that a carbohydrate food may be more filling and less refined.
+- The serving size still matters. A small-looking number can become a large intake when someone
+  eats two, three, or four servings.
+
+Customers do not need to memorize every industry name for sugar. The Added Sugars line does the
+main job. The ingredients list provides a second check, where added sugar can appear as cane sugar,
+corn syrup, dextrose, fructose, honey, molasses, syrup, or fruit-juice concentrate.
+
+The practical rule is: build most carbohydrate intake from foods that help the meal do its job.
+Use added-sugar products deliberately, not by accident.
 
 The guidance also gives customers a clear recovery rule:
 
