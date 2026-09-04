@@ -78,9 +78,9 @@ calibration choices, not claims of individual precision.
 The 500-calorie maximum is a ceiling, not a promise of universal safety and not the default
 reduction. The 10% calculation controls most starting results.
 
-Never generate a target below 1,200 calories. If a required guardrail would force a low-calorie or
-otherwise unsuitable result, the app must stop and show its short registered-dietitian notice rather
-than pretend the target is individualized care.
+Never generate a target below 1,200 calories. If the calculated result falls below that boundary,
+the app must stop and show its short registered-dietitian notice. It must not quietly raise the
+number to 1,200 and present that as an individualized plan.
 
 ### 4. Protein reference weight and target
 
@@ -122,19 +122,26 @@ The exact review window and optional later 100-150 calorie manual adjustment rem
 
 These are internal tests, not customer examples or promises.
 
-| Profile | Estimated maintenance | Proposed daily target |
-| --- | ---: | ---: |
-| Todd: 60M, 6 ft 1, 175 lb, mostly sitting | 2,100 | 1,900 for fat loss |
-| Todd: same inputs, on feet most of the day | 2,350 | 2,150 for fat loss |
-| 55F, 5 ft 4, 205 lb, mostly sitting, fat loss | 1,900 | 1,750 |
-| 60M, 6 ft 1, 235 lb, on feet, fat loss | 2,750 | 2,500 |
-| 65F, 4 ft 11, 200 lb, mostly sitting, fat loss | 1,700 | 1,550 |
-| 58F, 5 ft 6, 155 lb, on feet, recomposition | 1,850 | 1,850 |
-| 55M, 5 ft 10, 170 lb, on feet, slow lean gain | 2,300 | 2,300 |
+| Profile | Maintenance | Result | Protein | Carbs | Fat |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Todd: 60M, 6 ft 1, 175 lb, mostly sitting, lose weight | 2,100 | 1,900 | 125 g | 225 g | 55 g |
+| Todd: same inputs, on feet most of the day, lose weight | 2,350 | 2,100 | 125 g | 265 g | 60 g |
+| 55F, 5 ft 4, 205 lb, mostly sitting, lose weight | 1,900 | 1,700 | 125 g | 200 g | 45 g |
+| 60M, 6 ft 1, 235 lb, on feet, lose weight | 2,750 | 2,500 | 165 g | 305 g | 70 g |
+| 65F, 4 ft 11, 200 lb, mostly sitting, lose weight | 1,700 | 1,550 | 110 g | 175 g | 45 g |
+| 58F, 5 ft 6, 155 lb, on feet, maintain | 1,850 | 1,850 | 110 g | 240 g | 50 g |
+| 55M, 5 ft 10, 170 lb, on feet, add weight slowly | 2,300 | 2,300 | 125 g | 305 g | 65 g |
+| 70F, 4 ft 10, 110 lb, mostly sitting, lose weight | 1,150 | Dietitian notice | - | - | - |
+| 50M, 6 ft 5, 350 lb, physical work, lose weight | 4,000 | 3,600 | 185 g | 490 g | 100 g |
+
+Maintenance is rounded up to the next 50 calories. A fat-loss result is 10% below maintenance,
+capped at 500 calories, then rounded to the nearest 50. Protein, carbohydrate, and fat are rounded
+to the nearest 5 grams.
 
 Todd's stated real maintenance routine has generally been in the 2,000-2,300 calorie range. The
 two calibration outputs bracket that lived experience. This is a useful sanity check, not proof of
-accuracy for other customers.
+accuracy for other customers. The short, older profile proves the boundary behavior: the app shows
+the dietitian notice instead of inventing a low-calorie target.
 
 ## Still open before implementation
 
