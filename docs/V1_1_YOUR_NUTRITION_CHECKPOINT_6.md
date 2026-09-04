@@ -1,7 +1,8 @@
 # Checkpoint 6 - Your Nutrition approval brief
 
-**Status:** Product behavior approved by Todd on 2026-09-04. Numerical formulas, safety
-guardrails, final examples, and implementation remain gated by the open decisions below.
+**Status:** Product behavior, calorie direction, safety boundary, and the calibrated muscle-first
+protein method were approved by Todd on 2026-09-04. Meal-allocation math, final examples,
+implementation, and release remain gated by the open decisions below.
 
 ## Purpose
 
@@ -293,16 +294,14 @@ These choices must be resolved before implementation begins:
    floors, maximum deficit, and what the app says when an estimate is not appropriate. The
    slow-weight-gain branch must be deliberately conservative and must not become a bulk
    prescription.
-2. **Protein method:** weight basis, calculation, rounding, lower/upper guardrails, and how to
-   handle substantial excess weight.
-3. **Health and safety boundary:** age suitability, final caution/stop copy, and when the app
-   directs a customer to a registered dietitian rather than gives a target.
-4. **Meal-allocation math:** the exact default distribution, slider limits, automatic rebalance
-   behavior, rounding, and protein-spread behavior for selected meal occasions.
-5. **Todd's Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
-6. **Saved rotation:** whether V1 saves only short meal names/notes or launches first with the
-   meal-allocation plan and Todd's example only.
-7. **Manual review prompt:** the exact customer-facing wording and the point at which the app
+2. **Input and safety presentation:** exact valid ranges, height-unit handling, and the final
+   caution/stop copy.
+3. **Meal-allocation math:** the exact default distribution, adjustment limits, automatic
+   rebalance behavior, rounding, and protein-spread behavior for selected meal occasions.
+4. **My Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
+5. **Saved rotation:** confirm that V1 launches with the meal-allocation plan and My Normal Day
+   only, without stored customer meal notes.
+6. **Manual review prompt:** the exact customer-facing wording and the point at which the app
    invites a customer to reassess portions and calorie-dense foods.
 
 ## Formula guardrail
