@@ -71,12 +71,19 @@ The app teaches this distinction without turning carbs into the enemy:
 - The serving size still matters. A small-looking number can become a large intake when someone
   eats two, three, or four servings.
 
-Customers do not need to memorize every industry name for sugar. The Added Sugars line does the
-main job. The ingredients list provides a second check, where added sugar can appear as cane sugar,
-corn syrup, dextrose, fructose, honey, molasses, syrup, or fruit-juice concentrate.
+Customers do not need to become ingredient-list detectives, but they do need to stop trusting
+front-of-package marketing. The Added Sugars line does the main job. The ingredients list provides
+a second check, where added sugar can appear as cane sugar, high-fructose corn syrup, corn syrup,
+glucose, dextrose, fructose, honey, molasses, syrup, or fruit-juice concentrate.
+
+A product can still be a poor default choice when it says 0 g Added Sugars but is built around a
+refined or rapidly digested carbohydrate. The customer still checks total calories, total
+carbohydrate, fiber, and the serving size. “No added sugar,” “natural,” or “made with real fruit”
+does not automatically make a product fit the target.
 
 The practical rule is: build most carbohydrate intake from foods that help the meal do its job.
-Use added-sugar products deliberately, not by accident.
+Use packaged carbohydrate foods deliberately, not because the front of the package made them sound
+healthy.
 
 The guidance also gives customers a clear recovery rule:
 
