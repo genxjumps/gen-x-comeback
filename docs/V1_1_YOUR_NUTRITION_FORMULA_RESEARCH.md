@@ -85,14 +85,14 @@ number to 1,200 and present that as an individualized plan.
 
 ### 4. Protein reference weight and target
 
-At setup, the customer chooses a unit system:
+Nutrition reuses the existing 7-Day inline bodyweight-unit selector: **lb** or **kg** beside the
+Current weight field. When the customer has an existing saved weight, Nutrition prefills its unit.
+The same selected unit applies to Current weight and Goal weight. Nutrition does not introduce a
+separate account-wide unit preference.
 
-- **US:** pounds and feet/inches
-- **Metric:** kilograms and centimeters
-
-The app keeps that choice throughout the Nutrition experience. It never mixes systems or makes a
-customer translate. Daily protein remains in **grams** in either system because food labels and
-supplements use grams - for example, “175 g per day.”
+Height needs its own clear entry control: feet/inches or centimeters. It can remember the last
+choice, but it must not make a customer translate. Daily protein remains in **grams** in either
+case because food labels and supplements use grams - for example, “175 g per day.”
 
 Customers never see g/kg, g/lb, a unit conversion, or the underlying formula. Research notes can
 use g/kg when a source uses that unit, but the unit must always be spelled out. Any internal
@@ -161,8 +161,8 @@ the dietitian notice instead of inventing a low-calorie target.
 
 1. Run and approve deterministic calibration and boundary cases, including low-calorie, short,
    tall, high-bodyweight, and goal-direction combinations.
-2. Confirm input ranges, US/metric unit handling, and the exact short registered-dietitian
-   notice.
+2. Confirm input ranges, reuse of the existing lb/kg picker, height-unit handling, and the exact
+   short registered-dietitian notice.
 3. Approve the revised muscle-first protein rule, then recalculate all protein, carbohydrate, and
    fat calibration results.
 4. Lock slider limits, meal-allocation rounding, and protein-spread behavior.
