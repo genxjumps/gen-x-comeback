@@ -1449,6 +1449,29 @@ export type Database = {
           },
         ];
       };
+      private_customer_progress_admins: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "private_customer_progress_admins_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: true;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       rate_limit_counters: {
         Row: {
           attempts: number;

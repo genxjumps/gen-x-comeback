@@ -202,6 +202,13 @@
       "sha256": "260a92ddcfeea57486ef9a4496d7dc851b9ca3949ce9c75d3c07f44960fb4be6",
       "statementSha256": "006beb315330b217f61902a92afaf42bd60cb6e5c9b9e0dededd7e3507d9e71c",
       "version": "20260904110000"
+    },
+    {
+      "file": "20260904120000_private_customer_progress_admins.sql",
+      "name": "private_customer_progress_admins",
+      "sha256": "4034d44adf35db2b787e2052bb328bac83a7a8156af28282b1981ebedb9b23ea",
+      "statementSha256": "09db9069a18c1a10c35f30dd89134ea77f7ecdf3a4b4d2b3a05520ceb7c61a3f",
+      "version": "20260904120000"
     }
   ],
   "version": 1

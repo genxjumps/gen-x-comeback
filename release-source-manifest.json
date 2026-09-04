@@ -191,7 +191,7 @@
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "sha256": "04614b2d4bacfd91fe21c9a9e555089a8a139e001c038db240af4c7569c03db2"
+      "sha256": "5fe0a7b7ffc0bdd4887d179396ab5d568a3fe67fa87123dc37703a4f31bb64ab"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -372,6 +372,30 @@
     {
       "path": "src/lib/account/types.ts",
       "sha256": "7c10627c1000303d50ed25af4e858f1a583e2bffd506f8af5604d76d1f8852df"
+    },
+    {
+      "path": "src/lib/admin/__tests__/customer-progress.test.ts",
+      "sha256": "a659e166201dc0f78bbb7dd0eea64e55bd64042f3807b00211b3ac194e8132c2"
+    },
+    {
+      "path": "src/lib/admin/__tests__/private-customer-progress-contract.test.ts",
+      "sha256": "90948b02b0d0dfc1ec0784d5c60bbe66852098175d7a9eaf0b34662491c0497a"
+    },
+    {
+      "path": "src/lib/admin/customer-progress.ts",
+      "sha256": "68f22ce09482b4ad934aed3b7de6c1f476931e187fd088aa1694cbf6483f07d1"
+    },
+    {
+      "path": "src/lib/admin/functions.ts",
+      "sha256": "58cce82d5a44e13f182b7b4944ce28bb99c76565c078d99fdea61e9229f47f31"
+    },
+    {
+      "path": "src/lib/admin/schemas.ts",
+      "sha256": "5193f070295ba54d716b5c29dcfbda28d106ce6143228c68ccf0aa5f06628a62"
+    },
+    {
+      "path": "src/lib/admin/types.ts",
+      "sha256": "dd5db3b35b7feabba5501b7ecc23f78af7443be2d8e3b61201d65cae84377b97"
     },
     {
       "path": "src/lib/day-one-start.server.ts",
@@ -787,7 +811,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "395d7b4184ccfdea3c5280c8499d6728f05a9e177e8e856d106473498e6bf572"
+      "sha256": "51041a01e494d3e046c8ed081fe2e828a4df5f9c252847888613e6c2fcae55da"
     },
     {
       "path": "src/router.tsx",
@@ -799,11 +823,15 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "23f6ee930ca0b84ae400f7ec47223c02b2a950832063ca73b3c4158348ffef03"
+      "sha256": "7f0d76411f39c01ba90fc51e88492c2a891d0241a3e8599abee79bcd05e9dc9b"
     },
     {
       "path": "src/routes/accelerator.tsx",
       "sha256": "4999483c03444483daa2ac1c40b94484da1f1bef4bb4ab230c9be0d98a2419e5"
+    },
+    {
+      "path": "src/routes/admin.customers.tsx",
+      "sha256": "f7b7a8926fd7bf038cbc13aa5faa0203b85969e0705c8243f3e887105c188c2a"
     },
     {
       "path": "src/routes/api/public/email/dispatch.ts",
@@ -927,7 +955,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "263382aa38890efc1d2dacad313057ced54d0653330d4a0eedc9ac7045414af6"
+      "sha256": "76327dbbaec480deca416b859a5b19066b49a6c5976850188666dda637c6cd64"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1044,6 +1072,10 @@
     {
       "path": "supabase/migrations/20260904110000_customer_program_reminder_preferences.sql",
       "sha256": "260a92ddcfeea57486ef9a4496d7dc851b9ca3949ce9c75d3c07f44960fb4be6"
+    },
+    {
+      "path": "supabase/migrations/20260904120000_private_customer_progress_admins.sql",
+      "sha256": "4034d44adf35db2b787e2052bb328bac83a7a8156af28282b1981ebedb9b23ea"
     },
     {
       "path": "tsconfig.json",

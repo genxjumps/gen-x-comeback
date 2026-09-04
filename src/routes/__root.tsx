@@ -136,7 +136,8 @@ function RootComponent() {
     pathname === "/nutrition" ||
     pathname === "/programs" ||
     pathname === "/notifications" ||
-    pathname === "/accelerator";
+    pathname === "/accelerator" ||
+    pathname === "/admin/customers";
 
   if (inPlatform) {
     return (
