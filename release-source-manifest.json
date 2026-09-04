@@ -127,7 +127,7 @@
     },
     {
       "path": "src/components/platform-access-boundary.tsx",
-      "sha256": "f04f03a826ef60b96222c55544e80c068721e0810be7d4c68865d6515210c007"
+      "sha256": "8cfee73112248a1ba874befe2a1a0663db8d0df20a1280f0b66a8ef81b7553cf"
     },
     {
       "path": "src/components/platform-page.tsx",
@@ -415,7 +415,7 @@
     },
     {
       "path": "src/lib/email/__tests__/member-session-bridge-contract.test.ts",
-      "sha256": "5c876b56fb8e4e869c8639af2a8837ad4131d6261ddf7f867fe3aeb94f90ccb9"
+      "sha256": "bf373364055a34734a783d845322e6934e4f86593202896da67999ee48d509e4"
     },
     {
       "path": "src/lib/email/__tests__/memory-store.ts",
@@ -787,7 +787,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "6fe1ca12713b87540813d75f2895dfaf73062baf3b08129aa4e6de782c8a47c4"
+      "sha256": "23f6ee930ca0b84ae400f7ec47223c02b2a950832063ca73b3c4158348ffef03"
     },
     {
       "path": "src/routes/accelerator.tsx",
