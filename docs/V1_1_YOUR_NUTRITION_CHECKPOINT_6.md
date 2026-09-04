@@ -71,19 +71,18 @@ The app teaches this distinction without turning carbs into the enemy:
 - The serving size still matters. A small-looking number can become a large intake when someone
   eats two, three, or four servings.
 
-Customers do not need to become ingredient-list detectives, but they do need to stop trusting
-front-of-package marketing. The Added Sugars line does the main job. The ingredients list provides
-a second check, where added sugar can appear as cane sugar, high-fructose corn syrup, corn syrup,
-glucose, dextrose, fructose, honey, molasses, syrup, or fruit-juice concentrate.
+Food companies can put sugar and processed carbs behind a lot of friendlier names: cane sugar,
+high-fructose corn syrup, corn syrup, glucose, dextrose, fructose, honey, molasses, syrup, and
+fruit-juice concentrate. It still counts.
 
-A product can still be a poor default choice when it says 0 g Added Sugars but is built around a
-refined or rapidly digested carbohydrate. The customer still checks total calories, total
-carbohydrate, fiber, and the serving size. “No added sugar,” “natural,” or “made with real fruit”
-does not automatically make a product fit the target.
+Do not let the front of the package make your decision. “No added sugar,” “natural,” “low fat,”
+and “made with real fruit” are marketing claims, not proof that a product fits your target. Turn
+the package over. Check the serving size, calories, total carbohydrate, added sugars, and fiber.
 
-The practical rule is: build most carbohydrate intake from foods that help the meal do its job.
-Use packaged carbohydrate foods deliberately, not because the front of the package made them sound
-healthy.
+A product can show 0 g Added Sugars and still be a poor everyday choice if it is mostly refined
+carbohydrate with little fiber and a lot of calories. The practical rule is: build most carbohydrate
+intake from foods that help the meal do its job. Use packaged carbohydrate foods deliberately, not
+because the front of the package made them sound healthy.
 
 The guidance also gives customers a clear recovery rule:
 
