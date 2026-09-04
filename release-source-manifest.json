@@ -91,15 +91,15 @@
     },
     {
       "path": "src/components/accelerator-flow-preview.tsx",
-      "sha256": "41be75771e5369b28e2702c77edfa7b15159fa4e599d3dff068923258108f5f7"
+      "sha256": "164ac5b68878b3e343051442c3032c58db61680f09a1088533078ed1e6a23678"
     },
     {
       "path": "src/components/accelerator-program-preview.tsx",
-      "sha256": "3cb9934e01385c7b41dcddcf7ae3f705e5ce990b7f0816ed59512e2d186ca32a"
+      "sha256": "7b9965387d981569277d3a8ebf13b24b97829eb04b50a97440c7c14da77d1347"
     },
     {
       "path": "src/components/accelerator-program.tsx",
-      "sha256": "e784da524aaa074d666364e9c845453f198f078002d848a919300a05a0c094c7"
+      "sha256": "10de72dfe6a96b94c60fff76423274bfa9ccda2489ac89d44333683c6ec3b3b8"
     },
     {
       "path": "src/components/accelerator-video-tracker.tsx",
@@ -111,7 +111,7 @@
     },
     {
       "path": "src/components/day-assignment.tsx",
-      "sha256": "7eb197e373c1caf91ee5229abd78761d0928ce3aa32968f5d0ca8cafe06c8ca1"
+      "sha256": "42f5827d70148fb792cfd70e8103e3136280cb80dd91771baac9adac05b49ae9"
     },
     {
       "path": "src/components/day-one-workout.tsx",
@@ -243,7 +243,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/daily-assignment-contract.test.ts",
-      "sha256": "db50572652daabae50164c2d9cce7192a5bbeda9345a575edba2d06fd85817a6"
+      "sha256": "3edc2baacd2fb515ecedf87476004b99ae7fa9c9f2af5694088017b9d6261149"
     },
     {
       "path": "src/lib/accelerator/__tests__/daily-assignment.test.ts",
@@ -710,6 +710,10 @@
       "sha256": "1f201ade8b663beac7f121a14bbda4821457834e9a4edecc8b0f68054a05cb68"
     },
     {
+      "path": "src/lib/notifications/__tests__/comeback-reminder.test.ts",
+      "sha256": "f53876299860c20ae5ea0537a86d5ad2ee64bf3f0a6ea1ca365ef8aff5a71f42"
+    },
+    {
       "path": "src/lib/notifications/__tests__/measurement-reminder-contract.test.ts",
       "sha256": "b2623e7509b4c38d0d29dda9ec1ba2eedc95a3a3936c4877acd8f9c442373bdb"
     },
@@ -719,11 +723,15 @@
     },
     {
       "path": "src/lib/notifications/__tests__/reminder-preferences-contract.test.ts",
-      "sha256": "4d72f8ac7afba826e74cc90e168f1e960a9d1fa151be887e3a1afea531136122"
+      "sha256": "b576c4181e4b4c67a7ab65c0bce3e09ff9af88f80fbec94a1ac1cbcb5db02562"
+    },
+    {
+      "path": "src/lib/notifications/comeback-reminder.ts",
+      "sha256": "9d70e863610f3950012561d37efce42d98d746baf7371a731a779eda1b1419a1"
     },
     {
       "path": "src/lib/notifications/functions.ts",
-      "sha256": "6d46c1384d62fc68ecc119313244ef4c5ff333cecee2c4f146de7287a912c3d8"
+      "sha256": "e1c22cde6e1372d1fdc665d14a2ab108b2db418c508ead53903d369b9d1bd356"
     },
     {
       "path": "src/lib/notifications/measurement-reminder.ts",
@@ -735,7 +743,7 @@
     },
     {
       "path": "src/lib/notifications/types.ts",
-      "sha256": "902817ec05c51a0ae7e28b5b66bbd44d9e0ca98dd17113f7ba319f787b0ef9d1"
+      "sha256": "432a6c441c2293b91ffc28462b7ab4ced0553a1a85dae95e5a39353b303589c7"
     },
     {
       "path": "src/lib/plan-access.server.ts",
@@ -827,7 +835,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "8e7e29c0155d3668b5fb839018bee043219cfad650456ae98ab9c488cea77437"
+      "sha256": "ad50c6fe58dcb21b6815d92cf43fed39e7b0fb3c2c75cb757ba0927b7f058021"
     },
     {
       "path": "src/routes/index.tsx",
@@ -851,7 +859,7 @@
     },
     {
       "path": "src/routes/notifications.tsx",
-      "sha256": "a6a8523456f318869ba25a1db18a8961652e3d2cf3fcf7a0bc7643d621c3fca9"
+      "sha256": "3a6c485e1e29f8a7fc03a7757c08363d9fb86a6cd040a49d9a96374334501f1f"
     },
     {
       "path": "src/routes/nutrition.tsx",
@@ -891,11 +899,11 @@
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",
-      "sha256": "3755711044f74b19c3008cfe1bb7bf60313960461ccd97cdc0fc178c9e5a8036"
+      "sha256": "a67e83d2f81a7761e282998874e1b7c62085edfafbd03617521e0854376b2fb1"
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "01596e6678d0489cfe36b11dfa0a19ab25964aefa5fbb6d1e4c44dc7a562e48c"
+      "sha256": "0c72e147a7525382b4ffc9ed13842f61755cb4e966426d7aa777aa407de018a3"
     },
     {
       "path": "src/server.ts",

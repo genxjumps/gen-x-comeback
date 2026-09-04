@@ -399,17 +399,29 @@ program:
 - Watch only the one active structured program.
 - Trigger inactivity from no completed program days, not merely from app opens.
 - Not Started, Paused, and Completed programs send nothing.
-- Send the first comeback email after four inactive days.
-- Send the second comeback email after ten inactive days.
+- Start the inactivity clock from the later of the active program's start or resume time and its
+  latest completed workout.
+- Use elapsed time, not customer-local calendar midnights: the first comeback message is due at
+  four inactive days and the second at ten inactive days.
 - Then remain silent for that uninterrupted absence.
 - Returning and completing a day stops the active comeback sequence.
 - Customers can turn program reminders off.
 - Future structured programs reuse the same rules with program-specific wording.
 
+The in-app Inbox may show the current eligible comeback message, but it is not a phone push or an
+email send. The approved V1 copy is:
+
+- Four days: **Your next workout is waiting.** “You don’t need to make up anything. Open the app,
+  do today’s workout, and keep moving.”
+- Ten days: **Your program’s still here.** “Nothing’s ruined. You don’t need to restart or catch
+  up. Your next workout is waiting when you’re ready.”
+
 Do not create daily nagging or let the number of owned programs multiply email volume.
 
-Paid-program email launch scope also includes purchase/access delivery and user-requested recovery.
-Production activation remains a separate controlled checkpoint.
+When email delivery is separately built and approved, it uses an independent Email reminder
+preference alongside the In-app reminder preference. Customers can select in-app, email, both, or
+neither. Paid-program email launch also includes purchase/access delivery and user-requested
+recovery. Production activation remains a separate controlled checkpoint.
 
 ## Your Nutrition and Protein First
 

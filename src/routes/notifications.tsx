@@ -11,7 +11,7 @@ import {
   getPlatformNotifications,
   setProgramReminderPreference,
 } from "@/lib/notifications/functions";
-import type { MeasurementReminder } from "@/lib/notifications/measurement-reminder";
+import type { PlatformNotification, PlatformComebackReminder } from "@/lib/notifications/types";
 
 export const Route = createFileRoute("/notifications")({
   head: () => ({
@@ -28,7 +28,7 @@ function Notifications() {
   const dismissReminder = useServerFn(dismissMeasurementReminder);
   const loadPreference = useServerFn(getProgramReminderPreference);
   const updatePreference = useServerFn(setProgramReminderPreference);
-  const [notifications, setNotifications] = useState<MeasurementReminder[] | null>(null);
+  const [notifications, setNotifications] = useState<PlatformNotification[] | null>(null);
   const [programRemindersEnabled, setProgramRemindersEnabled] = useState<boolean | null>(null);
   const [dismissing, setDismissing] = useState(false);
   const [updatingPreference, setUpdatingPreference] = useState(false);
@@ -55,7 +55,7 @@ function Notifications() {
     };
   }, [loadNotifications, loadPreference]);
 
-  async function dismiss(notification: MeasurementReminder) {
+  async function dismiss(notification: Exclude<PlatformNotification, PlatformComebackReminder>) {
     setDismissing(true);
     setError(null);
     try {
@@ -73,6 +73,7 @@ function Notifications() {
         (current) =>
           current?.filter(
             (item) =>
+              item.code !== "weekly_measurement" ||
               item.enrollmentId !== notification.enrollmentId ||
               item.programWeek !== notification.programWeek,
           ) ?? [],
@@ -160,7 +161,11 @@ function Notifications() {
         <div className="space-y-4">
           {notifications.map((notification) => (
             <section
-              key={`${notification.enrollmentId}-${notification.programWeek}`}
+              key={
+                notification.code === "weekly_measurement"
+                  ? `${notification.enrollmentId}-${notification.programWeek}`
+                  : notification.code
+              }
               className="rounded-lg border border-border bg-card p-5"
             >
               <div className="flex items-start gap-3">
@@ -173,18 +178,26 @@ function Notifications() {
                 </div>
               </div>
               <div className="mt-5 flex flex-wrap gap-3">
-                <Button asChild size="sm">
-                  <Link to="/progress">Add a Measurement</Link>
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  disabled={dismissing}
-                  onClick={() => void dismiss(notification)}
-                >
-                  {dismissing ? "Dismissing..." : "Dismiss for This Week"}
-                </Button>
+                {notification.code === "weekly_measurement" ? (
+                  <>
+                    <Button asChild size="sm">
+                      <Link to="/progress">Add a Measurement</Link>
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={dismissing}
+                      onClick={() => void dismiss(notification)}
+                    >
+                      {dismissing ? "Dismissing..." : "Dismiss for This Week"}
+                    </Button>
+                  </>
+                ) : (
+                  <Button asChild size="sm">
+                    <Link to={notification.target}>Open Today&rsquo;s Workout</Link>
+                  </Button>
+                )}
               </div>
             </section>
           ))}

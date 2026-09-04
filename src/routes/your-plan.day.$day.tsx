@@ -8,7 +8,7 @@ export const Route = createFileRoute("/your-plan/day/$day")({
     const title =
       params.day === "1"
         ? "Day 1 - Full Body Flush & Fire | Gen X Jumps"
-        : `Day ${params.day} Assignment | Gen X Jumps`;
+        : `Day ${params.day} Workout | Gen X Jumps`;
     const description =
       params.day === "1"
         ? "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan."

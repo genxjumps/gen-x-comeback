@@ -73,7 +73,7 @@ function MediaSlot({
     return (
       <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-border bg-muted/60 px-6 text-center">
         <LockKeyhole aria-hidden="true" className="size-7 text-muted-foreground" />
-        <p className="mt-3 text-sm font-semibold">Video unlocks with this assignment</p>
+        <p className="mt-3 text-sm font-semibold">Video unlocks with this workout</p>
         <p className="mt-1 text-xs text-muted-foreground">
           You can preview the instructions below.
         </p>
@@ -404,19 +404,19 @@ export function AcceleratorProgram() {
               </Button>
             </section>
           ) : selectedDay && selectedDetails && selectedContent ? (
-            <section aria-labelledby="assignment-title">
+            <section aria-labelledby="workout-title">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
                     {selectedDay.access === "completed"
-                      ? "Completed assignment"
+                      ? "Completed workout"
                       : selectedDay.day === hub.progress.currentDay
                         ? hub.progress.canCompleteCurrent
-                          ? "Today's assignment"
-                          : "Next assignment"
+                          ? "Today's workout"
+                          : "Next workout"
                         : "Locked preview"}
                   </p>
-                  <h2 id="assignment-title" className="mt-1 text-xl font-semibold tracking-tight">
+                  <h2 id="workout-title" className="mt-1 text-xl font-semibold tracking-tight">
                     Day {selectedDay.day}: {selectedDetails.label}
                   </h2>
                 </div>
@@ -460,8 +460,8 @@ export function AcceleratorProgram() {
 
               {selectedDay.day === hub.progress.currentDay && !hub.progress.canCompleteCurrent ? (
                 <p className="mt-4 rounded-md border border-border bg-muted/50 p-4 text-sm">
-                  This assignment opens {friendlyDate(hub.progress.availableOn)}. Today&rsquo;s work
-                  is already complete.
+                  This workout opens {friendlyDate(hub.progress.availableOn)}. Today&rsquo;s work is
+                  already complete.
                 </p>
               ) : null}
               {actionableDay?.day === selectedDay.day ? (

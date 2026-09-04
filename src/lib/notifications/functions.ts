@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 
 import { toCustomerMeasurement } from "@/lib/accelerator/measurement-row";
+import { buildComebackReminder } from "@/lib/notifications/comeback-reminder";
 import { buildMeasurementReminder } from "@/lib/notifications/measurement-reminder";
 import {
   dismissMeasurementReminderInputSchema,
@@ -9,6 +10,8 @@ import {
 } from "@/lib/notifications/schemas";
 import type {
   DismissMeasurementReminderResult,
+  PlatformComebackReminder,
+  PlatformNotification,
   PlatformNotificationsResult,
   ProgramReminderPreferenceResult,
 } from "@/lib/notifications/types";
@@ -27,26 +30,101 @@ async function programRemindersEnabled(customerId: string): Promise<boolean> {
   return data?.[0]?.program_reminders_enabled ?? true;
 }
 
-async function loadMeasurementReminder() {
+function laterTimestamp(...values: (string | null | undefined)[]): string | null {
+  const valid = values
+    .filter(
+      (value): value is string => typeof value === "string" && Number.isFinite(Date.parse(value)),
+    )
+    .sort((left, right) => Date.parse(right) - Date.parse(left));
+  return valid[0] ?? null;
+}
+
+function isPlatformNotification(value: PlatformNotification | null): value is PlatformNotification {
+  return value !== null;
+}
+
+async function loadPlatformNotificationState() {
   const { currentAuthorizationHeader, resolveCustomerAccount } =
     await import("@/lib/account/customer-account.server");
   const account = await resolveCustomerAccount(await currentAuthorizationHeader());
   if (!account.ok) return { authorized: false as const, customerId: null, reminder: null };
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  if (!(await programRemindersEnabled(account.account.id))) {
-    return { authorized: true as const, customerId: account.account.id, reminder: null };
+  const remindersEnabled = await programRemindersEnabled(account.account.id);
+  if (!remindersEnabled) {
+    return {
+      authorized: true as const,
+      customerId: account.account.id,
+      reminder: null,
+      comeback: null,
+    };
   }
 
   const { data: activeRows, error: activeError } = await supabaseAdmin
     .from("customer_active_programs")
-    .select("program_kind, paid_enrollment_id")
+    .select("program_kind, lead_plan_id, paid_enrollment_id, activated_at")
     .eq("customer_id", account.account.id)
     .limit(1);
   if (activeError) throw new Error(activeError.message);
   const active = activeRows?.[0];
-  if (active?.program_kind !== "paid_run" || !active.paid_enrollment_id) {
-    return { authorized: true as const, customerId: account.account.id, reminder: null };
+  if (!active) {
+    return {
+      authorized: true as const,
+      customerId: account.account.id,
+      reminder: null,
+      comeback: null,
+    };
+  }
+
+  if (active.program_kind === "lead_plan" && active.lead_plan_id) {
+    const [startResult, completionResult, planResult] = await Promise.all([
+      supabaseAdmin
+        .from("lead_plan_day_starts")
+        .select("started_at")
+        .eq("lead_plan_id", active.lead_plan_id)
+        .eq("day_number", 1)
+        .limit(1),
+      supabaseAdmin
+        .from("lead_plan_day_completions")
+        .select("completed_at")
+        .eq("lead_plan_id", active.lead_plan_id)
+        .order("completed_at", { ascending: false })
+        .limit(8),
+      supabaseAdmin.from("lead_plans").select("plan_json").eq("id", active.lead_plan_id).limit(1),
+    ]);
+    for (const result of [startResult, completionResult, planResult]) {
+      if (result.error) throw new Error(result.error.message);
+    }
+    const planJson = planResult.data?.[0]?.plan_json;
+    const planDays =
+      planJson && typeof planJson === "object" && !Array.isArray(planJson) ? planJson.days : null;
+    const totalDays = Array.isArray(planDays) ? planDays.length : 0;
+    const isCompleted = totalDays > 0 && (completionResult.data?.length ?? 0) >= totalDays;
+    const startedAt = startResult.data?.[0]?.started_at ?? null;
+    const latestCompletedAt = completionResult.data?.[0]?.completed_at ?? null;
+    const reminder = buildComebackReminder({
+      programStatus: isCompleted ? "completed" : startedAt ? "active" : "not_started",
+      programRemindersEnabled: remindersEnabled,
+      activityAnchorAt: laterTimestamp(active.activated_at, latestCompletedAt),
+      now: new Date().toISOString(),
+    });
+    return {
+      authorized: true as const,
+      customerId: account.account.id,
+      reminder: null,
+      comeback: reminder
+        ? ({ ...reminder, target: "/your-plan" } satisfies PlatformComebackReminder)
+        : null,
+    };
+  }
+
+  if (active.program_kind !== "paid_run" || !active.paid_enrollment_id) {
+    return {
+      authorized: true as const,
+      customerId: account.account.id,
+      reminder: null,
+      comeback: null,
+    };
   }
 
   const { data: enrollmentRows, error: enrollmentError } = await supabaseAdmin
@@ -59,8 +137,27 @@ async function loadMeasurementReminder() {
   if (enrollmentError) throw new Error(enrollmentError.message);
   const enrollment = enrollmentRows?.[0];
   if (!enrollment || enrollment.status !== "active") {
-    return { authorized: true as const, customerId: account.account.id, reminder: null };
+    return {
+      authorized: true as const,
+      customerId: account.account.id,
+      reminder: null,
+      comeback: null,
+    };
   }
+
+  const { data: latestCompletionRows, error: latestCompletionError } = await supabaseAdmin
+    .from("paid_program_day_completions")
+    .select("completed_at")
+    .eq("enrollment_id", enrollment.id)
+    .order("completed_at", { ascending: false })
+    .limit(1);
+  if (latestCompletionError) throw new Error(latestCompletionError.message);
+  const comeback = buildComebackReminder({
+    programStatus: "active",
+    programRemindersEnabled: remindersEnabled,
+    activityAnchorAt: laterTimestamp(active.activated_at, latestCompletionRows?.[0]?.completed_at),
+    now: new Date().toISOString(),
+  });
 
   const { data: progressRows, error: progressError } = await supabaseAdmin.rpc(
     "accelerator_progress_state",
@@ -74,7 +171,14 @@ async function loadMeasurementReminder() {
   const currentDay = progress?.current_day ?? null;
   const programWeek = currentDay ? Math.ceil(currentDay / 7) : null;
   if (!progress || !programWeek || programWeek < 2 || programWeek > 4) {
-    return { authorized: true as const, customerId: account.account.id, reminder: null };
+    return {
+      authorized: true as const,
+      customerId: account.account.id,
+      reminder: null,
+      comeback: comeback
+        ? ({ ...comeback, target: "/accelerator" } satisfies PlatformComebackReminder)
+        : null,
+    };
   }
 
   const boundaryDay = (programWeek - 1) * 7;
@@ -119,21 +223,27 @@ async function loadMeasurementReminder() {
       measurements: (measurementResult.data ?? []).map(toCustomerMeasurement),
       dismissed: Boolean(dismissalResult.data?.length),
     }),
+    comeback: comeback
+      ? ({ ...comeback, target: "/accelerator" } satisfies PlatformComebackReminder)
+      : null,
   };
 }
 
 export const getPlatformNotifications = createServerFn({ method: "POST" })
   .validator((data: unknown) => platformNotificationsInputSchema.parse(data))
   .handler(async (): Promise<PlatformNotificationsResult> => {
-    const state = await loadMeasurementReminder();
+    const state = await loadPlatformNotificationState();
     if (!state.authorized) return { ok: false };
-    return { ok: true, notifications: state.reminder ? [state.reminder] : [] };
+    return {
+      ok: true,
+      notifications: [state.comeback, state.reminder].filter(isPlatformNotification),
+    };
   });
 
 export const dismissMeasurementReminder = createServerFn({ method: "POST" })
   .validator((data: unknown) => dismissMeasurementReminderInputSchema.parse(data))
   .handler(async ({ data }): Promise<DismissMeasurementReminderResult> => {
-    const state = await loadMeasurementReminder();
+    const state = await loadPlatformNotificationState();
     if (
       !state.authorized ||
       !state.reminder ||

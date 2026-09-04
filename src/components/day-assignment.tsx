@@ -150,7 +150,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
 
   const day = brief.day;
   const kind = assignmentType(day);
-  const title = day?.title ?? "Assignment";
+  const title = day?.title ?? "Workout";
   const optional = day?.optional ?? null;
 
   const duration =

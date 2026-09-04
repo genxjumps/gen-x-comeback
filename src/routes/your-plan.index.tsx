@@ -15,18 +15,18 @@ import { getPlanHub, startDayOne } from "@/lib/lead.functions";
 export const Route = createFileRoute("/your-plan/")({
   head: () => ({
     meta: [
-      { title: "My Plan - Your 7-Day Assignments | Gen X Jumps" },
+      { title: "My Plan - Your 7-Day Workouts | Gen X Jumps" },
       {
         name: "description",
         content:
-          "Your saved 7-day plan hub: the current assignment, your full schedule, your daily protein target, and how to approach the workouts.",
+          "Your saved 7-day plan hub: today’s workout, your full schedule, your daily protein target, and how to approach the workouts.",
       },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "My Plan - Your 7-Day Assignments | Gen X Jumps" },
+      { property: "og:title", content: "My Plan - Your 7-Day Workouts | Gen X Jumps" },
       {
         property: "og:description",
         content:
-          "Your saved 7-day plan hub: the current assignment, your full schedule, and your daily protein target.",
+          "Your saved 7-day plan hub: today’s workout, your full schedule, and your daily protein target.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -125,7 +125,7 @@ function PlanHubPage() {
         {hub.firstName}, Here&rsquo;s What To Do Next
       </h1>
       <p className="mt-3 text-sm font-medium">
-        {completedCount} of {TOTAL_ASSIGNMENTS} assignments complete
+        {completedCount} of {TOTAL_ASSIGNMENTS} days complete
       </p>
       <div
         className="mt-2 h-2 w-full overflow-hidden rounded-[2px] bg-muted"
@@ -158,7 +158,7 @@ function PlanHubPage() {
         }`}
       >
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-          Current Assignment
+          Today’s Workout
         </h2>
         {currentEntry ? (
           <>
@@ -213,8 +213,7 @@ function PlanHubPage() {
           <>
             <h3 className="mt-2 text-lg font-semibold tracking-tight">7-Day Plan Complete</h3>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              You finished all seven assignments in this plan. Review any day below whenever you
-              want.
+              You finished all seven days in this plan. Review any day below whenever you want.
             </p>
           </>
         )}
