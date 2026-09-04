@@ -38,11 +38,22 @@ The customer sees and can revisit this guidance:
 - Build meals around protein.
 - Do not obsess over exact carbohydrate and fat ratios.
 - Avoid obvious calorie bombs.
+- Watch liquid calories and calorie-dense extras, especially dressings and mayo.
 - Repeat simple meals that work.
 - Protein supports muscle preservation, recovery, and hunger control.
 - If fat loss stalls, adjust portions or calorie-dense foods before rebuilding the whole diet.
 
 The operating message is: **Calories still matter. Protein comes first. Meals stay simple.**
+
+The guidance gives customers a direct check before they change their whole diet:
+
+> Check what you are drinking and what you are pouring. Regular soda, juice, sweetened coffee or
+> tea, and calorie-containing flavored drinks can add up fast. Dressing, mayo, oils, butter,
+> cheese, ketchup, and barbecue sauce can do the same. Read the label. Check the serving size.
+> Measure it when needed.
+
+Zero-calorie drinks are not treated as a problem. The lesson is to account for drinks and extras
+that actually contain calories.
 
 ## Recommended V1 customer flow
 
@@ -187,8 +198,9 @@ The main Your Nutrition page always lets the customer revisit the Protein First 
 current targets, and their Normal Eating Day. Existing optional weight and waist history remains
 the platform's measurement record; Nutrition must not create a second measurement system.
 
-V1 gives manual, non-automatic review guidance: if results have stalled, first look at portions and
-calorie-dense foods before tearing up the whole approach. It does not score adherence, decide that
+V1 gives manual, non-automatic review guidance: if results have stalled, first look at portions,
+liquid calories, dressings, sauces, and other calorie-dense foods before tearing up the whole
+approach. It does not score adherence, decide that
 someone has stalled, change targets automatically, or create a target-history dashboard.
 
 ## Explicitly out of V1
