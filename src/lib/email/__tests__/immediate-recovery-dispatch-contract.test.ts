@@ -31,6 +31,16 @@ describe("immediate Recovery dispatch contract", () => {
     expect(scheduler).toContain("disableProductionSending");
   });
 
+  it("pins production email links to the customer-facing app domain", () => {
+    const runtime = readSource("../runtime.server.ts");
+
+    expect(runtime).toContain(
+      'PRODUCTION_APP_ORIGIN = "https://app.genxjumps.com"',
+    );
+    expect(runtime).toContain("appOrigin: PRODUCTION_APP_ORIGIN");
+    expect(runtime).not.toContain("appOrigin: resolveAppOrigin(config)");
+  });
+
   it("keeps wake failures non-identifying and non-fatal to the public response", () => {
     const recover = readSource("../../../routes/recover.ts");
 
