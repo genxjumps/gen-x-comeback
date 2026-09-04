@@ -1,8 +1,8 @@
 # Checkpoint 6 - Nutrition formula and evidence
 
-**Status:** Calorie direction and safety boundary approved by Todd on 2026-09-04. The protein
-formula is reopened after review and must not be implemented from this document until Todd approves
-the revised muscle-first rule. This remains general nutrition guidance, not individualized medical
+**Status:** Calorie direction, safety boundary, and the tested muscle-first protein method were
+approved by Todd on 2026-09-04. Final customer copy, remaining interaction rules, implementation,
+and release are still gated. This remains general nutrition guidance, not individualized medical
 nutrition care.
 
 ## What this proposal is trying to do
@@ -103,7 +103,7 @@ The prior 1.6 g/kg reference-weight proposal is **not approved**. It produced a 
 Todd at 175 lb, which would incorrectly make a lower intake look like the product's muscle-first
 recommendation.
 
-The tested replacement candidate uses a clear **protein reference weight in pounds**:
+The approved method uses a clear **protein reference weight in pounds**:
 
 1. When maintaining body weight, start with current weight.
 2. When losing or adding weight, start with goal weight.
@@ -181,8 +181,8 @@ the dietitian notice instead of inventing a low-calorie target.
    tall, high-bodyweight, and goal-direction combinations.
 2. Confirm input ranges, reuse of the existing lb/kg picker, height-unit handling, and the exact
    short registered-dietitian notice.
-3. Approve the revised muscle-first protein rule, then recalculate all protein, carbohydrate, and
-   fat calibration results.
+3. Convert the approved protein, carbohydrate, and fat calibration cases into deterministic tests
+   during implementation.
 4. Lock slider limits, meal-allocation rounding, and protein-spread behavior.
 5. Lock the manual review window and wording.
 6. Verify Todd's Normal Day labels and portions before publishing its totals.
