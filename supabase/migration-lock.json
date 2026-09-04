@@ -195,6 +195,13 @@
       "sha256": "739cfa5988cd1f983a58939510b6d8c6a01690b177331375573030ef55f8c1ca",
       "statementSha256": "fab376fb454f9919b8de28c793211b3bc4c4daf98209dfeb34a5c2bbba4e95c0",
       "version": "20260904100000"
+    },
+    {
+      "file": "20260904110000_customer_program_reminder_preferences.sql",
+      "name": "customer_program_reminder_preferences",
+      "sha256": "260a92ddcfeea57486ef9a4496d7dc851b9ca3949ce9c75d3c07f44960fb4be6",
+      "statementSha256": "006beb315330b217f61902a92afaf42bd60cb6e5c9b9e0dededd7e3507d9e71c",
+      "version": "20260904110000"
     }
   ],
   "version": 1
