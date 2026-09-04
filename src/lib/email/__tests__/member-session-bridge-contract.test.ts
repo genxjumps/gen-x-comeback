@@ -34,6 +34,7 @@ describe("verified secure-link member-session bridge", () => {
 
   it("consumes the fragment client-side, strips it from the URL, and establishes Supabase auth", () => {
     const bootstrap = readSource("../../../components/auth-session-bootstrap.tsx");
+    const boundary = readSource("../../../components/platform-access-boundary.tsx");
     const root = readSource("../../../routes/__root.tsx");
 
     expect(bootstrap).toContain('PLATFORM_AUTH_FRAGMENT_KEY = "gxj_auth"');
@@ -45,6 +46,11 @@ describe("verified secure-link member-session bridge", () => {
     expect(bootstrap).not.toContain('type: "magiclink" })');
     expect(bootstrap.indexOf("window.history.replaceState")).toBeLessThan(
       bootstrap.indexOf(".verifyOtp("),
+    );
+    expect(boundary).toContain('PLATFORM_AUTH_FRAGMENT_KEY = "gxj_auth"');
+    expect(boundary).toContain("await supabase.auth.verifyOtp");
+    expect(boundary.indexOf("await supabase.auth.verifyOtp")).toBeLessThan(
+      boundary.indexOf("await supabase.auth.getSession"),
     );
     expect(root).toContain("<AuthSessionBootstrap />");
   });
