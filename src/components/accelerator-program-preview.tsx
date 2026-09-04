@@ -146,7 +146,7 @@ export function AcceleratorProgramPreview({ initialCompleted = 0 }: { initialCom
               <div className="flex items-end justify-between gap-4">
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
-                    Today&rsquo;s assignment
+                    Today&rsquo;s workout
                   </p>
                   <h2 id="today-title" className="mt-1 text-xl font-semibold tracking-tight">
                     {assignmentLabel(currentDay)}
