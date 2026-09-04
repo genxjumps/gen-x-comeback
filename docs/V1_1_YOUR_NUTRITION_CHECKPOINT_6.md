@@ -294,6 +294,12 @@ These choices must be resolved before implementation begins:
 
 No numerical calorie or protein logic is approved by this document.
 
+The eventual calorie method must use a **responsible starting deficit**: enough to create a
+meaningful fat-loss trend, but not so aggressive that it treats rapid scale loss as the goal or
+makes normal eating, training, and recovery harder than necessary. It must not add assumed
+workout calories when the app does not know how often or how long a customer actually trains.
+Real weight, waist, and adherence data remain the check on the initial estimate.
+
 Do not reuse the free 7-Day one-gram-per-pound language. The earlier working approximately
 1.6 g/kg idea, its rounding, and its proposed minimum/maximum are historical discussion only, not
 approved customer-facing logic. Any selected method must be researched for adults 50+, evaluated
