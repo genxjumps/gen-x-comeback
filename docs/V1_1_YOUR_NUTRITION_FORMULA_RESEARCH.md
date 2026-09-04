@@ -138,15 +138,15 @@ Do not use the prior blanket 1.6 g/kg reference-weight proposal or arbitrary 70/
 This is a simple default macro structure. It is not carb cycling, a food log, or a claim that one
 carb-to-fat ratio is best for everyone.
 
-## Draft manual review behavior
+## Approved V1 review boundary
 
-V1 does not change targets automatically.
+V1 does not verify intake, run an adherence audit, collect temporary calorie logs, or change
+targets automatically or through a suggested calorie-reduction workflow.
 
-If a customer is not seeing the expected trend after a sustained period of honest consistency, the
-first review is portions, drinks, dressings, sauces, calorie-dense foods, and serving sizes. The
-app does not tell them to cut calories because of a few scale readings or a single off-target day.
-
-The exact review window and optional later 100-150 calorie manual adjustment remain open.
+If a customer is not seeing the expected trend, the app gives brief guidance to review portions,
+drinks, dressings, sauces, calorie-dense foods, serving sizes, and consistency. It does not pretend
+to know what the customer ate. The customer can update current weight, goal, movement, or training
+and deliberately recalculate starting targets at any time.
 
 ## Calibration checks
 
@@ -183,6 +183,6 @@ the dietitian notice instead of inventing a low-calorie target.
    short registered-dietitian notice.
 3. Convert the approved protein, carbohydrate, and fat calibration cases into deterministic tests
    during implementation.
-4. Lock slider limits, meal-allocation rounding, and protein-spread behavior.
-5. Lock the manual review window and wording.
-6. Verify Todd's Normal Day labels and portions before publishing its totals.
+4. Convert the approved meal-slider defaults, recalculation, and rounding behavior into
+   deterministic tests during implementation.
+5. Verify My Normal Day labels and portions before publishing its totals.
