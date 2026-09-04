@@ -70,7 +70,7 @@ The setup asks these direct questions:
 2. **What do you want your body weight to do?**
    - Lose weight
    - Maintain my current weight
-   - Gain weight
+   - Add weight slowly
 3. Current weight and, when weight is changing, goal weight.
 4. Height, age, and sex.
 5. **Outside of workouts, how active is your typical day?**
@@ -85,6 +85,16 @@ The setup asks these direct questions:
 
 The calculator does not ask people to estimate workout calories, workout duration, or training
 frequency. It does not use exercise-calorie eat-back logic.
+
+**Add weight slowly is not a bulk.** It is available only alongside a lean-muscle goal and must
+never be framed as permission to chase rapid scale gain or eat without a target. The intended
+outcome is stronger, more muscular, and still lean. Some scale gain may occur, but the scale alone
+does not determine success.
+
+For a customer who wants to add lean muscle while losing fat, maintaining roughly the same body
+weight is a valid outcome. In that case, changes in waist, strength, capability, and how clothes
+fit matter alongside the scale. Nutrition reuses the existing weight and waist records rather than
+creating another tracking system.
 
 The final field labels, units, valid ranges, skip handling, and medical/safety copy depend on the
 formula decision. This screen must not ship until those decisions are approved and tested.
@@ -102,6 +112,10 @@ The result shows:
 The customer-facing rule is: **These are your numbers for the whole day. Every meal counts.**
 Targets apply all seven days. There is no weekend mode, cheat-day setting, exercise-calorie credit,
 or carb cycling.
+
+The result must not describe a higher scale number as success by itself. When the customer has a
+lean-muscle goal, it points them back to the existing Progress experience for weight and waist
+context rather than presenting scale change as the only score.
 
 ### 5. Normal Eating Day
 
@@ -193,7 +207,9 @@ someone has stalled, change targets automatically, or create a target-history da
 These choices must be resolved before implementation begins:
 
 1. **Calorie method:** calculation, goal and goal-weight handling, movement categories, rounding,
-   floors, maximum deficit, and what the app says when an estimate is not appropriate.
+   floors, maximum deficit, and what the app says when an estimate is not appropriate. The
+   slow-weight-gain branch must be deliberately conservative and must not become a bulk
+   prescription.
 2. **Protein method:** weight basis, calculation, rounding, lower/upper guardrails, and how to
    handle substantial excess weight.
 3. **Health and safety boundary:** age suitability, caution/stop copy, and when the app directs a
