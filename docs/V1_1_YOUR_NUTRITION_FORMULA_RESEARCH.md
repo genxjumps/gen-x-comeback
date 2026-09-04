@@ -1,8 +1,9 @@
 # Checkpoint 6 - Nutrition formula and evidence
 
-**Status:** Formula direction approved by Todd on 2026-09-04 for implementation planning.
-Before code ships, complete the deterministic calibration cases and approve the final customer-facing
-copy. This remains general nutrition guidance, not individualized medical nutrition care.
+**Status:** Calorie direction and safety boundary approved by Todd on 2026-09-04. The protein
+formula is reopened after review and must not be implemented from this document until Todd approves
+the revised muscle-first rule. This remains general nutrition guidance, not individualized medical
+nutrition care.
 
 ## What this proposal is trying to do
 
@@ -90,12 +91,16 @@ Use a protein reference weight to avoid assigning protein from every pound of ex
 reference weight (kg) = min(current weight (kg), 30 × height (m)^2)
 ```
 
-| Customer | Approved protein target |
-| --- | ---: |
-| Eligible customer using Your Nutrition | 1.6 g/kg reference weight |
+The prior 1.6 g/kg reference-weight proposal is **not approved**. It produced a 125 g target for
+Todd at 175 lb, which would incorrectly make a lower intake look like the product's muscle-first
+recommendation.
 
-Round to the nearest 5 grams. Do not use the prior free-plan one-gram-per-pound target, a blanket
-1.6 g/kg of current weight, or arbitrary 70/180g hard caps.
+The revised rule must preserve a practical high-protein target for leaner customers training to
+build muscle and lose fat, while avoiding an absurd calculation from every pound of excess body
+weight. It must be recalibrated and approved before implementation.
+
+Do not use the prior free-plan one-gram-per-pound target, the prior blanket 1.6 g/kg reference
+weight proposal, or arbitrary 70/180g hard caps without a deliberate replacement decision.
 
 ### 5. Carbohydrate and fat targets
 
@@ -124,19 +129,19 @@ These are internal tests, not customer examples or promises.
 
 | Profile | Maintenance | Result | Protein | Carbs | Fat |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Todd: 60M, 6 ft 1, 175 lb, mostly sitting, lose weight | 2,100 | 1,900 | 125 g | 225 g | 55 g |
-| Todd: same inputs, on feet most of the day, lose weight | 2,350 | 2,100 | 125 g | 265 g | 60 g |
-| 55F, 5 ft 4, 205 lb, mostly sitting, lose weight | 1,900 | 1,700 | 125 g | 200 g | 45 g |
-| 60M, 6 ft 1, 235 lb, on feet, lose weight | 2,750 | 2,500 | 165 g | 305 g | 70 g |
-| 65F, 4 ft 11, 200 lb, mostly sitting, lose weight | 1,700 | 1,550 | 110 g | 175 g | 45 g |
-| 58F, 5 ft 6, 155 lb, on feet, maintain | 1,850 | 1,850 | 110 g | 240 g | 50 g |
-| 55M, 5 ft 10, 170 lb, on feet, add weight slowly | 2,300 | 2,300 | 125 g | 305 g | 65 g |
+| Todd: 60M, 6 ft 1, 175 lb, mostly sitting, lose weight | 2,100 | 1,900 | Recalculate | Recalculate | Recalculate |
+| Todd: same inputs, on feet most of the day, lose weight | 2,350 | 2,100 | Recalculate | Recalculate | Recalculate |
+| 55F, 5 ft 4, 205 lb, mostly sitting, lose weight | 1,900 | 1,700 | Recalculate | Recalculate | Recalculate |
+| 60M, 6 ft 1, 235 lb, on feet, lose weight | 2,750 | 2,500 | Recalculate | Recalculate | Recalculate |
+| 65F, 4 ft 11, 200 lb, mostly sitting, lose weight | 1,700 | 1,550 | Recalculate | Recalculate | Recalculate |
+| 58F, 5 ft 6, 155 lb, on feet, maintain | 1,850 | 1,850 | Recalculate | Recalculate | Recalculate |
+| 55M, 5 ft 10, 170 lb, on feet, add weight slowly | 2,300 | 2,300 | Recalculate | Recalculate | Recalculate |
 | 70F, 4 ft 10, 110 lb, mostly sitting, lose weight | 1,150 | Dietitian notice | - | - | - |
-| 50M, 6 ft 5, 350 lb, physical work, lose weight | 4,000 | 3,600 | 185 g | 490 g | 100 g |
+| 50M, 6 ft 5, 350 lb, physical work, lose weight | 4,000 | 3,600 | Recalculate | Recalculate | Recalculate |
 
 Maintenance is rounded up to the next 50 calories. A fat-loss result is 10% below maintenance,
-capped at 500 calories, then rounded to the nearest 50. Protein, carbohydrate, and fat are rounded
-to the nearest 5 grams.
+capped at 500 calories, then rounded to the nearest 50. The protein rule and dependent carbohydrate
+and fat results must be recalculated after the revised protein decision.
 
 Todd's stated real maintenance routine has generally been in the 2,000-2,300 calorie range. The
 two calibration outputs bracket that lived experience. This is a useful sanity check, not proof of
@@ -148,6 +153,8 @@ the dietitian notice instead of inventing a low-calorie target.
 1. Run and approve deterministic calibration and boundary cases, including low-calorie, short,
    tall, high-bodyweight, and goal-direction combinations.
 2. Confirm input ranges, units, and the exact short registered-dietitian notice.
-3. Lock slider limits, meal-allocation rounding, and protein-spread behavior.
-4. Lock the manual review window and wording.
-5. Verify Todd's Normal Day labels and portions before publishing its totals.
+3. Approve the revised muscle-first protein rule, then recalculate all protein, carbohydrate, and
+   fat calibration results.
+4. Lock slider limits, meal-allocation rounding, and protein-spread behavior.
+5. Lock the manual review window and wording.
+6. Verify Todd's Normal Day labels and portions before publishing its totals.
