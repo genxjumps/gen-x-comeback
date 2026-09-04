@@ -208,16 +208,20 @@ For example, someone who prefers coffee and a small breakfast can give breakfast
 and move more of the day to lunch, dinner, or snacks/dessert. This changes the meal-by-meal
 guidance only. It never changes the daily calorie or macro targets.
 
-The adjustment is one simple meal-size control for each selected eating occasion, with a clear
-**Reset to recommended split** action. When one meal changes, the remaining selected meals
-rebalance automatically. Calories, carbohydrates, and fats follow that meal-size split. The
-default protein guidance is intentionally more evenly distributed across the main meals than
-calories, because a large dinner does not make it useful to ignore protein earlier in the day.
+The adjustment uses one actual slider for each selected eating occasion, with a clear **Reset to
+recommended split** action. The slider runs from a smaller to a larger share of the day. The app
+shows the resulting percentage, calories, protein, carbohydrates, and fat directly beneath each
+meal.
 
-The app does not provide separate sliders for calories, protein, carbohydrates, and fat. That
-would turn a practical planning screen into a spreadsheet. If a customer chooses a very small
-meal, the app simply reminds them that their daily protein target still needs to be handled across
-the rest of the day.
+The sliders represent relative meal size. Customers never have to make four percentages add to
+100%. When one slider moves, the app automatically recalculates every selected meal while keeping
+the daily calorie and macro totals fixed.
+
+The app does not provide separate sliders for calories, protein, carbohydrates, and fat. One meal
+slider updates all four numbers together. If a customer makes breakfast very small, the app moves
+that portion of the daily targets into the remaining meals. The recommended starting split still
+teaches a more deliberate protein spread, but the customer can shape the day around how they
+actually eat.
 
 The result teaches the customer how all four numbers operate across a day. It is not a rigid meal
 schedule, a daily checklist, or a meal-by-meal food log.
