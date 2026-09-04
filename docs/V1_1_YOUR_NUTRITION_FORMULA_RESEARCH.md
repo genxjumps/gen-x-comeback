@@ -85,13 +85,19 @@ number to 1,200 and present that as an individualized plan.
 
 ### 4. Protein reference weight and target
 
-All customer-facing body-weight inputs and explanations use **pounds**. Customers see a daily
-protein target in **grams** - for example, “175 g per day.” They never see g/kg, a kilograms
-conversion, or the underlying formula.
+At setup, the customer chooses a unit system:
 
-Research notes can use g/kg when a source uses that unit, but the unit must always be spelled out.
-Any internal kilograms conversion for calorie math is implementation-only and must use explicit
-unit names in code and tests.
+- **US:** pounds and feet/inches
+- **Metric:** kilograms and centimeters
+
+The app keeps that choice throughout the Nutrition experience. It never mixes systems or makes a
+customer translate. Daily protein remains in **grams** in either system because food labels and
+supplements use grams - for example, “175 g per day.”
+
+Customers never see g/kg, g/lb, a unit conversion, or the underlying formula. Research notes can
+use g/kg when a source uses that unit, but the unit must always be spelled out. Any internal
+conversion for calorie math is implementation-only and must use explicit unit names in code and
+tests.
 
 The prior 1.6 g/kg reference-weight proposal is **not approved**. It produced a 125 g target for
 Todd at 175 lb, which would incorrectly make a lower intake look like the product's muscle-first
@@ -155,8 +161,8 @@ the dietitian notice instead of inventing a low-calorie target.
 
 1. Run and approve deterministic calibration and boundary cases, including low-calorie, short,
    tall, high-bodyweight, and goal-direction combinations.
-2. Confirm input ranges, customer-facing pounds/grams-only presentation, and the exact short
-   registered-dietitian notice.
+2. Confirm input ranges, US/metric unit handling, and the exact short registered-dietitian
+   notice.
 3. Approve the revised muscle-first protein rule, then recalculate all protein, carbohydrate, and
    fat calibration results.
 4. Lock slider limits, meal-allocation rounding, and protein-spread behavior.
