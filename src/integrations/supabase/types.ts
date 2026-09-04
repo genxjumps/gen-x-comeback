@@ -325,6 +325,35 @@ export type Database = {
           },
         ];
       };
+      customer_program_reminder_preferences: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          program_reminders_enabled: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          program_reminders_enabled?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          program_reminders_enabled?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "customer_program_reminder_preferences_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: true;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       email_jobs: {
         Row: {
           alerted_stale_at: string | null;
