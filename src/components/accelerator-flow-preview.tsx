@@ -12,7 +12,7 @@ const SCREENS: Array<{ id: PreviewScreen; label: string }> = [
   { id: "home", label: "Home" },
   { id: "programs", label: "My Programs" },
   { id: "setup", label: "Setup" },
-  { id: "daily", label: "Daily Assignment" },
+  { id: "daily", label: "Today’s Workout" },
   { id: "progress", label: "Progress" },
   { id: "completion", label: "Day 28 Complete" },
 ];
@@ -47,16 +47,16 @@ function HomePreview({ openDaily }: { openDaily: () => void }) {
     <PreviewPage
       kicker="Welcome Back, Todd"
       title="Today’s Comeback Starts Here"
-      description="The next assignment stays first. Everything else is easy to find without turning Home into a content feed."
+      description="Your next workout stays first. Everything else is easy to find without turning Home into a content feed."
     >
       <section className="rounded-lg border border-border bg-gxj-mint p-6">
         <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
-          Daily Assignment
+          Today’s Workout
         </p>
         <h2 className="mt-2 text-2xl font-semibold">Day 15: Workout A</h2>
         <p className="mt-2 text-sm text-muted-foreground">14 of 28 days complete</p>
         <Button type="button" className="mt-5" onClick={openDaily}>
-          Open Today’s Assignment
+          Open Today’s Workout
           <ArrowRight aria-hidden="true" className="size-4" />
         </Button>
       </section>
