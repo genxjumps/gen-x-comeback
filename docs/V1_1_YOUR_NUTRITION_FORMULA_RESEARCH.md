@@ -85,19 +85,22 @@ number to 1,200 and present that as an individualized plan.
 
 ### 4. Protein reference weight and target
 
-Use a protein reference weight to avoid assigning protein from every pound of excess body weight:
+All customer-facing body-weight inputs and explanations use **pounds**. Customers see a daily
+protein target in **grams** - for example, “175 g per day.” They never see g/kg, a kilograms
+conversion, or the underlying formula.
 
-```
-reference weight (kg) = min(current weight (kg), 30 × height (m)^2)
-```
+Research notes can use g/kg when a source uses that unit, but the unit must always be spelled out.
+Any internal kilograms conversion for calorie math is implementation-only and must use explicit
+unit names in code and tests.
 
 The prior 1.6 g/kg reference-weight proposal is **not approved**. It produced a 125 g target for
 Todd at 175 lb, which would incorrectly make a lower intake look like the product's muscle-first
 recommendation.
 
-The revised rule must preserve a practical high-protein target for leaner customers training to
-build muscle and lose fat, while avoiding an absurd calculation from every pound of excess body
-weight. It must be recalibrated and approved before implementation.
+The revised rule must use a clear **protein reference weight in pounds**. It must preserve a
+practical high-protein target for leaner customers training to build muscle and lose fat, while
+avoiding an absurd calculation from every pound of excess body weight. It must be recalibrated and
+approved before implementation.
 
 Do not use the prior free-plan one-gram-per-pound target, the prior blanket 1.6 g/kg reference
 weight proposal, or arbitrary 70/180g hard caps without a deliberate replacement decision.
@@ -152,7 +155,8 @@ the dietitian notice instead of inventing a low-calorie target.
 
 1. Run and approve deterministic calibration and boundary cases, including low-calorie, short,
    tall, high-bodyweight, and goal-direction combinations.
-2. Confirm input ranges, units, and the exact short registered-dietitian notice.
+2. Confirm input ranges, customer-facing pounds/grams-only presentation, and the exact short
+   registered-dietitian notice.
 3. Approve the revised muscle-first protein rule, then recalculate all protein, carbohydrate, and
    fat calibration results.
 4. Lock slider limits, meal-allocation rounding, and protein-spread behavior.
