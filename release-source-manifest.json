@@ -99,7 +99,7 @@
     },
     {
       "path": "src/components/accelerator-program.tsx",
-      "sha256": "10de72dfe6a96b94c60fff76423274bfa9ccda2489ac89d44333683c6ec3b3b8"
+      "sha256": "6a96d8a0fb460a121790aece4e9cbfbef9e545bbf2dfc1b17d1704a065ffdb83"
     },
     {
       "path": "src/components/accelerator-video-tracker.tsx",
@@ -239,11 +239,11 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/content-readiness.test.ts",
-      "sha256": "f14f542a6009e34eb3b534eebe1738d9bb6d7e574c4721a4e8106a1a38e9a346"
+      "sha256": "9ec192fc0a9b518ddd8c7874a62834d9eab041b4d9513bf1d3c27a1fa702a9f2"
     },
     {
       "path": "src/lib/accelerator/__tests__/daily-assignment-contract.test.ts",
-      "sha256": "3edc2baacd2fb515ecedf87476004b99ae7fa9c9f2af5694088017b9d6261149"
+      "sha256": "0b47fcfa47b95ca4611b9b4083adebc9e1e20dcafac579bcdd9c0943a47abe14"
     },
     {
       "path": "src/lib/accelerator/__tests__/daily-assignment.test.ts",
@@ -307,7 +307,7 @@
     },
     {
       "path": "src/lib/accelerator/content.ts",
-      "sha256": "ff232d5746de204080398643ae74f1af20a6de71ac0c18ba4113d0fbc27bfd46"
+      "sha256": "5f2dbae93ee5321cbd189bf56035bd0d8bd5defc6bd731e165a3b81c73377e63"
     },
     {
       "path": "src/lib/accelerator/daily-assignment.ts",
@@ -331,7 +331,7 @@
     },
     {
       "path": "src/lib/accelerator/program.ts",
-      "sha256": "18507b83a3c03d2bb7ad4867088e97b6b4f7562072374b8aee0a8023038b4b11"
+      "sha256": "b267f54eac66ee8d65bb8ac861af4867d50dbc3686cbc5f512543726b393e0d9"
     },
     {
       "path": "src/lib/accelerator/provision.server.ts",
@@ -339,7 +339,7 @@
     },
     {
       "path": "src/lib/accelerator/schemas.ts",
-      "sha256": "4787f5045f4ca041fff4547292d1330226131a90305ccbcb6457dd97b25a1fd4"
+      "sha256": "9a9da25248ba1bb24438a5815f9dec3d6abe7e6d16c0ee603cd4a5f710a120ce"
     },
     {
       "path": "src/lib/accelerator/types.ts",

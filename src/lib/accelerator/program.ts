@@ -172,7 +172,12 @@ export type AcceleratorProgramSnapshot = {
   }>;
   assignmentContent: Record<
     AcceleratorAssignmentCode,
-    { instructions: string; media: AcceleratorMediaPlaceholder | null }
+    {
+      instructions: string;
+      /** Optional written sequence for a workout whose video is not required. */
+      steps?: string[];
+      media: AcceleratorMediaPlaceholder | null;
+    }
   >;
 };
 
@@ -204,13 +209,17 @@ export function buildAcceleratorProgramSnapshot(): AcceleratorProgramSnapshot {
       media: { ...week.media },
     })),
     assignmentContent: Object.fromEntries(
-      Object.entries(ACCELERATOR_ASSIGNMENT_CONTENT).map(([code, content]) => [
-        code,
-        {
-          ...content,
-          media: content.media ? { ...content.media } : null,
-        },
-      ]),
+      Object.entries(ACCELERATOR_ASSIGNMENT_CONTENT).map(([code, content]) => {
+        const steps = "steps" in content ? content.steps : undefined;
+        return [
+          code,
+          {
+            ...content,
+            steps: steps ? [...steps] : undefined,
+            media: content.media ? { ...content.media } : null,
+          },
+        ];
+      }),
     ) as AcceleratorProgramSnapshot["assignmentContent"],
   };
 }

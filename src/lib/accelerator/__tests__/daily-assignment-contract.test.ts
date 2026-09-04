@@ -33,7 +33,7 @@ describe("customer-facing daily workout contract", () => {
   });
 
   it("supports canonical recovery guidance, rest, completion, brief Undo, and a path Home", () => {
-    expect(content).toContain("Use the Active Recovery session if it helps");
+    expect(content).toContain("Keep this recovery session easy enough to speak in full sentences");
     expect(workout).toContain("Take the full recovery day");
     expect(workout).toContain("Day {justCompletedDay} Complete");
     expect(workout).toContain('to="/home"');
