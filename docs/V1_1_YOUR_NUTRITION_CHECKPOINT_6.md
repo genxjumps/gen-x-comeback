@@ -170,10 +170,8 @@ The result shows:
 
 The **What are these?** control opens this concise explanation:
 
-> These are general starting estimates, not individual nutrition care or a medical diet. If you
-> have a condition that affects what you eat, take medication that affects blood sugar or appetite,
-> have been told to limit protein, or have been given a medical diet, use an individualized plan
-> from a registered dietitian instead of this tool.
+> Starting estimate, not medical nutrition advice. If you follow a medical diet or have been told
+> to limit protein, work with a registered dietitian.
 
 A registered dietitian is deliberately named here. The app does not present a physician as the
 primary source of individualized nutrition guidance.
