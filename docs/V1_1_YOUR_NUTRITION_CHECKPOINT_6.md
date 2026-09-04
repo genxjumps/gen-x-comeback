@@ -106,6 +106,16 @@ An eligible customer lands on a short explanation of Protein First and sees a si
 **Set up my starting targets**. The page makes clear that targets are a starting estimate, not a
 prescription, and that the tool does not require food logging.
 
+### 2a. Learn the basics
+
+Your Nutrition includes a small secondary **Learn the basics** card that links to the public Gen X
+Jumps Nutrition hub. It does not block setup, change saved targets, or become a second in-app
+content library.
+
+The app teaches the immediate rules. The website carries the deeper explanations and examples.
+The first linked education priorities are calories and macros, reading a label without getting
+fooled, building a normal eating day, recovering after an off-target meal, and protein after 50.
+
 ### 3. Starting-target setup
 
 The setup asks these direct questions:
