@@ -44,7 +44,7 @@ describe("authenticated platform shell source contract", () => {
     expect(access).toContain("enrollment is still closed during development");
   });
 
-  it("keeps unfinished provider behavior inactive while using the real assignment state", () => {
+  it("keeps unfinished provider behavior inactive while using real program state", () => {
     const home = readSource("../../../routes/home.tsx");
     const nutrition = readSource("../../../routes/nutrition.tsx");
     const programs = readSource("../../../routes/programs.tsx");
@@ -58,6 +58,9 @@ describe("authenticated platform shell source contract", () => {
     expect(home).toContain('to: "/your-plan"');
     expect(nutrition).toContain("No unapproved target formula is active");
     expect(programs).toContain("without opening checkout");
-    expect(notifications).toContain("No notifications have been activated");
+    expect(notifications).toContain("getPlatformNotifications");
+    expect(notifications).toContain("dismissMeasurementReminder");
+    expect(notifications).toContain('to="/progress"');
+    expect(notifications).not.toMatch(/email|push notification/i);
   });
 });

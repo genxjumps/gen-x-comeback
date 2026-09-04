@@ -1,6 +1,9 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { Apple, Bell, ChartNoAxesColumnIncreasing, Compass, Dumbbell, Home } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+
+import { getPlatformNotifications } from "@/lib/notifications/functions";
 
 const primaryNavigation = [
   { label: "Home", to: "/home", icon: Home },
@@ -16,6 +19,26 @@ function isActivePath(pathname: string, to: string): boolean {
 
 export function PlatformShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const loadNotifications = useServerFn(getPlatformNotifications);
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    void loadNotifications({ data: {} })
+      .then((result) => {
+        if (active && result.ok) setNotificationCount(result.notifications.length);
+      })
+      .catch(() => undefined);
+    const updateCount = (event: Event) => {
+      const detail = (event as CustomEvent<{ count?: number }>).detail;
+      if (typeof detail?.count === "number") setNotificationCount(detail.count);
+    };
+    window.addEventListener("gxj:notifications-changed", updateCount);
+    return () => {
+      active = false;
+      window.removeEventListener("gxj:notifications-changed", updateCount);
+    };
+  }, [loadNotifications, pathname]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -50,15 +73,21 @@ export function PlatformShell({ children }: { children: ReactNode }) {
 
           <Link
             to="/notifications"
-            aria-label="Notifications"
+            aria-label={notificationCount > 0 ? "Notifications - unread reminder" : "Notifications"}
             aria-current={pathname === "/notifications" ? "page" : undefined}
-            className={`grid size-10 place-items-center rounded-full border transition-colors ${
+            className={`relative grid size-10 place-items-center rounded-full border transition-colors ${
               pathname === "/notifications"
                 ? "border-foreground bg-foreground text-background"
                 : "border-border hover:bg-muted"
             }`}
           >
             <Bell aria-hidden="true" className="size-4" />
+            {notificationCount > 0 ? (
+              <span
+                aria-hidden="true"
+                className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive"
+              />
+            ) : null}
           </Link>
         </div>
       </header>

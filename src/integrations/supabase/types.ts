@@ -280,6 +280,51 @@ export type Database = {
           },
         ];
       };
+      customer_program_reminder_dismissals: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          dismissed_at: string;
+          enrollment_id: string;
+          id: string;
+          program_week: number;
+          reminder_code: string;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          dismissed_at?: string;
+          enrollment_id: string;
+          id?: string;
+          program_week: number;
+          reminder_code: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          dismissed_at?: string;
+          enrollment_id?: string;
+          id?: string;
+          program_week?: number;
+          reminder_code?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "customer_program_reminder_dismissals_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "customer_program_reminder_dismissals_run_owner_fkey";
+            columns: ["enrollment_id", "customer_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_program_enrollments";
+            referencedColumns: ["id", "customer_id"];
+          },
+        ];
+      };
       email_jobs: {
         Row: {
           alerted_stale_at: string | null;

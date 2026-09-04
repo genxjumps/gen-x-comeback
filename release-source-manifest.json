@@ -135,7 +135,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "dbe9faf0812cfb6cceed0ba90017b8ebc40c716a86ea20af3d43896ebc83202c"
+      "sha256": "c3053a5c845eb805c40e0ebb538e628c3ed495b799bbcacebee1935ba5c21af8"
     },
     {
       "path": "src/components/ui/button.tsx",
@@ -191,7 +191,7 @@
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "sha256": "b5d77cc417277b273903abfc87577590b565780e60508e8f69fd3fb939a7a42b"
+      "sha256": "3457668b7c045622f923306a8821648cb204b2fed0449908a082d8879c8c455d"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -267,7 +267,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "aca12b0bb2fadcaca2fb0a039bd65d823df39d4a5f44dfa39a171719be97a5c0"
+      "sha256": "c297585aa9205349d83214c37d70060c3f00be7dc79c397d8775789d264877c8"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -315,7 +315,11 @@
     },
     {
       "path": "src/lib/accelerator/functions.ts",
-      "sha256": "41830e84c7e8be44fd334640e099b4a646305484dd5651cff728a44d44205a7a"
+      "sha256": "08fe60244a5e9e9bda86770a3dd81c06557bfde6a18ce2486586447b068d45a8"
+    },
+    {
+      "path": "src/lib/accelerator/measurement-row.ts",
+      "sha256": "dbd5cec990b532969efd3c8e3d2adec37359b679b72a0700c0c4c2d0b1b6fdc7"
     },
     {
       "path": "src/lib/accelerator/measurements.ts",
@@ -706,6 +710,30 @@
       "sha256": "1f201ade8b663beac7f121a14bbda4821457834e9a4edecc8b0f68054a05cb68"
     },
     {
+      "path": "src/lib/notifications/__tests__/measurement-reminder-contract.test.ts",
+      "sha256": "b2623e7509b4c38d0d29dda9ec1ba2eedc95a3a3936c4877acd8f9c442373bdb"
+    },
+    {
+      "path": "src/lib/notifications/__tests__/measurement-reminder.test.ts",
+      "sha256": "179dbec64d316137a172aba2a8920aabe3dcdf4b36508aff170dd69d9b099dc3"
+    },
+    {
+      "path": "src/lib/notifications/functions.ts",
+      "sha256": "cabb3185b67d3c72e66bb3092884f3e58a56ddeecfb7309a0414f193acba49ab"
+    },
+    {
+      "path": "src/lib/notifications/measurement-reminder.ts",
+      "sha256": "b757c7d078041802ee2f216bb571d454c05d2ca2f5ee8a9389bef7780e29daa2"
+    },
+    {
+      "path": "src/lib/notifications/schemas.ts",
+      "sha256": "5c3d5a2df42d42bf1357dadb11ddbc2a1176be859a44c2323168788794822d81"
+    },
+    {
+      "path": "src/lib/notifications/types.ts",
+      "sha256": "5095b2270019b5183f047a9d3908cd11dbd025fa36c7b745b1289c1a433e14eb"
+    },
+    {
       "path": "src/lib/plan-access.server.ts",
       "sha256": "41c50fd64c202c4c436697e6558a3c7e45251b4760d867ed9540ba7cad49b822"
     },
@@ -819,7 +847,7 @@
     },
     {
       "path": "src/routes/notifications.tsx",
-      "sha256": "f14fe28d4d30e4bbc7191d1d8ce6f75058bddbfa88fd554c55dcc34026577fed"
+      "sha256": "a1a16af4d20191a9433d1ee717dae9ebccc4ed387bf3998ae010f21975899929"
     },
     {
       "path": "src/routes/nutrition.tsx",
@@ -839,7 +867,7 @@
     },
     {
       "path": "src/routes/progress.tsx",
-      "sha256": "df17d7afd9c0f40147881688c90fbfd2675c06d605874422c4082562af8fe2d2"
+      "sha256": "8e59355edfe4b5d00ef070ce8b24cfaf98291c00619d7cfcf02de3f58b80f1ce"
     },
     {
       "path": "src/routes/recover.ts",
@@ -887,7 +915,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "5fc85e50bb95abad7801f33ec71cd0fb715156edb9af9202ff0493039be18d33"
+      "sha256": "7742b268bb279cbdd55e128d9635d0f636765109b85318141d4ed33e79574843"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -996,6 +1024,10 @@
     {
       "path": "supabase/migrations/20260902183000_recovery_transactional_claim_contract.sql",
       "sha256": "6db58d8ac18d2a6f64703b76363846308424741c46d08530d7a13c9c0e6d3ac3"
+    },
+    {
+      "path": "supabase/migrations/20260904100000_program_week_measurement_reminders.sql",
+      "sha256": "739cfa5988cd1f983a58939510b6d8c6a01690b177331375573030ef55f8c1ca"
     },
     {
       "path": "tsconfig.json",

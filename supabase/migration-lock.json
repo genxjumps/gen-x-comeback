@@ -188,6 +188,13 @@
       "sha256": "6db58d8ac18d2a6f64703b76363846308424741c46d08530d7a13c9c0e6d3ac3",
       "statementSha256": "2f0178ba1157754393757a5f2c0b125b09968984244f3866b9545f39238669f2",
       "version": "20260902183000"
+    },
+    {
+      "file": "20260904100000_program_week_measurement_reminders.sql",
+      "name": "program_week_measurement_reminders",
+      "sha256": "739cfa5988cd1f983a58939510b6d8c6a01690b177331375573030ef55f8c1ca",
+      "statementSha256": "fab376fb454f9919b8de28c793211b3bc4c4daf98209dfeb34a5c2bbba4e95c0",
+      "version": "20260904100000"
     }
   ],
   "version": 1
