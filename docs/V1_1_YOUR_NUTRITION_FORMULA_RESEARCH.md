@@ -1,7 +1,8 @@
-# Checkpoint 6 - Proposed nutrition formula research
+# Checkpoint 6 - Nutrition formula and evidence
 
-**Status:** Proposed research only. This document does not approve numerical behavior or
-customer-facing copy. Do not implement from it until Todd explicitly approves the method.
+**Status:** Formula direction approved by Todd on 2026-09-04 for implementation planning.
+Before code ships, complete the deterministic calibration cases and approve the final customer-facing
+copy. This remains general nutrition guidance, not individualized medical nutrition care.
 
 ## What this proposal is trying to do
 
@@ -38,11 +39,16 @@ determine whether it was close enough.
 - Age
 - Height
 - Current body weight
+- Goal weight, when body weight is changing
 - Current fitness goal
 - Desired body-weight direction
 - Typical movement outside workouts
 - Current training type
 - Typical meal occasions and largest meal
+
+Goal weight confirms the direction of change and gives the existing Progress experience useful
+context. It does **not** directly set the starting calorie or protein number. A goal weight without
+a time frame cannot responsibly determine a daily energy target.
 
 Training type remains useful for protein and education. It does **not** add assumed exercise
 calories because the tool does not know how often, how long, or how hard a customer trains.
@@ -65,11 +71,9 @@ calibration choices, not claims of individual precision.
 
 | Customer situation | Proposed starting calorie behavior |
 | --- | --- |
-| Lose fat and lose weight | Maintenance minus 10%, with an internal maximum reduction of 500 calories |
-| Add lean muscle and lose fat, while losing weight | Maintenance minus 5-10%, with an internal maximum reduction of 300 calories |
-| Add lean muscle and lose fat, while maintaining or slowly adding weight | Estimated maintenance |
-| Add lean muscle and add weight slowly | Estimated maintenance. No automatic bulk surplus. |
-| Maintain results | Estimated maintenance |
+| Any goal paired with Lose weight | Maintenance minus 10%, with an internal maximum reduction of 500 calories |
+| Any goal paired with Maintain current weight | Estimated maintenance |
+| Any goal paired with Add weight slowly | Estimated maintenance. No automatic bulk surplus. |
 
 The 500-calorie maximum is a ceiling, not a promise of universal safety and not the default
 reduction. The 10% calculation controls most starting results.
@@ -86,10 +90,9 @@ Use a protein reference weight to avoid assigning protein from every pound of ex
 reference weight (kg) = min(current weight (kg), 30 × height (m)^2)
 ```
 
-| Goal | Proposed protein target |
+| Customer | Approved protein target |
 | --- | ---: |
-| Lose fat or maintain results | 1.4 g/kg reference weight |
-| Add lean muscle, with or without fat loss | 1.6 g/kg reference weight |
+| Eligible customer using Your Nutrition | 1.6 g/kg reference weight |
 
 Round to the nearest 5 grams. Do not use the prior free-plan one-gram-per-pound target, a blanket
 1.6 g/kg of current weight, or arbitrary 70/180g hard caps.
@@ -98,9 +101,9 @@ Round to the nearest 5 grams. Do not use the prior free-plan one-gram-per-pound 
 
 - Fat: 25% of total target calories.
 - Carbohydrate: remaining calories after protein and fat.
-- Raise the calorie result, if needed, so protein does not exceed 30% of calories. This preserves
-  room for 25% fat and at least 45% carbohydrate in the displayed macro pattern.
 - Round protein, carbohydrates, and fat to the nearest 5 grams.
+- Do not silently raise calories to make a macro ratio look cleaner. If a future safety or
+  suitability guardrail prevents a sensible result, stop and show the registered-dietitian notice.
 
 This is a simple default macro structure. It is not carb cycling, a food log, or a claim that one
 carb-to-fat ratio is best for everyone.
@@ -133,12 +136,11 @@ Todd's stated real maintenance routine has generally been in the 2,000-2,300 cal
 two calibration outputs bracket that lived experience. This is a useful sanity check, not proof of
 accuracy for other customers.
 
-## Still requires Todd approval
+## Still open before implementation
 
-1. The conservative movement multipliers.
-2. The 10% fat-loss starting deficit and 5-10% recomp deficit.
-3. The BMI-30 protein reference weight method.
-4. The 1.4 / 1.6 g/kg protein tiers.
-5. The 25% fat / carbohydrate remainder method.
-6. The guardrail behavior and short registered-dietitian notice.
-7. The manual review window and wording.
+1. Run and approve deterministic calibration and boundary cases, including low-calorie, short,
+   tall, high-bodyweight, and goal-direction combinations.
+2. Confirm input ranges, units, and the exact short registered-dietitian notice.
+3. Lock slider limits, meal-allocation rounding, and protein-spread behavior.
+4. Lock the manual review window and wording.
+5. Verify Todd's Normal Day labels and portions before publishing its totals.
