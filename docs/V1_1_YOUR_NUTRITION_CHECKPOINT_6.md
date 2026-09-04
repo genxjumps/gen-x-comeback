@@ -295,9 +295,13 @@ current targets, and their Normal Eating Day. Existing optional weight and waist
 the platform's measurement record; Nutrition must not create a second measurement system.
 
 V1 gives manual, non-automatic review guidance: if results have stalled, first look at portions,
-liquid calories, dressings, sauces, and other calorie-dense foods before tearing up the whole
-approach. It does not score adherence, decide that
-someone has stalled, change targets automatically, or create a target-history dashboard.
+liquid calories, dressings, sauces, serving sizes, and other calorie-dense foods before tearing up
+the whole approach. It does not verify intake, run an adherence audit, collect temporary calorie
+logs, score adherence, decide that someone has stalled, recommend a calorie reduction, change
+targets automatically, or create a target-history dashboard.
+
+The customer can deliberately update current weight, goal, movement, or training and recalculate
+starting targets at any time.
 
 ## Explicitly out of V1
 
@@ -307,8 +311,8 @@ someone has stalled, change targets automatically, or create a target-history da
 - AI meal generation, food checker, grocery list, restaurant guidance, substitutions, or saved
   recipe system
 - barcode scans or meal-photo analysis
-- adherence scores, automatic progress analysis, automatic target changes, or target-history
-  dashboards
+- adherence scores, intake-audit checklists, temporary calorie logs, automatic progress analysis,
+  automatic target changes, or target-history dashboards
 
 ## Decisions that remain open
 
@@ -323,8 +327,6 @@ These choices must be resolved before implementation begins:
 3. **My Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
 4. **Saved rotation:** confirm that V1 launches with the meal-allocation plan and My Normal Day
    only, without stored customer meal notes.
-5. **Manual review prompt:** the exact customer-facing wording and the point at which the app
-   invites a customer to reassess portions and calorie-dense foods.
 
 ## Formula guardrail
 
