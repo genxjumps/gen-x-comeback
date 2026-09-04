@@ -166,6 +166,17 @@ The result shows:
 - daily carbohydrate target
 - daily fat target
 - a clear statement that these are starting targets, to be measured against real life and results
+- a visible **What are these?** information control beside the targets
+
+The **What are these?** control opens this concise explanation:
+
+> These are general starting estimates, not individual nutrition care or a medical diet. If you
+> have a condition that affects what you eat, take medication that affects blood sugar or appetite,
+> have been told to limit protein, or have been given a medical diet, use an individualized plan
+> from a registered dietitian instead of this tool.
+
+A registered dietitian is deliberately named here. The app does not present a physician as the
+primary source of individualized nutrition guidance.
 
 The customer-facing rule is: **These are your numbers for the whole day. Every meal counts.**
 Targets apply all seven days. There is no weekend mode, cheat-day setting, exercise-calorie credit,
@@ -271,8 +282,8 @@ These choices must be resolved before implementation begins:
    prescription.
 2. **Protein method:** weight basis, calculation, rounding, lower/upper guardrails, and how to
    handle substantial excess weight.
-3. **Health and safety boundary:** age suitability, caution/stop copy, and when the app directs a
-   customer to a qualified clinician rather than gives a target.
+3. **Health and safety boundary:** age suitability, final caution/stop copy, and when the app
+   directs a customer to a registered dietitian rather than gives a target.
 4. **Meal allocation:** the exact calorie, protein, carbohydrate, and fat distribution for selected
    meal occasions and the largest-meal choice.
 5. **Todd's Normal Day:** final foods, serving sizes, nutrition information, and approved copy.
