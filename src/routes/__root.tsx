@@ -141,7 +141,6 @@ function RootComponent() {
   if (inPlatform) {
     return (
       <QueryClientProvider client={queryClient}>
-        <AuthSessionBootstrap />
         <PlatformAccessBoundary>
           <PlatformShell>
             <Outlet />
