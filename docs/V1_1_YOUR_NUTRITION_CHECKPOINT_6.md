@@ -42,6 +42,7 @@ The customer sees and can revisit this guidance:
 - Repeat simple meals that work.
 - Protein supports muscle preservation, recovery, and hunger control.
 - If fat loss stalls, adjust portions or calorie-dense foods before rebuilding the whole diet.
+- One off-target meal does not erase the day. Make the next choice better and keep going.
 
 The operating message is: **Calories still matter. Protein comes first. Meals stay simple.**
 
@@ -54,6 +55,14 @@ The guidance gives customers a direct check before they change their whole diet:
 
 Zero-calorie drinks are not treated as a problem. The lesson is to account for drinks and extras
 that actually contain calories.
+
+The guidance also gives customers a clear recovery rule:
+
+> You messed up a meal. Fine. Do not turn one decision into a lost day or a lost weekend. Do not
+> punish it by starving tomorrow. Do not wait for Monday. Your next meal is your next chance to get
+> back on target. Make the next choice better and keep going.
+
+One off-target meal does not ruin results. Repeating the same choice without correcting it does.
 
 ## Recommended V1 customer flow
 
