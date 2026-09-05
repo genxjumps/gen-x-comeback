@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { readStripeCheckoutConfig } from "../stripe-config.server";
+import { readStripeCheckoutConfig, stripeCheckoutConfigIssue } from "../stripe-config.server";
 
 const ORIGINAL_ENV = { ...process.env };
 
@@ -48,5 +48,20 @@ describe("Stripe checkout configuration", () => {
     expect(() => readStripeCheckoutConfig({ requireWebhookSecret: true })).toThrow(
       "Missing STRIPE_WEBHOOK_SECRET",
     );
+  });
+
+  it("reports safe configuration issue codes without returning secret values", () => {
+    validEnvironment();
+    process.env.STRIPE_SECRET_KEY = "sk_live_secret_value";
+
+    let failure: unknown;
+    try {
+      readStripeCheckoutConfig();
+    } catch (error) {
+      failure = error;
+    }
+
+    expect(stripeCheckoutConfigIssue(failure)).toBe("invalid_secret_key_mode");
+    expect(stripeCheckoutConfigIssue(failure)).not.toContain("secret_value");
   });
 });

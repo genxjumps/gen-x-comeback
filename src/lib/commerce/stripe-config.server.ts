@@ -10,6 +10,37 @@ export type StripeCheckoutConfig = {
   webhookSecret: string | null;
 };
 
+export type StripeCheckoutConfigIssue =
+  | "checkout_disabled"
+  | "missing_app_origin"
+  | "missing_price_id"
+  | "missing_secret_key"
+  | "missing_test_customer_ids"
+  | "invalid_app_origin"
+  | "invalid_price_id"
+  | "invalid_secret_key_mode"
+  | "invalid_webhook_secret"
+  | "invalid_test_customer_ids"
+  | "unknown_configuration_error";
+
+/** Converts configuration failures into safe diagnostic codes without exposing values. */
+export function stripeCheckoutConfigIssue(error: unknown): StripeCheckoutConfigIssue {
+  const message = error instanceof Error ? error.message : "";
+  if (message === "Stripe checkout is disabled") return "checkout_disabled";
+  if (message === "Missing APP_ORIGIN") return "missing_app_origin";
+  if (message === "Missing STRIPE_ACCELERATOR_PRICE_ID") return "missing_price_id";
+  if (message === "Missing STRIPE_SECRET_KEY") return "missing_secret_key";
+  if (message === "Missing STRIPE_TEST_CUSTOMER_IDS") return "missing_test_customer_ids";
+  if (message === "Invalid STRIPE_ACCELERATOR_PRICE_ID") return "invalid_price_id";
+  if (message.includes("test-mode secret")) return "invalid_secret_key_mode";
+  if (message === "Invalid STRIPE_WEBHOOK_SECRET") return "invalid_webhook_secret";
+  if (message.includes("APP_ORIGIN")) return "invalid_app_origin";
+  if (message.includes("STRIPE_TEST_CUSTOMER_IDS") || message.includes("Invalid uuid")) {
+    return "invalid_test_customer_ids";
+  }
+  return "unknown_configuration_error";
+}
+
 function requiredEnvironment(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`Missing ${name}`);

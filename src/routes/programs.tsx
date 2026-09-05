@@ -31,7 +31,7 @@ function Programs() {
     let active = true;
     void loadAvailability()
       .then((result) => active && setAvailability(result))
-      .catch(() => active && setAvailability({ ok: false }));
+      .catch(() => active && setAvailability({ ok: false, issue: "account_unavailable" }));
     return () => {
       active = false;
     };
@@ -96,6 +96,11 @@ function Programs() {
           </Button>
         ) : null}
         {checkoutError ? <p className="mt-3 text-sm font-medium">{checkoutError}</p> : null}
+        {availability && !controlledCheckout && !(availability.ok && availability.owned) ? (
+          <p className="mt-3 text-xs text-muted-foreground">
+            Test setup status: {availability.issue ?? "unknown"}
+          </p>
+        ) : null}
       </section>
     </PlatformPage>
   );

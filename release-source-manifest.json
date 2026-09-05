@@ -403,7 +403,7 @@
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-config.test.ts",
-      "sha256": "4c9368f0411c7fed27e743ea2da58bb4cc53830206e8d92fbd22597e23ab5ef0"
+      "sha256": "d5ad9e3d5b823eb248d9a7ad2e4eb47719c6edab4bcc344b7da09695bcce801a"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-webhook-route.test.ts",
@@ -411,7 +411,7 @@
     },
     {
       "path": "src/lib/commerce/functions.ts",
-      "sha256": "4506cb7494c2185c87406df48f36677241eba8931ecea3bd17e1052dc6eb87c4"
+      "sha256": "4d4367919128fd06eb5661c2b10214bf7c29594e04bd09398bd012fbde19298c"
     },
     {
       "path": "src/lib/commerce/stripe-checkout.server.ts",
@@ -419,7 +419,7 @@
     },
     {
       "path": "src/lib/commerce/stripe-config.server.ts",
-      "sha256": "109ea044899d5f1624d97c54927e18f00856230ca2243b7ceac4cb3e342fef73"
+      "sha256": "0234cefdd16ed17db32852dd223362d7f5b48bf7760438c20e26eedbdbc0c6a6"
     },
     {
       "path": "src/lib/day-one-start.server.ts",
@@ -967,7 +967,7 @@
     },
     {
       "path": "src/routes/programs.tsx",
-      "sha256": "a47f03f1bd0dd304c30643a20cc4ea2c0409682a4a6941cb6f3af1b02aa4e02b"
+      "sha256": "036760196acad34ad42fb6991a1390eec32e87ba1c17a3f9a73ef1cf00490fe1"
     },
     {
       "path": "src/routes/progress.tsx",
