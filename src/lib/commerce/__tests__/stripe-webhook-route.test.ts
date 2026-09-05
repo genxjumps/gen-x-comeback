@@ -1,16 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const readConfig = vi.fn();
-const constructEvent = vi.fn();
-const fulfill = vi.fn();
+const forwardWebhook = vi.fn();
 
-vi.mock("@/lib/commerce/stripe-config.server", () => ({
-  readStripeCheckoutConfig: readConfig,
-}));
-
-vi.mock("@/lib/commerce/stripe-checkout.server", () => ({
-  constructStripeWebhookEvent: constructEvent,
-  fulfillAcceleratorCheckout: fulfill,
+vi.mock("@/lib/commerce/stripe-edge.server", () => ({
+  forwardStripeWebhookToEdge: forwardWebhook,
 }));
 
 type Handler = (ctx: { request: Request }) => Promise<Response>;
@@ -31,45 +24,28 @@ async function post(signature?: string): Promise<Response> {
 describe("Stripe webhook route", () => {
   beforeEach(() => {
     vi.resetModules();
-    readConfig.mockReset().mockReturnValue({ webhookSecret: "whsec_test" });
-    constructEvent.mockReset().mockResolvedValue({
-      type: "checkout.session.completed",
-      data: { object: { id: "cs_test_verified" } },
-    });
-    fulfill.mockReset().mockResolvedValue({ replayed: false });
+    forwardWebhook
+      .mockReset()
+      .mockResolvedValue(Response.json({ received: true, handled: true, replayed: false }));
   });
 
   it("rejects a request without a Stripe signature before parsing the body", async () => {
     expect((await post()).status).toBe(400);
-    expect(constructEvent).not.toHaveBeenCalled();
+    expect(forwardWebhook).not.toHaveBeenCalled();
   });
 
-  it("rejects an invalid signed event without attempting fulfillment", async () => {
-    constructEvent.mockRejectedValue(new Error("invalid signature"));
-    expect((await post("bad-signature")).status).toBe(400);
-    expect(fulfill).not.toHaveBeenCalled();
-  });
-
-  it("acknowledges unrelated signed events without provisioning", async () => {
-    constructEvent.mockResolvedValue({ type: "payment_intent.created", data: { object: {} } });
+  it("forwards the exact signed provider body to the secret-bearing edge function", async () => {
     const response = await post("signed");
     expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ received: true, handled: false });
-    expect(fulfill).not.toHaveBeenCalled();
-  });
-
-  it("fulfills a verified Checkout Session by its provider ID", async () => {
-    const response = await post("signed");
-    expect(response.status).toBe(200);
-    expect(fulfill).toHaveBeenCalledWith({
-      config: { webhookSecret: "whsec_test" },
-      sessionId: "cs_test_verified",
+    expect(forwardWebhook).toHaveBeenCalledWith({
+      rawBody: "raw-provider-body",
+      signature: "signed",
     });
     expect(await response.json()).toEqual({ received: true, handled: true, replayed: false });
   });
 
-  it("returns a retryable failure when durable fulfillment fails", async () => {
-    fulfill.mockRejectedValue(new Error("database unavailable"));
-    expect((await post("signed")).status).toBe(500);
+  it("preserves the edge status so Stripe retries transient failures", async () => {
+    forwardWebhook.mockResolvedValue(Response.json({ error: "edge_failure" }, { status: 503 }));
+    expect((await post("signed")).status).toBe(503);
   });
 });

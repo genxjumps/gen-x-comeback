@@ -1,8 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { ACCELERATOR_OFFER } from "@/lib/accelerator/program";
-
 export type CheckoutAvailabilityResult =
   | { ok: false; issue: "account_unavailable" }
   | {
@@ -35,31 +33,8 @@ export const getAcceleratorCheckoutAvailability = createServerFn({ method: "POST
   async (): Promise<CheckoutAvailabilityResult> => {
     const resolved = await account();
     if (!resolved.ok) return { ok: false, issue: "account_unavailable" };
-
-    try {
-      const { readStripeCheckoutConfig } = await import("@/lib/commerce/stripe-config.server");
-      const { customerIsAllowed, customerOwnsAccelerator } =
-        await import("@/lib/commerce/stripe-checkout.server");
-      const config = readStripeCheckoutConfig();
-      return {
-        ok: true,
-        enabled: true,
-        allowed: customerIsAllowed(config, resolved.account.id),
-        owned: await customerOwnsAccelerator(resolved.account.id),
-        priceCents: ACCELERATOR_OFFER.priceCents,
-        issue: customerIsAllowed(config, resolved.account.id) ? null : "customer_not_allowlisted",
-      };
-    } catch (error) {
-      const { stripeCheckoutConfigIssue } = await import("@/lib/commerce/stripe-config.server");
-      return {
-        ok: true,
-        enabled: false,
-        allowed: false,
-        owned: false,
-        priceCents: ACCELERATOR_OFFER.priceCents,
-        issue: stripeCheckoutConfigIssue(error),
-      };
-    }
+    const { getStripeEdgeAvailability } = await import("@/lib/commerce/stripe-edge.server");
+    return getStripeEdgeAvailability({ customerAccountId: resolved.account.id });
   },
 );
 
@@ -68,23 +43,11 @@ export const createAcceleratorCheckout = createServerFn({ method: "POST" }).hand
     const resolved = await account();
     if (!resolved.ok) return { ok: false, reason: "unauthorized" };
 
-    try {
-      const { readStripeCheckoutConfig } = await import("@/lib/commerce/stripe-config.server");
-      const { createAcceleratorCheckoutSession, customerIsAllowed, customerOwnsAccelerator } =
-        await import("@/lib/commerce/stripe-checkout.server");
-      const config = readStripeCheckoutConfig();
-      if (!customerIsAllowed(config, resolved.account.id)) return { ok: false, reason: "closed" };
-      if (await customerOwnsAccelerator(resolved.account.id)) {
-        return { ok: false, reason: "already_owned" };
-      }
-      const session = await createAcceleratorCheckoutSession({
-        account: { id: resolved.account.id, email: resolved.account.email },
-        config,
-      });
-      return { ok: true, checkoutUrl: session.url };
-    } catch {
-      return { ok: false, reason: "unavailable" };
-    }
+    const { createStripeEdgeCheckout } = await import("@/lib/commerce/stripe-edge.server");
+    return createStripeEdgeCheckout({
+      customerAccountId: resolved.account.id,
+      email: resolved.account.email,
+    });
   },
 );
 
@@ -98,16 +61,9 @@ export const confirmAcceleratorCheckout = createServerFn({ method: "POST" })
     const resolved = await account();
     if (!resolved.ok) return { ok: false, reason: "unauthorized" };
 
-    try {
-      const { readStripeCheckoutConfig } = await import("@/lib/commerce/stripe-config.server");
-      const { fulfillAcceleratorCheckout } = await import("@/lib/commerce/stripe-checkout.server");
-      const result = await fulfillAcceleratorCheckout({
-        config: readStripeCheckoutConfig(),
-        expectedCustomerAccountId: resolved.account.id,
-        sessionId: data.sessionId,
-      });
-      return { ok: true, entitlementId: result.entitlementId };
-    } catch {
-      return { ok: false, reason: "invalid" };
-    }
+    const { confirmStripeEdgeCheckout } = await import("@/lib/commerce/stripe-edge.server");
+    return confirmStripeEdgeCheckout({
+      customerAccountId: resolved.account.id,
+      sessionId: data.sessionId,
+    });
   });
