@@ -60,6 +60,7 @@ const SAFE_FAILURE_REASONS = new Set([
   "session_product_mismatch",
   "session_version_mismatch",
   "product_not_expanded",
+  "line_items_mismatch",
   "price_mismatch",
   "intent_not_expanded",
   "charge_not_paid",
@@ -67,13 +68,27 @@ const SAFE_FAILURE_REASONS = new Set([
   "provision_rejected",
 ]);
 
+class FulfillmentFailure extends Error {
+  constructor(
+    readonly stage: FulfillmentStage,
+    readonly reason: string,
+  ) {
+    super("fulfillment_failed");
+    this.name = "FulfillmentFailure";
+  }
+}
+
+function safeFailureReason(error: unknown): string {
+  const message = error instanceof Error ? error.message : null;
+  return message && SAFE_FAILURE_REASONS.has(message) ? message : "provider_or_runtime_error";
+}
+
 function safeToken(value: unknown): string | null {
   return typeof value === "string" && /^[A-Za-z0-9_.:-]{1,80}$/.test(value) ? value : null;
 }
 
 function logFailure(action: DiagnosticAction, stage: string, error: unknown): void {
   const record = error && typeof error === "object" ? (error as Record<string, unknown>) : {};
-  const message = error instanceof Error ? error.message : null;
   const statusCode =
     typeof record["statusCode"] === "number" && Number.isInteger(record["statusCode"])
       ? record["statusCode"]
@@ -84,7 +99,7 @@ function logFailure(action: DiagnosticAction, stage: string, error: unknown): vo
       event: "request_failed",
       action,
       stage,
-      reason: message && SAFE_FAILURE_REASONS.has(message) ? message : "provider_or_runtime_error",
+      reason: safeFailureReason(error),
       errorName: safeToken(error instanceof Error ? error.name : null),
       providerType: safeToken(record["type"]),
       providerCode: safeToken(record["code"]),
@@ -407,7 +422,7 @@ async function fulfill(
     return { entitlementId: row.entitlement_id as string, replayed: row.replayed as boolean };
   } catch (error) {
     logFailure(action, stage, error);
-    throw error;
+    throw new FulfillmentFailure(stage, safeFailureReason(error));
   }
 }
 
@@ -446,8 +461,15 @@ async function webhook(config: Config, body: Record<string, unknown>): Promise<R
     try {
       const result = await fulfill(config, event.data.object.id, "webhook");
       return json({ received: true, handled: true, replayed: result.replayed });
-    } catch {
-      return json({ error: "fulfillment_failed" }, 500);
+    } catch (error) {
+      const failure =
+        error instanceof FulfillmentFailure
+          ? error
+          : new FulfillmentFailure("provision_ownership", "provider_or_runtime_error");
+      return json(
+        { error: "fulfillment_failed", stage: failure.stage, reason: failure.reason },
+        500,
+      );
     }
   } catch (error) {
     logFailure("webhook", "verify_webhook_signature", error);
