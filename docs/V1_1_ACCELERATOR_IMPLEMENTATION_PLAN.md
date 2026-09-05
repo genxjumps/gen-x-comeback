@@ -118,6 +118,23 @@ The first part creates no browser push, phone push, email send, payment call, pu
 live schema change. Its migration remains source-only until the normal inspected migration boundary
 is explicitly approved.
 
+## Checkpoint 12 working sequence
+
+Checkpoint 12 is split so a verified test purchase can exercise the existing ownership transaction
+without opening public enrollment or silently activating customer email:
+
+1. Controlled Stripe test checkout for allow-listed, authenticated customer accounts; signed
+   webhook and success-return verification; durable ownership only; no automatic Day 1 start.
+2. Direct-buyer passwordless account entry and backup access delivery.
+3. Paid recovery and seven-day refund-request handling.
+4. Sales-page checkout-button connection after the complete paid-customer journey passes in the
+   required staging environment.
+
+The first part accepts only Stripe test credentials and test objects. It remains fail-closed unless
+the checkout gate, exact price, webhook secret, app origin, and controlled customer allow-list are
+all configured. Live keys, real cards, public enrollment, Accelerator email, and sales-page buttons
+remain excluded.
+
 ## Checkpoint 1: unified customer-account foundation
 
 ### Outcome
