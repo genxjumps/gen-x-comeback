@@ -78,11 +78,40 @@ Subscribe only to `checkout.session.completed` for this card-only, one-time test
   does not already own the Accelerator.
 - Verify one purchase, one permanent entitlement, Not Started state, manual Day 1 start, duplicate
   webhook replay, canceled Checkout, wrong amount/product rejection, and unauthorized account denial.
-- Complete direct-buyer account entry, backup access delivery, paid recovery, and refund requests.
+- Build the approved public website purchase path: sales page to Stripe Checkout with no
+  pre-purchase login, account-creation, or email-confirmation requirement.
+- After a paid public Checkout Session is verified server-side, take the same browser directly to
+  the post-purchase app experience. Confirm ownership and offer setup without automatically starting
+  Day 1 or requiring the buyer to check email first.
+- Keep the authenticated in-app purchase path direct. A signed-in customer sees the Accelerator's
+  dedicated responsive compact offer page and does not repeat email verification before Checkout.
+- Send a non-blocking backup access email and support later/cross-device passwordless recovery by
+  secure email link or code.
+- Add seven-day refund-request handling and correct purchase/entitlement state changes.
+- Keep Explore Programs as a responsive multi-program catalog. The complete Accelerator offer lives
+  on its dedicated detail page rather than consuming the catalog hub.
 - Establish the required staging boundary and run the complete paid-customer journey.
 - Connect sales-page buttons only after that journey passes.
 - Keep live payment credentials and public enrollment disabled until Todd gives separate explicit
   approval.
+
+## Forward purchase architecture
+
+The controlled test flow above intentionally begins with an allow-listed, signed-in customer so the
+Stripe and ownership transaction can be proven safely. It does not define the public launch funnel.
+
+At launch there are two entry contexts:
+
+- **Public website buyer:** the website sells the program, the CTA opens Stripe Checkout directly,
+  and a verified paid Checkout Session returns the buyer immediately to the post-purchase app
+  experience. Email is collected by Stripe and used for backup access and recovery, not as a
+  pre-purchase gate.
+- **Signed-in app customer:** the customer opens a dedicated compact Accelerator offer/detail page,
+  completes Checkout without another verification step, and returns with ownership attached to the
+  existing account.
+
+Both paths preserve the locked separation between purchase and program start. Neither path starts
+Day 1 automatically.
 
 ## Rollback
 
