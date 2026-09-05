@@ -51,6 +51,16 @@ describe("My Programs and setup contract", () => {
     expect(beginFunction).toContain("RAISE EXCEPTION 'Starting waist was not saved'");
   });
 
+  it("qualifies the enrollment run number so the first run can start", () => {
+    const migration = readSource(
+      "../../../../supabase/migrations/20260905180000_fix_accelerator_run_number_ambiguity.sql",
+    );
+
+    expect(migration).toContain("max(enrollment.run_number)");
+    expect(migration).toContain("enrollment.entitlement_id = p_entitlement_id");
+    expect(migration).not.toMatch(/max\(run_number\)/);
+  });
+
   it("rejects mismatched setup measurement units before reaching the database", () => {
     const base = {
       entitlementId: "00000000-0000-4000-8000-000000000001",

@@ -263,7 +263,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/my-programs-setup-contract.test.ts",
-      "sha256": "245e40af18ba5dee2af76c89b84b7361e8ddbb102df8ed7567fd5117983b820d"
+      "sha256": "fe16bf939a49a9d713d3c17bf005aefe88dea96b90ff2c34bd40138787a071fd"
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
@@ -1035,7 +1035,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "d4fb19d46578272cedaa7ef31ff484ff96647deb180d5892d27ab6d9e3e40665"
+      "sha256": "f8af308cf336a60fd7db4957ec6fe537a9dee517064f314cf4d432f4b745c813"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1164,6 +1164,10 @@
     {
       "path": "supabase/migrations/20260905170000_fix_accelerator_ownership_lock_separator.sql",
       "sha256": "33642a2914d615d5ba34cb898888534e6ed0a23308de1db576989a6ee54719b8"
+    },
+    {
+      "path": "supabase/migrations/20260905180000_fix_accelerator_run_number_ambiguity.sql",
+      "sha256": "898d6f16ceb1ecc806ed3219fc81bbaca73f5726ff511108c65f03b2043e5590"
     },
     {
       "path": "tsconfig.json",
