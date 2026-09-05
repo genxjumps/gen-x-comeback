@@ -36,6 +36,63 @@ type ConfigIssue =
   | "invalid_test_customer_ids"
   | "unknown_configuration_error";
 
+type DiagnosticAction = "availability" | "create_checkout" | "confirm_checkout" | "webhook";
+type FulfillmentStage =
+  | "validate_session_id"
+  | "retrieve_session"
+  | "validate_session"
+  | "validate_price"
+  | "validate_charge"
+  | "provision_ownership";
+
+const SAFE_FAILURE_REASONS = new Set([
+  "invalid_session_id",
+  "session_customer_missing",
+  "session_customer_not_allowed",
+  "session_client_reference_mismatch",
+  "live_session_rejected",
+  "session_customer_mismatch",
+  "session_mode_mismatch",
+  "session_not_complete",
+  "session_not_paid",
+  "session_amount_mismatch",
+  "session_currency_mismatch",
+  "session_product_mismatch",
+  "session_version_mismatch",
+  "product_not_expanded",
+  "price_mismatch",
+  "intent_not_expanded",
+  "charge_not_paid",
+  "provision_rpc_error",
+  "provision_rejected",
+]);
+
+function safeToken(value: unknown): string | null {
+  return typeof value === "string" && /^[A-Za-z0-9_.:-]{1,80}$/.test(value) ? value : null;
+}
+
+function logFailure(action: DiagnosticAction, stage: string, error: unknown): void {
+  const record = error && typeof error === "object" ? (error as Record<string, unknown>) : {};
+  const message = error instanceof Error ? error.message : null;
+  const statusCode =
+    typeof record["statusCode"] === "number" && Number.isInteger(record["statusCode"])
+      ? record["statusCode"]
+      : null;
+  console.error(
+    JSON.stringify({
+      component: "accelerator-stripe",
+      event: "request_failed",
+      action,
+      stage,
+      reason: message && SAFE_FAILURE_REASONS.has(message) ? message : "provider_or_runtime_error",
+      errorName: safeToken(error instanceof Error ? error.name : null),
+      providerType: safeToken(record["type"]),
+      providerCode: safeToken(record["code"]),
+      statusCode,
+    }),
+  );
+}
+
 function env(name: string): string | null {
   const value = Deno.env.get(name);
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
@@ -281,58 +338,77 @@ async function sha256(value: string): Promise<string> {
   return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-async function fulfill(config: Config, sessionId: string, expectedCustomerAccountId?: string) {
-  if (!/^cs_test_[A-Za-z0-9]+$/.test(sessionId)) throw new Error("invalid_session_id");
-  const stripe = stripeClient(config);
-  const session = await stripe.checkout.sessions.retrieve(sessionId, {
-    expand: ["line_items.data.price.product", "payment_intent.latest_charge"],
-  });
-  const customerAccountId = session.metadata?.["customer_account_id"];
-  if (
-    !customerAccountId ||
-    !config.allowedCustomerIds.has(customerAccountId) ||
-    session.client_reference_id !== customerAccountId ||
-    session.livemode !== false ||
-    (expectedCustomerAccountId && expectedCustomerAccountId !== customerAccountId) ||
-    session.mode !== "payment" ||
-    session.status !== "complete" ||
-    session.payment_status !== "paid" ||
-    session.amount_total !== PRICE_CENTS ||
-    session.currency?.toUpperCase() !== CURRENCY ||
-    session.metadata?.["genx_product_code"] !== PRODUCT_CODE ||
-    session.metadata?.["genx_program_version"] !== PROGRAM_VERSION
-  )
-    throw new Error("session_mismatch");
+async function fulfill(
+  config: Config,
+  sessionId: string,
+  action: Extract<DiagnosticAction, "confirm_checkout" | "webhook">,
+  expectedCustomerAccountId?: string,
+) {
+  let stage: FulfillmentStage = "validate_session_id";
+  try {
+    if (!/^cs_test_[A-Za-z0-9]+$/.test(sessionId)) throw new Error("invalid_session_id");
+    const stripe = stripeClient(config);
+    stage = "retrieve_session";
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ["line_items.data.price.product", "payment_intent.latest_charge"],
+    });
+    stage = "validate_session";
+    const customerAccountId = session.metadata?.["customer_account_id"];
+    if (!customerAccountId) throw new Error("session_customer_missing");
+    if (!config.allowedCustomerIds.has(customerAccountId))
+      throw new Error("session_customer_not_allowed");
+    if (session.client_reference_id !== customerAccountId)
+      throw new Error("session_client_reference_mismatch");
+    if (session.livemode !== false) throw new Error("live_session_rejected");
+    if (expectedCustomerAccountId && expectedCustomerAccountId !== customerAccountId)
+      throw new Error("session_customer_mismatch");
+    if (session.mode !== "payment") throw new Error("session_mode_mismatch");
+    if (session.status !== "complete") throw new Error("session_not_complete");
+    if (session.payment_status !== "paid") throw new Error("session_not_paid");
+    if (session.amount_total !== PRICE_CENTS) throw new Error("session_amount_mismatch");
+    if (session.currency?.toUpperCase() !== CURRENCY) throw new Error("session_currency_mismatch");
+    if (session.metadata?.["genx_product_code"] !== PRODUCT_CODE)
+      throw new Error("session_product_mismatch");
+    if (session.metadata?.["genx_program_version"] !== PROGRAM_VERSION)
+      throw new Error("session_version_mismatch");
 
-  assertPrice(checkoutPrice(session), config);
-  const purchasedAt = checkoutPurchaseTime(session);
-  const requestFingerprint = await sha256(
-    [
-      session.id,
-      customerAccountId,
-      PURCHASE_SOURCE,
-      session.id,
-      purchasedAt,
-      PRODUCT_CODE,
-      String(PRICE_CENTS),
-      CURRENCY,
-    ].join("\u0000"),
-  );
-  const { data: rows, error } = await adminClient(config).rpc("provision_accelerator_ownership", {
-    p_customer_id: customerAccountId,
-    p_idempotency_key: session.id,
-    p_request_fingerprint: requestFingerprint,
-    p_purchase_source: PURCHASE_SOURCE,
-    p_source_reference: session.id,
-    p_purchased_at: purchasedAt,
-    p_product_code: PRODUCT_CODE,
-    p_amount_cents: PRICE_CENTS,
-    p_currency: CURRENCY,
-  });
-  if (error) throw new Error(error.message);
-  const row = rows?.[0];
-  if (!row || !["created", "replayed"].includes(row.outcome)) throw new Error("provision_rejected");
-  return { entitlementId: row.entitlement_id as string, replayed: row.replayed as boolean };
+    stage = "validate_price";
+    assertPrice(checkoutPrice(session), config);
+    stage = "validate_charge";
+    const purchasedAt = checkoutPurchaseTime(session);
+    const requestFingerprint = await sha256(
+      [
+        session.id,
+        customerAccountId,
+        PURCHASE_SOURCE,
+        session.id,
+        purchasedAt,
+        PRODUCT_CODE,
+        String(PRICE_CENTS),
+        CURRENCY,
+      ].join("\u0000"),
+    );
+    stage = "provision_ownership";
+    const { data: rows, error } = await adminClient(config).rpc("provision_accelerator_ownership", {
+      p_customer_id: customerAccountId,
+      p_idempotency_key: session.id,
+      p_request_fingerprint: requestFingerprint,
+      p_purchase_source: PURCHASE_SOURCE,
+      p_source_reference: session.id,
+      p_purchased_at: purchasedAt,
+      p_product_code: PRODUCT_CODE,
+      p_amount_cents: PRICE_CENTS,
+      p_currency: CURRENCY,
+    });
+    if (error) throw new Error("provision_rpc_error");
+    const row = rows?.[0];
+    if (!row || !["created", "replayed"].includes(row.outcome))
+      throw new Error("provision_rejected");
+    return { entitlementId: row.entitlement_id as string, replayed: row.replayed as boolean };
+  } catch (error) {
+    logFailure(action, stage, error);
+    throw error;
+  }
 }
 
 async function confirmCheckout(config: Config, body: Record<string, unknown>): Promise<Response> {
@@ -346,7 +422,7 @@ async function confirmCheckout(config: Config, body: Record<string, unknown>): P
   )
     return json({ ok: false, reason: "invalid" }, 400);
   try {
-    const result = await fulfill(config, sessionId, expectedCustomerAccountId);
+    const result = await fulfill(config, sessionId, "confirm_checkout", expectedCustomerAccountId);
     return json({ ok: true, entitlementId: result.entitlementId });
   } catch {
     return json({ ok: false, reason: "invalid" }, 400);
@@ -368,12 +444,13 @@ async function webhook(config: Config, body: Record<string, unknown>): Promise<R
     if (event.type !== "checkout.session.completed")
       return json({ received: true, handled: false });
     try {
-      const result = await fulfill(config, event.data.object.id);
+      const result = await fulfill(config, event.data.object.id, "webhook");
       return json({ received: true, handled: true, replayed: result.replayed });
     } catch {
       return json({ error: "fulfillment_failed" }, 500);
     }
-  } catch {
+  } catch (error) {
+    logFailure("webhook", "verify_webhook_signature", error);
     return json({ error: "invalid_event" }, 400);
   }
 }
@@ -399,7 +476,10 @@ Deno.serve(async (request) => {
     if (record.action === "confirm_checkout") return await confirmCheckout(config, record);
     if (record.action === "webhook") return await webhook(config, record);
     return json({ error: "invalid_action" }, 400);
-  } catch {
+  } catch (error) {
+    const action = record.action;
+    if (["availability", "create_checkout", "confirm_checkout", "webhook"].includes(String(action)))
+      logFailure(action as DiagnosticAction, "dispatch", error);
     return json({ error: "edge_failure" }, 500);
   }
 });

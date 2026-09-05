@@ -38,4 +38,12 @@ describe("Accelerator Stripe edge contract", () => {
     expect(SUPABASE_CONFIG).toContain("[functions.accelerator-stripe]");
     expect(SUPABASE_CONFIG).toMatch(/\[functions\.accelerator-stripe\][\s\S]*verify_jwt = false/);
   });
+
+  it("logs safe failure codes without logging payment or identity payloads", () => {
+    expect(EDGE_FUNCTION).toContain('event: "request_failed"');
+    expect(EDGE_FUNCTION).toContain("reason: message && SAFE_FAILURE_REASONS.has(message)");
+    expect(EDGE_FUNCTION).toContain('providerCode: safeToken(record["code"])');
+    expect(EDGE_FUNCTION).not.toContain("console.log");
+    expect(EDGE_FUNCTION).not.toMatch(/console\.error\([^)]*(sessionId|rawBody|signature|email)/s);
+  });
 });
