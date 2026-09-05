@@ -407,7 +407,7 @@
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge-contract.test.ts",
-      "sha256": "59835c33e46648617a316827e49167ac5146ee91652111ddb14921c97b9ed09c"
+      "sha256": "291a94e6ed4150da6a35aee7cabe226b66540b69386b0263b142f15725f62972"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge.test.ts",
@@ -1027,7 +1027,7 @@
     },
     {
       "path": "supabase/functions/accelerator-stripe/index.ts",
-      "sha256": "85080806d1a4c71132de7a02d207bcd48fcb8b241aa78231b445fee8df739f71"
+      "sha256": "5cfd52dbcb3659be7f384ec74be71f63b6647a391503e7a7d1a2f7ec4240376b"
     },
     {
       "path": "supabase/functions/mailerlite-marketing-sync/index.ts",

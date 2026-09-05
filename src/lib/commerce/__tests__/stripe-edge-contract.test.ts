@@ -41,9 +41,18 @@ describe("Accelerator Stripe edge contract", () => {
 
   it("logs safe failure codes without logging payment or identity payloads", () => {
     expect(EDGE_FUNCTION).toContain('event: "request_failed"');
-    expect(EDGE_FUNCTION).toContain("reason: message && SAFE_FAILURE_REASONS.has(message)");
+    expect(EDGE_FUNCTION).toContain("reason: safeFailureReason(error)");
     expect(EDGE_FUNCTION).toContain('providerCode: safeToken(record["code"])');
     expect(EDGE_FUNCTION).not.toContain("console.log");
     expect(EDGE_FUNCTION).not.toMatch(/console\.error\([^)]*(sessionId|rawBody|signature|email)/s);
+  });
+
+  it("returns only safe fulfillment diagnostics to the test webhook caller", () => {
+    expect(EDGE_FUNCTION).toContain("class FulfillmentFailure extends Error");
+    expect(EDGE_FUNCTION).toContain("new FulfillmentFailure(stage, safeFailureReason(error))");
+    expect(EDGE_FUNCTION).toContain(
+      '{ error: "fulfillment_failed", stage: failure.stage, reason: failure.reason }',
+    );
+    expect(EDGE_FUNCTION).toContain('"line_items_mismatch"');
   });
 });
