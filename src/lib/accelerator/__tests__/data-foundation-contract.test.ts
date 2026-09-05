@@ -9,6 +9,12 @@ function source(relativePath: string): string {
 const rawMigration = source(
   "../../../../supabase/migrations/20260828180000_accelerator_enrollment_progress.sql",
 );
+const rawOwnershipLockFix = source(
+  "../../../../supabase/migrations/20260905170000_fix_accelerator_ownership_lock_separator.sql",
+);
+const ownershipLockFix = rawOwnershipLockFix
+  .slice(rawOwnershipLockFix.indexOf("CREATE OR REPLACE FUNCTION"))
+  .replace(/\s+/g, " ");
 const migration = rawMigration.replace(/\s+/g, " ");
 const functions = source("../functions.ts");
 const access = source("../access.server.ts");
@@ -48,6 +54,23 @@ describe("account-owned Accelerator and program-run foundation", () => {
     expect(migration).toContain("v_purchase.request_fingerprint <> p_request_fingerprint");
     expect(migration).toContain("'replayed'::text");
     expect(migration).toContain("'conflict'::text");
+  });
+
+  it("uses a PostgreSQL-safe separator for the ownership advisory lock", () => {
+    expect(ownershipLockFix).toContain(
+      "hashtextextended(p_purchase_source || chr(31) || p_source_reference, 1)",
+    );
+    expect(ownershipLockFix).not.toContain("chr(0)");
+    expect(ownershipLockFix).toContain(
+      "ON CONFLICT ON CONSTRAINT paid_product_entitlements_customer_product_unique",
+    );
+    expect(ownershipLockFix).not.toContain("ON CONFLICT (customer_id, product_code)");
+    expect(ownershipLockFix).toContain(
+      "CREATE OR REPLACE FUNCTION public.provision_accelerator_ownership",
+    );
+    expect(ownershipLockFix).toContain(
+      "GRANT EXECUTE ON FUNCTION public.provision_accelerator_ownership",
+    );
   });
 
   it("preserves repeat runs and immutable version snapshots", () => {
