@@ -223,6 +223,13 @@
       "sha256": "33642a2914d615d5ba34cb898888534e6ed0a23308de1db576989a6ee54719b8",
       "statementSha256": "3c95d2981145ca1ed03e868b6bd2b780b21462e1a3e0e359ac712ee32e3bffa2",
       "version": "20260905170000"
+    },
+    {
+      "file": "20260905180000_fix_accelerator_run_number_ambiguity.sql",
+      "name": "fix_accelerator_run_number_ambiguity",
+      "sha256": "898d6f16ceb1ecc806ed3219fc81bbaca73f5726ff511108c65f03b2043e5590",
+      "statementSha256": "5871f921944cfb8873456c0d3bdf99ee532be3f1a44ce4b5086510970409d365",
+      "version": "20260905180000"
     }
   ],
   "version": 1
