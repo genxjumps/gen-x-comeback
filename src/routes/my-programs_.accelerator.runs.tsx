@@ -7,7 +7,7 @@ import { getMyPrograms } from "@/lib/accelerator/functions";
 import { measurementChange } from "@/lib/accelerator/measurements";
 import type { CustomerMeasurement, MyProgramsResult } from "@/lib/accelerator/types";
 
-export const Route = createFileRoute("/my-programs/accelerator/runs")({
+export const Route = createFileRoute("/my-programs_/accelerator/runs")({
   head: () => ({
     meta: [
       { title: "Previous Accelerator Runs | Gen X Jumps" },
