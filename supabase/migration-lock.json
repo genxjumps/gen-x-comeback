@@ -216,6 +216,13 @@
       "sha256": "e3ae27b616158a8f853f1c86de06103aaf1512fabc6f6d9fa1cc368a9910a1f1",
       "statementSha256": "5f0bcb8019b823c8540dfd5d0ce48ac2d753a54adbb110ea2cba7ae4d0fbfd93",
       "version": "20260904140000"
+    },
+    {
+      "file": "20260905170000_fix_accelerator_ownership_lock_separator.sql",
+      "name": "fix_accelerator_ownership_lock_separator",
+      "sha256": "33642a2914d615d5ba34cb898888534e6ed0a23308de1db576989a6ee54719b8",
+      "statementSha256": "3c95d2981145ca1ed03e868b6bd2b780b21462e1a3e0e359ac712ee32e3bffa2",
+      "version": "20260905170000"
     }
   ],
   "version": 1

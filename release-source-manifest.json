@@ -251,7 +251,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/data-foundation-contract.test.ts",
-      "sha256": "0db8096c0f704505efe0598e8819725e6bcc0d8ada54d963f814a23176fa743a"
+      "sha256": "f1c02634359dfd9e66e3de0ee501068d09a51f044fbee681a8ef3082382734d2"
     },
     {
       "path": "src/lib/accelerator/__tests__/measurement-history-contract.test.ts",
@@ -1035,7 +1035,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "fbd76c91d04a18825b8fcd69fffdd67528f8ac5746d32716cea90f9c3f2d7a0b"
+      "sha256": "d4fb19d46578272cedaa7ef31ff484ff96647deb180d5892d27ab6d9e3e40665"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1160,6 +1160,10 @@
     {
       "path": "supabase/migrations/20260904140000_customer_nutrition_profiles.sql",
       "sha256": "e3ae27b616158a8f853f1c86de06103aaf1512fabc6f6d9fa1cc368a9910a1f1"
+    },
+    {
+      "path": "supabase/migrations/20260905170000_fix_accelerator_ownership_lock_separator.sql",
+      "sha256": "33642a2914d615d5ba34cb898888534e6ed0a23308de1db576989a6ee54719b8"
     },
     {
       "path": "tsconfig.json",
