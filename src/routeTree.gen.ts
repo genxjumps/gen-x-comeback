@@ -31,8 +31,8 @@ import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
-import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs.accelerator.setup'
-import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs.accelerator.runs'
+import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs_.accelerator.setup'
+import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs_.accelerator.runs'
 import { Route as CheckoutAcceleratorSuccessRouteImport } from './routes/checkout.accelerator.success'
 import { Route as ApiPublicReleaseRouteImport } from './routes/api/public/release'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
@@ -151,15 +151,15 @@ const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
 } as any)
 const MyProgramsAcceleratorSetupRoute =
   MyProgramsAcceleratorSetupRouteImport.update({
-    id: '/accelerator/setup',
-    path: '/accelerator/setup',
-    getParentRoute: () => MyProgramsRoute,
+    id: '/my-programs_/accelerator/setup',
+    path: '/my-programs/accelerator/setup',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const MyProgramsAcceleratorRunsRoute =
   MyProgramsAcceleratorRunsRouteImport.update({
-    id: '/accelerator/runs',
-    path: '/accelerator/runs',
-    getParentRoute: () => MyProgramsRoute,
+    id: '/my-programs_/accelerator/runs',
+    path: '/my-programs/accelerator/runs',
+    getParentRoute: () => rootRouteImport,
   } as any)
 const CheckoutAcceleratorSuccessRoute =
   CheckoutAcceleratorSuccessRouteImport.update({
@@ -194,7 +194,7 @@ export interface FileRoutesByFullPath {
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
-  '/my-programs': typeof MyProgramsRouteWithChildren
+  '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
   '/programs': typeof ProgramsRoute
@@ -225,7 +225,7 @@ export interface FileRoutesByTo {
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
-  '/my-programs': typeof MyProgramsRouteWithChildren
+  '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
   '/programs': typeof ProgramsRoute
@@ -257,7 +257,7 @@ export interface FileRoutesById {
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
-  '/my-programs': typeof MyProgramsRouteWithChildren
+  '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
   '/programs': typeof ProgramsRoute
@@ -275,8 +275,8 @@ export interface FileRoutesById {
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
   '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
-  '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
-  '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
+  '/my-programs_/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
+  '/my-programs_/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
@@ -370,8 +370,8 @@ export interface FileRouteTypes {
     | '/your-plan/'
     | '/api/public/release'
     | '/checkout/accelerator/success'
-    | '/my-programs/accelerator/runs'
-    | '/my-programs/accelerator/setup'
+    | '/my-programs_/accelerator/runs'
+    | '/my-programs_/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
     | '/api/public/email/webhook'
@@ -384,7 +384,7 @@ export interface RootRouteChildren {
   EmailPreferencesRoute: typeof EmailPreferencesRoute
   HomeRoute: typeof HomeRoute
   JumpRopesRoute: typeof JumpRopesRoute
-  MyProgramsRoute: typeof MyProgramsRouteWithChildren
+  MyProgramsRoute: typeof MyProgramsRoute
   NotificationsRoute: typeof NotificationsRoute
   NutritionRoute: typeof NutritionRoute
   ProgramsRoute: typeof ProgramsRoute
@@ -402,6 +402,8 @@ export interface RootRouteChildren {
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   ApiPublicReleaseRoute: typeof ApiPublicReleaseRoute
   CheckoutAcceleratorSuccessRoute: typeof CheckoutAcceleratorSuccessRoute
+  MyProgramsAcceleratorRunsRoute: typeof MyProgramsAcceleratorRunsRoute
+  MyProgramsAcceleratorSetupRoute: typeof MyProgramsAcceleratorSetupRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
   ApiPublicEmailWebhookRoute: typeof ApiPublicEmailWebhookRoute
@@ -564,19 +566,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof YourPlanDayDayRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/my-programs/accelerator/setup': {
-      id: '/my-programs/accelerator/setup'
-      path: '/accelerator/setup'
+    '/my-programs_/accelerator/setup': {
+      id: '/my-programs_/accelerator/setup'
+      path: '/my-programs/accelerator/setup'
       fullPath: '/my-programs/accelerator/setup'
       preLoaderRoute: typeof MyProgramsAcceleratorSetupRouteImport
-      parentRoute: typeof MyProgramsRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/my-programs/accelerator/runs': {
-      id: '/my-programs/accelerator/runs'
-      path: '/accelerator/runs'
+    '/my-programs_/accelerator/runs': {
+      id: '/my-programs_/accelerator/runs'
+      path: '/my-programs/accelerator/runs'
       fullPath: '/my-programs/accelerator/runs'
       preLoaderRoute: typeof MyProgramsAcceleratorRunsRouteImport
-      parentRoute: typeof MyProgramsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/checkout/accelerator/success': {
       id: '/checkout/accelerator/success'
@@ -616,27 +618,13 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface MyProgramsRouteChildren {
-  MyProgramsAcceleratorRunsRoute: typeof MyProgramsAcceleratorRunsRoute
-  MyProgramsAcceleratorSetupRoute: typeof MyProgramsAcceleratorSetupRoute
-}
-
-const MyProgramsRouteChildren: MyProgramsRouteChildren = {
-  MyProgramsAcceleratorRunsRoute: MyProgramsAcceleratorRunsRoute,
-  MyProgramsAcceleratorSetupRoute: MyProgramsAcceleratorSetupRoute,
-}
-
-const MyProgramsRouteWithChildren = MyProgramsRoute._addFileChildren(
-  MyProgramsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcceleratorRoute: AcceleratorRoute,
   EmailPreferencesRoute: EmailPreferencesRoute,
   HomeRoute: HomeRoute,
   JumpRopesRoute: JumpRopesRoute,
-  MyProgramsRoute: MyProgramsRouteWithChildren,
+  MyProgramsRoute: MyProgramsRoute,
   NotificationsRoute: NotificationsRoute,
   NutritionRoute: NutritionRoute,
   ProgramsRoute: ProgramsRoute,
@@ -654,6 +642,8 @@ const rootRouteChildren: RootRouteChildren = {
   YourPlanIndexRoute: YourPlanIndexRoute,
   ApiPublicReleaseRoute: ApiPublicReleaseRoute,
   CheckoutAcceleratorSuccessRoute: CheckoutAcceleratorSuccessRoute,
+  MyProgramsAcceleratorRunsRoute: MyProgramsAcceleratorRunsRoute,
+  MyProgramsAcceleratorSetupRoute: MyProgramsAcceleratorSetupRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
   ApiPublicEmailWebhookRoute: ApiPublicEmailWebhookRoute,

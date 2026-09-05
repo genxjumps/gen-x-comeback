@@ -263,7 +263,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/my-programs-setup-contract.test.ts",
-      "sha256": "b068bc2bf1903927f1ffd51b69ca6a38f53b9668b2ebda655263ca55683dccd3"
+      "sha256": "245e40af18ba5dee2af76c89b84b7361e8ddbb102df8ed7567fd5117983b820d"
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
@@ -283,7 +283,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/progress-completion-contract.test.ts",
-      "sha256": "366375abe985b07de82c5ca7ebefd320f848feecb23f28dfaa907fb2a4221307"
+      "sha256": "10359cca39f418c8de14b61b2ff2c3267133249e1acb2b8f54595c8df5c78fb3"
     },
     {
       "path": "src/lib/accelerator/__tests__/progress-engine-contract.test.ts",
@@ -879,7 +879,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "33e0d4921af8b06069595d1582ee95a1e6728ca7d627fdabf778a2311c27ae40"
+      "sha256": "f7820f09e73e120ab7d4222e7e9b9148f734f39c20e87cbdf9b5c1dcc1fbe298"
     },
     {
       "path": "src/router.tsx",
@@ -950,16 +950,16 @@
       "sha256": "79c3cc0dedb8654a45d5ded4866c8b0291cdeb6aecfe01b0d6200d8cacab25b9"
     },
     {
-      "path": "src/routes/my-programs.accelerator.runs.tsx",
-      "sha256": "ba8ed538d2d721ba30c964668d42533290a82b6ba8466354c8797ca5898d0b49"
-    },
-    {
-      "path": "src/routes/my-programs.accelerator.setup.tsx",
-      "sha256": "34bcd133ade394a8a515fb8ebb6e4a300c6d2ff234dadc63b207038caf0740be"
-    },
-    {
       "path": "src/routes/my-programs.tsx",
-      "sha256": "db1a33427a8bc303298a4085451b1dfb86c3878681e568c97eb27c44c39d707f"
+      "sha256": "a3bf022e29dcbe996ac52b1d5440ea2e898adb557c8a8b659794e15e5533b9bc"
+    },
+    {
+      "path": "src/routes/my-programs_.accelerator.runs.tsx",
+      "sha256": "b9dc7a166f5474b6715bad1a24914a7fcad11fdb4005fb2f787a0a2edf7ab6a4"
+    },
+    {
+      "path": "src/routes/my-programs_.accelerator.setup.tsx",
+      "sha256": "59b3e22b2e59941b748845f46ccc350619216e78cfbb90be73ecd1cf5dff66be"
     },
     {
       "path": "src/routes/notifications.tsx",

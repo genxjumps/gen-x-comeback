@@ -10,7 +10,7 @@ import { ACCELERATOR_ORIENTATION } from "@/lib/accelerator/content";
 import { beginAccelerator, getMyPrograms } from "@/lib/accelerator/functions";
 import type { MeasurementUnit } from "@/lib/accelerator/types";
 
-export const Route = createFileRoute("/my-programs/accelerator/setup")({
+export const Route = createFileRoute("/my-programs_/accelerator/setup")({
   validateSearch: z.object({ entitlement: z.string().uuid() }),
   head: () => ({
     meta: [

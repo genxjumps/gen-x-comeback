@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 const readSource = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const progress = readSource("../../../routes/progress.tsx");
 const completion = readSource("../../../components/accelerator-completion.tsx");
-const previousRuns = readSource("../../../routes/my-programs.accelerator.runs.tsx");
+const previousRuns = readSource("../../../routes/my-programs_.accelerator.runs.tsx");
 const functions = readSource("../functions.ts");
 
 describe("customer progress and Day 28 completion contract", () => {

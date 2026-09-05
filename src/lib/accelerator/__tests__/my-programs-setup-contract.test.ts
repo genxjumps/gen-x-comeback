@@ -6,6 +6,21 @@ import { beginAcceleratorInputSchema } from "../schemas";
 const readSource = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("My Programs and setup contract", () => {
+  it("keeps setup and previous runs independent from the My Programs screen", () => {
+    const routeTree = readSource("../../../routeTree.gen.ts");
+    for (const routeId of [
+      "'/my-programs_/accelerator/setup'",
+      "'/my-programs_/accelerator/runs'",
+    ]) {
+      const routeBlock = routeTree.slice(
+        routeTree.indexOf(`${routeId}: {`),
+        routeTree.indexOf("    }", routeTree.indexOf(`${routeId}: {`)),
+      );
+      expect(routeBlock).toContain("parentRoute: typeof rootRouteImport");
+      expect(routeBlock).not.toContain("parentRoute: typeof MyProgramsRoute");
+    }
+  });
+
   it("keeps the Accelerator query scoped to its product", () => {
     const functions = readSource("../functions.ts");
     expect(functions).toContain('.eq("product_code", "accelerator_28")');
@@ -61,10 +76,11 @@ describe("My Programs and setup contract", () => {
 
   it("provides pause, warned resume, setup switching notice, and previous runs", () => {
     const programs = readSource("../../../routes/my-programs.tsx");
-    const setup = readSource("../../../routes/my-programs.accelerator.setup.tsx");
-    const previousRuns = readSource("../../../routes/my-programs.accelerator.runs.tsx");
+    const setup = readSource("../../../routes/my-programs_.accelerator.setup.tsx");
+    const previousRuns = readSource("../../../routes/my-programs_.accelerator.runs.tsx");
 
     expect(programs).toContain("Pause Program");
+    expect(programs).toContain("Set Up My Accelerator");
     expect(programs).toContain("If another structured program is active, it will be paused");
     expect(programs).toContain('to="/my-programs/accelerator/runs"');
     expect(setup).toContain("Starting this program will pause your current structured program");
@@ -74,7 +90,7 @@ describe("My Programs and setup contract", () => {
 
   it("lets a repeat run reuse, change, or skip current measurements", () => {
     const functions = readSource("../functions.ts");
-    const setup = readSource("../../../routes/my-programs.accelerator.setup.tsx");
+    const setup = readSource("../../../routes/my-programs_.accelerator.setup.tsx");
 
     expect(functions).toContain("latestMeasurementPair");
     expect(functions).toContain("latestMeasurements,");

@@ -138,7 +138,7 @@ function MyPrograms() {
                         }
                       >
                         {accelerator.status === "not_started"
-                          ? "Start Program"
+                          ? "Set Up My Accelerator"
                           : accelerator.status === "completed"
                             ? "Start Another Run"
                             : "Continue Program"}
