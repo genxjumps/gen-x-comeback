@@ -406,12 +406,20 @@
       "sha256": "d5ad9e3d5b823eb248d9a7ad2e4eb47719c6edab4bcc344b7da09695bcce801a"
     },
     {
+      "path": "src/lib/commerce/__tests__/stripe-edge-contract.test.ts",
+      "sha256": "c0c262d4c758f434a14e9ef2d95fddb282382d9baddcbfee2bea61d05e73fa27"
+    },
+    {
+      "path": "src/lib/commerce/__tests__/stripe-edge.test.ts",
+      "sha256": "0d6f2ccfbdfe320f08c137b769695d39b5f465826133650a40f37d3db6e04225"
+    },
+    {
       "path": "src/lib/commerce/__tests__/stripe-webhook-route.test.ts",
-      "sha256": "9e9fa82ad4f9fd4b7575a5f0e1919df62846d0dd4d930f81aaecbedfad72ceb3"
+      "sha256": "3eab5c6db70579b745a70cdcc40fd1b7854c1969927206b9cb51c6c919628fc2"
     },
     {
       "path": "src/lib/commerce/functions.ts",
-      "sha256": "4d4367919128fd06eb5661c2b10214bf7c29594e04bd09398bd012fbde19298c"
+      "sha256": "2b778cc49295c69dce3dfe1f17430af55fe405327468d7813abce9eb3790c774"
     },
     {
       "path": "src/lib/commerce/stripe-checkout.server.ts",
@@ -420,6 +428,10 @@
     {
       "path": "src/lib/commerce/stripe-config.server.ts",
       "sha256": "0234cefdd16ed17db32852dd223362d7f5b48bf7760438c20e26eedbdbc0c6a6"
+    },
+    {
+      "path": "src/lib/commerce/stripe-edge.server.ts",
+      "sha256": "efe6d9697900b11486790e4ddfc772058ac0bdc1ee178395811a28a181b9832e"
     },
     {
       "path": "src/lib/day-one-start.server.ts",
@@ -903,7 +915,7 @@
     },
     {
       "path": "src/routes/api/public/stripe/webhook.ts",
-      "sha256": "8ebf6278bbc99f6455628e80749ecf983d9dd2f41ad84abc3a61189e4de82412"
+      "sha256": "520aeb2436b8b7efb1762245affa33c3837cd46ad5532f324e7e3783396b657a"
     },
     {
       "path": "src/routes/assessment.complete.tsx",
@@ -1011,7 +1023,11 @@
     },
     {
       "path": "supabase/config.toml",
-      "sha256": "d62512bde04cd4cec9933de31c225d7463440cc0ee9c70c9b425ecab7385b69e"
+      "sha256": "4f6e1de06c10e4b7300badd18eea08b4d70499e177f0c96430b881e5a6f7002b"
+    },
+    {
+      "path": "supabase/functions/accelerator-stripe/index.ts",
+      "sha256": "9530155d026974d72c9d296172f75926b0954af986cae7fa1ba99d414c5882b0"
     },
     {
       "path": "supabase/functions/mailerlite-marketing-sync/index.ts",

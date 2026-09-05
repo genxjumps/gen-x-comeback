@@ -6,8 +6,9 @@ This source checkpoint connects a controlled Stripe test checkout to the existin
 purchase and entitlement transaction. It does not enable live payments, public enrollment,
 sales-page checkout buttons, customer email, paid recovery, refunds, or Day 1.
 
-The integration uses Stripe directly instead of Lovable's generated payments model. The app already
-has the approved `paid_purchases`, `paid_product_entitlements`, and service-role-only
+The integration uses Stripe directly from a dedicated Lovable Cloud Edge Function instead of
+Lovable's generated payments model. The app already has the approved `paid_purchases`,
+`paid_product_entitlements`, and service-role-only
 `provision_accelerator_ownership` boundary. A second generated purchase model would create competing
 ownership records.
 
@@ -24,23 +25,29 @@ ownership records.
 ## Runtime flow
 
 1. A verified, signed-in customer opens Explore Programs.
-2. The server requires the customer account to be on the controlled test allow-list and confirms
-   that the account does not already own the Accelerator.
-3. The server retrieves the configured Stripe Price and verifies test mode, one-time billing,
-   `$37 USD`, and the locked product/version metadata before creating Checkout.
+2. The app server authenticates the customer, then calls the dedicated Edge Function through the
+   existing private Lovable Cloud service connection. The Edge Function requires the customer
+   account to be on the controlled test allow-list and confirms that it does not already own the
+   Accelerator.
+3. The Edge Function reads the Stripe credentials from Lovable Cloud Secrets, retrieves the
+   configured Stripe Price, and verifies test mode, one-time billing, `$37 USD`, and the locked
+   product/version metadata before creating Checkout.
 4. Stripe hosts Checkout. Only test cards can be accepted because the runtime rejects live keys and
    live Stripe objects.
-5. The signed Stripe webhook retrieves the Checkout Session again from Stripe, verifies the paid
-   charge, exact line item, customer binding, amount, currency, product, version, and test mode, then
-   calls the existing idempotent ownership transaction.
-6. The signed-in success page performs the same server-side Stripe verification as an immediate
+5. The existing app-domain webhook forwards the raw signed payload through the private service
+   connection. The Edge Function verifies Stripe's signature, retrieves the Checkout Session again,
+   verifies the paid charge, exact line item, customer binding, amount, currency, product, version,
+   and test mode, then calls the existing idempotent ownership transaction.
+6. The signed-in success page asks the Edge Function to perform the same Stripe verification as an immediate
    backup. The Checkout Session ID is the shared idempotency key, so webhook and return-path retries
    converge on one purchase.
 7. The purchase creates ownership only. The customer chooses when to start Day 1 from My Programs.
 
-## Required server configuration
+## Required backend configuration
 
-No values belong in Git or browser code.
+No values belong in Git, browser code, build secrets, or the published app's hosting environment.
+All six values below belong in the project's Lovable Cloud Secrets because only the dedicated Edge
+Function reads them.
 
 | Name                          | Purpose                                                            |
 | ----------------------------- | ------------------------------------------------------------------ |
