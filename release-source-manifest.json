@@ -11,7 +11,7 @@
     },
     {
       "path": "bun.lock",
-      "sha256": "1366e1e33be16d61f1ad398cbf29f47c1b242ca690ae7cd67979dbf2f89e2d54"
+      "sha256": "bc90f548b39fc00d3fb354eab7c9d8979f91b6c3ec67ff18a01ebe2d8bb51060"
     },
     {
       "path": "bunfig.toml",
@@ -27,7 +27,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "ca0be2caa0b7e1d14e9fbbc9af07f830dcc85e8e7286750e97e082a808276ee5"
+      "sha256": "b530b4852d17a33f72cff0ffa98946349b75b717077cb1cab57e9275f1483495"
     },
     {
       "path": "public/favicon.ico",
@@ -396,6 +396,30 @@
     {
       "path": "src/lib/admin/types.ts",
       "sha256": "dd5db3b35b7feabba5501b7ecc23f78af7443be2d8e3b61201d65cae84377b97"
+    },
+    {
+      "path": "src/lib/commerce/__tests__/stripe-checkout.test.ts",
+      "sha256": "a94218d6afb9e81b01b518bbcf5a21112c78d46dd78c763ad4490d62e6eee3bb"
+    },
+    {
+      "path": "src/lib/commerce/__tests__/stripe-config.test.ts",
+      "sha256": "4c9368f0411c7fed27e743ea2da58bb4cc53830206e8d92fbd22597e23ab5ef0"
+    },
+    {
+      "path": "src/lib/commerce/__tests__/stripe-webhook-route.test.ts",
+      "sha256": "9e9fa82ad4f9fd4b7575a5f0e1919df62846d0dd4d930f81aaecbedfad72ceb3"
+    },
+    {
+      "path": "src/lib/commerce/functions.ts",
+      "sha256": "4506cb7494c2185c87406df48f36677241eba8931ecea3bd17e1052dc6eb87c4"
+    },
+    {
+      "path": "src/lib/commerce/stripe-checkout.server.ts",
+      "sha256": "6bd9e89200d033ce8c100048d6981893ca2b2b8619b29087fefd65193f83399f"
+    },
+    {
+      "path": "src/lib/commerce/stripe-config.server.ts",
+      "sha256": "109ea044899d5f1624d97c54927e18f00856230ca2243b7ceac4cb3e342fef73"
     },
     {
       "path": "src/lib/day-one-start.server.ts",
@@ -843,7 +867,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "51041a01e494d3e046c8ed081fe2e828a4df5f9c252847888613e6c2fcae55da"
+      "sha256": "33e0d4921af8b06069595d1582ee95a1e6728ca7d627fdabf778a2311c27ae40"
     },
     {
       "path": "src/router.tsx",
@@ -855,7 +879,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "7f0d76411f39c01ba90fc51e88492c2a891d0241a3e8599abee79bcd05e9dc9b"
+      "sha256": "f20ce28d20b5166f2446591ac2713dcdcd7deafcf14d4e7218a5306202317922"
     },
     {
       "path": "src/routes/accelerator.tsx",
@@ -878,6 +902,10 @@
       "sha256": "609fa91ef58e4ac2709161d585fbf1d0a2aa7423a55cfac9ce036067b6e737cf"
     },
     {
+      "path": "src/routes/api/public/stripe/webhook.ts",
+      "sha256": "8ebf6278bbc99f6455628e80749ecf983d9dd2f41ad84abc3a61189e4de82412"
+    },
+    {
       "path": "src/routes/assessment.complete.tsx",
       "sha256": "294b2764a1f4d751a49d0235ad72593a1e3ebf3197c1696788dc7dcb10315bfa"
     },
@@ -888,6 +916,10 @@
     {
       "path": "src/routes/assessment.start.tsx",
       "sha256": "66a3a9e69b20e5ddf7b4720a7a0c1b25d0a9cec11a81250261a90f58797ddf60"
+    },
+    {
+      "path": "src/routes/checkout.accelerator.success.tsx",
+      "sha256": "28a12cf92ca7f99c9b7e94fc9fac439d2aa2082fca7581c65e956a5df7857ae6"
     },
     {
       "path": "src/routes/email-preferences.ts",
@@ -935,7 +967,7 @@
     },
     {
       "path": "src/routes/programs.tsx",
-      "sha256": "586a8946ad99d8eb8d1a04143a6b148b45b1eca2fa649991c0c85de4cdf1e39f"
+      "sha256": "a47f03f1bd0dd304c30643a20cc4ea2c0409682a4a6941cb6f3af1b02aa4e02b"
     },
     {
       "path": "src/routes/progress.tsx",

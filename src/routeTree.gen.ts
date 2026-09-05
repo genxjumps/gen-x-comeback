@@ -33,7 +33,9 @@ import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
 import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs.accelerator.setup'
 import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs.accelerator.runs'
+import { Route as CheckoutAcceleratorSuccessRouteImport } from './routes/checkout.accelerator.success'
 import { Route as ApiPublicReleaseRouteImport } from './routes/api/public/release'
+import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as ApiPublicEmailWebhookRouteImport } from './routes/api/public/email/webhook'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 
@@ -159,9 +161,20 @@ const MyProgramsAcceleratorRunsRoute =
     path: '/accelerator/runs',
     getParentRoute: () => MyProgramsRoute,
   } as any)
+const CheckoutAcceleratorSuccessRoute =
+  CheckoutAcceleratorSuccessRouteImport.update({
+    id: '/checkout/accelerator/success',
+    path: '/checkout/accelerator/success',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicReleaseRoute = ApiPublicReleaseRouteImport.update({
   id: '/api/public/release',
   path: '/api/public/release',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
+  id: '/api/public/stripe/webhook',
+  path: '/api/public/stripe/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicEmailWebhookRoute = ApiPublicEmailWebhookRouteImport.update({
@@ -198,11 +211,13 @@ export interface FileRoutesByFullPath {
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
+  '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -227,11 +242,13 @@ export interface FileRoutesByTo {
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
+  '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -257,11 +274,13 @@ export interface FileRoutesById {
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
+  '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
+  '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -288,11 +307,13 @@ export interface FileRouteTypes {
     | '/assessment/'
     | '/your-plan/'
     | '/api/public/release'
+    | '/checkout/accelerator/success'
     | '/my-programs/accelerator/runs'
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
     | '/api/public/email/webhook'
+    | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -317,11 +338,13 @@ export interface FileRouteTypes {
     | '/assessment'
     | '/your-plan'
     | '/api/public/release'
+    | '/checkout/accelerator/success'
     | '/my-programs/accelerator/runs'
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
     | '/api/public/email/webhook'
+    | '/api/public/stripe/webhook'
   id:
     | '__root__'
     | '/'
@@ -346,11 +369,13 @@ export interface FileRouteTypes {
     | '/assessment/'
     | '/your-plan/'
     | '/api/public/release'
+    | '/checkout/accelerator/success'
     | '/my-programs/accelerator/runs'
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
     | '/api/public/email/webhook'
+    | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -376,9 +401,11 @@ export interface RootRouteChildren {
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   ApiPublicReleaseRoute: typeof ApiPublicReleaseRoute
+  CheckoutAcceleratorSuccessRoute: typeof CheckoutAcceleratorSuccessRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
   ApiPublicEmailWebhookRoute: typeof ApiPublicEmailWebhookRoute
+  ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -551,11 +578,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyProgramsAcceleratorRunsRouteImport
       parentRoute: typeof MyProgramsRoute
     }
+    '/checkout/accelerator/success': {
+      id: '/checkout/accelerator/success'
+      path: '/checkout/accelerator/success'
+      fullPath: '/checkout/accelerator/success'
+      preLoaderRoute: typeof CheckoutAcceleratorSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/release': {
       id: '/api/public/release'
       path: '/api/public/release'
       fullPath: '/api/public/release'
       preLoaderRoute: typeof ApiPublicReleaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/stripe/webhook': {
+      id: '/api/public/stripe/webhook'
+      path: '/api/public/stripe/webhook'
+      fullPath: '/api/public/stripe/webhook'
+      preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/email/webhook': {
@@ -612,9 +653,11 @@ const rootRouteChildren: RootRouteChildren = {
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,
   ApiPublicReleaseRoute: ApiPublicReleaseRoute,
+  CheckoutAcceleratorSuccessRoute: CheckoutAcceleratorSuccessRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
   ApiPublicEmailWebhookRoute: ApiPublicEmailWebhookRoute,
+  ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
