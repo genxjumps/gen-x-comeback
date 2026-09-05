@@ -4,13 +4,17 @@ import { z } from "zod";
 import { ACCELERATOR_OFFER } from "@/lib/accelerator/program";
 
 export type CheckoutAvailabilityResult =
-  | { ok: false }
+  | { ok: false; issue: "account_unavailable" }
   | {
       ok: true;
       allowed: boolean;
       enabled: boolean;
       owned: boolean;
       priceCents: number;
+      issue:
+        | null
+        | "customer_not_allowlisted"
+        | import("@/lib/commerce/stripe-config.server").StripeCheckoutConfigIssue;
     };
 
 export type CreateCheckoutResult =
@@ -30,7 +34,7 @@ async function account() {
 export const getAcceleratorCheckoutAvailability = createServerFn({ method: "POST" }).handler(
   async (): Promise<CheckoutAvailabilityResult> => {
     const resolved = await account();
-    if (!resolved.ok) return { ok: false };
+    if (!resolved.ok) return { ok: false, issue: "account_unavailable" };
 
     try {
       const { readStripeCheckoutConfig } = await import("@/lib/commerce/stripe-config.server");
@@ -43,14 +47,17 @@ export const getAcceleratorCheckoutAvailability = createServerFn({ method: "POST
         allowed: customerIsAllowed(config, resolved.account.id),
         owned: await customerOwnsAccelerator(resolved.account.id),
         priceCents: ACCELERATOR_OFFER.priceCents,
+        issue: customerIsAllowed(config, resolved.account.id) ? null : "customer_not_allowlisted",
       };
-    } catch {
+    } catch (error) {
+      const { stripeCheckoutConfigIssue } = await import("@/lib/commerce/stripe-config.server");
       return {
         ok: true,
         enabled: false,
         allowed: false,
         owned: false,
         priceCents: ACCELERATOR_OFFER.priceCents,
+        issue: stripeCheckoutConfigIssue(error),
       };
     }
   },
