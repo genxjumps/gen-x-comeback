@@ -8,6 +8,27 @@ const EDGE_FUNCTION = readFileSync(
   "utf8",
 );
 const SUPABASE_CONFIG = readFileSync(join(process.cwd(), "supabase", "config.toml"), "utf8");
+const COMMERCE_FUNCTIONS = readFileSync(
+  join(process.cwd(), "src", "lib", "commerce", "functions.ts"),
+  "utf8",
+);
+const SUCCESS_ROUTE = readFileSync(
+  join(process.cwd(), "src", "routes", "checkout.accelerator.success.tsx"),
+  "utf8",
+);
+const PROGRAM_ROUTE = readFileSync(
+  join(process.cwd(), "src", "routes", "programs_.accelerator.tsx"),
+  "utf8",
+);
+const GUEST_HANDOFF_MIGRATION = readFileSync(
+  join(
+    process.cwd(),
+    "supabase",
+    "migrations",
+    "20260905190000_accelerator_guest_checkout_handoffs.sql",
+  ),
+  "utf8",
+);
 
 describe("Accelerator Stripe edge contract", () => {
   it("keeps every provider credential inside Lovable Cloud", () => {
@@ -16,6 +37,7 @@ describe("Accelerator Stripe edge contract", () => {
     expect(EDGE_FUNCTION).toContain('env("STRIPE_ACCELERATOR_PRICE_ID")');
     expect(EDGE_FUNCTION).toContain('env("STRIPE_TEST_CUSTOMER_IDS")');
     expect(EDGE_FUNCTION).toContain('env("STRIPE_CHECKOUT_ENABLED")');
+    expect(EDGE_FUNCTION).toContain('env("STRIPE_GUEST_CHECKOUT_ENABLED")');
   });
 
   it("rejects live Stripe keys and validates the locked offer", () => {
@@ -31,6 +53,36 @@ describe("Accelerator Stripe edge contract", () => {
     expect(EDGE_FUNCTION).toContain('rpc("provision_accelerator_ownership"');
     expect(EDGE_FUNCTION).toContain("session.livemode !== false");
     expect(EDGE_FUNCTION).toContain('session.payment_status !== "paid"');
+  });
+
+  it("binds immediate guest access to the browser that opened the paid Checkout Session", () => {
+    expect(EDGE_FUNCTION).toContain('genx_checkout_kind: "guest"');
+    expect(EDGE_FUNCTION).toContain("genx_guest_claim_hash: claimHash");
+    expect(EDGE_FUNCTION).toContain('stage = "validate_guest_claim"');
+    expect(EDGE_FUNCTION).toContain("secretsMatch(suppliedHash, storedHash)");
+    expect(EDGE_FUNCTION).toContain('type: "magiclink"');
+    expect(EDGE_FUNCTION).toContain('rpc("resolve_verified_customer_account"');
+    expect(COMMERCE_FUNCTIONS).toContain("const GUEST_CHECKOUT_CLAIM_COOKIE =");
+    expect(COMMERCE_FUNCTIONS).toContain("httpOnly: true");
+    expect(COMMERCE_FUNCTIONS).toContain('sameSite: "lax"');
+    expect(SUCCESS_ROUTE).toContain("supabase.auth.verifyOtp");
+    expect(SUCCESS_ROUTE).toContain("Set Up My Accelerator");
+    expect(SUCCESS_ROUTE).not.toContain("Start Day 1");
+    expect(GUEST_HANDOFF_MIGRATION).toContain(
+      "CREATE TABLE public.accelerator_guest_checkout_handoffs",
+    );
+    expect(GUEST_HANDOFF_MIGRATION).toContain(
+      "REVOKE ALL ON TABLE public.accelerator_guest_checkout_handoffs FROM PUBLIC, anon, authenticated",
+    );
+    expect(EDGE_FUNCTION).toContain('.from("accelerator_guest_checkout_handoffs")');
+    expect(EDGE_FUNCTION).toContain('throw new Error("guest_handoff_pending")');
+  });
+
+  it("keeps the responsive program detail page separate from the catalog", () => {
+    expect(PROGRAM_ROUTE).toContain('createFileRoute("/programs_/accelerator")');
+    expect(PROGRAM_ROUTE).toContain("Get the 28-Day Accelerator");
+    expect(PROGRAM_ROUTE).toContain("lg:grid-cols-");
+    expect(PROGRAM_ROUTE).toMatch(/Buying creates your[\s\S]*access but does not start Day 1\./);
   });
 
   it("authenticates the app proxy independently of Supabase JWT verification", () => {
@@ -49,7 +101,7 @@ describe("Accelerator Stripe edge contract", () => {
 
   it("returns only safe fulfillment diagnostics to the test webhook caller", () => {
     expect(EDGE_FUNCTION).toContain("class FulfillmentFailure extends Error");
-    expect(EDGE_FUNCTION).toContain("new FulfillmentFailure(stage, safeFailureReason(error))");
+    expect(EDGE_FUNCTION).toContain("new FulfillmentFailure(stage, reason)");
     expect(EDGE_FUNCTION).toContain(
       '{ error: "fulfillment_failed", stage: failure.stage, reason: failure.reason }',
     );

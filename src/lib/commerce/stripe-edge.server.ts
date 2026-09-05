@@ -4,6 +4,7 @@ import type {
   CheckoutAvailabilityResult,
   ConfirmCheckoutResult,
   CreateCheckoutResult,
+  GuestCheckoutAvailabilityResult,
 } from "@/lib/commerce/functions";
 
 type EdgeRuntimeConfig = {
@@ -38,6 +39,27 @@ const availabilitySchema = z.discriminatedUnion("ok", [
   }),
 ]);
 
+const guestAvailabilitySchema = z.object({
+  ok: z.literal(true),
+  enabled: z.boolean(),
+  priceCents: z.number().int().nonnegative(),
+  issue: z
+    .enum([
+      "checkout_disabled",
+      "missing_app_origin",
+      "missing_price_id",
+      "missing_secret_key",
+      "missing_test_customer_ids",
+      "invalid_app_origin",
+      "invalid_price_id",
+      "invalid_secret_key_mode",
+      "invalid_webhook_secret",
+      "invalid_test_customer_ids",
+      "unknown_configuration_error",
+    ])
+    .nullable(),
+});
+
 const createSchema = z.discriminatedUnion("ok", [
   z.object({
     ok: z.literal(false),
@@ -49,12 +71,33 @@ const createSchema = z.discriminatedUnion("ok", [
   }),
 ]);
 
+const createGuestSchema = z.discriminatedUnion("ok", [
+  z.object({ ok: z.literal(false), reason: z.enum(["closed", "unavailable"]) }),
+  z.object({
+    ok: z.literal(true),
+    checkoutUrl: z.string().url().startsWith("https://checkout.stripe.com/"),
+    claimToken: z.string().regex(/^[a-f0-9]{64}$/),
+  }),
+]);
+
 const confirmSchema = z.discriminatedUnion("ok", [
   z.object({
     ok: z.literal(false),
-    reason: z.enum(["invalid", "unauthorized", "unavailable"]),
+    reason: z.enum(["invalid", "pending", "unauthorized", "unavailable"]),
   }),
   z.object({ ok: z.literal(true), entitlementId: z.string().uuid() }),
+]);
+
+const confirmGuestSchema = z.discriminatedUnion("ok", [
+  z.object({
+    ok: z.literal(false),
+    reason: z.enum(["invalid", "pending", "unauthorized", "unavailable"]),
+  }),
+  z.object({
+    ok: z.literal(true),
+    authTokenHash: z.string().min(20).max(512),
+    entitlementId: z.string().uuid(),
+  }),
 ]);
 
 function env(name: string): string | null {
@@ -118,6 +161,21 @@ export async function getStripeEdgeAvailability(input: {
   }
 }
 
+export async function getStripeEdgeGuestAvailability(): Promise<GuestCheckoutAvailabilityResult> {
+  try {
+    const { response, payload } = await invokeEdge({ action: "guest_availability" });
+    if (!response.ok) throw new Error("stripe_edge_unavailable");
+    return guestAvailabilitySchema.parse(payload);
+  } catch {
+    return {
+      ok: true,
+      enabled: false,
+      priceCents: 3_700,
+      issue: "unknown_configuration_error",
+    };
+  }
+}
+
 export async function createStripeEdgeCheckout(input: {
   customerAccountId: string;
   email: string;
@@ -134,6 +192,19 @@ export async function createStripeEdgeCheckout(input: {
   }
 }
 
+export async function createStripeEdgeGuestCheckout(): Promise<
+  | { ok: false; reason: "closed" | "unavailable" }
+  | { ok: true; checkoutUrl: string; claimToken: string }
+> {
+  try {
+    const { response, payload } = await invokeEdge({ action: "create_guest_checkout" });
+    if (!response.ok && response.status >= 500) throw new Error("stripe_edge_unavailable");
+    return createGuestSchema.parse(payload);
+  } catch {
+    return { ok: false, reason: "unavailable" };
+  }
+}
+
 export async function confirmStripeEdgeCheckout(input: {
   customerAccountId: string;
   sessionId: string;
@@ -145,7 +216,25 @@ export async function confirmStripeEdgeCheckout(input: {
       sessionId: input.sessionId,
     });
     if (!response.ok && response.status >= 500) throw new Error("stripe_edge_unavailable");
-    return confirmSchema.parse(payload);
+    const parsed = confirmSchema.parse(payload);
+    return parsed.ok ? { ...parsed, authTokenHash: null } : parsed;
+  } catch {
+    return { ok: false, reason: "unavailable" };
+  }
+}
+
+export async function confirmStripeEdgeGuestCheckout(input: {
+  claimToken: string;
+  sessionId: string;
+}): Promise<ConfirmCheckoutResult> {
+  try {
+    const { response, payload } = await invokeEdge({
+      action: "confirm_guest_checkout",
+      claimToken: input.claimToken,
+      sessionId: input.sessionId,
+    });
+    if (!response.ok && response.status >= 500) throw new Error("stripe_edge_unavailable");
+    return confirmGuestSchema.parse(payload);
   } catch {
     return { ok: false, reason: "unavailable" };
   }

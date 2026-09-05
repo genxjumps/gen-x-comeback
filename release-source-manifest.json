@@ -407,11 +407,11 @@
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge-contract.test.ts",
-      "sha256": "291a94e6ed4150da6a35aee7cabe226b66540b69386b0263b142f15725f62972"
+      "sha256": "8487e202f72c3cb5c2eb31a311308e2cfd718ebd3850a045c21a26c5fce0a9c0"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge.test.ts",
-      "sha256": "0d6f2ccfbdfe320f08c137b769695d39b5f465826133650a40f37d3db6e04225"
+      "sha256": "1f2581a5e935b8576e55d2052b2f5f7d579a1cdc56d2bb5deb11b1cee797bc3a"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-webhook-route.test.ts",
@@ -419,7 +419,7 @@
     },
     {
       "path": "src/lib/commerce/functions.ts",
-      "sha256": "2b778cc49295c69dce3dfe1f17430af55fe405327468d7813abce9eb3790c774"
+      "sha256": "badbb40883c7f38819d0c18b9a1157c03f72a3dfddc99631c4d1dddbf89389d1"
     },
     {
       "path": "src/lib/commerce/stripe-checkout.server.ts",
@@ -431,7 +431,7 @@
     },
     {
       "path": "src/lib/commerce/stripe-edge.server.ts",
-      "sha256": "efe6d9697900b11486790e4ddfc772058ac0bdc1ee178395811a28a181b9832e"
+      "sha256": "7b90fa43fdb2a5dae65fd4c252ee1ccf333fac3315103d4bba00738b62c1f779"
     },
     {
       "path": "src/lib/day-one-start.server.ts",
@@ -879,7 +879,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "f7820f09e73e120ab7d4222e7e9b9148f734f39c20e87cbdf9b5c1dcc1fbe298"
+      "sha256": "835cf2b4ef571458ca08693c45293be8f14108bc274b0bd38587252f4e05b8f8"
     },
     {
       "path": "src/router.tsx",
@@ -891,7 +891,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "f20ce28d20b5166f2446591ac2713dcdcd7deafcf14d4e7218a5306202317922"
+      "sha256": "7f0d76411f39c01ba90fc51e88492c2a891d0241a3e8599abee79bcd05e9dc9b"
     },
     {
       "path": "src/routes/accelerator.tsx",
@@ -931,7 +931,7 @@
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
-      "sha256": "28a12cf92ca7f99c9b7e94fc9fac439d2aa2082fca7581c65e956a5df7857ae6"
+      "sha256": "ed30e6f8b371c34edbe5d504987535a63d6c586bf243fa047cf05ec5c8f25f6f"
     },
     {
       "path": "src/routes/email-preferences.ts",
@@ -979,7 +979,11 @@
     },
     {
       "path": "src/routes/programs.tsx",
-      "sha256": "036760196acad34ad42fb6991a1390eec32e87ba1c17a3f9a73ef1cf00490fe1"
+      "sha256": "6c25caf7e53b46e0b085d5bbfd79177f917a26759734046f5fd87e71d9506aca"
+    },
+    {
+      "path": "src/routes/programs_.accelerator.tsx",
+      "sha256": "3f2d1e5f4e11744182622b7834206e67c201e818e332c2540eb249642c0432aa"
     },
     {
       "path": "src/routes/progress.tsx",
@@ -1027,7 +1031,7 @@
     },
     {
       "path": "supabase/functions/accelerator-stripe/index.ts",
-      "sha256": "5cfd52dbcb3659be7f384ec74be71f63b6647a391503e7a7d1a2f7ec4240376b"
+      "sha256": "2037ceb448021008fded74cdca9cf9d62a244985ae2b564d0d10cba898e81b02"
     },
     {
       "path": "supabase/functions/mailerlite-marketing-sync/index.ts",
@@ -1035,7 +1039,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "f8af308cf336a60fd7db4957ec6fe537a9dee517064f314cf4d432f4b745c813"
+      "sha256": "8d20c1d45351e6f085db574a52bf5a1db7cc97b1089d61bd276fce93183b0459"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1168,6 +1172,10 @@
     {
       "path": "supabase/migrations/20260905180000_fix_accelerator_run_number_ambiguity.sql",
       "sha256": "898d6f16ceb1ecc806ed3219fc81bbaca73f5726ff511108c65f03b2043e5590"
+    },
+    {
+      "path": "supabase/migrations/20260905190000_accelerator_guest_checkout_handoffs.sql",
+      "sha256": "f973be24d42c05972a1e5d44dd795ed7dfeb276754c03dacd9d0d4f3e4397019"
     },
     {
       "path": "tsconfig.json",
