@@ -181,15 +181,78 @@ separate approval before implementation.
 
 ### Explore Programs
 
-Explore Programs helps customers find and buy another program. Buying a program grants ownership
-but does not automatically replace or start the current active program.
+Explore Programs is the responsive program-catalog hub, not a full sales page for the Accelerator.
+It must work from mobile through desktop and remain usable when more programs are added. Each
+available program appears as a concise card with its name, primary outcome, duration, short
+description, price or ownership state, and a **View Program** action. Mobile stacks the cards;
+larger screens may use a two- or three-column grid. Do not add empty future-program placeholders.
+
+Each program has its own responsive detail page. For a signed-in customer who does not own the
+Accelerator, that page is a compact in-app offer: shorter than the public website sales page, but
+complete enough to explain the outcome, included program components, how it works, price, permanent
+access, refund-request window, and purchase action. "Compact" describes the amount of selling, not
+a mobile-only layout, popup, modal, or undersized card.
+
+The public website remains the full sales environment for a cold visitor. The in-app program page
+serves someone who already knows Gen X Jumps or is already using a Gen X Jumps program. A relevant
+in-app recommendation, including the Day 7 transition, may link directly to the Accelerator detail
+page instead of forcing the customer through the catalog hub.
+
+Program pages are ownership-aware and must not continue selling a program the customer already
+owns. The primary action changes with state:
+
+- Does not own the Accelerator: **Get the 28-Day Accelerator**.
+- Owns it but has not started: **Set Up My Accelerator**.
+- Has an active or paused run: **Continue My Accelerator**.
+- Has completed it with no unfinished run: **Start Another Run**.
+
+Buying a program grants ownership but does not automatically replace or start the current active
+program.
+
+### Website and in-app purchase paths
+
+The public website and the authenticated app are different purchase contexts and must not be
+forced through the same pre-purchase steps.
+
+For a public website buyer:
+
+1. The public Accelerator sales page makes the full offer.
+2. **Buy the 28-Day Accelerator** opens the Stripe-hosted order page directly.
+3. Account creation, login, and email confirmation do not appear before payment.
+4. Stripe collects the buyer's payment details and email address.
+5. After the server verifies the paid Checkout Session, the same browser enters a responsive
+   post-purchase app experience immediately.
+6. The first app screen confirms ownership and offers **Set Up My Accelerator**. It does not start
+   Day 1 automatically.
+7. A backup access email is sent without blocking immediate use of the app.
+
+For a customer buying inside the app:
+
+1. A relevant recommendation or Explore Programs opens the Accelerator's compact in-app offer
+   page.
+2. Because the customer is already signed in and verified, the purchase action opens Checkout
+   without another email-verification step.
+3. After payment, ownership attaches to that existing customer account and the customer returns to
+   the post-purchase/setup experience.
+
+The verified Stripe Checkout Session is the immediate purchase handoff for the browser that
+completed payment. Email is the durable recovery and cross-device access channel, not a gate placed
+between payment and first use. A customer returning in another browser or device uses a secure
+passwordless email link or code. Do not add a traditional password login requirement.
+
+The completed free 7-Day experience may recommend the Accelerator after Day 7, but the free plan
+must not become a stream of repeated upsells. Its completion screen and completion email use the
+same ownership-aware destination and action rules above.
 
 ## Account, access, ownership, and enrollment
 
 - One customer account must work across supported devices.
 - Access is passwordless by secure email link or code.
 - A verified purchase grants a durable product entitlement.
-- The customer receives immediate access plus a backup access email.
+- A public website buyer receives immediate same-browser access after server-side verification of
+  the paid Checkout Session; email verification is not required before purchase or before that
+  first post-purchase app entry.
+- The customer receives a non-blocking backup access email for later recovery and cross-device use.
 - Purchased programs remain owned without expiration.
 - Purchase and program start are separate facts.
 - The free 7-Day signup uses one required, explicit checkbox covering plan-related emails and
