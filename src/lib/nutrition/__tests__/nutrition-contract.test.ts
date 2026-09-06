@@ -25,6 +25,11 @@ describe("Your Nutrition V1 contract", () => {
     expect(functions).not.toContain("data.targets");
   });
 
+  it("normalizes stored database timestamps before validating a profile on a fresh session", () => {
+    const functions = readSource("../functions.ts");
+    expect(functions).toContain("new Date(row.calculated_at).toISOString()");
+  });
+
   it("keeps the free plan locked and the nutrition tool separate from workout progress", () => {
     const access = readSource("../access.server.ts");
     const route = readSource("../../../routes/nutrition.tsx");

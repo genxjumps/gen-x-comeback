@@ -51,7 +51,9 @@ function storedProfile(row: NutritionProfileRow): NutritionProfile {
     maintenanceCalories: row.maintenance_calories,
     targets: row.target_payload,
     sliderPositions: row.meal_slider_positions,
-    calculatedAt: row.calculated_at,
+    // Postgres serializes timestamptz values with an explicit offset, while the
+    // profile contract keeps browser-facing timestamps in canonical UTC form.
+    calculatedAt: new Date(row.calculated_at).toISOString(),
   });
 }
 
