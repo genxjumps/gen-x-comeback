@@ -21,7 +21,7 @@ export const MEAL_OCCASIONS = ["breakfast", "lunch", "dinner", "extras"] as cons
 export type MealOccasion = (typeof MEAL_OCCASIONS)[number];
 export type MainMeal = Exclude<MealOccasion, "extras">;
 export type BiggestMeal = MainMeal | "same" | null;
-export type MealSliderPosition = 1 | 2 | 3 | 4 | 5;
+export type MealPercentage = number;
 
 export type NutritionHeight =
   | { unit: "imperial"; feet: number; inches: number }
@@ -57,11 +57,10 @@ export type NutritionCalculation =
     }
   | { ok: false; reason: "goal_below_healthy_range" | "calorie_floor" | "unsuitable_macros" };
 
-export type MealSliderPositions = Partial<Record<MealOccasion, MealSliderPosition>>;
+export type MealPercentages = Partial<Record<MealOccasion, MealPercentage>>;
 
 export type MealAllocation = {
   occasion: MealOccasion;
-  position: MealSliderPosition;
   percentage: number;
   targets: NutritionTargets;
 };
@@ -71,7 +70,7 @@ export type NutritionProfile = {
   intake: NutritionIntake;
   maintenanceCalories: number;
   targets: NutritionTargets;
-  sliderPositions: MealSliderPositions;
+  mealPercentages: MealPercentages;
   calculatedAt: string;
 };
 
