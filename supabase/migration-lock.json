@@ -237,6 +237,13 @@
       "sha256": "f973be24d42c05972a1e5d44dd795ed7dfeb276754c03dacd9d0d4f3e4397019",
       "statementSha256": "07fa55662a7548dad225dad9cda735cd77e41a07f307501755f477d917123f4d",
       "version": "20260905190000"
+    },
+    {
+      "file": "20260906100000_paid_access_email_recovery.sql",
+      "name": "paid_access_email_recovery",
+      "sha256": "e5f4cd05a43e1d32062824cd757686570bf4e88ea3f70be585d0a902c2d14435",
+      "statementSha256": "9dd097527dd30f84da9b60a62d8429aee98372ae32199f76c33d5e810b3fb8cb",
+      "version": "20260906100000"
     }
   ],
   "version": 1

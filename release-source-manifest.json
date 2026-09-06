@@ -191,7 +191,7 @@
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "sha256": "5fe0a7b7ffc0bdd4887d179396ab5d568a3fe67fa87123dc37703a4f31bb64ab"
+      "sha256": "3c13f70c6b7fbea6a32387b0bf46b8632bb76fee63562d175789a15ec2707f1b"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -370,6 +370,10 @@
       "sha256": "7599cc33699844ba121198385e79b8020d892193cb9facac94eebee675076bae"
     },
     {
+      "path": "src/lib/account/paid-access-exchange.server.ts",
+      "sha256": "d362bd83c8aeda725191b180d8a8077fde43e909057d88e6cd70396aa97a107c"
+    },
+    {
       "path": "src/lib/account/types.ts",
       "sha256": "7c10627c1000303d50ed25af4e858f1a583e2bffd506f8af5604d76d1f8852df"
     },
@@ -439,11 +443,11 @@
     },
     {
       "path": "src/lib/email/__tests__/consent-production-contracts.test.ts",
-      "sha256": "d2d6bb77ebcbb9dacabc757df08dceb3554d97c6bf674724a7311ce8bc164f5e"
+      "sha256": "307c334fbebef38e7df121f5d6eff39b2533b3633016fea3f87d30c954bf7a53"
     },
     {
       "path": "src/lib/email/__tests__/consent-state.test.ts",
-      "sha256": "2649a3a71dbfcfbead9c489facdb9bdbf62f700e43bbd0ffbe3c0c57c535deb2"
+      "sha256": "f7d2dd44ddebe10e1b21d4cf34ba4fb4d6b5c2af4a7d1656e3a6bd77127290a6"
     },
     {
       "path": "src/lib/email/__tests__/correction-gates.test.ts",
@@ -463,7 +467,7 @@
     },
     {
       "path": "src/lib/email/__tests__/immediate-recovery-dispatch-contract.test.ts",
-      "sha256": "a1305a399a398f7655e80adb7b725352b1334f1604b6fe38fb415a8872f105f5"
+      "sha256": "df8e52f9c2becbaa92f953b646494b35df03685a9c4709635d6ed536a1026738"
     },
     {
       "path": "src/lib/email/__tests__/lifecycle-deferral-horizon.test.ts",
@@ -480,6 +484,10 @@
     {
       "path": "src/lib/email/__tests__/memory-store.ts",
       "sha256": "c658fe0b9d57af92ea2fbd0fee7993192b1058edbaa58d00d0aa845c7733ad6d"
+    },
+    {
+      "path": "src/lib/email/__tests__/paid-access-recovery.test.ts",
+      "sha256": "2460d67c5a153a3a51bc76a9166812657756ce0534b13426f2fbc728d7023a1e"
     },
     {
       "path": "src/lib/email/__tests__/plan-completed.test.ts",
@@ -511,7 +519,7 @@
     },
     {
       "path": "src/lib/email/__tests__/recovery.test.ts",
-      "sha256": "c529d819d8889356b6a64faa57845f18b433857c27567c6fb34202262d0dfb45"
+      "sha256": "1722b71658845611d001b44a36f1957c024d47e3878e4abddc2a02f60296aceb"
     },
     {
       "path": "src/lib/email/__tests__/return-destination.test.ts",
@@ -604,6 +612,26 @@
     {
       "path": "src/lib/email/link-exchange-event.ts",
       "sha256": "8fed40ddfad5c5c2426f08b35b96643e10b7bb632df412c3e3a30f85b1db2193"
+    },
+    {
+      "path": "src/lib/email/paid-access-dispatch.server.ts",
+      "sha256": "ff59a6c48be526c4f01ea85543638c95701963c6f42837400e389fa472f1e51a"
+    },
+    {
+      "path": "src/lib/email/paid-access-runtime.server.ts",
+      "sha256": "bbe9a28047f0c26e9713279cced34ed4dc82c177086300db6ae6ca3210a5e633"
+    },
+    {
+      "path": "src/lib/email/paid-access-store.server.ts",
+      "sha256": "b0a3cb865644aeab052dc9df3cf9b3dee91cce8360ef59015ffd391d30e79165"
+    },
+    {
+      "path": "src/lib/email/paid-access-template.ts",
+      "sha256": "4c34c71c1206c3db94498c1ed49903c0f2a5fdcfa7710a90c8ca74abde449956"
+    },
+    {
+      "path": "src/lib/email/paid-access-types.ts",
+      "sha256": "7efdb34c5ea7add07bf51f876d0ff92601b380fb0b88686e85464f376653dc17"
     },
     {
       "path": "src/lib/email/plan-completed-resolver.ts",
@@ -707,7 +735,7 @@
     },
     {
       "path": "src/lib/email/webhook.server.ts",
-      "sha256": "93e43dd96fec883f50f7557062b2e6999fa461caa6d1bafc60f218e700d5d756"
+      "sha256": "511eb7fa4087bad14189f2d4f36aa14ecd00e214dec30d8e9d0af6cba13818ad"
     },
     {
       "path": "src/lib/error-capture.ts",
@@ -879,7 +907,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "835cf2b4ef571458ca08693c45293be8f14108bc274b0bd38587252f4e05b8f8"
+      "sha256": "ea25859251e576c4067e9250d3e17feac02e104ed29f4aafdbb5c189e6a5df53"
     },
     {
       "path": "src/router.tsx",
@@ -898,12 +926,16 @@
       "sha256": "4999483c03444483daa2ac1c40b94484da1f1bef4bb4ab230c9be0d98a2419e5"
     },
     {
+      "path": "src/routes/account.return.ts",
+      "sha256": "78d204fafbc71af1545439f2337e75b9b23cb6602876c1cbe24fbcc7e45db5b2"
+    },
+    {
       "path": "src/routes/admin.customers.tsx",
       "sha256": "f7b7a8926fd7bf038cbc13aa5faa0203b85969e0705c8243f3e887105c188c2a"
     },
     {
       "path": "src/routes/api/public/email/dispatch.ts",
-      "sha256": "185fab30825a9979db8159f7dc7d52b8153a33b6a16176759b494f4346909114"
+      "sha256": "586c30fab96bc29bfcf3e1c93f3245e3dd08b0b218ff5e0203d919dbb207adea"
     },
     {
       "path": "src/routes/api/public/email/webhook.ts",
@@ -991,7 +1023,7 @@
     },
     {
       "path": "src/routes/recover.ts",
-      "sha256": "3750f446291887696639893e43cfecd3595449bae73aea9db4c62c60bcb5a911"
+      "sha256": "bc645265443e1f28acac30ed4c2294d78b3ac014de485ea0616bba527c6b44db"
     },
     {
       "path": "src/routes/return.ts",
@@ -1039,7 +1071,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "8d20c1d45351e6f085db574a52bf5a1db7cc97b1089d61bd276fce93183b0459"
+      "sha256": "125a9f2319cf0266b29021e89f367f7e6e3543758e91659db25afd46b52eba26"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1176,6 +1208,10 @@
     {
       "path": "supabase/migrations/20260905190000_accelerator_guest_checkout_handoffs.sql",
       "sha256": "f973be24d42c05972a1e5d44dd795ed7dfeb276754c03dacd9d0d4f3e4397019"
+    },
+    {
+      "path": "supabase/migrations/20260906100000_paid_access_email_recovery.sql",
+      "sha256": "e5f4cd05a43e1d32062824cd757686570bf4e88ea3f70be585d0a902c2d14435"
     },
     {
       "path": "tsconfig.json",

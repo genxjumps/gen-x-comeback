@@ -31,6 +31,7 @@ import { Route as PreviewAcceleratorRouteImport } from './routes/preview.acceler
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
+import { Route as AccountReturnRouteImport } from './routes/account.return'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
 import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs_.accelerator.setup'
 import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs_.accelerator.runs'
@@ -150,6 +151,11 @@ const AdminCustomersRoute = AdminCustomersRouteImport.update({
   path: '/admin/customers',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountReturnRoute = AccountReturnRouteImport.update({
+  id: '/account/return',
+  path: '/account/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
   id: '/your-plan/day/$day',
   path: '/your-plan/day/$day',
@@ -208,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -273,6 +281,7 @@ export interface FileRoutesById {
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
@@ -307,6 +316,7 @@ export interface FileRouteTypes {
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/account/return'
     | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/account/return'
     | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
@@ -371,6 +382,7 @@ export interface FileRouteTypes {
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/account/return'
     | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
@@ -404,6 +416,7 @@ export interface RootRouteChildren {
   RecoverRoute: typeof RecoverRoute
   ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AccountReturnRoute: typeof AccountReturnRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentStartRoute: typeof AssessmentStartRoute
@@ -579,6 +592,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCustomersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/return': {
+      id: '/account/return'
+      path: '/account/return'
+      fullPath: '/account/return'
+      preLoaderRoute: typeof AccountReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/your-plan/day/$day': {
       id: '/your-plan/day/$day'
       path: '/your-plan/day/$day'
@@ -652,6 +672,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecoverRoute: RecoverRoute,
   ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AccountReturnRoute: AccountReturnRoute,
   AdminCustomersRoute: AdminCustomersRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentStartRoute: AssessmentStartRoute,

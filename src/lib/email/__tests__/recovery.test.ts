@@ -64,7 +64,7 @@ vi.mock("@/integrations/supabase/client.server", () => {
       if (!self || self.rest?.marker !== "service-role") {
         throw new TypeError("undefined is not an object (evaluating 'this.rest')");
       }
-      if (fn === "request_plan_recovery") {
+      if (fn === "request_customer_access_recovery") {
         rpcCalls.push({
           email: args["p_email_normalized"] as string,
           requestId: args["p_request_id"] as string,

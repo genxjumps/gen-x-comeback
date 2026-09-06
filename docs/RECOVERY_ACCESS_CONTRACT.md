@@ -1,6 +1,6 @@
 # Recovery Access Contract
 
-This contract defines how Gen X Jumps plan recovery must behave across real-world devices, browsers, tabs, and repeated recovery attempts.
+This contract defines how Gen X Jumps free and paid plan recovery must behave across real-world devices, browsers, tabs, and repeated recovery attempts.
 
 ## Core rule
 
@@ -39,6 +39,16 @@ The email link proves access to the current plan. The device that requested the 
 
 The raw recovery token is validated server-side. A successful exchange creates a new opaque return-session credential for the browser that used the link. Concurrent browser sessions are expected and supported.
 
+For a paid customer, the reusable opaque email credential resolves only to the customer account and
+an active entitlement. Each deliberate exchange creates a fresh one-browser Supabase Auth handoff
+and opens My Programs. The source email credential is not consumed, and existing authenticated
+browser sessions are not revoked. Refund or revocation state is checked again before every exchange.
+
+Paid recovery is transactional account access. It does not depend on 7-Day Plan-email consent or
+marketing consent. A paid-account match takes precedence over a matching free plan so one recovery
+request never sends two access emails. A free-only match retains the established 7-Day recovery and
+consent behavior.
+
 ## Pre-launch acceptance matrix
 
 Every row below must work without the user understanding sessions, cookies, browsers, or device state.
@@ -71,5 +81,9 @@ Automated tests must protect these invariants where deterministic automation is 
 4. `request_plan_recovery` does not revoke older valid tokens or active sessions.
 5. Plan replacement remains an explicit revocation boundary.
 6. Production `/return` must write the session cookie through the framework-supported response path and the protected plan route must read it through the framework-supported request path.
+7. Production `/account/return` must perform no exchange on GET and must create a fresh platform
+   session handoff only after deliberate POST.
+8. Paid recovery must reject expired, revoked, mismatched, or inactive-entitlement credentials
+   without revealing which boundary failed.
 
 The cross-device matrix remains a required manual production acceptance pass because browser cookie behavior and deployment adapters are part of the behavior being verified.

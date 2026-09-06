@@ -3,8 +3,8 @@
 ## Boundary
 
 This source checkpoint connects a controlled Stripe test checkout to the existing Accelerator
-purchase and entitlement transaction. It does not enable live payments, public enrollment,
-sales-page checkout buttons, customer email, paid recovery, refunds, or Day 1.
+purchase and entitlement transaction, including non-blocking backup access and paid recovery. It
+does not enable live payments, public enrollment, sales-page checkout buttons, refunds, or Day 1.
 
 The integration uses Stripe directly from a dedicated Lovable Cloud Edge Function instead of
 Lovable's generated payments model. The app already has the approved `paid_purchases`,
@@ -42,6 +42,9 @@ ownership records.
    backup. The Checkout Session ID is the shared idempotency key, so webhook and return-path retries
    converge on one purchase.
 7. The purchase creates ownership only. The customer chooses when to start Day 1 from My Programs.
+8. The ownership transaction atomically queues one transactional backup access email. Delivery is
+   non-blocking and uses the existing authenticated scheduler, retry, provider-volume, webhook, and
+   suppression boundaries.
 
 The bounded guest test path uses the same verified payment and ownership transaction with an
 additional browser-binding fence:
@@ -102,8 +105,6 @@ Subscribe only to `checkout.session.completed` for this card-only, one-time test
   takes the verified success browser directly to setup without starting Day 1.
 - Keep the authenticated in-app purchase path direct. A signed-in customer sees the Accelerator's
   dedicated responsive compact offer page and does not repeat email verification before Checkout.
-- Send a non-blocking backup access email and support later/cross-device passwordless recovery by
-  secure email link or code.
 - Add seven-day refund-request handling and correct purchase/entitlement state changes.
 - Keep Explore Programs as a responsive multi-program catalog. The complete Accelerator offer lives
   on its dedicated detail page rather than consuming the catalog hub.
@@ -135,6 +136,12 @@ Day 1 automatically.
 This part adds one forward-only migration for the service-role-only
 `accelerator_guest_checkout_handoffs` table. It stores no card data and is unreadable by browser
 roles. The migration must be applied before the guest gate is enabled.
+
+Paid access delivery adds service-role-only `paid_access_email_jobs`, `paid_access_tokens`, and
+`paid_access_email_events` tables. The existing provider reservation ledger gains a mutually
+exclusive paid-job owner so free-plan and paid messages share one exact rolling provider ceiling.
+Paid delivery has a separate fail-closed gate, a controlled-customer test boundary, and a separate
+public-admission boundary. Applying the migration does not enable paid email sending.
 
 Disabling `STRIPE_GUEST_CHECKOUT_ENABLED` closes only guest Checkout; disabling
 `STRIPE_CHECKOUT_ENABLED` closes both Checkout paths. Neither action removes existing purchases or
