@@ -131,26 +131,20 @@ export const nutritionIntakeSchema = z
     }
   });
 
-const sliderPositionSchema = z.union([
-  z.literal(1),
-  z.literal(2),
-  z.literal(3),
-  z.literal(4),
-  z.literal(5),
-]);
+const mealPercentageSchema = z.number().int().min(5).max(100);
 
-export const mealSliderPositionsSchema = z
+export const mealPercentagesSchema = z
   .object({
-    breakfast: sliderPositionSchema.optional(),
-    lunch: sliderPositionSchema.optional(),
-    dinner: sliderPositionSchema.optional(),
-    extras: sliderPositionSchema.optional(),
+    breakfast: mealPercentageSchema.optional(),
+    lunch: mealPercentageSchema.optional(),
+    dinner: mealPercentageSchema.optional(),
+    extras: mealPercentageSchema.optional(),
   })
   .strict();
 
 export const saveNutritionProfileInputSchema = z.object({
   intake: nutritionIntakeSchema,
-  sliderPositions: mealSliderPositionsSchema.optional(),
+  mealPercentages: mealPercentagesSchema.optional(),
 });
 
 export const nutritionAccountInputSchema = z.object({});
@@ -167,6 +161,6 @@ export const nutritionProfileSchema = z.object({
   intake: nutritionIntakeSchema,
   maintenanceCalories: z.number().int().positive(),
   targets: nutritionTargetsSchema,
-  sliderPositions: mealSliderPositionsSchema,
+  mealPercentages: mealPercentagesSchema,
   calculatedAt: z.string().datetime(),
 });
