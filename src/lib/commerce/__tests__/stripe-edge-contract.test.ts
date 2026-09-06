@@ -63,8 +63,15 @@ describe("Accelerator Stripe edge contract", () => {
     expect(EDGE_FUNCTION).toContain('type: "magiclink"');
     expect(EDGE_FUNCTION).toContain('rpc("resolve_verified_customer_account"');
     expect(COMMERCE_FUNCTIONS).toContain("const GUEST_CHECKOUT_CLAIM_COOKIE =");
+    expect(COMMERCE_FUNCTIONS).toMatch(
+      /setCookie\(GUEST_CHECKOUT_CLAIM_COOKIE, result\.claimToken, \{[\s\S]*?path: "\/"/,
+    );
     expect(COMMERCE_FUNCTIONS).toContain("httpOnly: true");
     expect(COMMERCE_FUNCTIONS).toContain('sameSite: "lax"');
+    expect(COMMERCE_FUNCTIONS).toMatch(
+      /if \(result\.ok\) deleteCookie\(GUEST_CHECKOUT_CLAIM_COOKIE, \{ path: "\/" \}\)/,
+    );
+    expect(COMMERCE_FUNCTIONS).not.toContain('path: "/checkout/accelerator/success"');
     expect(SUCCESS_ROUTE).toContain("supabase.auth.verifyOtp");
     expect(SUCCESS_ROUTE).toContain("Set Up My Accelerator");
     expect(SUCCESS_ROUTE).not.toContain("Start Day 1");
