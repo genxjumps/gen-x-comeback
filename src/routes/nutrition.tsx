@@ -18,7 +18,9 @@ import {
 import {
   allocateMealTargets,
   calculateNutritionTargets,
-  recommendedSliderPositions,
+  MINIMUM_MEAL_PERCENTAGE,
+  recommendedMealPercentages,
+  redistributeMealPercentages,
 } from "@/lib/nutrition/calculator";
 import { getNutritionProfile, saveNutritionProfile } from "@/lib/nutrition/functions";
 import { nutritionIntakeSchema } from "@/lib/nutrition/schemas";
@@ -26,8 +28,7 @@ import type {
   BiggestMeal,
   FitnessGoal,
   MealOccasion,
-  MealSliderPosition,
-  MealSliderPositions,
+  MealPercentages,
   MovementLevel,
   NutritionIntake,
   NutritionProfile,
@@ -580,7 +581,7 @@ function NutritionResults({
   profile,
   saving,
   message,
-  sliderPositions,
+  mealPercentages,
   onEdit,
   onSliderChange,
   onReset,
@@ -589,16 +590,16 @@ function NutritionResults({
   profile: NutritionProfile;
   saving: boolean;
   message: string | null;
-  sliderPositions: MealSliderPositions;
+  mealPercentages: MealPercentages;
   onEdit: () => void;
-  onSliderChange: (occasion: MealOccasion, position: MealSliderPosition) => void;
+  onSliderChange: (occasion: MealOccasion, percentage: number) => void;
   onReset: () => void;
   onSaveSplit: () => void;
 }) {
   const [adjusting, setAdjusting] = useState(false);
   const allocations = useMemo(
-    () => allocateMealTargets(profile.targets, profile.intake, sliderPositions),
-    [profile, sliderPositions],
+    () => allocateMealTargets(profile.targets, profile.intake, mealPercentages),
+    [profile, mealPercentages],
   );
   const oneMeal = allocations.length === 1;
   const muscleGoal = ["add_lean_muscle", "add_lean_muscle_and_lose_fat"].includes(
@@ -718,18 +719,15 @@ function NutritionResults({
                 <div className="mt-3">
                   <input
                     type="range"
-                    min="1"
-                    max="5"
+                    min={MINIMUM_MEAL_PERCENTAGE}
+                    max={100 - MINIMUM_MEAL_PERCENTAGE * (allocations.length - 1)}
                     step="1"
-                    value={allocation.position}
+                    value={allocation.percentage}
                     aria-label={`${mealLabels[allocation.occasion]} share`}
                     aria-valuetext={`${allocation.percentage} percent of daily targets`}
                     className="w-full accent-gxj-teal"
                     onInput={(event) =>
-                      onSliderChange(
-                        allocation.occasion,
-                        Number(event.currentTarget.value) as MealSliderPosition,
-                      )
+                      onSliderChange(allocation.occasion, Number(event.currentTarget.value))
                     }
                   />
                   <div className="mt-1 flex justify-between text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
@@ -894,7 +892,7 @@ function Nutrition() {
   const [result, setResult] = useState<NutritionProfileResult | null>(null);
   const [profile, setProfile] = useState<NutritionProfile | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
-  const [sliderPositions, setSliderPositions] = useState<MealSliderPositions>({});
+  const [mealPercentages, setMealPercentages] = useState<MealPercentages>({});
   const [editing, setEditing] = useState(false);
   const [setupStarted, setSetupStarted] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -912,7 +910,7 @@ function Nutrition() {
           if (loaded.profile) {
             setProfile(loaded.profile);
             setForm(profileToForm(loaded.profile));
-            setSliderPositions(loaded.profile.sliderPositions);
+            setMealPercentages(loaded.profile.mealPercentages);
           } else if (loaded.savedWeight) {
             setForm((current) => ({
               ...current,
@@ -952,12 +950,12 @@ function Nutrition() {
 
     const positions =
       profile && sameMealPattern(profile.intake, parsed.data)
-        ? sliderPositions
-        : recommendedSliderPositions(parsed.data);
+        ? mealPercentages
+        : recommendedMealPercentages(parsed.data);
     setSaving(true);
     try {
       const saved = await saveNutrition({
-        data: { intake: parsed.data, sliderPositions: positions },
+        data: { intake: parsed.data, mealPercentages: positions },
       });
       if (!saved.ok) {
         if (saved.reason === "stopped") setStopped(true);
@@ -966,7 +964,7 @@ function Nutrition() {
       }
       setProfile(saved.profile);
       setForm(profileToForm(saved.profile));
-      setSliderPositions(saved.profile.sliderPositions);
+      setMealPercentages(saved.profile.mealPercentages);
       setEditing(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -982,14 +980,14 @@ function Nutrition() {
     setMessage(null);
     try {
       const saved = await saveNutrition({
-        data: { intake: profile.intake, sliderPositions },
+        data: { intake: profile.intake, mealPercentages },
       });
       if (!saved.ok) {
         setMessage("Your day split could not be saved. Try again.");
         return;
       }
       setProfile(saved.profile);
-      setSliderPositions(saved.profile.sliderPositions);
+      setMealPercentages(saved.profile.mealPercentages);
       setMessage("Day split saved.");
     } catch {
       setMessage("Your day split could not be saved. Try again.");
@@ -1055,18 +1053,20 @@ function Nutrition() {
           profile={profile}
           saving={saving}
           message={message}
-          sliderPositions={sliderPositions}
+          mealPercentages={mealPercentages}
           onEdit={() => {
             setEditing(true);
             setError(null);
             setStopped(false);
           }}
-          onSliderChange={(occasion, position) => {
-            setSliderPositions((current) => ({ ...current, [occasion]: position }));
+          onSliderChange={(occasion, percentage) => {
+            setMealPercentages((current) =>
+              redistributeMealPercentages(profile.intake, current, occasion, percentage),
+            );
             setMessage(null);
           }}
           onReset={() => {
-            setSliderPositions(recommendedSliderPositions(profile.intake));
+            setMealPercentages(recommendedMealPercentages(profile.intake));
             setMessage(null);
           }}
           onSaveSplit={() => void saveDaySplit()}

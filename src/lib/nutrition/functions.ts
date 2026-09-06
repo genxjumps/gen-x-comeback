@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import { calculateNutritionTargets, normalizeSliderPositions } from "@/lib/nutrition/calculator";
+import { calculateNutritionTargets, normalizeMealPercentages } from "@/lib/nutrition/calculator";
 import {
   nutritionAccountInputSchema,
+  nutritionIntakeSchema,
   nutritionProfileSchema,
   saveNutritionProfileInputSchema,
 } from "@/lib/nutrition/schemas";
@@ -45,12 +46,16 @@ async function authorize() {
 }
 
 function storedProfile(row: NutritionProfileRow): NutritionProfile {
+  const intake = nutritionIntakeSchema.parse(row.input_payload);
   return nutritionProfileSchema.parse({
     formulaVersion: row.formula_version,
-    intake: row.input_payload,
+    intake,
     maintenanceCalories: row.maintenance_calories,
     targets: row.target_payload,
-    sliderPositions: row.meal_slider_positions,
+    mealPercentages: normalizeMealPercentages(
+      intake,
+      row.meal_slider_positions as Record<string, number>,
+    ),
     // Postgres serializes timestamptz values with an explicit offset, while the
     // profile contract keeps browser-facing timestamps in canonical UTC form.
     calculatedAt: new Date(row.calculated_at).toISOString(),
@@ -115,13 +120,13 @@ export const saveNutritionProfile = createServerFn({ method: "POST" })
     if (!calculation.ok) return { ok: false, reason: "stopped" };
 
     const calculatedAt = new Date().toISOString();
-    const sliderPositions = normalizeSliderPositions(data.intake, data.sliderPositions);
+    const mealPercentages = normalizeMealPercentages(data.intake, data.mealPercentages);
     const profile = nutritionProfileSchema.parse({
       formulaVersion: NUTRITION_FORMULA_VERSION,
       intake: data.intake,
       maintenanceCalories: calculation.maintenanceCalories,
       targets: calculation.targets,
-      sliderPositions,
+      mealPercentages,
       calculatedAt,
     });
 
@@ -134,7 +139,7 @@ export const saveNutritionProfile = createServerFn({ method: "POST" })
         input_payload: profile.intake,
         maintenance_calories: profile.maintenanceCalories,
         target_payload: profile.targets,
-        meal_slider_positions: profile.sliderPositions,
+        meal_slider_positions: profile.mealPercentages,
         calculated_at: profile.calculatedAt,
         updated_at: profile.calculatedAt,
       },

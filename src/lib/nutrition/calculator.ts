@@ -2,12 +2,13 @@ import { nutritionIntakeSchema } from "@/lib/nutrition/schemas";
 import type {
   MealAllocation,
   MealOccasion,
-  MealSliderPosition,
-  MealSliderPositions,
+  MealPercentages,
   NutritionCalculation,
   NutritionIntake,
   NutritionTargets,
 } from "@/lib/nutrition/types";
+
+export const MINIMUM_MEAL_PERCENTAGE = 5;
 
 const POUNDS_PER_KILOGRAM = 2.2046226218;
 const CENTIMETERS_PER_INCH = 2.54;
@@ -96,32 +97,6 @@ export function calculateNutritionTargets(rawInput: NutritionIntake): NutritionC
   };
 }
 
-export function recommendedSliderPositions(input: NutritionIntake): MealSliderPositions {
-  const selected = new Set(input.mealOccasions);
-  if (input.mealOccasions.length === 1) {
-    return { [input.mealOccasions[0]]: 3 };
-  }
-
-  const positions: MealSliderPositions = {};
-  for (const occasion of input.mealOccasions) {
-    positions[occasion] = occasion === "extras" ? 2 : 3;
-  }
-  if (input.biggestMeal && input.biggestMeal !== "same" && selected.has(input.biggestMeal)) {
-    positions[input.biggestMeal] = 4;
-  }
-  return positions;
-}
-
-export function normalizeSliderPositions(
-  input: NutritionIntake,
-  requested: MealSliderPositions = {},
-): MealSliderPositions {
-  const recommended = recommendedSliderPositions(input);
-  return Object.fromEntries(
-    input.mealOccasions.map((occasion) => [occasion, requested[occasion] ?? recommended[occasion]]),
-  ) as MealSliderPositions;
-}
-
 function allocateInteger(total: number, weights: number[]): number[] {
   const weightTotal = weights.reduce((sum, weight) => sum + weight, 0);
   const exact = weights.map((weight) => (total * weight) / weightTotal);
@@ -137,22 +112,95 @@ function allocateInteger(total: number, weights: number[]): number[] {
   return allocated;
 }
 
+export function recommendedMealPercentages(input: NutritionIntake): MealPercentages {
+  if (input.mealOccasions.length === 1) {
+    return { [input.mealOccasions[0]]: 100 };
+  }
+
+  const selected = new Set(input.mealOccasions);
+  const weights = input.mealOccasions.map((occasion) => {
+    if (input.biggestMeal && input.biggestMeal !== "same" && occasion === input.biggestMeal)
+      return 4;
+    return occasion === "extras" ? 2 : 3;
+  });
+  const percentages = allocateInteger(100, weights);
+  return Object.fromEntries(
+    input.mealOccasions
+      .filter((occasion) => selected.has(occasion))
+      .map((occasion, index) => [occasion, percentages[index]]),
+  ) as MealPercentages;
+}
+
+export function normalizeMealPercentages(
+  input: NutritionIntake,
+  requested: MealPercentages = {},
+): MealPercentages {
+  if (input.mealOccasions.length === 1) return { [input.mealOccasions[0]]: 100 };
+
+  const values = input.mealOccasions.map((occasion) => requested[occasion]);
+  if (
+    values.every(
+      (value) => Number.isInteger(value) && value! >= MINIMUM_MEAL_PERCENTAGE && value! <= 100,
+    ) &&
+    values.reduce<number>((sum, value) => sum + (value ?? 0), 0) === 100
+  ) {
+    return Object.fromEntries(
+      input.mealOccasions.map((occasion, index) => [occasion, values[index]]),
+    ) as MealPercentages;
+  }
+
+  // Profiles saved before percentage sliders used five relative weights.
+  if (values.every((value) => Number.isInteger(value) && value! >= 1 && value! <= 5)) {
+    const converted = allocateInteger(100, values as number[]);
+    return Object.fromEntries(
+      input.mealOccasions.map((occasion, index) => [occasion, converted[index]]),
+    ) as MealPercentages;
+  }
+
+  return recommendedMealPercentages(input);
+}
+
+export function redistributeMealPercentages(
+  input: NutritionIntake,
+  current: MealPercentages,
+  changedOccasion: MealOccasion,
+  requestedPercentage: number,
+): MealPercentages {
+  const normalized = normalizeMealPercentages(input, current);
+  if (input.mealOccasions.length === 1) return normalized;
+
+  const others = input.mealOccasions.filter((occasion) => occasion !== changedOccasion);
+  const maximum = 100 - MINIMUM_MEAL_PERCENTAGE * others.length;
+  const changed = Math.min(maximum, Math.max(MINIMUM_MEAL_PERCENTAGE, requestedPercentage));
+  const remainingAboveMinimum = 100 - changed - MINIMUM_MEAL_PERCENTAGE * others.length;
+  const adjustableWeights = others.map((occasion) =>
+    Math.max(0, (normalized[occasion] ?? MINIMUM_MEAL_PERCENTAGE) - MINIMUM_MEAL_PERCENTAGE),
+  );
+  const redistributionWeights = adjustableWeights.some((weight) => weight > 0)
+    ? adjustableWeights
+    : others.map(() => 1);
+  const redistributed = allocateInteger(remainingAboveMinimum, redistributionWeights);
+
+  return Object.fromEntries([
+    [changedOccasion, changed],
+    ...others.map((occasion, index) => [occasion, MINIMUM_MEAL_PERCENTAGE + redistributed[index]]),
+  ]) as MealPercentages;
+}
+
 export function allocateMealTargets(
   targets: NutritionTargets,
   input: NutritionIntake,
-  requestedPositions: MealSliderPositions = {},
+  requestedPercentages: MealPercentages = {},
 ): MealAllocation[] {
-  const positions = normalizeSliderPositions(input, requestedPositions);
-  const weights = input.mealOccasions.map((occasion) => positions[occasion] ?? 3);
-  const percentages = allocateInteger(100, weights);
-  const calories = allocateInteger(targets.calories, weights);
-  const protein = allocateInteger(targets.proteinGrams, weights);
-  const carbohydrates = allocateInteger(targets.carbohydrateGrams, weights);
-  const fat = allocateInteger(targets.fatGrams, weights);
+  const normalized = normalizeMealPercentages(input, requestedPercentages);
+  const percentages = input.mealOccasions.map((occasion) => normalized[occasion] ?? 0);
+  const calories = allocateInteger(targets.calories, percentages);
+  const protein = allocateInteger(targets.proteinGrams, percentages);
+  const carbohydrates = allocateInteger(targets.carbohydrateGrams, percentages);
+  const fat = allocateInteger(targets.fatGrams, percentages);
 
   return input.mealOccasions.map((occasion, index) => ({
     occasion,
-    position: (positions[occasion] ?? 3) as MealSliderPosition,
     percentage: percentages[index],
     targets: {
       calories: calories[index],

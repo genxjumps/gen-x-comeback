@@ -3,7 +3,9 @@ import { describe, expect, it } from "vitest";
 import {
   allocateMealTargets,
   calculateNutritionTargets,
-  recommendedSliderPositions,
+  normalizeMealPercentages,
+  recommendedMealPercentages,
+  redistributeMealPercentages,
 } from "../calculator";
 import { nutritionIntakeSchema } from "../schemas";
 import type { NutritionIntake } from "../types";
@@ -244,25 +246,43 @@ describe("nutrition intake validation", () => {
 describe("normal-day allocation", () => {
   const targets = { calories: 1900, proteinGrams: 195, carbohydrateGrams: 155, fatGrams: 55 };
 
-  it("uses the approved recommended positions and deterministic percentages", () => {
+  it("uses the approved recommended percentages", () => {
     const input = intake();
-    expect(recommendedSliderPositions(input)).toEqual({
-      breakfast: 3,
-      lunch: 3,
-      dinner: 4,
-      extras: 2,
+    expect(recommendedMealPercentages(input)).toEqual({
+      breakfast: 25,
+      lunch: 25,
+      dinner: 33,
+      extras: 17,
     });
     expect(allocateMealTargets(targets, input).map(({ percentage }) => percentage)).toEqual([
       25, 25, 33, 17,
     ]);
   });
 
+  it("converts legacy five-position profiles to percentages", () => {
+    expect(
+      normalizeMealPercentages(intake(), { breakfast: 3, lunch: 3, dinner: 4, extras: 2 }),
+    ).toEqual({ breakfast: 25, lunch: 25, dinner: 33, extras: 17 });
+  });
+
+  it("moves in one-percent steps and redistributes the remainder across other meals", () => {
+    const changed = redistributeMealPercentages(
+      intake(),
+      { breakfast: 25, lunch: 25, dinner: 33, extras: 17 },
+      "breakfast",
+      26,
+    );
+    expect(changed.breakfast).toBe(26);
+    expect(Object.values(changed).reduce((sum, value) => sum + (value ?? 0), 0)).toBe(100);
+    expect(Object.values(changed).every((value) => (value ?? 0) >= 5)).toBe(true);
+  });
+
   it("keeps every displayed allocation equal to the daily totals after slider changes", () => {
     const allocations = allocateMealTargets(targets, intake(), {
-      breakfast: 1,
-      lunch: 2,
-      dinner: 5,
-      extras: 4,
+      breakfast: 20,
+      lunch: 25,
+      dinner: 40,
+      extras: 15,
     });
     expect(allocations.reduce((sum, meal) => sum + meal.percentage, 0)).toBe(100);
     expect(allocations.reduce((sum, meal) => sum + meal.targets.calories, 0)).toBe(1900);
@@ -274,7 +294,7 @@ describe("normal-day allocation", () => {
   it("gives a one-meal customer the whole day without requiring a slider", () => {
     const oneMealInput = intake({ mealOccasions: ["dinner"], biggestMeal: "dinner" });
     expect(allocateMealTargets(targets, oneMealInput)).toEqual([
-      { occasion: "dinner", position: 3, percentage: 100, targets },
+      { occasion: "dinner", percentage: 100, targets },
     ]);
   });
 });

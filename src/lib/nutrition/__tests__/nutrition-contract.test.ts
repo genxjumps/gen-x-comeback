@@ -20,7 +20,7 @@ describe("Your Nutrition V1 contract", () => {
   it("recalculates targets on the server and never trusts client-provided target numbers", () => {
     const functions = readSource("../functions.ts");
     expect(functions).toContain("calculateNutritionTargets(data.intake)");
-    expect(functions).toContain("normalizeSliderPositions(data.intake, data.sliderPositions)");
+    expect(functions).toContain("normalizeMealPercentages(data.intake, data.mealPercentages)");
     expect(functions).toContain("customer_nutrition_profiles");
     expect(functions).not.toContain("data.targets");
   });
@@ -51,6 +51,7 @@ describe("Your Nutrition V1 contract", () => {
   it("updates controlled meal sliders through the input event for Safari pointer support", () => {
     const route = readSource("../../../routes/nutrition.tsx");
     expect(route).toMatch(/type="range"[\s\S]*?onInput=/);
-    expect(route).toContain("Number(event.currentTarget.value) as MealSliderPosition");
+    expect(route).toContain('step="1"');
+    expect(route).toContain("redistributeMealPercentages");
   });
 });
