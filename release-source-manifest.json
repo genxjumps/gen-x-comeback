@@ -843,7 +843,7 @@
     },
     {
       "path": "src/lib/nutrition/__tests__/nutrition-contract.test.ts",
-      "sha256": "148765448e582cc2be6483f6b2e925acd06c4f6b7afab30537c4fab840cd0fd2"
+      "sha256": "3cd0181c4ed0fdcb5c62fcf2224b34866c49b03c7d033314e42b7b77c8c0fa43"
     },
     {
       "path": "src/lib/nutrition/access.server.ts",
@@ -855,7 +855,7 @@
     },
     {
       "path": "src/lib/nutrition/functions.ts",
-      "sha256": "4adf2d8ed312668bde7c7e75eb5f7c45d8421966e76e85d618a3f26b9d5682cc"
+      "sha256": "d50841601f40c642206a760fa05649054ca78936f46aaeabb3e24531b6106dd6"
     },
     {
       "path": "src/lib/nutrition/schemas.ts",
