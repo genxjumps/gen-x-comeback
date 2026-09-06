@@ -42,4 +42,10 @@ describe("Your Nutrition V1 contract", () => {
     expect(route).toContain("No food logging required.");
     expect(route).not.toMatch(/adherence score|temporary calorie log|barcode/i);
   });
+
+  it("updates controlled meal sliders through the input event for Safari pointer support", () => {
+    const route = readSource("../../../routes/nutrition.tsx");
+    expect(route).toMatch(/type="range"[\s\S]*?onInput=/);
+    expect(route).toContain("Number(event.currentTarget.value) as MealSliderPosition");
+  });
 });
