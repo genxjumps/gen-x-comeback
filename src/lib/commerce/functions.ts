@@ -74,7 +74,7 @@ export const createGuestAcceleratorCheckout = createServerFn({ method: "POST" })
       const result = await createStripeEdgeGuestCheckout();
       if (!result.ok) return result;
       setCookie(GUEST_CHECKOUT_CLAIM_COOKIE, result.claimToken, {
-        path: "/checkout/accelerator/success",
+        path: "/",
         maxAge: GUEST_CHECKOUT_CLAIM_MAX_AGE,
         secure: true,
         httpOnly: true,
@@ -112,13 +112,14 @@ export const confirmAcceleratorCheckout = createServerFn({ method: "POST" })
     }
 
     try {
-      const { getCookie } = await import("@tanstack/react-start/server");
+      const { deleteCookie, getCookie } = await import("@tanstack/react-start/server");
       const claimToken = getCookie(GUEST_CHECKOUT_CLAIM_COOKIE);
       if (!claimToken) return { ok: false, reason: "unauthorized" };
       const result = await edge.confirmStripeEdgeGuestCheckout({
         claimToken,
         sessionId: data.sessionId,
       });
+      if (result.ok) deleteCookie(GUEST_CHECKOUT_CLAIM_COOKIE, { path: "/" });
       return result;
     } catch {
       return { ok: false, reason: "unavailable" };

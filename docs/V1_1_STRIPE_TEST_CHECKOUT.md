@@ -48,13 +48,15 @@ additional browser-binding fence:
 
 1. The responsive Accelerator detail page asks the app server to open guest Checkout.
 2. The server creates a random one-browser claim, stores only its SHA-256 hash in Stripe Session
-   metadata, and places the raw claim in a Secure, HttpOnly, SameSite=Lax cookie scoped to the
-   success route. Stripe collects the buyer's email during Checkout.
+   metadata, and places the raw claim in a Secure, HttpOnly, SameSite=Lax app-origin cookie. The
+   app-wide path is required because TanStack sends the success page's confirmation request through
+   its `/_serverFn` endpoint. Stripe collects the buyer's email during Checkout.
 3. After payment, the webhook resolves or creates the matching passwordless platform identity and
    customer account, then provisions ownership idempotently. It stores the single-use handoff in a
    service-role-only table and never returns an auth credential to Stripe.
 4. The success browser must present both its cookie claim and the paid test Session ID. Only after
-   both match does the server return a one-time Supabase auth handoff for that customer.
+   both match does the server return a one-time Supabase auth handoff for that customer and clear
+   the temporary claim cookie.
 5. The browser establishes its session and presents **Set Up My Accelerator** for the exact new
    entitlement. Email confirmation is not a pre-purchase or same-browser access gate, and Day 1 is
    still a separate action.

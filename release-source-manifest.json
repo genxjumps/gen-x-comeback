@@ -407,7 +407,7 @@
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge-contract.test.ts",
-      "sha256": "8487e202f72c3cb5c2eb31a311308e2cfd718ebd3850a045c21a26c5fce0a9c0"
+      "sha256": "5f27d935173827ae77c827b34b0224b51449a5b5c8a231f07b4e0ecafe915b7c"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge.test.ts",
@@ -419,7 +419,7 @@
     },
     {
       "path": "src/lib/commerce/functions.ts",
-      "sha256": "badbb40883c7f38819d0c18b9a1157c03f72a3dfddc99631c4d1dddbf89389d1"
+      "sha256": "f9ab6d4b8eef9535c0fe7d9f2934ece911adc0b3f2f8daceefb08c1fbaadb1b2"
     },
     {
       "path": "src/lib/commerce/stripe-checkout.server.ts",
