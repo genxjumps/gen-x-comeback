@@ -64,12 +64,17 @@ export async function handleProviderWebhook(
   }
   const eventRowId = inserted?.[0]?.id ?? null;
 
-  async function closeEventRow(jobId: string | null, reconciled: boolean): Promise<void> {
+  async function closeEventRow(
+    jobId: string | null,
+    reconciled: boolean,
+    paidAccessJobId: string | null = null,
+  ): Promise<void> {
     if (!eventRowId) return;
     await supabaseAdmin
       .from("email_provider_events")
       .update({
         ...(jobId ? { job_id: jobId, matched_at: nowIso } : {}),
+        ...(paidAccessJobId ? { paid_access_job_id: paidAccessJobId, matched_at: nowIso } : {}),
         ...(reconciled ? { reconciled_at: nowIso } : {}),
       })
       .eq("id", eventRowId);
@@ -90,9 +95,60 @@ export async function handleProviderWebhook(
   if (error) throw new Error(error.message);
   const job = jobs?.[0];
 
-  // Early event: the accepting attempt has not written its message id yet. The
-  // row stays unreconciled and the dispatcher applies it on acceptance.
-  if (!job) return { status: 200, body: "unmatched", applied: false };
+  if (!job) {
+    const { data: paidJobs, error: paidJobError } = await supabaseAdmin
+      .from("paid_access_email_jobs")
+      .select("job_id, customer_id")
+      .eq("provider_key", providerKey)
+      .eq("provider_message_id", event.providerMessageId)
+      .limit(1);
+    if (paidJobError) throw new Error(paidJobError.message);
+    const paidJob = paidJobs?.[0];
+
+    // Early event: the accepting attempt has not written its message id yet.
+    // The row stays unreconciled and the paid dispatcher applies it on acceptance.
+    if (!paidJob) return { status: 200, body: "unmatched", applied: false };
+
+    const paidClient = supabaseAdmin as unknown as {
+      rpc(
+        fn: "apply_paid_access_delivery_event",
+        args: { p_job_id: string; p_kind: string; p_occurred_at?: string },
+      ): PromiseLike<{ data: boolean | null; error: { message: string } | null }>;
+    };
+    const { data: paidApplied, error: paidApplyError } = await paidClient.rpc(
+      "apply_paid_access_delivery_event",
+      {
+        p_job_id: paidJob.job_id,
+        p_kind: terminalKind,
+        ...(event.occurredAt ? { p_occurred_at: event.occurredAt } : {}),
+      },
+    );
+    if (paidApplyError) throw new Error(paidApplyError.message);
+    await closeEventRow(null, true, paidJob.job_id);
+
+    if (event.suppression) {
+      const { data: accounts } = await supabaseAdmin
+        .from("customer_accounts")
+        .select("email_normalized")
+        .eq("id", paidJob.customer_id)
+        .limit(1);
+      const emailNormalized = accounts?.[0]?.email_normalized;
+      if (emailNormalized) {
+        await supabaseAdmin.from("email_suppressions").upsert(
+          {
+            email_normalized: emailNormalized,
+            reason: event.suppression,
+            source: "provider_webhook",
+          },
+          { onConflict: "email_normalized,reason" },
+        );
+      }
+    }
+
+    return paidApplied === true
+      ? { status: 200, body: "applied", applied: true }
+      : { status: 200, body: "stale", applied: false };
+  }
 
   // One transaction performs the rank guard, the state change, and the
   // delivered canonical event, so a late or duplicate event cannot regress it.

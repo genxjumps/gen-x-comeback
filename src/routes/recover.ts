@@ -12,11 +12,12 @@ export const RECOVER_COPY = "Enter the email you used and I’ll send you a fres
 
 /**
  * Exact subordinate consent disclosure rendered beneath the Recovery action.
- * A successful Recovery may re-activate Gen X Jumps 7-Day Plan email consent;
- * it never touches general Gen X Jumps marketing consent.
+ * A free-only Recovery may re-activate Gen X Jumps 7-Day Plan email consent.
+ * Paid recovery changes no email preference, and neither path touches general
+ * Gen X Jumps marketing consent.
  */
 export const RECOVER_CONSENT_DISCLOSURE =
-  "By recovering your plan, you agree to receive Gen X Jumps 7-Day Plan emails.";
+  "Recovering a free 7-Day Plan restarts its plan emails. Recovering a purchased program does not change your email preferences.";
 
 /** The single generic response for every possible outcome. */
 export const RECOVER_GENERIC_RESPONSE =
@@ -62,7 +63,7 @@ function genericAcknowledgement(): Response {
  */
 type RecoveryRpcClient = {
   rpc(
-    fn: "request_plan_recovery",
+    fn: "request_customer_access_recovery",
     args: { p_email_normalized: string; p_request_id: string },
   ): PromiseLike<{ error: { code?: string | null } | null }>;
   rpc(
@@ -140,7 +141,7 @@ export const Route = createFileRoute("/recover")({
           // method call on the client: a detached `rpc` reference loses the SDK
           // receiver and throws before any request is made.
           const client = supabaseAdmin as unknown as RecoveryRpcClient;
-          const { error } = await client.rpc("request_plan_recovery", {
+          const { error } = await client.rpc("request_customer_access_recovery", {
             p_email_normalized: emailNormalized,
             p_request_id: requestId,
           });
@@ -153,7 +154,7 @@ export const Route = createFileRoute("/recover")({
             // production gates, activation boundary, consent/suppression checks,
             // provider-volume fence, idempotency, and retry path as the normal
             // five-minute cron. It intentionally runs for both matched and unknown
-            // addresses because request_plan_recovery returns no match signal.
+            // addresses because request_customer_access_recovery returns no match signal.
             // If the wake fails, the queued job remains durable for the cron.
             try {
               const { error: wakeError } = await client.rpc("invoke_email_dispatch_scheduler");

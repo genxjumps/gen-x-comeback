@@ -144,7 +144,7 @@ describe("Recovery production RPC contract", () => {
     // Recovery remains authoritative for consent/queueing, then the existing
     // production scheduler is woken. The scheduler receives no identity input.
     expect(rpcCalls).toHaveLength(2);
-    expect(rpcCalls[0]!.fn).toBe("request_plan_recovery");
+    expect(rpcCalls[0]!.fn).toBe("request_customer_access_recovery");
     expect(rpcCalls[0]!.args["p_email_normalized"]).toBe("reader@example.com");
     expect(rpcCalls[1]!.fn).toBe("invoke_email_dispatch_scheduler");
 

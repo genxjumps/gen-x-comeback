@@ -208,6 +208,16 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             limit: gate.providerSubmissionLimit,
             staleAlerts: true,
           });
+          const { buildPaidAccessDispatchDeps } =
+            await import("@/lib/email/paid-access-runtime.server");
+          const paidRuntime = await buildPaidAccessDispatchDeps(authentication.invocationId);
+          if (!paidRuntime.enabled) throw new Error("missing_paid_access_runtime_configuration");
+          const { dispatchPaidAccessJobs } =
+            await import("@/lib/email/paid-access-dispatch.server");
+          const paidAccess = await dispatchPaidAccessJobs(
+            paidRuntime.deps,
+            gate.providerSubmissionLimit,
+          );
           const summaries = [
             cycle.planReady,
             cycle.recovery,
@@ -216,6 +226,8 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             cycle.finalRescue,
             cycle.stalled,
             cycle.startDayOne,
+            paidAccess.recovery,
+            paidAccess.purchase,
           ];
           const claimed = summaries.reduce((sum, value) => sum + value.claimed, 0);
           const providerSubmissions = summaries.reduce(
@@ -249,6 +261,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
               stalled: cycle.stalled,
               start_day_1: cycle.startDayOne,
               final_rescue: cycle.finalRescue,
+              paid_access: paidAccess,
             },
             { headers: { "cache-control": "no-store" } },
           );

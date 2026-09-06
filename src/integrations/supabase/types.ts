@@ -498,8 +498,11 @@ export type Database = {
           activated_at: string | null;
           activation_boundary: string | null;
           controlled_lead_plan_id: string | null;
+          controlled_paid_customer_id: string | null;
           cron_job_id: number | null;
           genuine_plans_admitted: boolean;
+          paid_access_customers_admitted: boolean;
+          paid_access_sending_enabled: boolean;
           provider_submission_limit: number;
           scheduler_configured_at: string | null;
           scheduler_secret_sha256: string | null;
@@ -512,8 +515,11 @@ export type Database = {
           activated_at?: string | null;
           activation_boundary?: string | null;
           controlled_lead_plan_id?: string | null;
+          controlled_paid_customer_id?: string | null;
           cron_job_id?: number | null;
           genuine_plans_admitted?: boolean;
+          paid_access_customers_admitted?: boolean;
+          paid_access_sending_enabled?: boolean;
           provider_submission_limit?: number;
           scheduler_configured_at?: string | null;
           scheduler_secret_sha256?: string | null;
@@ -526,8 +532,11 @@ export type Database = {
           activated_at?: string | null;
           activation_boundary?: string | null;
           controlled_lead_plan_id?: string | null;
+          controlled_paid_customer_id?: string | null;
           cron_job_id?: number | null;
           genuine_plans_admitted?: boolean;
+          paid_access_customers_admitted?: boolean;
+          paid_access_sending_enabled?: boolean;
           provider_submission_limit?: number;
           scheduler_configured_at?: string | null;
           scheduler_secret_sha256?: string | null;
@@ -537,6 +546,13 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "email_production_control_controlled_paid_customer_id_fkey";
+            columns: ["controlled_paid_customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "email_production_control_controlled_lead_plan_id_fkey";
             columns: ["controlled_lead_plan_id"];
@@ -552,6 +568,7 @@ export type Database = {
           event_type: string;
           id: string;
           job_id: string | null;
+          paid_access_job_id: string | null;
           matched_at: string | null;
           occurred_at: string | null;
           provider_event_id: string;
@@ -566,6 +583,7 @@ export type Database = {
           event_type: string;
           id?: string;
           job_id?: string | null;
+          paid_access_job_id?: string | null;
           matched_at?: string | null;
           occurred_at?: string | null;
           provider_event_id: string;
@@ -580,6 +598,7 @@ export type Database = {
           event_type?: string;
           id?: string;
           job_id?: string | null;
+          paid_access_job_id?: string | null;
           matched_at?: string | null;
           occurred_at?: string | null;
           provider_event_id?: string;
@@ -597,21 +616,30 @@ export type Database = {
             referencedRelation: "email_jobs";
             referencedColumns: ["job_id"];
           },
+          {
+            foreignKeyName: "email_provider_events_paid_access_job_id_fkey";
+            columns: ["paid_access_job_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_access_email_jobs";
+            referencedColumns: ["job_id"];
+          },
         ];
       };
       email_provider_submissions: {
         Row: {
           completed_at: string | null;
           created_at: string;
+          customer_id: string | null;
           idempotency_key: string;
           invocation_id: string;
-          job_id: string;
+          job_id: string | null;
           job_type: string;
-          lead_plan_id: string;
+          lead_plan_id: string | null;
           outcome_code: string | null;
           provider_accepted_at: string | null;
           provider_key: string | null;
           provider_message_id: string | null;
+          paid_access_job_id: string | null;
           reserved_at: string;
           status: string;
           submission_attempt_id: string;
@@ -620,15 +648,17 @@ export type Database = {
         Insert: {
           completed_at?: string | null;
           created_at?: string;
+          customer_id?: string | null;
           idempotency_key: string;
           invocation_id: string;
-          job_id: string;
+          job_id?: string | null;
           job_type: string;
-          lead_plan_id: string;
+          lead_plan_id?: string | null;
           outcome_code?: string | null;
           provider_accepted_at?: string | null;
           provider_key?: string | null;
           provider_message_id?: string | null;
+          paid_access_job_id?: string | null;
           reserved_at?: string;
           status?: string;
           submission_attempt_id?: string;
@@ -637,15 +667,17 @@ export type Database = {
         Update: {
           completed_at?: string | null;
           created_at?: string;
+          customer_id?: string | null;
           idempotency_key?: string;
           invocation_id?: string;
-          job_id?: string;
+          job_id?: string | null;
           job_type?: string;
-          lead_plan_id?: string;
+          lead_plan_id?: string | null;
           outcome_code?: string | null;
           provider_accepted_at?: string | null;
           provider_key?: string | null;
           provider_message_id?: string | null;
+          paid_access_job_id?: string | null;
           reserved_at?: string;
           status?: string;
           submission_attempt_id?: string;
@@ -672,6 +704,20 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "lead_plans";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "email_provider_submissions_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "email_provider_submissions_paid_access_job_id_fkey";
+            columns: ["paid_access_job_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_access_email_jobs";
+            referencedColumns: ["job_id"];
           },
         ];
       };
@@ -1042,6 +1088,227 @@ export type Database = {
             columns: ["job_id"];
             isOneToOne: false;
             referencedRelation: "email_jobs";
+            referencedColumns: ["job_id"];
+          },
+        ];
+      };
+      paid_access_email_events: {
+        Row: {
+          customer_id: string | null;
+          details: Json;
+          entitlement_id: string | null;
+          event_id: string;
+          event_name: string;
+          job_id: string | null;
+          occurred_at: string;
+        };
+        Insert: {
+          customer_id?: string | null;
+          details?: Json;
+          entitlement_id?: string | null;
+          event_id?: string;
+          event_name: string;
+          job_id?: string | null;
+          occurred_at?: string;
+        };
+        Update: {
+          customer_id?: string | null;
+          details?: Json;
+          entitlement_id?: string | null;
+          event_id?: string;
+          event_name?: string;
+          job_id?: string | null;
+          occurred_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_access_email_events_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "paid_access_email_events_entitlement_id_fkey";
+            columns: ["entitlement_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_product_entitlements";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "paid_access_email_events_job_id_fkey";
+            columns: ["job_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_access_email_jobs";
+            referencedColumns: ["job_id"];
+          },
+        ];
+      };
+      paid_access_email_jobs: {
+        Row: {
+          attempt_count: number;
+          canceled_at: string | null;
+          claim_token: string | null;
+          created_at: string;
+          customer_id: string;
+          delivered_at: string | null;
+          delivery_status: Database["public"]["Enums"]["email_delivery_status"];
+          eligible_at: string;
+          entitlement_id: string;
+          first_provider_attempt_at: string | null;
+          idempotency_key: string;
+          job_id: string;
+          job_type: string;
+          job_version: string;
+          last_error_at: string | null;
+          last_error_code: string | null;
+          lease_expires_at: string | null;
+          locked_at: string | null;
+          manual_review_at: string | null;
+          next_attempt_at: string | null;
+          provider_accepted_at: string | null;
+          provider_key: string | null;
+          provider_message_id: string | null;
+          status: Database["public"]["Enums"]["email_job_status"];
+          suppression_reason: string | null;
+          template_version: string;
+          updated_at: string;
+        };
+        Insert: {
+          attempt_count?: number;
+          canceled_at?: string | null;
+          claim_token?: string | null;
+          created_at?: string;
+          customer_id: string;
+          delivered_at?: string | null;
+          delivery_status?: Database["public"]["Enums"]["email_delivery_status"];
+          eligible_at?: string;
+          entitlement_id: string;
+          first_provider_attempt_at?: string | null;
+          idempotency_key: string;
+          job_id?: string;
+          job_type: string;
+          job_version?: string;
+          last_error_at?: string | null;
+          last_error_code?: string | null;
+          lease_expires_at?: string | null;
+          locked_at?: string | null;
+          manual_review_at?: string | null;
+          next_attempt_at?: string | null;
+          provider_accepted_at?: string | null;
+          provider_key?: string | null;
+          provider_message_id?: string | null;
+          status?: Database["public"]["Enums"]["email_job_status"];
+          suppression_reason?: string | null;
+          template_version: string;
+          updated_at?: string;
+        };
+        Update: {
+          attempt_count?: number;
+          canceled_at?: string | null;
+          claim_token?: string | null;
+          created_at?: string;
+          customer_id?: string;
+          delivered_at?: string | null;
+          delivery_status?: Database["public"]["Enums"]["email_delivery_status"];
+          eligible_at?: string;
+          entitlement_id?: string;
+          first_provider_attempt_at?: string | null;
+          idempotency_key?: string;
+          job_id?: string;
+          job_type?: string;
+          job_version?: string;
+          last_error_at?: string | null;
+          last_error_code?: string | null;
+          lease_expires_at?: string | null;
+          locked_at?: string | null;
+          manual_review_at?: string | null;
+          next_attempt_at?: string | null;
+          provider_accepted_at?: string | null;
+          provider_key?: string | null;
+          provider_message_id?: string | null;
+          status?: Database["public"]["Enums"]["email_job_status"];
+          suppression_reason?: string | null;
+          template_version?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_access_email_jobs_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "paid_access_email_jobs_entitlement_id_fkey";
+            columns: ["entitlement_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_product_entitlements";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      paid_access_tokens: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          entitlement_id: string;
+          expires_at: string;
+          issued_at: string;
+          job_id: string;
+          last_used_at: string | null;
+          revoked_at: string | null;
+          token_hash: string;
+          token_id: string;
+          use_count: number;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          entitlement_id: string;
+          expires_at: string;
+          issued_at?: string;
+          job_id: string;
+          last_used_at?: string | null;
+          revoked_at?: string | null;
+          token_hash: string;
+          token_id?: string;
+          use_count?: number;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          entitlement_id?: string;
+          expires_at?: string;
+          issued_at?: string;
+          job_id?: string;
+          last_used_at?: string | null;
+          revoked_at?: string | null;
+          token_hash?: string;
+          token_id?: string;
+          use_count?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paid_access_tokens_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customer_accounts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "paid_access_tokens_entitlement_id_fkey";
+            columns: ["entitlement_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_product_entitlements";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "paid_access_tokens_job_id_fkey";
+            columns: ["job_id"];
+            isOneToOne: false;
+            referencedRelation: "paid_access_email_jobs";
             referencedColumns: ["job_id"];
           },
         ];
@@ -1612,6 +1879,14 @@ export type Database = {
         };
         Returns: boolean;
       };
+      apply_paid_access_delivery_event: {
+        Args: {
+          p_job_id: string;
+          p_kind: Database["public"]["Enums"]["email_delivery_status"];
+          p_occurred_at?: string;
+        };
+        Returns: boolean;
+      };
       authenticate_email_scheduler_invocation: {
         Args: {
           p_authenticated_at?: string;
@@ -1650,6 +1925,15 @@ export type Database = {
         Returns: string;
       };
       begin_production_provider_attempt: {
+        Args: {
+          p_attempted_at: string;
+          p_claim_token: string;
+          p_invocation_id: string;
+          p_job_id: string;
+        };
+        Returns: Json;
+      };
+      begin_production_paid_access_provider_attempt: {
         Args: {
           p_attempted_at: string;
           p_claim_token: string;
@@ -1829,6 +2113,21 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      claim_production_paid_access_email_jobs: {
+        Args: {
+          p_invocation_id: string;
+          p_job_type: string;
+          p_lease_seconds?: number;
+          p_limit?: number;
+        };
+        Returns: Database["public"]["Tables"]["paid_access_email_jobs"]["Row"][];
+        SetofOptions: {
+          from: "*";
+          to: "paid_access_email_jobs";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       commit_plan_version: {
         Args: {
           p_assessment: Json;
@@ -1894,6 +2193,18 @@ export type Database = {
         };
         Returns: boolean;
       };
+      complete_production_paid_access_provider_attempt: {
+        Args: {
+          p_completed_at: string;
+          p_outcome: string;
+          p_outcome_code?: string;
+          p_provider_accepted_at?: string;
+          p_provider_key?: string;
+          p_provider_message_id?: string;
+          p_submission_attempt_id: string;
+        };
+        Returns: boolean;
+      };
       configure_email_production_scheduler: {
         Args: { p_url: string };
         Returns: Json;
@@ -1940,12 +2251,26 @@ export type Database = {
         Args: { p_reason: string };
         Returns: boolean;
       };
+      defer_paid_access_email_job: {
+        Args: { p_claim_token: string; p_job_id: string; p_next_attempt_at: string };
+        Returns: boolean;
+      };
       email_delivery_rank: {
         Args: { p_status: Database["public"]["Enums"]["email_delivery_status"] };
         Returns: number;
       };
       email_production_warning_state: { Args: never; Returns: Json };
       enable_email_production_sending: { Args: never; Returns: boolean };
+      enqueue_paid_access_job: {
+        Args: {
+          p_customer_id: string;
+          p_eligible_at?: string;
+          p_entitlement_id: string;
+          p_idempotency_key: string;
+          p_job_type: string;
+        };
+        Returns: string;
+      };
       establish_email_production_activation: { Args: never; Returns: Json };
       finish_email_job: {
         Args: {
@@ -1953,6 +2278,16 @@ export type Database = {
           p_event_name?: string;
           p_job_id: string;
           p_patch?: Json;
+          p_status: Database["public"]["Enums"]["email_job_status"];
+        };
+        Returns: boolean;
+      };
+      finish_paid_access_email_job: {
+        Args: {
+          p_claim_token: string;
+          p_event_name?: string;
+          p_job_id: string;
+          p_patch: Json;
           p_status: Database["public"]["Enums"]["email_job_status"];
         };
         Returns: boolean;
@@ -2074,6 +2409,10 @@ export type Database = {
         };
         Returns: undefined;
       };
+      reconcile_paid_access_provider_events: {
+        Args: { p_job_id: string; p_provider_key: string; p_provider_message_id: string };
+        Returns: number;
+      };
       remove_customer_measurement_atomic: {
         Args: { p_customer_id: string; p_measurement_id: string };
         Returns: {
@@ -2082,6 +2421,10 @@ export type Database = {
         }[];
       };
       request_plan_recovery: {
+        Args: { p_email_normalized: string; p_request_id: string };
+        Returns: undefined;
+      };
+      request_customer_access_recovery: {
         Args: { p_email_normalized: string; p_request_id: string };
         Returns: undefined;
       };

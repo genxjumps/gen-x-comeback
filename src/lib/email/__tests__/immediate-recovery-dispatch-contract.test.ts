@@ -7,7 +7,7 @@ describe("immediate Recovery dispatch contract", () => {
   it("wakes the existing production scheduler only after the recovery RPC succeeds", () => {
     const recover = readSource("../../../routes/recover.ts");
 
-    const recoveryCall = 'client.rpc("request_plan_recovery"';
+    const recoveryCall = 'client.rpc("request_customer_access_recovery"';
     const successBranch = "} else {";
     const wakeCall = 'client.rpc("invoke_email_dispatch_scheduler")';
 
