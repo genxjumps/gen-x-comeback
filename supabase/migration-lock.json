@@ -230,6 +230,13 @@
       "sha256": "898d6f16ceb1ecc806ed3219fc81bbaca73f5726ff511108c65f03b2043e5590",
       "statementSha256": "5871f921944cfb8873456c0d3bdf99ee532be3f1a44ce4b5086510970409d365",
       "version": "20260905180000"
+    },
+    {
+      "file": "20260905190000_accelerator_guest_checkout_handoffs.sql",
+      "name": "accelerator_guest_checkout_handoffs",
+      "sha256": "f973be24d42c05972a1e5d44dd795ed7dfeb276754c03dacd9d0d4f3e4397019",
+      "statementSha256": "07fa55662a7548dad225dad9cda735cd77e41a07f307501755f477d917123f4d",
+      "version": "20260905190000"
     }
   ],
   "version": 1

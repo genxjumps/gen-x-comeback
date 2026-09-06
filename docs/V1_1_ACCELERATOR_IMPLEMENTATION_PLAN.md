@@ -125,10 +125,32 @@ without opening public enrollment or silently activating customer email:
 
 1. Controlled Stripe test checkout for allow-listed, authenticated customer accounts; signed
    webhook and success-return verification; durable ownership only; no automatic Day 1 start.
-2. Direct-buyer passwordless account entry and backup access delivery.
-3. Paid recovery and seven-day refund-request handling.
-4. Sales-page checkout-button connection after the complete paid-customer journey passes in the
+2. Public guest checkout and immediate post-purchase app entry. The website CTA goes directly to
+   Stripe Checkout with no pre-purchase account, login, or email-confirmation gate. A server-verified
+   paid Checkout Session establishes same-browser access, grants or safely claims ownership, and
+   opens the post-purchase Accelerator experience without starting Day 1.
+3. Authenticated in-app offer and checkout. Explore Programs remains a scalable catalog hub; the
+   Accelerator uses its own responsive compact offer/detail page and does not require an already
+   verified customer to verify email again before purchase.
+4. Non-blocking backup access delivery and paid recovery. The purchase email supports later and
+   cross-device passwordless access; it is not required before the buyer can use the app in the
+   browser that completed Checkout.
+5. Seven-day refund-request handling and correct purchase/entitlement state changes.
+6. The 7-Day-to-Accelerator bridge: one completion-screen recommendation, matching completion-email
+   destination, and ownership-aware Explore, Set Up, Continue, or Start Another Run actions.
+7. Sales-page checkout-button connection after the complete paid-customer journey passes in the
    required staging environment.
+
+The program discovery hierarchy is locked:
+
+- **Explore Programs** is a responsive multi-program catalog whose cards scale from mobile to
+  desktop.
+- Each program has a dedicated responsive detail page.
+- The Accelerator detail page contains the compact in-app offer for non-owners and becomes an
+  ownership/status page for owners.
+- Day 7 and other relevant recommendations may link directly to the Accelerator detail page.
+- Do not turn the catalog hub into the Accelerator sales page or use a popup/modal as the complete
+  offer.
 
 The first part accepts only Stripe test credentials and test objects. It remains fail-closed unless
 the checkout gate, exact price, webhook secret, app origin, and controlled customer allow-list are

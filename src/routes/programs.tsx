@@ -5,7 +5,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { PlatformPage } from "@/components/platform-page";
 import { Button } from "@/components/ui/button";
 import {
-  createAcceleratorCheckout,
   getAcceleratorCheckoutAvailability,
   type CheckoutAvailabilityResult,
 } from "@/lib/commerce/functions";
@@ -22,10 +21,7 @@ export const Route = createFileRoute("/programs")({
 
 function Programs() {
   const loadAvailability = useServerFn(getAcceleratorCheckoutAvailability);
-  const openCheckout = useServerFn(createAcceleratorCheckout);
   const [availability, setAvailability] = useState<CheckoutAvailabilityResult | null>(null);
-  const [opening, setOpening] = useState(false);
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -36,28 +32,6 @@ function Programs() {
       active = false;
     };
   }, [loadAvailability]);
-
-  async function beginCheckout() {
-    if (opening) return;
-    setOpening(true);
-    setCheckoutError(null);
-    try {
-      const result = await openCheckout();
-      if (result.ok) {
-        window.location.assign(result.checkoutUrl);
-        return;
-      }
-      if (result.reason === "already_owned") {
-        setAvailability((current) => (current?.ok ? { ...current, owned: true } : current));
-        return;
-      }
-      setCheckoutError("Test checkout is not available for this account.");
-    } catch {
-      setCheckoutError("Test checkout could not be opened. Try again in a moment.");
-    } finally {
-      setOpening(false);
-    }
-  }
 
   const controlledCheckout =
     availability?.ok && availability.enabled && availability.allowed && !availability.owned;
@@ -86,16 +60,10 @@ function Programs() {
           </Button>
         ) : null}
         {controlledCheckout ? (
-          <Button
-            type="button"
-            className="mt-5 w-full sm:w-auto"
-            disabled={opening}
-            onClick={() => void beginCheckout()}
-          >
-            {opening ? "Opening Stripe..." : "Open $37 Test Checkout"}
+          <Button asChild className="mt-5 w-full sm:w-auto">
+            <Link to="/programs/accelerator">View Program</Link>
           </Button>
         ) : null}
-        {checkoutError ? <p className="mt-3 text-sm font-medium">{checkoutError}</p> : null}
         {availability && !controlledCheckout && !(availability.ok && availability.owned) ? (
           <p className="mt-3 text-xs text-muted-foreground">
             Test setup status: {availability.issue ?? "unknown"}

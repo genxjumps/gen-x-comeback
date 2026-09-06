@@ -2,9 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   confirmStripeEdgeCheckout,
+  confirmStripeEdgeGuestCheckout,
   createStripeEdgeCheckout,
+  createStripeEdgeGuestCheckout,
   forwardStripeWebhookToEdge,
   getStripeEdgeAvailability,
+  getStripeEdgeGuestAvailability,
   readStripeEdgeRuntimeConfig,
 } from "../stripe-edge.server";
 
@@ -66,6 +69,16 @@ describe("Stripe edge runtime adapter", () => {
     ).toMatchObject({ ok: true, enabled: false, allowed: false });
   });
 
+  it("reads the separate guest-checkout gate without requiring a customer account", async () => {
+    mockEdge({ ok: true, enabled: true, priceCents: 3700, issue: null });
+    expect(await getStripeEdgeGuestAvailability()).toEqual({
+      ok: true,
+      enabled: true,
+      priceCents: 3700,
+      issue: null,
+    });
+  });
+
   it("accepts only Stripe-hosted checkout URLs", async () => {
     mockEdge({ ok: true, checkoutUrl: "https://checkout.stripe.com/c/pay/test" });
     expect(
@@ -86,6 +99,20 @@ describe("Stripe edge runtime adapter", () => {
     ).toEqual({ ok: false, reason: "unavailable" });
   });
 
+  it("keeps the guest claim server-side while accepting only Stripe checkout URLs", async () => {
+    const claimToken = "a".repeat(64);
+    mockEdge({
+      ok: true,
+      checkoutUrl: "https://checkout.stripe.com/c/pay/guest",
+      claimToken,
+    });
+    expect(await createStripeEdgeGuestCheckout()).toEqual({
+      ok: true,
+      checkoutUrl: "https://checkout.stripe.com/c/pay/guest",
+      claimToken,
+    });
+  });
+
   it("confirms an edge-verified entitlement", async () => {
     mockEdge({ ok: true, entitlementId: "00000000-0000-4000-8000-000000000002" });
     expect(
@@ -93,7 +120,29 @@ describe("Stripe edge runtime adapter", () => {
         customerAccountId: "00000000-0000-4000-8000-000000000001",
         sessionId: "cs_test_verified",
       }),
-    ).toEqual({ ok: true, entitlementId: "00000000-0000-4000-8000-000000000002" });
+    ).toEqual({
+      ok: true,
+      authTokenHash: null,
+      entitlementId: "00000000-0000-4000-8000-000000000002",
+    });
+  });
+
+  it("returns a one-time auth handoff only after the guest claim is confirmed", async () => {
+    mockEdge({
+      ok: true,
+      authTokenHash: "hashed-auth-token-for-the-paid-browser",
+      entitlementId: "00000000-0000-4000-8000-000000000002",
+    });
+    expect(
+      await confirmStripeEdgeGuestCheckout({
+        claimToken: "b".repeat(64),
+        sessionId: "cs_test_verified",
+      }),
+    ).toEqual({
+      ok: true,
+      authTokenHash: "hashed-auth-token-for-the-paid-browser",
+      entitlementId: "00000000-0000-4000-8000-000000000002",
+    });
   });
 
   it("preserves webhook response status for provider retries", async () => {

@@ -16,6 +16,7 @@ type Config = {
   appOrigin: string | null;
   allowedCustomerIds: ReadonlySet<string>;
   enabled: boolean;
+  guestEnabled: boolean;
   priceId: string | null;
   secretKey: string | null;
   serviceRoleKey: string | null;
@@ -36,13 +37,22 @@ type ConfigIssue =
   | "invalid_test_customer_ids"
   | "unknown_configuration_error";
 
-type DiagnosticAction = "availability" | "create_checkout" | "confirm_checkout" | "webhook";
+type DiagnosticAction =
+  | "availability"
+  | "guest_availability"
+  | "create_checkout"
+  | "create_guest_checkout"
+  | "confirm_checkout"
+  | "confirm_guest_checkout"
+  | "webhook";
 type FulfillmentStage =
   | "validate_session_id"
   | "retrieve_session"
   | "validate_session"
   | "validate_price"
   | "validate_charge"
+  | "validate_guest_claim"
+  | "resolve_customer"
   | "provision_ownership";
 
 const SAFE_FAILURE_REASONS = new Set([
@@ -64,6 +74,12 @@ const SAFE_FAILURE_REASONS = new Set([
   "price_mismatch",
   "intent_not_expanded",
   "charge_not_paid",
+  "guest_checkout_disabled",
+  "guest_claim_invalid",
+  "guest_email_missing",
+  "guest_identity_error",
+  "guest_account_error",
+  "guest_handoff_pending",
   "provision_rpc_error",
   "provision_rejected",
 ]);
@@ -123,6 +139,7 @@ function readConfig(): Config {
         .filter(Boolean),
     ),
     enabled: env("STRIPE_CHECKOUT_ENABLED")?.toLowerCase() === "true",
+    guestEnabled: env("STRIPE_GUEST_CHECKOUT_ENABLED")?.toLowerCase() === "true",
     priceId: env("STRIPE_ACCELERATOR_PRICE_ID"),
     secretKey: env("STRIPE_SECRET_KEY"),
     serviceRoleKey: env("SUPABASE_SERVICE_ROLE_KEY"),
@@ -135,7 +152,7 @@ function validUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
-function configIssue(config: Config): ConfigIssue | null {
+function providerConfigIssue(config: Config): ConfigIssue | null {
   if (!config.enabled) return "checkout_disabled";
   if (!config.appOrigin) return "missing_app_origin";
   try {
@@ -151,10 +168,16 @@ function configIssue(config: Config): ConfigIssue | null {
   if (!/^(sk|rk)_test_/.test(config.secretKey)) return "invalid_secret_key_mode";
   if (!config.webhookSecret || !config.webhookSecret.startsWith("whsec_"))
     return "invalid_webhook_secret";
+  if (!config.supabaseUrl || !config.serviceRoleKey) return "unknown_configuration_error";
+  return null;
+}
+
+function configIssue(config: Config): ConfigIssue | null {
+  const providerIssue = providerConfigIssue(config);
+  if (providerIssue) return providerIssue;
   if (config.allowedCustomerIds.size === 0) return "missing_test_customer_ids";
   if ([...config.allowedCustomerIds].some((id) => !validUuid(id)))
     return "invalid_test_customer_ids";
-  if (!config.supabaseUrl || !config.serviceRoleKey) return "unknown_configuration_error";
   return null;
 }
 
@@ -252,6 +275,7 @@ function configuration(config: Config): Record<string, boolean> {
     secret_key_present: config.secretKey !== null,
     webhook_secret_present: config.webhookSecret !== null,
     test_customer_ids_present: config.allowedCustomerIds.size > 0,
+    guest_checkout_enabled: config.guestEnabled,
   };
 }
 
@@ -278,6 +302,16 @@ async function availability(config: Config, body: Record<string, unknown>): Prom
     owned: await customerOwnsAccelerator(config, customerAccountId),
     priceCents: PRICE_CENTS,
     issue: allowed ? null : "customer_not_allowlisted",
+  });
+}
+
+async function guestAvailability(config: Config): Promise<Response> {
+  const issue = providerConfigIssue(config);
+  return json({
+    ok: true,
+    enabled: !issue && config.guestEnabled,
+    priceCents: PRICE_CENTS,
+    issue: issue ?? (config.guestEnabled ? null : "checkout_disabled"),
   });
 }
 
@@ -310,6 +344,7 @@ async function createCheckout(config: Config, body: Record<string, unknown>): Pr
       client_reference_id: id,
       metadata: {
         customer_account_id: id,
+        genx_checkout_kind: "account",
         genx_product_code: PRODUCT_CODE,
         genx_program_version: PROGRAM_VERSION,
       },
@@ -330,6 +365,48 @@ async function createCheckout(config: Config, body: Record<string, unknown>): Pr
   );
   if (!session.url || session.livemode) throw new Error("invalid_checkout_session");
   return json({ ok: true, checkoutUrl: session.url });
+}
+
+function randomGuestClaim(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(32));
+  return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function createGuestCheckout(config: Config): Promise<Response> {
+  if (providerConfigIssue(config)) return json({ ok: false, reason: "unavailable" }, 503);
+  if (!config.guestEnabled) return json({ ok: false, reason: "closed" }, 403);
+
+  const stripe = stripeClient(config);
+  const price = await stripe.prices.retrieve(config.priceId!, { expand: ["product"] });
+  assertPrice(price, config);
+  const claimToken = randomGuestClaim();
+  const claimHash = await sha256(claimToken);
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    payment_method_types: ["card"],
+    line_items: [{ price: config.priceId!, quantity: 1 }],
+    customer_creation: "always",
+    metadata: {
+      genx_checkout_kind: "guest",
+      genx_guest_claim_hash: claimHash,
+      genx_product_code: PRODUCT_CODE,
+      genx_program_version: PROGRAM_VERSION,
+    },
+    payment_intent_data: {
+      metadata: {
+        genx_checkout_kind: "guest",
+        genx_product_code: PRODUCT_CODE,
+        genx_program_version: PROGRAM_VERSION,
+      },
+    },
+    success_url: `${new URL(config.appOrigin!).origin}/checkout/accelerator/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${new URL(config.appOrigin!).origin}/programs/accelerator?checkout=cancelled`,
+    allow_promotion_codes: false,
+    billing_address_collection: "auto",
+    submit_type: "pay",
+  });
+  if (!session.url || session.livemode) throw new Error("invalid_checkout_session");
+  return json({ ok: true, checkoutUrl: session.url, claimToken });
 }
 
 function checkoutPurchaseTime(session: Stripe.Checkout.Session): string {
@@ -353,11 +430,89 @@ async function sha256(value: string): Promise<string> {
   return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+function guestEmail(session: Stripe.Checkout.Session): string {
+  const original = (session.customer_details?.email ?? session.customer_email ?? "").trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(original) || original.length > 254)
+    throw new Error("guest_email_missing");
+  return original;
+}
+
+function guestFirstName(session: Stripe.Checkout.Session): string | null {
+  const candidate = session.customer_details?.name?.trim().split(/\s+/)[0] ?? "";
+  return candidate.length >= 1 && candidate.length <= 60 ? candidate : null;
+}
+
+async function resolveGuestCustomer(config: Config, session: Stripe.Checkout.Session) {
+  const emailOriginal = guestEmail(session);
+  const emailNormalized = emailOriginal.toLowerCase();
+  const client = adminClient(config);
+  const { data: authLink, error: authError } = await client.auth.admin.generateLink({
+    type: "magiclink",
+    email: emailOriginal,
+  });
+  if (authError || !authLink.user?.id || !authLink.properties?.hashed_token)
+    throw new Error("guest_identity_error");
+
+  const verifiedAt = new Date(session.created * 1_000).toISOString();
+  const { data: rows, error } = await client.rpc("resolve_verified_customer_account", {
+    p_auth_user_id: authLink.user.id,
+    p_email_normalized: emailNormalized,
+    p_email_original: emailOriginal,
+    p_email_verified_at: verifiedAt,
+    p_first_name: guestFirstName(session),
+  });
+  const row = rows?.[0];
+  if (error || !row || !["created", "replayed"].includes(row.outcome))
+    throw new Error("guest_account_error");
+  return {
+    authTokenHash: authLink.properties.hashed_token,
+    customerAccountId: row.customer_id as string,
+  };
+}
+
+async function readGuestHandoff(config: Config, sessionId: string) {
+  const { data, error } = await adminClient(config)
+    .from("accelerator_guest_checkout_handoffs")
+    .select("customer_id, entitlement_id, auth_token_hash, expires_at")
+    .eq("stripe_session_id", sessionId)
+    .gt("expires_at", new Date().toISOString())
+    .limit(1);
+  if (error) throw new Error("guest_account_error");
+  return data?.[0] ?? null;
+}
+
+async function storeGuestHandoff(
+  config: Config,
+  input: {
+    authTokenHash: string;
+    customerAccountId: string;
+    entitlementId: string;
+    sessionId: string;
+  },
+) {
+  const { error } = await adminClient(config)
+    .from("accelerator_guest_checkout_handoffs")
+    .insert({
+      stripe_session_id: input.sessionId,
+      customer_id: input.customerAccountId,
+      entitlement_id: input.entitlementId,
+      auth_token_hash: input.authTokenHash,
+      expires_at: new Date(Date.now() + 60 * 60 * 1_000).toISOString(),
+    });
+  if (error) {
+    const existing = await readGuestHandoff(config, input.sessionId);
+    if (!existing) throw new Error("guest_account_error");
+    return existing;
+  }
+  return readGuestHandoff(config, input.sessionId);
+}
+
 async function fulfill(
   config: Config,
   sessionId: string,
-  action: Extract<DiagnosticAction, "confirm_checkout" | "webhook">,
+  action: Extract<DiagnosticAction, "confirm_checkout" | "confirm_guest_checkout" | "webhook">,
   expectedCustomerAccountId?: string,
+  guestClaimToken?: string,
 ) {
   let stage: FulfillmentStage = "validate_session_id";
   try {
@@ -368,15 +523,7 @@ async function fulfill(
       expand: ["line_items.data.price.product", "payment_intent.latest_charge"],
     });
     stage = "validate_session";
-    const customerAccountId = session.metadata?.["customer_account_id"];
-    if (!customerAccountId) throw new Error("session_customer_missing");
-    if (!config.allowedCustomerIds.has(customerAccountId))
-      throw new Error("session_customer_not_allowed");
-    if (session.client_reference_id !== customerAccountId)
-      throw new Error("session_client_reference_mismatch");
     if (session.livemode !== false) throw new Error("live_session_rejected");
-    if (expectedCustomerAccountId && expectedCustomerAccountId !== customerAccountId)
-      throw new Error("session_customer_mismatch");
     if (session.mode !== "payment") throw new Error("session_mode_mismatch");
     if (session.status !== "complete") throw new Error("session_not_complete");
     if (session.payment_status !== "paid") throw new Error("session_not_paid");
@@ -386,6 +533,47 @@ async function fulfill(
       throw new Error("session_product_mismatch");
     if (session.metadata?.["genx_program_version"] !== PROGRAM_VERSION)
       throw new Error("session_version_mismatch");
+
+    const guestCheckout = session.metadata?.["genx_checkout_kind"] === "guest";
+    let authTokenHash: string | null = null;
+    let existingGuestHandoff: Awaited<ReturnType<typeof readGuestHandoff>> = null;
+    let customerAccountId: string;
+    if (guestCheckout) {
+      if (!config.guestEnabled) throw new Error("guest_checkout_disabled");
+      if (action === "confirm_guest_checkout") {
+        stage = "validate_guest_claim";
+        const storedHash = session.metadata?.["genx_guest_claim_hash"] ?? null;
+        const suppliedHash = guestClaimToken ? await sha256(guestClaimToken) : null;
+        if (!(await secretsMatch(suppliedHash, storedHash))) throw new Error("guest_claim_invalid");
+        existingGuestHandoff = await readGuestHandoff(config, session.id);
+        if (!existingGuestHandoff) throw new Error("guest_handoff_pending");
+        customerAccountId = existingGuestHandoff.customer_id;
+        authTokenHash = existingGuestHandoff.auth_token_hash;
+      } else if (action !== "webhook") {
+        throw new Error("guest_claim_invalid");
+      } else {
+        existingGuestHandoff = await readGuestHandoff(config, session.id);
+        if (existingGuestHandoff) {
+          customerAccountId = existingGuestHandoff.customer_id;
+          authTokenHash = existingGuestHandoff.auth_token_hash;
+        } else {
+          stage = "resolve_customer";
+          const guest = await resolveGuestCustomer(config, session);
+          customerAccountId = guest.customerAccountId;
+          authTokenHash = guest.authTokenHash;
+        }
+      }
+    } else {
+      const accountId = session.metadata?.["customer_account_id"];
+      if (!accountId) throw new Error("session_customer_missing");
+      if (!config.allowedCustomerIds.has(accountId))
+        throw new Error("session_customer_not_allowed");
+      if (session.client_reference_id !== accountId)
+        throw new Error("session_client_reference_mismatch");
+      if (expectedCustomerAccountId && expectedCustomerAccountId !== accountId)
+        throw new Error("session_customer_mismatch");
+      customerAccountId = accountId;
+    }
 
     stage = "validate_price";
     assertPrice(checkoutPrice(session), config);
@@ -419,10 +607,60 @@ async function fulfill(
     const row = rows?.[0];
     if (!row || !["created", "replayed"].includes(row.outcome))
       throw new Error("provision_rejected");
-    return { entitlementId: row.entitlement_id as string, replayed: row.replayed as boolean };
+    if (guestCheckout && action === "webhook" && !existingGuestHandoff) {
+      if (!authTokenHash) throw new Error("guest_identity_error");
+      const handoff = await storeGuestHandoff(config, {
+        authTokenHash,
+        customerAccountId,
+        entitlementId: row.entitlement_id as string,
+        sessionId: session.id,
+      });
+      if (!handoff) throw new Error("guest_account_error");
+      authTokenHash = handoff.auth_token_hash;
+    }
+    return {
+      authTokenHash,
+      entitlementId: row.entitlement_id as string,
+      replayed: row.replayed as boolean,
+    };
   } catch (error) {
-    logFailure(action, stage, error);
-    throw new FulfillmentFailure(stage, safeFailureReason(error));
+    const reason = safeFailureReason(error);
+    if (reason !== "guest_handoff_pending") logFailure(action, stage, error);
+    throw new FulfillmentFailure(stage, reason);
+  }
+}
+
+async function confirmGuestCheckout(
+  config: Config,
+  body: Record<string, unknown>,
+): Promise<Response> {
+  if (providerConfigIssue(config)) return json({ ok: false, reason: "unavailable" }, 503);
+  const sessionId = body.sessionId;
+  const claimToken = body.claimToken;
+  if (
+    typeof sessionId !== "string" ||
+    typeof claimToken !== "string" ||
+    !/^[a-f0-9]{64}$/.test(claimToken)
+  )
+    return json({ ok: false, reason: "invalid" }, 400);
+  try {
+    const result = await fulfill(
+      config,
+      sessionId,
+      "confirm_guest_checkout",
+      undefined,
+      claimToken,
+    );
+    if (!result.authTokenHash) return json({ ok: false, reason: "invalid" }, 400);
+    return json({
+      ok: true,
+      authTokenHash: result.authTokenHash,
+      entitlementId: result.entitlementId,
+    });
+  } catch (error) {
+    if (error instanceof FulfillmentFailure && error.reason === "guest_handoff_pending")
+      return json({ ok: false, reason: "pending" }, 409);
+    return json({ ok: false, reason: "invalid" }, 400);
   }
 }
 
@@ -445,7 +683,7 @@ async function confirmCheckout(config: Config, body: Record<string, unknown>): P
 }
 
 async function webhook(config: Config, body: Record<string, unknown>): Promise<Response> {
-  if (configIssue(config)) return json({ error: "unavailable" }, 503);
+  if (providerConfigIssue(config)) return json({ error: "unavailable" }, 503);
   const rawBody = body.rawBody;
   const signature = body.signature;
   if (typeof rawBody !== "string" || typeof signature !== "string")
@@ -494,13 +732,27 @@ Deno.serve(async (request) => {
   const record = body as Record<string, unknown>;
   try {
     if (record.action === "availability") return await availability(config, record);
+    if (record.action === "guest_availability") return await guestAvailability(config);
     if (record.action === "create_checkout") return await createCheckout(config, record);
+    if (record.action === "create_guest_checkout") return await createGuestCheckout(config);
     if (record.action === "confirm_checkout") return await confirmCheckout(config, record);
+    if (record.action === "confirm_guest_checkout")
+      return await confirmGuestCheckout(config, record);
     if (record.action === "webhook") return await webhook(config, record);
     return json({ error: "invalid_action" }, 400);
   } catch (error) {
     const action = record.action;
-    if (["availability", "create_checkout", "confirm_checkout", "webhook"].includes(String(action)))
+    if (
+      [
+        "availability",
+        "guest_availability",
+        "create_checkout",
+        "create_guest_checkout",
+        "confirm_checkout",
+        "confirm_guest_checkout",
+        "webhook",
+      ].includes(String(action))
+    )
       logFailure(action as DiagnosticAction, "dispatch", error);
     return json({ error: "edge_failure" }, 500);
   }
