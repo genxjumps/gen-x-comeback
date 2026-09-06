@@ -843,7 +843,7 @@
     },
     {
       "path": "src/lib/nutrition/__tests__/nutrition-contract.test.ts",
-      "sha256": "30063d660335bce905b8267ce0b801c9cacb2b4381c87816d8b88e9331f275d9"
+      "sha256": "148765448e582cc2be6483f6b2e925acd06c4f6b7afab30537c4fab840cd0fd2"
     },
     {
       "path": "src/lib/nutrition/access.server.ts",
@@ -999,7 +999,7 @@
     },
     {
       "path": "src/routes/nutrition.tsx",
-      "sha256": "f0c5120857427d5406572e4e613a2c489fcbbb32752b1e7d4709e2b8c8dc0956"
+      "sha256": "aa1a2df4cb29612d8db0ee4ff47d5c183d61151862a946e4e156f24f5a73d26c"
     },
     {
       "path": "src/routes/preview.accelerator.tsx",
