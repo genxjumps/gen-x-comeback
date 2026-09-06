@@ -725,10 +725,10 @@ function NutritionResults({
                     aria-label={`${mealLabels[allocation.occasion]} share`}
                     aria-valuetext={`${allocation.percentage} percent of daily targets`}
                     className="w-full accent-gxj-teal"
-                    onChange={(event) =>
+                    onInput={(event) =>
                       onSliderChange(
                         allocation.occasion,
-                        Number(event.target.value) as MealSliderPosition,
+                        Number(event.currentTarget.value) as MealSliderPosition,
                       )
                     }
                   />
