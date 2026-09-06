@@ -839,11 +839,11 @@
     },
     {
       "path": "src/lib/nutrition/__tests__/calculator.test.ts",
-      "sha256": "98a763c4d553f997af799a4b6ba33c047029fc430a4feaa5863ca0a93dcb2dfe"
+      "sha256": "75e35d92cea02760cd665beb3eae8c1f2374558ea13c1c5fcab650e41af07b34"
     },
     {
       "path": "src/lib/nutrition/__tests__/nutrition-contract.test.ts",
-      "sha256": "3cd0181c4ed0fdcb5c62fcf2224b34866c49b03c7d033314e42b7b77c8c0fa43"
+      "sha256": "795d0d0172f6576f63858633a1367f4dcc648d804d2ca0572a035f06ec55bb0f"
     },
     {
       "path": "src/lib/nutrition/access.server.ts",
@@ -851,19 +851,19 @@
     },
     {
       "path": "src/lib/nutrition/calculator.ts",
-      "sha256": "fb120fd624add61fb0cf8d0b9187e00db9705f7d62972028d0166575cce7727e"
+      "sha256": "5185ab0add73c9b02e55077daff5e8bcc8054a6d0da706cc94f9c850123ec84c"
     },
     {
       "path": "src/lib/nutrition/functions.ts",
-      "sha256": "d50841601f40c642206a760fa05649054ca78936f46aaeabb3e24531b6106dd6"
+      "sha256": "35d06ac2400efbcdc875cdf505ff500c6f696da151cb585629d772e91c2480e6"
     },
     {
       "path": "src/lib/nutrition/schemas.ts",
-      "sha256": "3fabb65b9175f3b657e8408f6756d4bce30e20b9a316cff4943ac2d30c704e81"
+      "sha256": "6d48ab2c74a1d16c37b1600ad1c0718467d97910403e6b5b33cc72b137792cad"
     },
     {
       "path": "src/lib/nutrition/types.ts",
-      "sha256": "b021d44a723e5bf25719f2992a7022c5c4f327f0a9d8a45a5b64ce7f3893150d"
+      "sha256": "6f68aafdd7d332fe336a589de476632f8cf8165f6146d30f0a8239c2c6745efe"
     },
     {
       "path": "src/lib/plan-access.server.ts",
@@ -999,7 +999,7 @@
     },
     {
       "path": "src/routes/nutrition.tsx",
-      "sha256": "aa1a2df4cb29612d8db0ee4ff47d5c183d61151862a946e4e156f24f5a73d26c"
+      "sha256": "1dfbd4880ad343cb41d3fc2a19210f6e15a5801326f8163841c3f3646a3fa41c"
     },
     {
       "path": "src/routes/preview.accelerator.tsx",
