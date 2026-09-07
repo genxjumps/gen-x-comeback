@@ -1,8 +1,5 @@
 import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
-import {
-  LEAD_INTAKE_STORAGE_KEY,
-  parseLeadIntakeDraft,
-} from "@/lib/lead-intake-draft";
+import { LEAD_INTAKE_STORAGE_KEY, parseLeadIntakeDraft } from "@/lib/lead-intake-draft";
 
 const ASSESSMENT_START_PATH = "/assessment/start";
 const FALLBACK_SIGNUP_PATH = "/start/7-day";
@@ -29,9 +26,7 @@ function htmlResponse(body: string, status: number, nonce?: string): Response {
     headers: {
       ...NO_STORE_HEADERS,
       "content-type": "text/html; charset=utf-8",
-      "content-security-policy":
-        `default-src 'none'; ${scriptPolicy}; style-src 'unsafe-inline'; ` +
-        "base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      "content-security-policy": `default-src 'none'; ${scriptPolicy}; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`,
     },
   });
 }
