@@ -214,12 +214,16 @@
       "sha256": "0e0a9466e359ab045168063ff58eb9e1e5a1eeb17fde37d9ee50d0fa5f0d3a2a"
     },
     {
+      "path": "src/lib/__tests__/lead-intake-handoff.test.ts",
+      "sha256": "16721f92ee06b42fffd2069ef81755bf14e2193c7a3cbec97ff13040bc9ae87c"
+    },
+    {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
       "sha256": "56e874a721b8e1367a51354d010a82853e8474e861598e9e0455ec170ca75511"
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
-      "sha256": "75c6a172c9b33578629657d2da4a267492327f7a8a6ae1f9368b9a9fa9980602"
+      "sha256": "d4e857e933b095c77584f3d6660e9fac678d1d5d6362a04cfc8609144e772b7e"
     },
     {
       "path": "src/lib/__tests__/release-fingerprint.test.ts",
@@ -747,11 +751,15 @@
     },
     {
       "path": "src/lib/intake.ts",
-      "sha256": "31be830f709bce5c122f04b288780dbd1dc6f4c0e7f42404e08cda41fbe31259"
+      "sha256": "ff227fad3f2c615776dd28826fdd10ad8dc3f1a95b20718de65d5c292400c402"
     },
     {
       "path": "src/lib/lead-intake-draft.ts",
-      "sha256": "869b8ce0b78a80cfc44699248900a41e9fa4726d6b3a152bef1975cee491648c"
+      "sha256": "1e86775b860509853ecacea39fab70c30e421d0a2620ddf807e54103b5b3b7fb"
+    },
+    {
+      "path": "src/lib/lead-intake-handoff.server.ts",
+      "sha256": "36a07666f331fb9a3a856cee454e52c9a128b8307a6972ff0602e6b338e45596"
     },
     {
       "path": "src/lib/lead-plan.ts",
@@ -1035,7 +1043,7 @@
     },
     {
       "path": "src/routes/start.7-day.tsx",
-      "sha256": "332221ad85d43f84a9afd8a979909b0b92c5d15122bf82dfdea3ce07ec7c7ea7"
+      "sha256": "97c72ed83969e6b28741d87f05a3afe836859dca50c0a516775eae24b48fcdb0"
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",

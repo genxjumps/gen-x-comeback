@@ -1,7 +1,7 @@
 /**
- * Explicit pre-launch boundary for new free-plan signups.
+ * Public boundary for new free-plan signups.
  *
- * Existing plan access, recovery, and reassessment remain available while this
- * is false. Reopening intake requires a reviewed source change and release.
+ * The website and the app's first-party signup route now feed the same
+ * consent-gated assessment and plan-persistence flow.
  */
-export const NEW_PLAN_INTAKE_OPEN = false;
+export const NEW_PLAN_INTAKE_OPEN = true;
