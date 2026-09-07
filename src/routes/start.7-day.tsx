@@ -28,6 +28,15 @@ export const Route = createFileRoute("/start/7-day")({
     ],
   }),
   component: SevenDaySignup,
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const { handleLeadIntakeHandoff } =
+          await import("@/lib/lead-intake-handoff.server");
+        return handleLeadIntakeHandoff(request);
+      },
+    },
+  },
 });
 
 function SevenDaySignup() {

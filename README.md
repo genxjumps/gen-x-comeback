@@ -8,9 +8,9 @@ The repository and Lovable project still use the historical working name `Gen X 
 
 The app is **pre-launch and still in development**. There are no real external users or live paid customers using it yet.
 
-New public plan intake is closed in source during pre-launch. Existing participants can still use
-their saved access or request a recovery link. Reopening intake requires a reviewed source change
-and release.
+New public plan intake is open through the first-party website and app signup routes. Name, email,
+and consent are carried into the assessment without placing personal data in the URL. The app still
+creates the durable lead, assigned plan, and MailerLite sync job only when the completed plan is saved.
 
 The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Accelerator is the active
 next development phase. Its product contract, deterministic sequence, private paid-domain data

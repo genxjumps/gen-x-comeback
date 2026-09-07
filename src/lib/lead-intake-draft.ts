@@ -13,7 +13,8 @@ export function validFirstName(value: string): boolean {
 }
 
 export function validEmail(value: string): boolean {
-  return EMAIL_RE.test(value.trim());
+  const trimmed = value.trim();
+  return trimmed.length <= 254 && EMAIL_RE.test(trimmed);
 }
 
 export function parseLeadIntakeDraft(value: unknown): LeadIntakeDraft | null {
