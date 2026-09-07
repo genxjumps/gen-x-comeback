@@ -1043,7 +1043,7 @@
     },
     {
       "path": "src/routes/start.7-day.tsx",
-      "sha256": "611249ba46cda9ef4d7b9208ccbff1f27ca4af0a8f6dc4b6fa47533d68d01b10"
+      "sha256": "97c72ed83969e6b28741d87f05a3afe836859dca50c0a516775eae24b48fcdb0"
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",

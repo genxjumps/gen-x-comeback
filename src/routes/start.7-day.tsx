@@ -31,9 +31,7 @@ export const Route = createFileRoute("/start/7-day")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { handleLeadIntakeHandoff } = await import(
-          "@/lib/lead-intake-handoff.server"
-        );
+        const { handleLeadIntakeHandoff } = await import("@/lib/lead-intake-handoff.server");
         return handleLeadIntakeHandoff(request);
       },
     },
