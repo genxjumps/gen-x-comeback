@@ -16,12 +16,12 @@ const assessment = source("../../routes/assessment.index.tsx");
 const complete = source("../../routes/assessment.complete.tsx");
 const closed = source("../../components/intake-closed.tsx");
 
-describe("pre-launch intake gate", () => {
-  it("defaults new-plan intake to closed", () => {
-    expect(NEW_PLAN_INTAKE_OPEN).toBe(false);
+describe("new-plan intake gate", () => {
+  it("opens new-plan intake after the reviewed release checkpoint", () => {
+    expect(NEW_PLAN_INTAKE_OPEN).toBe(true);
   });
 
-  it("fails closed on the server before the lead-plan transaction", () => {
+  it("retains the fail-closed server rollback guard before the lead-plan transaction", () => {
     const saveStart = leadFunctions.indexOf("export const saveLeadPlan");
     const saveEnd = leadFunctions.indexOf("export const regeneratePlanWithToken", saveStart);
     const saveHandler = leadFunctions.slice(saveStart, saveEnd);
@@ -32,7 +32,7 @@ describe("pre-launch intake gate", () => {
     );
   });
 
-  it("blocks every public entry surface without blocking existing-plan actions", () => {
+  it("keeps every public entry surface governed without blocking existing-plan actions", () => {
     expect(home).toContain("!NEW_PLAN_INTAKE_OPEN && !hasPlan");
     expect(signup).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
     expect(start).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
