@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { AuthSessionBootstrap } from "@/components/auth-session-bootstrap";
+import { PwaInstallCapture } from "@/components/pwa-install";
 import { Button } from "@/components/ui/button";
 import { PlatformAccessBoundary } from "@/components/platform-access-boundary";
 import { PlatformShell } from "@/components/platform-shell";
@@ -82,6 +83,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#faf8f3" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "Gen X Jumps" },
       { title: "Free Personalized 7-Day Fitness Plan for Gen X" },
       {
         name: "description",
@@ -96,7 +100,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
       { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
@@ -114,6 +119,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <PwaInstallCapture />
         {children}
         <Scripts />
       </body>
@@ -125,6 +131,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const inAssessment = pathname === "/assessment" || pathname.startsWith("/assessment/");
+  const inOnboarding = pathname === "/welcome" || pathname === "/plan-ready";
   const inPlan = pathname === "/your-plan" || pathname.startsWith("/your-plan/");
   const inJumpRopes = pathname === "/jump-ropes";
   const inPlatform =
@@ -169,7 +176,7 @@ function RootComponent() {
                   Jump Ropes
                 </Link>
               </>
-            ) : inAssessment ? (
+            ) : inAssessment || inOnboarding ? (
               <span className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]">
                 Gen X Jumps
               </span>

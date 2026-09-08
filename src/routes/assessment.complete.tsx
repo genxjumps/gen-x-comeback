@@ -2,19 +2,21 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { IntakeClosed } from "@/components/intake-closed";
 import { Separator } from "@/components/ui/separator";
 import { buildPlan, isCompleteDraft, readAnswers, type Answers } from "@/lib/plan";
-import { ACCESS_TOKEN_STORAGE_KEY, CONSENT_COPY, RAW_TOKEN_RE } from "@/lib/lead-plan";
-import { regeneratePlanWithToken, saveLeadPlan } from "@/lib/lead.functions";
-import { getSubmissionId, mintCredential } from "@/lib/plan-submission";
+import { ACCESS_TOKEN_STORAGE_KEY, RAW_TOKEN_RE } from "@/lib/lead-plan";
+import {
+  regeneratePlanWithToken,
+  saveLeadPlan,
+  saveLeadPlanFromHandoff,
+} from "@/lib/lead.functions";
+import { getSubmissionAttempt } from "@/lib/plan-submission";
 import { readStoredToken } from "@/lib/access-token";
 import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
 import { clearLeadIntakeDraft, readLeadIntakeDraft } from "@/lib/lead-intake-draft";
 import type { LeadIntakeDraft } from "@/lib/lead-intake-draft";
+import { getLeadIntakeWelcome } from "@/lib/lead-intake.functions";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
@@ -35,8 +37,6 @@ export const Route = createFileRoute("/assessment/complete")({
   }),
   component: ResultsPage,
 });
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Reads a one-time `?access=` recovery token and strips it from the visible URL. */
 function takeRecoveryTokenFromUrl(): string | null {
@@ -59,19 +59,19 @@ function takeRecoveryTokenFromUrl(): string | null {
 function ResultsPage() {
   const navigate = useNavigate();
   const save = useServerFn(saveLeadPlan);
+  const saveFromHandoff = useServerFn(saveLeadPlanFromHandoff);
   const regenerate = useServerFn(regeneratePlanWithToken);
+  const loadHandoff = useServerFn(getLeadIntakeWelcome);
 
   const [answers, setAnswers] = useState<Answers | null>(null);
   const [intakeDraft, setIntakeDraft] = useState<LeadIntakeDraft | null>(null);
-  const [firstName, setFirstName] = useState("");
-  const [email, setEmail] = useState("");
-  const [consent, setConsent] = useState(false);
-  const [showErrors, setShowErrors] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
   const [recognized, setRecognized] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [handoffStatus, setHandoffStatus] = useState<"checking" | "available" | "missing">(
+    "checking",
+  );
   const frontEnrollmentAttempted = useRef(false);
 
   useEffect(() => {
@@ -85,9 +85,6 @@ function ResultsPage() {
     const draft = readLeadIntakeDraft();
     if (draft) {
       setIntakeDraft(draft);
-      setFirstName(draft.firstName);
-      setEmail(draft.email);
-      setConsent(draft.consentGranted);
     }
 
     const recoveryToken = takeRecoveryTokenFromUrl();
@@ -95,11 +92,20 @@ function ResultsPage() {
 
     void (async () => {
       try {
-        // A reassessment rotates same-browser access, so mint the next credential.
-        const next = await mintCredential();
+        const handoff = await loadHandoff({ data: {} }).catch(() => null);
+        if (cancelled) return;
+        const hasHandoff = handoff?.ok === true;
+        setHandoffStatus(hasHandoff ? "available" : "missing");
+
+        // A fresh website signup is authoritative. Do not accidentally rebuild
+        // an older plan that happens to be recognized in this browser.
+        if (hasHandoff) return;
+
+        // Exact retries retain the same binding; changed answers mint a fresh one.
+        const next = await getSubmissionAttempt(a);
         const result = await regenerate({
           data: {
-            submissionId: getSubmissionId(a),
+            submissionId: next.submissionId,
             sessionTokenHash: next.hash,
             token,
             assessment: a,
@@ -133,34 +139,44 @@ function ResultsPage() {
     return () => {
       cancelled = true;
     };
-  }, [navigate, regenerate]);
+  }, [loadHandoff, navigate, regenerate]);
 
   useEffect(() => {
     if (
       !answers ||
-      !intakeDraft ||
       checkingAccess ||
+      handoffStatus === "checking" ||
       unlocked ||
       frontEnrollmentAttempted.current
     ) {
       return;
     }
+    if (!intakeDraft && handoffStatus !== "available") return;
     frontEnrollmentAttempted.current = true;
-    setSaving(true);
     setError(null);
     void (async () => {
       try {
-        const access = await mintCredential();
-        await save({
-          data: {
-            submissionId: getSubmissionId(answers),
-            sessionTokenHash: access.hash,
-            firstName: intakeDraft.firstName,
-            email: intakeDraft.email,
-            consentGranted: true,
-            assessment: answers,
-          },
-        });
+        const access = await getSubmissionAttempt(answers);
+        if (handoffStatus === "available") {
+          await saveFromHandoff({
+            data: {
+              submissionId: access.submissionId,
+              sessionTokenHash: access.hash,
+              assessment: answers,
+            },
+          });
+        } else if (intakeDraft) {
+          await save({
+            data: {
+              submissionId: access.submissionId,
+              sessionTokenHash: access.hash,
+              firstName: intakeDraft.firstName,
+              email: intakeDraft.email,
+              consentGranted: true,
+              assessment: answers,
+            },
+          });
+        }
         try {
           window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, access.raw);
         } catch {
@@ -168,15 +184,22 @@ function ResultsPage() {
         }
         clearLeadIntakeDraft();
         setUnlocked(true);
-        navigate({ to: "/your-plan", replace: true });
+        navigate({ to: "/plan-ready", replace: true });
       } catch {
-        setIntakeDraft(null);
+        if (handoffStatus !== "available") setIntakeDraft(null);
         setError("We couldn\u2019t save your plan. Your answers are still here. Try again.");
-      } finally {
-        setSaving(false);
       }
     })();
-  }, [answers, checkingAccess, intakeDraft, navigate, save, unlocked]);
+  }, [
+    answers,
+    checkingAccess,
+    handoffStatus,
+    intakeDraft,
+    navigate,
+    save,
+    saveFromHandoff,
+    unlocked,
+  ]);
 
   const plan = useMemo(() => (answers ? buildPlan(answers) : null), [answers]);
 
@@ -184,9 +207,6 @@ function ResultsPage() {
 
   const dayOne = plan.days[0];
   const rest = plan.days.slice(1);
-  const nameOk = firstName.trim().length > 0;
-  const emailOk = EMAIL_RE.test(email.trim());
-
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <h1 className="gxj-display-title text-2xl leading-tight tracking-tight sm:text-3xl">
@@ -306,148 +326,40 @@ function ResultsPage() {
             follow the plan in order.
           </p>
         </section>
-      ) : checkingAccess || intakeDraft ? (
+      ) : checkingAccess ||
+        handoffStatus === "checking" ||
+        handoffStatus === "available" ||
+        intakeDraft ? (
         <section className="rounded-lg border border-border bg-card p-4" aria-live="polite">
           <h2 className="text-lg font-semibold tracking-tight">Opening Your 7-Day Plan</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Your answers are complete. We&rsquo;re saving your plan now.
+            {error
+              ? "Your answers are still here. Try saving your plan again."
+              : "Your answers are complete. We’re saving your plan now."}
           </p>
+          {error ? (
+            <Button
+              type="button"
+              className="mt-4 w-full sm:w-auto"
+              onClick={() => window.location.reload()}
+            >
+              Try Saving My Plan Again
+            </Button>
+          ) : null}
         </section>
       ) : !NEW_PLAN_INTAKE_OPEN ? (
         <IntakeClosed />
       ) : (
-        <section>
-          <h2 className="text-lg font-semibold tracking-tight">
-            Unlock Your Full 7-Day Workout Plan
-          </h2>
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="text-lg font-semibold tracking-tight">Your Answers Are Still Saved</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            Enter your first name and email to unlock Days 2 through 7.
+            We couldn&rsquo;t find the secure signup that brought you here. Return to the short
+            website form and submit it again. You won&rsquo;t need to repeat these assessment
+            answers.
           </p>
-
-          <div className="mt-4 rounded-lg border border-border bg-card p-4">
-            <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-              You&rsquo;ll Unlock
-            </h3>
-            <ul className="mt-2 grid gap-1.5 text-sm text-muted-foreground">
-              <li>The remaining guided video workouts</li>
-              <li>Your complete workout and recovery schedule</li>
-              <li>Clear guidance for scaling pace, reps, rest, range of motion, and impact</li>
-            </ul>
-          </div>
-
-          <form
-            noValidate
-            className="mt-4 grid gap-3 rounded-lg border border-border bg-card p-4"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setShowErrors(true);
-              if (!nameOk || !emailOk || !consent) {
-                const selector = !nameOk ? "#first-name" : !emailOk ? "#email" : "#consent";
-                window.requestAnimationFrame(() => {
-                  document.querySelector<HTMLElement>(selector)?.focus();
-                });
-                return;
-              }
-              if (saving) return;
-              setSaving(true);
-              setError(null);
-              try {
-                const access = await mintCredential();
-                await save({
-                  data: {
-                    submissionId: getSubmissionId(answers),
-                    sessionTokenHash: access.hash,
-
-                    firstName: firstName.trim(),
-                    email: email.trim(),
-                    consentGranted: true as const,
-                    assessment: answers,
-                  },
-                });
-                try {
-                  window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, access.raw);
-                } catch {
-                  /* ignore storage errors */
-                }
-                clearLeadIntakeDraft();
-                setUnlocked(true);
-                navigate({ to: "/your-plan" });
-              } catch {
-                setError(
-                  "We couldn\u2019t save your plan. Your answers are still here. Try again.",
-                );
-              } finally {
-                setSaving(false);
-              }
-            }}
-          >
-            <div className="grid gap-1.5">
-              <Label htmlFor="first-name">First name</Label>
-              <Input
-                id="first-name"
-                name="firstName"
-                autoComplete="given-name"
-                value={firstName}
-                maxLength={60}
-                onChange={(e) => setFirstName(e.target.value)}
-                aria-invalid={showErrors && !nameOk ? true : undefined}
-                aria-describedby="first-name-error"
-              />
-              <div id="first-name-error" aria-live="polite" role="status">
-                {showErrors && !nameOk ? (
-                  <p className="text-xs text-muted-foreground">Enter your first name.</p>
-                ) : null}
-              </div>
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="email">Email address</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                aria-invalid={showErrors && !emailOk ? true : undefined}
-                aria-describedby="email-error"
-              />
-              <div id="email-error" aria-live="polite" role="status">
-                {showErrors && !emailOk ? (
-                  <p className="text-xs text-muted-foreground">Enter a valid email address.</p>
-                ) : null}
-              </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <Checkbox
-                id="consent"
-                checked={consent}
-                onCheckedChange={(v) => setConsent(v === true)}
-                className="mt-0.5"
-                aria-describedby="consent-error"
-              />
-              <Label htmlFor="consent" className="text-xs font-normal leading-relaxed">
-                {CONSENT_COPY}
-              </Label>
-            </div>
-            <div id="consent-error" aria-live="polite" role="status">
-              {showErrors && !consent ? (
-                <p className="text-xs text-muted-foreground">
-                  You need to agree before continuing.
-                </p>
-              ) : null}
-            </div>
-            <Button type="submit" className="mt-1 w-full" disabled={saving}>
-              {saving ? "Saving your plan..." : "Unlock My Full 7-Day Workout Plan"}
-            </Button>
-            {error ? (
-              <p role="alert" className="text-xs font-medium leading-relaxed">
-                {error}
-              </p>
-            ) : null}
-            <p className="text-xs text-muted-foreground">
-              Free. Get immediate access after submitting.
-            </p>
-          </form>
+          <Button asChild className="mt-4 w-full sm:w-auto">
+            <a href="https://genxjumps.com/start-here/#seven-day-optin">Return to My Signup</a>
+          </Button>
         </section>
       )}
     </div>

@@ -43,6 +43,52 @@ export function getSubmissionId(answers: unknown): string {
 
 export type BrowserCredential = { raw: string; hash: string };
 
+export type SubmissionAttempt = BrowserCredential & { submissionId: string };
+
+/**
+ * Returns one stable submission id and access credential for these exact
+ * answers. A response-lost retry therefore replays the same database binding
+ * instead of generating a conflicting access hash.
+ */
+export async function getSubmissionAttempt(answers: unknown): Promise<SubmissionAttempt> {
+  const fingerprint = canonical(answers);
+  try {
+    const stored = window.localStorage.getItem(SUBMISSION_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as {
+        fingerprint?: unknown;
+        id?: unknown;
+        rawToken?: unknown;
+      };
+      if (
+        parsed.fingerprint === fingerprint &&
+        typeof parsed.id === "string" &&
+        typeof parsed.rawToken === "string"
+      ) {
+        return {
+          submissionId: parsed.id,
+          raw: parsed.rawToken,
+          hash: await hashAccessToken(parsed.rawToken),
+        };
+      }
+    }
+  } catch {
+    // Fall through to a fresh, internally consistent attempt.
+  }
+
+  const submissionId = crypto.randomUUID();
+  const raw = generateAccessToken();
+  try {
+    window.localStorage.setItem(
+      SUBMISSION_STORAGE_KEY,
+      JSON.stringify({ fingerprint, id: submissionId, rawToken: raw }),
+    );
+  } catch {
+    // The current in-memory attempt still works; only a full reload loses replay protection.
+  }
+  return { submissionId, raw, hash: await hashAccessToken(raw) };
+}
+
 /** Mints a raw credential locally and returns it with its SHA-256 hash. */
 export async function mintCredential(): Promise<BrowserCredential> {
   const raw = generateAccessToken();
