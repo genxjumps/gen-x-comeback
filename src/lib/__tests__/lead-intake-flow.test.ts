@@ -97,17 +97,82 @@ describe("website lead intake handoff", () => {
     expect(cookie).toContain("SameSite=Lax");
   });
 
-  it("allows only exact normalized emails configured for controlled testing", () => {
-    const previous = process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
+  it("allows exact normalized emails configured for controlled testing", () => {
+    const previousEmails = process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
+    const previousOrigin = process.env["WEBSITE_ORIGIN"];
     process.env["NEW_PLAN_INTAKE_TEST_EMAILS"] = "allowed@example.com, second-test@example.com";
+    process.env["WEBSITE_ORIGIN"] = "https://controlled-preview.example";
+    const request = new Request("https://app.genxjumps.com/intake/7-day", {
+      headers: { origin: "https://genxjumps.com" },
+    });
 
     try {
-      expect(controlledTestLeadIntakeAllowed(" Allowed@example.com ")).toBe(true);
-      expect(controlledTestLeadIntakeAllowed("second-test@example.com")).toBe(true);
-      expect(controlledTestLeadIntakeAllowed("somebody-else@example.com")).toBe(false);
+      expect(controlledTestLeadIntakeAllowed(" Allowed@example.com ", request)).toBe(true);
+      expect(controlledTestLeadIntakeAllowed("second-test@example.com", request)).toBe(true);
+      expect(controlledTestLeadIntakeAllowed("somebody-else@example.com", request)).toBe(false);
     } finally {
-      if (previous === undefined) delete process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
-      else process.env["NEW_PLAN_INTAKE_TEST_EMAILS"] = previous;
+      if (previousEmails === undefined) delete process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
+      else process.env["NEW_PLAN_INTAKE_TEST_EMAILS"] = previousEmails;
+      if (previousOrigin === undefined) delete process.env["WEBSITE_ORIGIN"];
+      else process.env["WEBSITE_ORIGIN"] = previousOrigin;
+    }
+  });
+
+  it("allows configured Gmail plus aliases only from the controlled preview", () => {
+    const previousEmails = process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
+    const previousOrigin = process.env["WEBSITE_ORIGIN"];
+    process.env["NEW_PLAN_INTAKE_TEST_EMAILS"] =
+      "controlled.tester@gmail.com, exact+only@gmail.com";
+    process.env["WEBSITE_ORIGIN"] = "https://controlled-preview.example/path";
+
+    const from = (origin: string) =>
+      new Request("https://app.genxjumps.com/intake/7-day", { headers: { origin } });
+
+    try {
+      expect(
+        controlledTestLeadIntakeAllowed(
+          "controlled.tester+fresh-1@gmail.com",
+          from("https://controlled-preview.example"),
+        ),
+      ).toBe(true);
+      expect(
+        controlledTestLeadIntakeAllowed(
+          "controlled.tester+fresh-1@gmail.com",
+          from("https://genxjumps.com"),
+        ),
+      ).toBe(false);
+      expect(
+        controlledTestLeadIntakeAllowed(
+          "controlled.tester+fresh-1@gmail.com",
+          from("https://app.genxjumps.com"),
+        ),
+      ).toBe(false);
+      expect(
+        controlledTestLeadIntakeAllowed(
+          "somebody-else+fresh-1@gmail.com",
+          from("https://controlled-preview.example"),
+        ),
+      ).toBe(false);
+      expect(
+        controlledTestLeadIntakeAllowed(
+          "controlled.tester+fresh-1@example.com",
+          from("https://controlled-preview.example"),
+        ),
+      ).toBe(false);
+      expect(
+        controlledTestLeadIntakeAllowed(
+          "exact+only+fresh@gmail.com",
+          from("https://controlled-preview.example"),
+        ),
+      ).toBe(false);
+      expect(
+        controlledTestLeadIntakeAllowed("exact+only@gmail.com", from("https://genxjumps.com")),
+      ).toBe(true);
+    } finally {
+      if (previousEmails === undefined) delete process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
+      else process.env["NEW_PLAN_INTAKE_TEST_EMAILS"] = previousEmails;
+      if (previousOrigin === undefined) delete process.env["WEBSITE_ORIGIN"];
+      else process.env["WEBSITE_ORIGIN"] = previousOrigin;
     }
   });
 

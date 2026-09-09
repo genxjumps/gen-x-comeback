@@ -235,7 +235,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
-      "sha256": "957f5c752c6dfa91ed090f16b07aebea4b4e20553500c0ce5dee653598e60828"
+      "sha256": "4780ea9f793757a9e585b982bcf1a9da075b474d7330d3d7643c2ce5be25ced8"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
@@ -243,7 +243,7 @@
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
-      "sha256": "893c0044e47f06603ff01478445df30b2424be4d1dd25929fa9542528572c888"
+      "sha256": "ea8984f8adb0a85fc977b1884e4c968de904f1fe974bb76f97fc057068f0f57a"
     },
     {
       "path": "src/lib/__tests__/pwa-install-contract.test.ts",
@@ -783,7 +783,7 @@
     },
     {
       "path": "src/lib/lead-intake-handoff.server.ts",
-      "sha256": "feeb20932b9db36adc98b4e1725f8527cbbfc641047276e6a065088b5be120da"
+      "sha256": "6278ba995529e752fb35a256ca65e7b5dd1322c7bde73f194f95a705d750c29e"
     },
     {
       "path": "src/lib/lead-intake-handoff.ts",
@@ -1027,7 +1027,7 @@
     },
     {
       "path": "src/routes/intake.7-day.ts",
-      "sha256": "7a1191b342e0a526e7637f883d29a1b19e376861240225cde533b86af71bb778"
+      "sha256": "f13b1e648c0c038547c4b766669ac0a4b14b6a28d77205abfc413f386affbdf3"
     },
     {
       "path": "src/routes/jump-ropes.tsx",

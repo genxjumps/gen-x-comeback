@@ -32,7 +32,7 @@ describe("pre-launch intake gate", () => {
       saveHandler.indexOf("commitNewPlan(data"),
     );
 
-    expect(handoffRoute).toContain("controlledTestLeadIntakeAllowed(parsed.data.email)");
+    expect(handoffRoute).toContain("controlledTestLeadIntakeAllowed(parsed.data.email, request)");
     expect(handoffRoute.indexOf("if (!NEW_PLAN_INTAKE_OPEN)")).toBeLessThan(
       handoffRoute.indexOf("createWebsiteLeadIntake(parsed.data"),
     );

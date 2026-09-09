@@ -2,6 +2,7 @@ import { generateAccessToken, hashAccessToken } from "@/lib/lead-plan";
 import {
   LEAD_INTAKE_COOKIE,
   LEAD_INTAKE_TTL_SECONDS,
+  WEBSITE_INTAKE_ORIGIN,
   websiteLeadIntakeSchema,
 } from "@/lib/lead-intake-handoff";
 import { readCookie } from "@/lib/plan-access.server";
@@ -46,16 +47,62 @@ type IntakeStore = { from(table: "lead_intakes"): IntakeQuery };
 type RpcResult = { data: unknown; error: StoreError };
 type IntakeRpc = (name: string, args: Record<string, unknown>) => Promise<RpcResult>;
 
-export function controlledTestLeadIntakeAllowed(email: string): boolean {
+function normalizedOrigin(value: string | null): string | null {
+  if (!value) return null;
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
+function isConfiguredGmailAlias(configuredEmail: string, candidateEmail: string): boolean {
+  const configuredAt = configuredEmail.lastIndexOf("@");
+  const candidateAt = candidateEmail.lastIndexOf("@");
+  if (configuredAt <= 0 || candidateAt <= 0) return false;
+
+  const configuredLocal = configuredEmail.slice(0, configuredAt);
+  const configuredDomain = configuredEmail.slice(configuredAt + 1);
+  const candidateLocal = candidateEmail.slice(0, candidateAt);
+  const candidateDomain = candidateEmail.slice(candidateAt + 1);
+
+  if (configuredDomain !== "gmail.com" || candidateDomain !== configuredDomain) return false;
+  if (configuredLocal.includes("+")) return false;
+
+  const aliasPrefix = `${configuredLocal}+`;
+  if (!candidateLocal.startsWith(aliasPrefix)) return false;
+  return /^[a-z0-9][a-z0-9._-]{0,62}$/.test(candidateLocal.slice(aliasPrefix.length));
+}
+
+export function controlledTestLeadIntakeAllowed(email: string, request: Request): boolean {
   const configured = process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
   if (!configured) return false;
 
   const normalized = email.trim().toLowerCase();
-  return configured
+  const configuredEmails = configured
     .split(",")
     .map((candidate) => candidate.trim().toLowerCase())
-    .filter(Boolean)
-    .includes(normalized);
+    .filter(Boolean);
+  if (configuredEmails.includes(normalized)) return true;
+
+  // Gmail plus aliases are a controlled-preview test convenience only. Exact
+  // configured identities remain valid from any already-trusted intake origin,
+  // but an alias must come from the separately configured external preview.
+  const requestOrigin = normalizedOrigin(request.headers.get("origin"));
+  const requestUrlOrigin = normalizedOrigin(request.url);
+  const previewOrigin = normalizedOrigin(process.env["WEBSITE_ORIGIN"] ?? null);
+  if (
+    !requestOrigin ||
+    !requestUrlOrigin ||
+    !previewOrigin ||
+    previewOrigin === WEBSITE_INTAKE_ORIGIN ||
+    previewOrigin === requestUrlOrigin ||
+    requestOrigin !== previewOrigin
+  ) {
+    return false;
+  }
+
+  return configuredEmails.some((candidate) => isConfiguredGmailAlias(candidate, normalized));
 }
 
 function identity(row: IntakeRow): LeadIntakeIdentity {
