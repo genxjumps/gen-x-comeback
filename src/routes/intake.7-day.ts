@@ -77,7 +77,7 @@ export const Route = createFileRoute("/intake/7-day")({
         if (!NEW_PLAN_INTAKE_OPEN) {
           const { controlledTestLeadIntakeAllowed } =
             await import("@/lib/lead-intake-handoff.server");
-          if (!controlledTestLeadIntakeAllowed(parsed.data.email)) {
+          if (!controlledTestLeadIntakeAllowed(parsed.data.email, request)) {
             return new Response(null, { status: 303, headers: { location: "/start/7-day" } });
           }
         }
