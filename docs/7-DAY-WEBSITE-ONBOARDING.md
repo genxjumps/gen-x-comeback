@@ -17,6 +17,7 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 ## Security and privacy
 
 - The public intake route fails closed with `NEW_PLAN_INTAKE_OPEN`.
+- While public intake is closed, a server-only `NEW_PLAN_INTAKE_TEST_EMAILS` allowlist can admit exact normalized test identities through the complete handoff. Keep addresses in the backend secret store, never in source control.
 - Only the production website, configured website origin, same-origin app requests, and local development origins are accepted.
 - The raw handoff token is kept in an HTTP-only, SameSite=Lax cookie and only its SHA-256 hash is stored.
 - Intake rows expire after 24 hours and can be claimed once for a specific assessment submission.
@@ -38,6 +39,7 @@ The approved consent text is stored with the opt-in. A durable MailerLite sync j
 ## Release controls
 
 - Keep `NEW_PLAN_INTAKE_OPEN` false until the migration, app deployment, website handoff, and end-to-end test are all ready.
+- During controlled testing, configure `NEW_PLAN_INTAKE_TEST_EMAILS` with the approved test identity. All other new-plan identities remain blocked.
 - Apply `20260907210000_website_lead_intake_handoff.sql` only through the repository migration workflow after a fresh read-only production comparison and explicit approval.
 - Test on iPhone Safari from hero submission through Home Screen launch before opening intake publicly.
 

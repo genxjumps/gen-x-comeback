@@ -47,9 +47,6 @@ export const Route = createFileRoute("/intake/7-day")({
     handlers: {
       GET: () => new Response(null, { status: 303, headers: { location: "/start/7-day" } }),
       POST: async ({ request }) => {
-        if (!NEW_PLAN_INTAKE_OPEN) {
-          return new Response(null, { status: 303, headers: { location: "/start/7-day" } });
-        }
         if (!trustedLeadIntakeOrigin(request)) return errorPage(403);
 
         const { callerBucketKey, consumeRateLimit } = await import("@/lib/email/rate-limit.server");
@@ -76,6 +73,14 @@ export const Route = createFileRoute("/intake/7-day")({
           utmContent: field(form, "utmContent"),
         });
         if (!parsed.success) return errorPage(422);
+
+        if (!NEW_PLAN_INTAKE_OPEN) {
+          const { controlledTestLeadIntakeAllowed } =
+            await import("@/lib/lead-intake-handoff.server");
+          if (!controlledTestLeadIntakeAllowed(parsed.data.email)) {
+            return new Response(null, { status: 303, headers: { location: "/start/7-day" } });
+          }
+        }
 
         try {
           const { createWebsiteLeadIntake } = await import("@/lib/lead-intake-handoff.server");

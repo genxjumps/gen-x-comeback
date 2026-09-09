@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IntakeClosed } from "@/components/intake-closed";
-import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
+import { useNewPlanIntakeAccess } from "@/lib/use-new-plan-intake-access";
 import {
   Select,
   SelectContent,
@@ -156,6 +156,7 @@ function SingleSelect({
 
 function Assessment() {
   const navigate = useNavigate();
+  const intakeAccess = useNewPlanIntakeAccess();
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
   const [loaded, setLoaded] = useState(false);
@@ -263,7 +264,17 @@ function Assessment() {
     }
   };
 
-  if (!NEW_PLAN_INTAKE_OPEN) {
+  if (intakeAccess === "checking") {
+    return (
+      <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8">
+        <p className="text-sm text-muted-foreground" role="status">
+          Opening your setup...
+        </p>
+      </div>
+    );
+  }
+
+  if (intakeAccess === "closed") {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
         <IntakeClosed />

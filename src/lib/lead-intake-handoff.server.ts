@@ -46,6 +46,18 @@ type IntakeStore = { from(table: "lead_intakes"): IntakeQuery };
 type RpcResult = { data: unknown; error: StoreError };
 type IntakeRpc = (name: string, args: Record<string, unknown>) => Promise<RpcResult>;
 
+export function controlledTestLeadIntakeAllowed(email: string): boolean {
+  const configured = process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
+  if (!configured) return false;
+
+  const normalized = email.trim().toLowerCase();
+  return configured
+    .split(",")
+    .map((candidate) => candidate.trim().toLowerCase())
+    .filter(Boolean)
+    .includes(normalized);
+}
+
 function identity(row: IntakeRow): LeadIntakeIdentity {
   return {
     intakeId: row.intake_id,

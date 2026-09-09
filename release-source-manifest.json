@@ -7,7 +7,7 @@
     },
     {
       "path": ".env.example",
-      "sha256": "b7ed7aa7b30d05483209787441d0c4e3fd302d9a3b498f7ccc51b4f40b5cc054"
+      "sha256": "09cdec0674f1b4689d5b2ddd2b52e9ada642d108467b7385fbb3aca67f1b5815"
     },
     {
       "path": "bun.lock",
@@ -235,7 +235,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
-      "sha256": "d7d15e4e0db6188b4f25393738ee4bb3ab14dc207fb3de4949bbadff4bbc2684"
+      "sha256": "957f5c752c6dfa91ed090f16b07aebea4b4e20553500c0ce5dee653598e60828"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
@@ -243,7 +243,7 @@
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
-      "sha256": "d33c2d844b77e13a4db200c5a61998319c097ed8b218bdf81b31b3483f8ecc78"
+      "sha256": "893c0044e47f06603ff01478445df30b2424be4d1dd25929fa9542528572c888"
     },
     {
       "path": "src/lib/__tests__/pwa-install-contract.test.ts",
@@ -783,7 +783,7 @@
     },
     {
       "path": "src/lib/lead-intake-handoff.server.ts",
-      "sha256": "e9e2423afb98d3e6e901024d422fc1caea0e9a145539f874cb2f5f2f4be45913"
+      "sha256": "feeb20932b9db36adc98b4e1725f8527cbbfc641047276e6a065088b5be120da"
     },
     {
       "path": "src/lib/lead-intake-handoff.ts",
@@ -803,7 +803,7 @@
     },
     {
       "path": "src/lib/lead.functions.ts",
-      "sha256": "e92a065905185196d205c01a1705a8f5a1f1d29c49c778e7499ec44063b8060a"
+      "sha256": "c0acd1a0ca56c92e51440584113c7da0be9aa59a0589db3324d24d48ac852840"
     },
     {
       "path": "src/lib/lovable-error-reporting.ts",
@@ -934,6 +934,10 @@
       "sha256": "81fdd6219dba57acaa1a442bf7c50176c22840e85631b7daf8b8efeca203a6e6"
     },
     {
+      "path": "src/lib/use-new-plan-intake-access.ts",
+      "sha256": "393b4c3c9e6201d6e4b01764437f376209fccacb5663298acfbfedb5d3e4c6c3"
+    },
+    {
       "path": "src/lib/utils.ts",
       "sha256": "d1f1e0d62cb8d8d1e04c26e14de842d8a151f75812d81b046c65b5d1fe8e4b27"
     },
@@ -999,11 +1003,11 @@
     },
     {
       "path": "src/routes/assessment.index.tsx",
-      "sha256": "d980480341e8c04ceaa56356a6a1fb226f48481539c0a4eeff7fb74e259df4ff"
+      "sha256": "db920c06362dcc32de67f92386b31d63c19e464da47d2caa38267ee55bac2ea4"
     },
     {
       "path": "src/routes/assessment.start.tsx",
-      "sha256": "66a3a9e69b20e5ddf7b4720a7a0c1b25d0a9cec11a81250261a90f58797ddf60"
+      "sha256": "375a39a257c6c1b86d6d822701786338e1ed830ee8b199f88924e4123a17e096"
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
@@ -1023,7 +1027,7 @@
     },
     {
       "path": "src/routes/intake.7-day.ts",
-      "sha256": "01c7a6622ae9e0bb71e46f94b9133b86463b569159c6f5062d3839af6537f030"
+      "sha256": "7a1191b342e0a526e7637f883d29a1b19e376861240225cde533b86af71bb778"
     },
     {
       "path": "src/routes/jump-ropes.tsx",
@@ -1091,7 +1095,7 @@
     },
     {
       "path": "src/routes/welcome.tsx",
-      "sha256": "e48ad395f1e31ecd6645d7f92fe6b2cb4453bef789ccb60194b9c64e691bb853"
+      "sha256": "3d78805f3f8f609dc705a2b96ae91f9ba5c00ae8436aac82e721169a93a202af"
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",

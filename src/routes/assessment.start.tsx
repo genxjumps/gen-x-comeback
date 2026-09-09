@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { IntakeClosed } from "@/components/intake-closed";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
+import { useNewPlanIntakeAccess } from "@/lib/use-new-plan-intake-access";
 
 export const Route = createFileRoute("/assessment/start")({
   head: () => ({
@@ -37,6 +37,7 @@ const ELIGIBILITY_STORAGE_KEY = "gxj_eligibility_answer_v1";
 
 function BeforeYouStart() {
   const navigate = useNavigate();
+  const intakeAccess = useNewPlanIntakeAccess();
   const [answer, setAnswer] = useState("");
   const [ineligible, setIneligible] = useState(false);
 
@@ -67,7 +68,17 @@ function BeforeYouStart() {
     navigate({ to: "/assessment" });
   };
 
-  if (!NEW_PLAN_INTAKE_OPEN) {
+  if (intakeAccess === "checking") {
+    return (
+      <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8">
+        <p className="text-sm text-muted-foreground" role="status">
+          Opening your setup...
+        </p>
+      </div>
+    );
+  }
+
+  if (intakeAccess === "closed") {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
         <IntakeClosed />

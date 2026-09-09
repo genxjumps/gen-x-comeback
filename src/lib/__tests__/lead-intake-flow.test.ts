@@ -9,6 +9,7 @@ import {
   trustedLeadIntakeOrigin,
   websiteLeadIntakeSchema,
 } from "@/lib/lead-intake-handoff";
+import { controlledTestLeadIntakeAllowed } from "@/lib/lead-intake-handoff.server";
 import { CONSENT_COPY } from "@/lib/lead-plan";
 
 function source(relativePath: string): string {
@@ -94,6 +95,20 @@ describe("website lead intake handoff", () => {
     expect(cookie).toContain("Secure");
     expect(cookie).toContain("HttpOnly");
     expect(cookie).toContain("SameSite=Lax");
+  });
+
+  it("allows only exact normalized emails configured for controlled testing", () => {
+    const previous = process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
+    process.env["NEW_PLAN_INTAKE_TEST_EMAILS"] = "allowed@example.com, second-test@example.com";
+
+    try {
+      expect(controlledTestLeadIntakeAllowed(" Allowed@example.com ")).toBe(true);
+      expect(controlledTestLeadIntakeAllowed("second-test@example.com")).toBe(true);
+      expect(controlledTestLeadIntakeAllowed("somebody-else@example.com")).toBe(false);
+    } finally {
+      if (previous === undefined) delete process.env["NEW_PLAN_INTAKE_TEST_EMAILS"];
+      else process.env["NEW_PLAN_INTAKE_TEST_EMAILS"] = previous;
+    }
   });
 
   it("redirects a valid intake to the brief personalized welcome screen", () => {

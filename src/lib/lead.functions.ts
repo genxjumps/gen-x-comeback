@@ -261,8 +261,6 @@ export const saveLeadPlan = createServerFn({ method: "POST" })
 export const saveLeadPlanFromHandoff = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => handoffLeadInputSchema.parse(data))
   .handler(async ({ data }): Promise<SaveLeadPlanResult> => {
-    if (!NEW_PLAN_INTAKE_OPEN) throw new Error("New plan intake is closed");
-
     const { currentCookieHeader } = await import("@/lib/plan-access.server");
     const { claimLeadIntake, completeLeadIntake } =
       await import("@/lib/lead-intake-handoff.server");

@@ -47,20 +47,20 @@ function LeadWelcome() {
     };
   }, [loadWelcome]);
 
-  if (!NEW_PLAN_INTAKE_OPEN) {
-    return (
-      <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-        <IntakeClosed />
-      </div>
-    );
-  }
-
   if (!result) {
     return (
       <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8">
         <p className="text-sm text-muted-foreground" role="status">
           Opening your setup...
         </p>
+      </div>
+    );
+  }
+
+  if (!result.ok && !NEW_PLAN_INTAKE_OPEN) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
+        <IntakeClosed />
       </div>
     );
   }
