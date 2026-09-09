@@ -244,6 +244,13 @@
       "sha256": "e5f4cd05a43e1d32062824cd757686570bf4e88ea3f70be585d0a902c2d14435",
       "statementSha256": "9dd097527dd30f84da9b60a62d8429aee98372ae32199f76c33d5e810b3fb8cb",
       "version": "20260906100000"
+    },
+    {
+      "file": "20260907210000_website_lead_intake_handoff.sql",
+      "name": "website_lead_intake_handoff",
+      "sha256": "d6fe2586a2fc5fe00fe917ad3900bf2cf91b5306f45bec7dcdc9698bc1d22a0b",
+      "statementSha256": "d3381405528439c97dde7b4d3e8da9dc9779a6ef3e53bd4473c8f53dbbf5817b",
+      "version": "20260907210000"
     }
   ],
   "version": 1

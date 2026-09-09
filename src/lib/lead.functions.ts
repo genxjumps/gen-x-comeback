@@ -20,7 +20,9 @@ import {
 import {
   completeDayInputSchema,
   dayBriefInputSchema,
+  handoffLeadInputSchema,
   leadInputSchema,
+  onboardingEventInputSchema,
   regenerateInputSchema,
   tokenOnlyInputSchema,
 } from "@/lib/lead-schemas";
@@ -193,6 +195,52 @@ async function requestFingerprint(parts: Array<string | null>): Promise<string> 
     .digest("hex");
 }
 
+type NewPlanIdentity = {
+  emailNormalized: string;
+  emailOriginal: string;
+  firstName: string;
+  consentCopy: string;
+  consentVersion: string;
+};
+
+async function commitNewPlan(
+  data: { submissionId: string; sessionTokenHash: string; assessment: Answers },
+  identity: NewPlanIdentity,
+): Promise<SaveLeadPlanResult & { leadPlanId: string }> {
+  const { plan, snapshot } = planFromAnswers(data.assessment);
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: rows, error } = await supabaseAdmin.rpc("commit_plan_version", {
+    p_submission_id: data.submissionId,
+    p_session_token_hash: data.sessionTokenHash,
+    p_request_fingerprint: await requestFingerprint([
+      "save",
+      identity.emailNormalized,
+      identity.firstName,
+      JSON.stringify(data.assessment),
+    ]),
+    p_email_normalized: identity.emailNormalized,
+    p_email_original: identity.emailOriginal,
+    p_first_name: identity.firstName,
+    p_consent_copy: identity.consentCopy,
+    p_consent_version: identity.consentVersion,
+    p_assessment: JSON.parse(JSON.stringify(data.assessment)),
+    p_plan: JSON.parse(JSON.stringify(snapshot)),
+  });
+  if (error) throw new Error(error.message);
+
+  const result = rows?.[0];
+  if (!result) throw new Error("Plan commit returned no result");
+  if (result.outcome === "conflict" || result.outcome === "stale_replay") {
+    throw new Error("Submission conflict");
+  }
+  return {
+    leadPlanId: result.lead_plan_id,
+    firstName: result.first_name,
+    plan,
+    replayed: result.replayed,
+  };
+}
+
 export const saveLeadPlan = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => leadInputSchema.parse(data))
   .handler(async ({ data }): Promise<SaveLeadPlanResult> => {
@@ -200,40 +248,55 @@ export const saveLeadPlan = createServerFn({ method: "POST" })
     // use separate authenticated handlers and remain available during pre-launch.
     if (!NEW_PLAN_INTAKE_OPEN) throw new Error("New plan intake is closed");
 
-    const answers = data.assessment as Answers;
-    const { plan, snapshot } = planFromAnswers(answers);
-    const emailNormalized = data.email.toLowerCase();
+    const result = await commitNewPlan(data, {
+      emailNormalized: data.email.toLowerCase(),
+      emailOriginal: data.email,
+      firstName: data.firstName,
+      consentCopy: CONSENT_COPY,
+      consentVersion: CONSENT_VERSION,
+    });
+    return { firstName: result.firstName, plan: result.plan, replayed: result.replayed };
+  });
 
+export const saveLeadPlanFromHandoff = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => handoffLeadInputSchema.parse(data))
+  .handler(async ({ data }): Promise<SaveLeadPlanResult> => {
+    const { currentCookieHeader } = await import("@/lib/plan-access.server");
+    const { claimLeadIntake, completeLeadIntake } =
+      await import("@/lib/lead-intake-handoff.server");
+    const intake = await claimLeadIntake(await currentCookieHeader(), data.submissionId);
+    if (!intake) throw new Error("Lead intake is missing or expired");
+
+    const result = await commitNewPlan(
+      { ...data, assessment: data.assessment as Answers },
+      {
+        emailNormalized: intake.emailNormalized,
+        emailOriginal: intake.emailOriginal,
+        firstName: intake.firstName,
+        consentCopy: intake.consentCopy,
+        consentVersion: intake.consentVersion,
+      },
+    );
+    await completeLeadIntake(intake.intakeId, data.submissionId, result.leadPlanId);
+    return { firstName: result.firstName, plan: result.plan, replayed: result.replayed };
+  });
+
+export const recordOnboardingEvent = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => onboardingEventInputSchema.parse(data))
+  .handler(async ({ data }): Promise<{ ok: boolean }> => {
+    const access = await authorize(data.token);
+    if (!access) return { ok: false };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // One transaction: plan version, same-browser access, canonical event, and
-    // exactly one Plan Ready outbox job. No provider call happens here.
-    const { data: rows, error } = await supabaseAdmin.rpc("commit_plan_version", {
-      p_submission_id: data.submissionId,
-      p_session_token_hash: data.sessionTokenHash,
-      p_request_fingerprint: await requestFingerprint([
-        "save",
-        emailNormalized,
-        data.firstName,
-        JSON.stringify(answers),
-      ]),
-      p_email_normalized: emailNormalized,
-      p_email_original: data.email,
-      p_first_name: data.firstName,
-      p_consent_copy: CONSENT_COPY,
-      p_consent_version: CONSENT_VERSION,
-      p_assessment: JSON.parse(JSON.stringify(answers)),
-      p_plan: JSON.parse(JSON.stringify(snapshot)),
+    const { error } = await supabaseAdmin.from("canonical_events").insert({
+      event_name: data.eventName,
+      event_version: "v1",
+      lead_plan_id: access.leadPlanId,
+      plan_version_id: access.planVersionId,
+      source: `pwa_${data.platform}`,
+      occurred_at: new Date().toISOString(),
     });
     if (error) throw new Error(error.message);
-
-    const result = rows?.[0];
-    if (!result) throw new Error("Plan commit returned no result");
-    // A conflicting or stale replay authorizes nothing and discloses nothing.
-    if (result.outcome === "conflict" || result.outcome === "stale_replay") {
-      throw new Error("Submission conflict");
-    }
-
-    return { firstName: result.first_name, plan, replayed: result.replayed };
+    return { ok: true };
   });
 
 export const regeneratePlanWithToken = createServerFn({ method: "POST" })

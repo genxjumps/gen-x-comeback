@@ -1,8 +1,9 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied } from "@/components/plan-access";
+import { InstallNudge, type InstallEventName } from "@/components/pwa-install";
 import { readStoredToken } from "@/lib/access-token";
 import {
   TOTAL_ASSIGNMENTS,
@@ -10,7 +11,8 @@ import {
   currentAssignmentDay,
   type PlanHubData,
 } from "@/lib/lead-plan";
-import { getPlanHub, startDayOne } from "@/lib/lead.functions";
+import { getPlanHub, recordOnboardingEvent, startDayOne } from "@/lib/lead.functions";
+import type { InstallPlatform } from "@/lib/pwa-install";
 
 export const Route = createFileRoute("/your-plan/")({
   head: () => ({
@@ -56,10 +58,20 @@ function PlanHubPage() {
   const navigate = useNavigate();
   const loadHub = useServerFn(getPlanHub);
   const recordDayOneStart = useServerFn(startDayOne);
+  const saveOnboardingEvent = useServerFn(recordOnboardingEvent);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
   const [hub, setHub] = useState<PlanHubData | null>(null);
   const [startingDayOne, setStartingDayOne] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
+
+  const trackInstall = useCallback(
+    (eventName: InstallEventName, platform: InstallPlatform) => {
+      void saveOnboardingEvent({
+        data: { token: readStoredToken(), eventName, platform },
+      }).catch(() => undefined);
+    },
+    [saveOnboardingEvent],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -137,6 +149,8 @@ function PlanHubPage() {
       >
         <div className="h-full bg-gxj-teal" style={{ width: `${pct}%` }} />
       </div>
+
+      <InstallNudge track={trackInstall} />
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <Link to="/your-plan" hash="current" className="underline-offset-4 hover:underline">

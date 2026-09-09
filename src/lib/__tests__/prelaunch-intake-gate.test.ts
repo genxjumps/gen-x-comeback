@@ -9,6 +9,7 @@ function source(relativePath: string): string {
 }
 
 const leadFunctions = source("../lead.functions.ts");
+const handoffRoute = source("../../routes/intake.7-day.ts");
 const home = source("../../routes/index.tsx");
 const signup = source("../../routes/start.7-day.tsx");
 const start = source("../../routes/assessment.start.tsx");
@@ -28,15 +29,20 @@ describe("pre-launch intake gate", () => {
 
     expect(saveHandler).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
     expect(saveHandler.indexOf("if (!NEW_PLAN_INTAKE_OPEN)")).toBeLessThan(
-      saveHandler.indexOf('rpc("commit_plan_version"'),
+      saveHandler.indexOf("commitNewPlan(data"),
+    );
+
+    expect(handoffRoute).toContain("controlledTestLeadIntakeAllowed(parsed.data.email)");
+    expect(handoffRoute.indexOf("if (!NEW_PLAN_INTAKE_OPEN)")).toBeLessThan(
+      handoffRoute.indexOf("createWebsiteLeadIntake(parsed.data"),
     );
   });
 
   it("blocks every public entry surface without blocking existing-plan actions", () => {
     expect(home).toContain("!NEW_PLAN_INTAKE_OPEN && !hasPlan");
-    expect(signup).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
-    expect(start).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
-    expect(assessment).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
+    expect(signup).toContain("NEW_PLAN_INTAKE_OPEN ? (");
+    expect(start).toContain('if (intakeAccess === "closed")');
+    expect(assessment).toContain('if (intakeAccess === "closed")');
     expect(complete).toContain("!NEW_PLAN_INTAKE_OPEN");
     expect(leadFunctions).not.toContain(
       "export const regeneratePlanWithToken = NEW_PLAN_INTAKE_OPEN",
@@ -45,5 +51,20 @@ describe("pre-launch intake gate", () => {
 
   it("keeps recovery available to existing participants", () => {
     expect(closed).toContain('<Link to="/recover">Recover My Plan</Link>');
+  });
+
+  it("lets a valid controlled-test handoff finish while direct intake stays closed", () => {
+    expect(start).toContain("useNewPlanIntakeAccess");
+    expect(assessment).toContain("useNewPlanIntakeAccess");
+    expect(complete).toContain('handoffStatus === "available"');
+
+    const handoffSaveStart = leadFunctions.indexOf("export const saveLeadPlanFromHandoff");
+    const handoffSaveEnd = leadFunctions.indexOf(
+      "export const recordOnboardingEvent",
+      handoffSaveStart,
+    );
+    const handoffSaveHandler = leadFunctions.slice(handoffSaveStart, handoffSaveEnd);
+    expect(handoffSaveHandler).toContain("claimLeadIntake");
+    expect(handoffSaveHandler).not.toContain('throw new Error("New plan intake is closed")');
   });
 });

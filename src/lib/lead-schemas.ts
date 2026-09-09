@@ -71,6 +71,26 @@ export const leadInputSchema = z.object({
   assessment: answersSchema,
 });
 
+export const handoffLeadInputSchema = z.object({
+  submissionId: submissionIdSchema,
+  sessionTokenHash: tokenHashSchema,
+  assessment: answersSchema,
+});
+
+export const onboardingEventInputSchema = z.object({
+  token: optionalTokenSchema,
+  eventName: z.enum([
+    "install_prompt_shown",
+    "install_cta_clicked",
+    "install_prompt_accepted",
+    "install_prompt_dismissed",
+    "install_instructions_shown",
+    "install_not_now",
+    "installed_display_detected",
+  ]),
+  platform: z.enum(["ios", "android", "desktop"]),
+});
+
 export const regenerateInputSchema = z.object({
   submissionId: submissionIdSchema,
   sessionTokenHash: tokenHashSchema,

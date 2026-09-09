@@ -9,11 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReturnRouteImport } from './routes/return'
 import { Route as RecoverRouteImport } from './routes/recover'
 import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as ProgramsRouteImport } from './routes/programs'
+import { Route as PlanReadyRouteImport } from './routes/plan-ready'
 import { Route as NutritionRouteImport } from './routes/nutrition'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyProgramsRouteImport } from './routes/my-programs'
@@ -28,6 +30,7 @@ import { Route as Start7DayRouteImport } from './routes/start.7-day'
 import { Route as ProgramsAcceleratorRouteImport } from './routes/programs_.accelerator'
 import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as PreviewAcceleratorRouteImport } from './routes/preview.accelerator'
+import { Route as Intake7DayRouteImport } from './routes/intake.7-day'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
@@ -41,6 +44,11 @@ import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/
 import { Route as ApiPublicEmailWebhookRouteImport } from './routes/api/public/email/webhook'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -64,6 +72,11 @@ const ProgressRoute = ProgressRouteImport.update({
 const ProgramsRoute = ProgramsRouteImport.update({
   id: '/programs',
   path: '/programs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanReadyRoute = PlanReadyRouteImport.update({
+  id: '/plan-ready',
+  path: '/plan-ready',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NutritionRoute = NutritionRouteImport.update({
@@ -134,6 +147,11 @@ const PreviewW01Route = PreviewW01RouteImport.update({
 const PreviewAcceleratorRoute = PreviewAcceleratorRouteImport.update({
   id: '/preview/accelerator',
   path: '/preview/accelerator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Intake7DayRoute = Intake7DayRouteImport.update({
+  id: '/intake/7-day',
+  path: '/intake/7-day',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AssessmentStartRoute = AssessmentStartRouteImport.update({
@@ -209,15 +227,18 @@ export interface FileRoutesByFullPath {
   '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
+  '/plan-ready': typeof PlanReadyRoute
   '/programs': typeof ProgramsRoute
   '/progress': typeof ProgressRoute
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/welcome': typeof WelcomeRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/intake/7-day': typeof Intake7DayRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
@@ -242,15 +263,18 @@ export interface FileRoutesByTo {
   '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
+  '/plan-ready': typeof PlanReadyRoute
   '/programs': typeof ProgramsRoute
   '/progress': typeof ProgressRoute
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/welcome': typeof WelcomeRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/intake/7-day': typeof Intake7DayRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
@@ -276,15 +300,18 @@ export interface FileRoutesById {
   '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
+  '/plan-ready': typeof PlanReadyRoute
   '/programs': typeof ProgramsRoute
   '/progress': typeof ProgressRoute
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/welcome': typeof WelcomeRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
+  '/intake/7-day': typeof Intake7DayRoute
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs_/accelerator': typeof ProgramsAcceleratorRoute
@@ -311,15 +338,18 @@ export interface FileRouteTypes {
     | '/my-programs'
     | '/notifications'
     | '/nutrition'
+    | '/plan-ready'
     | '/programs'
     | '/progress'
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/welcome'
     | '/account/return'
     | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/intake/7-day'
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs/accelerator'
@@ -344,15 +374,18 @@ export interface FileRouteTypes {
     | '/my-programs'
     | '/notifications'
     | '/nutrition'
+    | '/plan-ready'
     | '/programs'
     | '/progress'
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/welcome'
     | '/account/return'
     | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/intake/7-day'
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs/accelerator'
@@ -377,15 +410,18 @@ export interface FileRouteTypes {
     | '/my-programs'
     | '/notifications'
     | '/nutrition'
+    | '/plan-ready'
     | '/programs'
     | '/progress'
     | '/recover'
     | '/return'
     | '/sitemap.xml'
+    | '/welcome'
     | '/account/return'
     | '/admin/customers'
     | '/assessment/complete'
     | '/assessment/start'
+    | '/intake/7-day'
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs_/accelerator'
@@ -411,15 +447,18 @@ export interface RootRouteChildren {
   MyProgramsRoute: typeof MyProgramsRoute
   NotificationsRoute: typeof NotificationsRoute
   NutritionRoute: typeof NutritionRoute
+  PlanReadyRoute: typeof PlanReadyRoute
   ProgramsRoute: typeof ProgramsRoute
   ProgressRoute: typeof ProgressRoute
   RecoverRoute: typeof RecoverRoute
   ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  WelcomeRoute: typeof WelcomeRoute
   AccountReturnRoute: typeof AccountReturnRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentStartRoute: typeof AssessmentStartRoute
+  Intake7DayRoute: typeof Intake7DayRoute
   PreviewAcceleratorRoute: typeof PreviewAcceleratorRoute
   PreviewW01Route: typeof PreviewW01Route
   ProgramsAcceleratorRoute: typeof ProgramsAcceleratorRoute
@@ -438,6 +477,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -471,6 +517,13 @@ declare module '@tanstack/react-router' {
       path: '/programs'
       fullPath: '/programs'
       preLoaderRoute: typeof ProgramsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan-ready': {
+      id: '/plan-ready'
+      path: '/plan-ready'
+      fullPath: '/plan-ready'
+      preLoaderRoute: typeof PlanReadyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/nutrition': {
@@ -571,6 +624,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PreviewAcceleratorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/intake/7-day': {
+      id: '/intake/7-day'
+      path: '/intake/7-day'
+      fullPath: '/intake/7-day'
+      preLoaderRoute: typeof Intake7DayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/assessment/start': {
       id: '/assessment/start'
       path: '/assessment/start'
@@ -667,15 +727,18 @@ const rootRouteChildren: RootRouteChildren = {
   MyProgramsRoute: MyProgramsRoute,
   NotificationsRoute: NotificationsRoute,
   NutritionRoute: NutritionRoute,
+  PlanReadyRoute: PlanReadyRoute,
   ProgramsRoute: ProgramsRoute,
   ProgressRoute: ProgressRoute,
   RecoverRoute: RecoverRoute,
   ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  WelcomeRoute: WelcomeRoute,
   AccountReturnRoute: AccountReturnRoute,
   AdminCustomersRoute: AdminCustomersRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentStartRoute: AssessmentStartRoute,
+  Intake7DayRoute: Intake7DayRoute,
   PreviewAcceleratorRoute: PreviewAcceleratorRoute,
   PreviewW01Route: PreviewW01Route,
   ProgramsAcceleratorRoute: ProgramsAcceleratorRoute,
