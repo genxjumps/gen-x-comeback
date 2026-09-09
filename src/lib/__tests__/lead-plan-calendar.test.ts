@@ -62,10 +62,23 @@ describe("7-Day Plan calendar access", () => {
   it("locks future video playback and removes redundant short-page navigation", () => {
     const assignment = source("../../components/day-assignment.tsx");
     const dayOne = source("../../components/day-one-workout.tsx");
-    expect(assignment).toContain("src && !lockedLabel");
-    expect(assignment).toContain("Your workout opens on schedule.");
+    const media = source("../../components/workout-media-card.tsx");
+    expect(assignment).toContain("<WorkoutMediaCard");
+    expect(media).toContain("src && playing");
+    expect(media).toContain('state.type === "blocked"');
+    expect(media).toContain('state.type === "scheduled"');
+    expect(media).toContain("Your next workout is scheduled.");
     expect(assignment).toContain('!completed && (kind === "workout"');
     expect(dayOne).toContain("{!completed ? (");
+  });
+
+  it("provides one numbered cover for every plan day while keeping workout names dynamic", () => {
+    const media = source("../../components/workout-media-card.tsx");
+    for (let day = 1; day <= 7; day += 1) {
+      expect(media).toContain(`${day}: "/workout-covers/day-0${day}.webp"`);
+    }
+    expect(media).toContain("coverTitle = title");
+    expect(media).toContain("Day {dayNumber} / Workout");
   });
 
   it("defines a forward-only database calendar and service-role access boundary", () => {

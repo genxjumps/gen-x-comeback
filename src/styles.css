@@ -62,6 +62,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-gxj-teal: var(--gxj-teal);
   --color-gxj-mint: var(--gxj-mint);
+  --color-gxj-orange: var(--gxj-orange);
 }
 
 :root {
@@ -100,6 +101,7 @@
   --sidebar-ring: oklch(0.6 0 0);
   --gxj-teal: oklch(0.368619 0.069427 227.945);
   --gxj-mint: oklch(0.930779 0.041868 144.14);
+  --gxj-orange: oklch(0.63 0.2 42);
 }
 
 .dark {
@@ -135,6 +137,7 @@
   --sidebar-accent-foreground: oklch(0.97 0 0);
   --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: oklch(0.55 0 0);
+  --gxj-orange: oklch(0.68 0.18 42);
 }
 
 @layer base {

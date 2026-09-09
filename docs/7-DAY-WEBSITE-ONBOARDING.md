@@ -19,6 +19,8 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 - The participant's browser time zone is captured when the plan is first saved. The server anchors Day 1 to that local calendar date; Day N is assigned to Day 1 plus N minus one calendar days. Unlocking is never based on an elapsed 24-hour timer.
 - The earliest unfinished assignment is labeled `Tomorrow's Workout/Movement` before its assigned date, `Today's Workout/Movement` on its assigned date, and `Your Next Workout/Movement` after a missed date. Recovery and rest use the equivalent assignment noun. Do not label a missed assignment `Yesterday's Workout` and do not introduce stacking or guilt language.
 - Participants may read future-day details, guidance, modifications, and equipment notes. A future workout video remains a non-playing poster until both its assigned date has arrived and every earlier day is complete.
+- Video assignments use one branded 16:9 background for each plan day, including the optional Day 7 active-recovery video. The day label and saved workout name are live app text, not baked into the artwork, because one calendar day can contain different workouts across schedule templates.
+- The media card status rail reflects real plan state: `Complete Day N First` links to the prerequisite, `Available [weekday]` remains non-playing, `Start Workout` opens the real player, and `Completed` offers replay. Locked states never mount a playable iframe.
 - Completion is enforced on the server. A day cannot be marked complete before its local assigned date or before an earlier required day.
 - A completed assignment screen has one primary route back to the plan. Short movement and rest pages do not repeat a second bottom `Back to My Plan` action.
 

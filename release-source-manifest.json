@@ -62,6 +62,34 @@
       "sha256": "345bc9c8edeed0ae70929aeb6917f8d8d6a995407bcf3b2a6928f490986c5195"
     },
     {
+      "path": "public/workout-covers/day-01.webp",
+      "sha256": "3fe5e6ef774c5c1f4610c356c57ab626342c33957196e8a90e961d8cfe23b945"
+    },
+    {
+      "path": "public/workout-covers/day-02.webp",
+      "sha256": "65ce01ba14f1037423c8eafc079f8f7226cf17ec488cebc190ac0317ba43cabc"
+    },
+    {
+      "path": "public/workout-covers/day-03.webp",
+      "sha256": "239ae8248c482cccece248b4d03fe7f4317aa41c47452591685198dc57f49a09"
+    },
+    {
+      "path": "public/workout-covers/day-04.webp",
+      "sha256": "4595b3f1a3d5cea501600f8fb5524eed5bede6b9740ffe79cb80fa28eb2f7cd2"
+    },
+    {
+      "path": "public/workout-covers/day-05.webp",
+      "sha256": "9f5fef83dd1c83b500babe4ce9d42ad3dc79b64ac315a2ab0fe69dea74ee3a91"
+    },
+    {
+      "path": "public/workout-covers/day-06.webp",
+      "sha256": "eda2304cef6c6e07ca5f949631b5cf06e07d7ac748e4f6a75d5616554f8908a0"
+    },
+    {
+      "path": "public/workout-covers/day-07.webp",
+      "sha256": "aee49fc0ca0a39870c77c0339e07ca8d8e02065901cc1e500c083f4e5d82eff2"
+    },
+    {
       "path": "scripts/assert-production-env.ts",
       "sha256": "d89ffdf4e3feca13e6791f5a199acadacf0ad91eb6fb58054532d324e8d1e087"
     },
@@ -131,11 +159,11 @@
     },
     {
       "path": "src/components/day-assignment.tsx",
-      "sha256": "a033c321f0a208e7a4da7ce7c6e3b6df6637a8040364cf35d99598cea59f05b7"
+      "sha256": "47a055352099eb14b24d7fa41a755cdf462c355140d5df4040ec0961e4a6c74d"
     },
     {
       "path": "src/components/day-one-workout.tsx",
-      "sha256": "c48b7bfac7d81e7df7b3272bf76146e592a1e91c475e6051f6f82e46c2bf2099"
+      "sha256": "8c167d19018dc985275671675e7a6f45e259a6b2e7027336fa1e4f0b6abbd630"
     },
     {
       "path": "src/components/intake-closed.tsx",
@@ -194,6 +222,10 @@
       "sha256": "bf5838b692e5f74fde7083280b99492dd402bce6966e912e79f5e23f14bc98eb"
     },
     {
+      "path": "src/components/workout-media-card.tsx",
+      "sha256": "65f20d489d1584ff88dade5403346533937fd5638abce89f79fe13c9df063b93"
+    },
+    {
       "path": "src/integrations/supabase/auth-attacher.ts",
       "sha256": "6f3a336700721b5cbf9235fb18b9575cdb5d1f55e4656b2f4a3cadc7ae81b8eb"
     },
@@ -239,7 +271,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
-      "sha256": "4508201605627c95cade9e88f74e1023bed6004faa5fc3e08a477e25e825c550"
+      "sha256": "b99f0686d2165afe221e247c08057c891d260f86e69ac3af174078d9cbd5d068"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
@@ -1071,7 +1103,7 @@
     },
     {
       "path": "src/routes/preview.w01.tsx",
-      "sha256": "80a22316713509e354afb17c791b399cb6fb7d671c2ff0c3b1838c4d462b45fc"
+      "sha256": "3f94ad7c0bfcd5ddd2a6a27dc04c78cbae67e4f5818640838ce7e38e5d7bd92d"
     },
     {
       "path": "src/routes/programs.tsx",
@@ -1123,7 +1155,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "b7f8c20bf982c9a558693567da529b70d426fc213c677e083e8986076315093b"
+      "sha256": "d2bd5f1442de38871d0ae6692a07e477cdb5edba191ae786cc7d19ec8e879120"
     },
     {
       "path": "supabase/config.toml",

@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { cardioGuidance, ropeLevelFromExperience, type CardioContext } from "@/lib/lead-plan";
 import { answersSchema } from "@/lib/lead-schemas";
-import { readAnswers } from "@/lib/plan";
+import { readAnswers, WORKOUTS } from "@/lib/plan";
 import {
   W01_APPROACH,
   W01_DURATION,
   W01_EQUIPMENT_NOTES,
   W01_EXPECT,
-  W01_IFRAME_SRC,
   W01_RUNDOWN,
   W01_TITLE,
 } from "@/lib/w01-content";
@@ -116,16 +116,13 @@ function DayOnePreviewPage() {
         </ul>
       </section>
 
-      <div className="mt-6 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-        <iframe
-          src={W01_IFRAME_SRC}
-          loading="lazy"
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-          allowFullScreen
-          className="h-full w-full border-0"
-          title="W01 - Full Body Flush & Fire"
-        />
-      </div>
+      <WorkoutMediaCard
+        dayNumber={1}
+        code="W01"
+        title={W01_TITLE}
+        coverTitle={WORKOUTS.W01.title}
+        state={{ type: "ready" }}
+      />
 
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
