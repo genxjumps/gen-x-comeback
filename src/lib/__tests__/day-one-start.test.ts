@@ -1,10 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const rpc = vi.hoisted(() => vi.fn());
+const rpcHarness = vi.hoisted(() => {
+  const rpc = vi.fn();
+  const client = {
+    rest: { marker: "service-role" },
+    rpc(this: { rest?: { marker?: string } } | undefined, ...args: unknown[]) {
+      if (!this || this.rest?.marker !== "service-role") {
+        throw new TypeError("Cannot read properties of undefined (reading 'rest')");
+      }
+      return rpc(...args);
+    },
+  };
+  return { client, rpc };
+});
 
 vi.mock("@/integrations/supabase/client.server", () => ({
-  supabaseAdmin: { rpc },
+  supabaseAdmin: rpcHarness.client,
 }));
+
+const { rpc } = rpcHarness;
 
 import { recordDayOneStart } from "@/lib/day-one-start.server";
 
@@ -31,6 +45,17 @@ describe("authoritative Day 1 start persistence", () => {
     expect(rpc).toHaveBeenCalledWith("mark_day_1_started", {
       p_lead_plan_id: LEAD_PLAN_ID,
       p_plan_version_id: PLAN_VERSION_ID,
+    });
+  });
+
+  it("keeps the Supabase client receiver attached when invoking the RPC", async () => {
+    rpc.mockResolvedValue({
+      data: [{ started_at: STARTED_AT, newly_started: true }],
+      error: null,
+    });
+
+    await expect(recordDayOneStart(LEAD_PLAN_ID, PLAN_VERSION_ID)).resolves.toMatchObject({
+      ok: true,
     });
   });
 

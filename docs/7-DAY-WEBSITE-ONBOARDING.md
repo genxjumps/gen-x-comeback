@@ -51,16 +51,17 @@ When an email with an existing 7-Day Plan opts in again, the app must never fail
 
 ## Minimum verification matrix
 
-| Scenario                   | Expected result                               |
-| -------------------------- | --------------------------------------------- |
-| Valid website opt-in       | Redirects to personalized `/welcome`          |
-| Invalid or missing consent | Generic validation error, no intake created   |
-| Untrusted origin           | Request rejected                              |
-| Expired or missing handoff | Return-to-signup recovery screen              |
-| Exact assessment retry     | Same submission identity, no duplicate plan   |
-| Handoff completion         | No second name/email form, then `/plan-ready` |
-| Fresh alias from preview   | Configured Gmail base alias reaches welcome   |
-| Alias from other origin    | Request rejected without an intake row        |
-| iPhone install             | Share, Add to Home Screen, Add instructions   |
-| Install dismissed          | Plan opens; nudge waits 24 hours              |
-| Standalone launch          | Plan opens without another install prompt     |
+| Scenario                   | Expected result                                   |
+| -------------------------- | ------------------------------------------------- |
+| Valid website opt-in       | Redirects to personalized `/welcome`              |
+| Invalid or missing consent | Generic validation error, no intake created       |
+| Untrusted origin           | Request rejected                                  |
+| Expired or missing handoff | Return-to-signup recovery screen                  |
+| Exact assessment retry     | Same submission identity, no duplicate plan       |
+| Handoff completion         | No second name/email form, then `/plan-ready`     |
+| Fresh alias from preview   | Configured Gmail base alias reaches welcome       |
+| Alias from other origin    | Request rejected without an intake row            |
+| Start Day 1                | Records activation exactly once, then opens Day 1 |
+| iPhone install             | Share, Add to Home Screen, Add instructions       |
+| Install dismissed          | Plan opens; nudge waits 24 hours                  |
+| Standalone launch          | Plan opens without another install prompt         |

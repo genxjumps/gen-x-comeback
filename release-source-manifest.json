@@ -231,7 +231,7 @@
     },
     {
       "path": "src/lib/__tests__/day-one-start.test.ts",
-      "sha256": "05999d44f1191ac27e25e73bb503abcf16e9a673f0deb9c908ac911a2a346164"
+      "sha256": "ff4138c9997f82841b45d1d880c7e31187c0657bb706d9c24895d8b895b5aaa3"
     },
     {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
@@ -467,7 +467,7 @@
     },
     {
       "path": "src/lib/day-one-start.server.ts",
-      "sha256": "d894f6a34d9a77bbfa5a9d38cb680ae98d78738047ca63cf4091d0bcc2f8c128"
+      "sha256": "28e93e9dba1f6f4a2337f581f33565440b994aa2cb33abd0d944f4242b331cd8"
     },
     {
       "path": "src/lib/email/__tests__/consent-production-contracts.test.ts",
