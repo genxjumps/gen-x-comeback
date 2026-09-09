@@ -117,3 +117,12 @@ export const dayBriefInputSchema = z.object({
   token: optionalTokenSchema,
   day: planDaySchema,
 });
+
+export const restartPlanInputSchema = z.object({
+  token: optionalTokenSchema,
+  retryToken: optionalTokenSchema,
+  expectedVersion: z.string().uuid(),
+  submissionId: submissionIdSchema,
+  sessionTokenHash: tokenHashSchema,
+  timeZone: timeZoneSchema,
+});

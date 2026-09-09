@@ -82,12 +82,28 @@ export const Route = createFileRoute("/intake/7-day")({
           }
         }
 
+        const { readEmailTokenSecret } = await import("@/lib/email/credentials.server");
+        const { recoveryEmailBucketKey } = await import("@/lib/email/recovery-request.server");
+        const secret = readEmailTokenSecret();
+        if (!secret) return errorPage(503);
+        const emailLimit = await consumeRateLimit(
+          `signup:${recoveryEmailBucketKey(secret, parsed.data.email.toLowerCase())}`,
+          600,
+          5,
+        );
+        if (!emailLimit.allowed) return errorPage(429);
+
         try {
           const { createWebsiteLeadIntake } = await import("@/lib/lead-intake-handoff.server");
-          const intake = await createWebsiteLeadIntake(parsed.data, {
-            copy: CONSENT_COPY,
-            version: CONSENT_VERSION,
-          });
+          const intake = await createWebsiteLeadIntake(
+            parsed.data,
+            {
+              copy: CONSENT_COPY,
+              version: CONSENT_VERSION,
+            },
+            new Date(),
+            !NEW_PLAN_INTAKE_OPEN,
+          );
           const secure = new URL(request.url).protocol === "https:";
           setCookie(LEAD_INTAKE_COOKIE, intake.rawToken, {
             path: "/",

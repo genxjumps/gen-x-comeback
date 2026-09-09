@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied } from "@/components/plan-access";
 import { InstallNudge, type InstallEventName } from "@/components/pwa-install";
+import { getSubmissionAttempt } from "@/lib/plan-submission";
+import { ACCESS_TOKEN_STORAGE_KEY } from "@/lib/lead-plan";
 import { readStoredToken } from "@/lib/access-token";
 import {
   TOTAL_ASSIGNMENTS,
@@ -13,7 +15,13 @@ import {
   planDayTiming,
   type PlanHubData,
 } from "@/lib/lead-plan";
-import { getPlanHub, recordOnboardingEvent, startDayOne } from "@/lib/lead.functions";
+import {
+  getPlanHub,
+  recordOnboardingEvent,
+  startDayOne,
+  restartCompletedPlan,
+  beginPlanUpdate,
+} from "@/lib/lead.functions";
 import type { InstallPlatform } from "@/lib/pwa-install";
 
 export const Route = createFileRoute("/your-plan/")({
@@ -63,6 +71,10 @@ function PlanHubPage() {
   const saveOnboardingEvent = useServerFn(recordOnboardingEvent);
   const [status, setStatus] = useState<"checking" | "allowed" | "denied">("checking");
   const [hub, setHub] = useState<PlanHubData | null>(null);
+  const beginUpdate = useServerFn(beginPlanUpdate);
+  const restart = useServerFn(restartCompletedPlan);
+  const [confirmRestart, setConfirmRestart] = useState(false);
+  const [restarting, setRestarting] = useState(false);
   const [startingDayOne, setStartingDayOne] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
 
@@ -154,6 +166,79 @@ function PlanHubPage() {
       </div>
 
       <InstallNudge track={trackInstall} />
+      {completedCount === TOTAL_ASSIGNMENTS && hub.planVersionId ? (
+        <section className="mt-6 rounded-lg border border-border bg-card p-4">
+          <h2 className="text-lg font-semibold">You Finished Your 7-Day Plan</h2>
+          <p className="mt-2 text-sm">
+            Your completed week stays saved. Start another week with the same workouts whenever
+            you're ready.
+          </p>
+          {!confirmRestart ? (
+            <Button className="mt-4" onClick={() => setConfirmRestart(true)}>
+              Restart My 7-Day Plan
+            </Button>
+          ) : (
+            <div className="mt-4">
+              <p className="text-sm">
+                Start a new week today? Your active progress will begin again at Day 1.
+              </p>
+              <Button
+                className="mt-3"
+                disabled={restarting}
+                onClick={async () => {
+                  if (restarting || !hub.planVersionId) return;
+                  setRestarting(true);
+                  setStartError(null);
+                  try {
+                    const attempt = await getSubmissionAttempt({
+                      restartVersion: hub.planVersionId,
+                    });
+                    const result = await restart({
+                      data: {
+                        token: readStoredToken(),
+                        retryToken: attempt.raw,
+                        expectedVersion: hub.planVersionId,
+                        submissionId: attempt.submissionId,
+                        sessionTokenHash: attempt.hash,
+                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+                      },
+                    });
+                    if (!result.ok) {
+                      setStartError("Your plan changed. Refresh My Plan before restarting.");
+                      return;
+                    }
+                    try {
+                      window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, attempt.raw);
+                    } catch {
+                      /* server cookie carries access */
+                    }
+                    window.location.assign("/your-plan");
+                  } catch {
+                    setStartError("We couldn't restart your plan. Try again.");
+                  } finally {
+                    setRestarting(false);
+                  }
+                }}
+              >
+                {restarting ? "Starting..." : "Yes - Start a New Week"}
+              </Button>
+              <Button
+                variant="outline"
+                className="ml-3"
+                disabled={restarting}
+                onClick={() => setConfirmRestart(false)}
+              >
+                Keep My Completed Plan
+              </Button>
+            </div>
+          )}
+          {startError ? (
+            <p className="mt-3 text-sm" role="alert">
+              {startError}
+            </p>
+          ) : null}
+        </section>
+      ) : null}
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <Link to="/your-plan" hash="current" className="underline-offset-4 hover:underline">
@@ -328,12 +413,29 @@ function PlanHubPage() {
         </div>
 
         <div className="mt-4">
-          <Button asChild variant="outline" className="w-full sm:w-auto">
-            <Link to="/assessment/start">Update My Plan</Link>
-          </Button>
-          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-            Changing your answers rebuilds this plan and resets its progress.
-          </p>
+          {completedCount < TOTAL_ASSIGNMENTS ? (
+            <>
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto"
+                onClick={async () => {
+                  try {
+                    if ((await beginUpdate({ data: { token: readStoredToken() } })).ok) {
+                      window.localStorage.removeItem("gxj_assessment_draft_v1");
+                      navigate({ to: "/assessment/start" });
+                    }
+                  } catch {
+                    setStartError("We couldn't open setup. Try again.");
+                  }
+                }}
+              >
+                Update My Plan
+              </Button>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                Changing your answers rebuilds this plan and resets its progress after you confirm.
+              </p>
+            </>
+          ) : null}
           <p className="mt-3 text-sm leading-relaxed">
             <a href="/recover" className="underline underline-offset-4">
               Resend My Plan Link

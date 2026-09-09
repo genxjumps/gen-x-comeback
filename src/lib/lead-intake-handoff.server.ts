@@ -121,6 +121,7 @@ export async function createWebsiteLeadIntake(
   input: WebsiteLeadIntake,
   consent: { copy: string; version: string },
   now = new Date(),
+  controlledTest = false,
 ): Promise<{ rawToken: string; expiresAt: Date }> {
   const rawToken = generateAccessToken();
   const expiresAt = new Date(now.getTime() + LEAD_INTAKE_TTL_SECONDS * 1000);
@@ -134,6 +135,7 @@ export async function createWebsiteLeadIntake(
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const store = supabaseAdmin as unknown as IntakeStore;
   const { error } = await store.from("lead_intakes").insert({
+    controlled_test: controlledTest,
     token_hash: await hashAccessToken(rawToken),
     email_normalized: input.email.toLowerCase(),
     email_original: input.email,
@@ -150,6 +152,13 @@ export async function createWebsiteLeadIntake(
     expires_at: expiresAt.toISOString(),
   });
   if (error) throw new Error(error.message);
+  // Best-effort wake after the intake + welcome job transaction commits.
+  // The authenticated five-minute scheduler retries if wake-up is unavailable.
+  try {
+    await supabaseAdmin.rpc("invoke_email_dispatch_scheduler");
+  } catch {
+    /* durable outbox */
+  }
   return { rawToken, expiresAt };
 }
 

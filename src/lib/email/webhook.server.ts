@@ -107,7 +107,25 @@ export async function handleProviderWebhook(
 
     // Early event: the accepting attempt has not written its message id yet.
     // The row stays unreconciled and the paid dispatcher applies it on acceptance.
-    if (!paidJob) return { status: 200, body: "unmatched", applied: false };
+    if (!paidJob) {
+      const { signupRpc } = await import("@/lib/signup-recovery.server");
+      const db = supabaseAdmin as unknown as {
+        from(name: string): ReturnType<typeof supabaseAdmin.from>;
+      };
+      const { data: welcomeJobs, error: welcomeError } = await db
+        .from("lead_intake_welcome_jobs")
+        .select("job_id")
+        .eq("provider_key", providerKey)
+        .eq("provider_message_id", event.providerMessageId)
+        .limit(1);
+      if (welcomeError) throw new Error("welcome_webhook_lookup_failed");
+      const welcome = welcomeJobs?.[0] as unknown as { job_id: string } | undefined;
+      if (!welcome) return { status: 200, body: "unmatched", applied: false };
+      const applied = await signupRpc<boolean>("reconcile_signup_welcome_events", {
+        p_job_id: welcome.job_id,
+      });
+      return { status: 200, body: "ok", applied };
+    }
 
     const paidClient = supabaseAdmin as unknown as {
       rpc(
