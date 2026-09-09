@@ -219,6 +219,17 @@ type NewPlanIdentity = {
   consentVersion: string;
 };
 
+/** Wake the authenticated sender only after a successful new-plan save. */
+async function wakePlanReadySender(): Promise<void> {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.rpc("invoke_email_dispatch_scheduler");
+  } catch {
+    // The committed outbox survives both transport failures and RPC errors.
+    // The five-minute scheduler retries; email must not turn a saved plan into an error.
+  }
+}
+
 async function commitNewPlan(
   data: {
     submissionId: string;
@@ -259,6 +270,7 @@ async function commitNewPlan(
     throw new Error("Use your secure link to resume your saved plan");
   const { configureLeadPlanCalendar } = await import("@/lib/lead-plan-calendar.server");
   await configureLeadPlanCalendar(result.lead_plan_id, data.timeZone);
+  await wakePlanReadySender();
   return {
     leadPlanId: result.lead_plan_id,
     firstName: result.first_name,
@@ -315,6 +327,7 @@ export const saveLeadPlanFromHandoff = createServerFn({ method: "POST" })
         p_time_zone: data.timeZone,
       });
       if (result.outcome === "saved" && result.leadPlanId) {
+        await wakePlanReadySender();
         const { issueSignupPlanCookie } = await import("@/lib/signup-recovery.server");
         await issueSignupPlanCookie(result.leadPlanId);
       }

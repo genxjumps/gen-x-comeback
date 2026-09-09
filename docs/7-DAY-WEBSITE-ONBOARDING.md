@@ -40,6 +40,17 @@ The approved consent text is stored with the opt-in. A durable MailerLite sync j
 
 The immediate welcome-and-resume email is implemented in the bounded signup-recovery checkpoint below. It returns an unfinished participant to welcome or their same-browser draft without waiting for Plan Ready. Plan Ready remains a separate email sent only after the plan is successfully committed.
 
+After a successful new-plan save, both the website handoff and direct signup paths
+immediately wake the existing authenticated email scheduler. The handoff wake occurs
+after the atomic plan/calendar/outbox commit and before browser-session issuance;
+the direct path wakes after calendar configuration succeeds. This requests an immediate
+delivery attempt, not guaranteed instant inbox arrival. A failed wake never fails the
+saved-plan response: the durable outbox and five-minute scheduler remain the retry
+path. Exact save retries can wake the same queued job again without creating another
+Plan Ready email. Failed saves, expired handoffs, and existing-plan resume outcomes
+do not wake the sender. Existing sending, consent, suppression, and provider-cap
+controls still apply. This does not change reassessment or completed-plan restart.
+
 During closed-intake testing, successful completion of an allowed handoff moves the existing production email fence to that exact new plan. It does not enable sending or admit genuine plans. This lets a new allowed Gmail plus alias receive its test Plan Ready email without manually replacing a secret or database control value after every run.
 
 Plan Ready resolves saved completion progress when the queued message is actually dispatched. A delayed message must direct the participant to the next unfinished scheduled day instead of telling someone who already completed Day 1 to start Day 1.

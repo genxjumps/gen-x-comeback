@@ -274,6 +274,10 @@
       "sha256": "ff4138c9997f82841b45d1d880c7e31187c0657bb706d9c24895d8b895b5aaa3"
     },
     {
+      "path": "src/lib/__tests__/immediate-plan-ready.test.ts",
+      "sha256": "2e470e9cec277f6239c8af3b3a5de030ceb940373853f14724bb9db01bb61a9f"
+    },
+    {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
       "sha256": "ba730a92d51abdfa27a12a0cb3526b563412b135c341864092ee63b24e00057c"
     },
@@ -871,7 +875,7 @@
     },
     {
       "path": "src/lib/lead.functions.ts",
-      "sha256": "ad41a5b0ec25424b2806fad9304524eb82eda762234ba0fbbc04cad43c771090"
+      "sha256": "b81d2d90c0e17bbac993b43549a1afed4a156ba2c91ce1c8f90bcf5c1bd932bc"
     },
     {
       "path": "src/lib/lovable-error-reporting.ts",
