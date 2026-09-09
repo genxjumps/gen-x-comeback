@@ -56,6 +56,14 @@ function takeRecoveryTokenFromUrl(): string | null {
   }
 }
 
+function browserTimeZone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+  } catch {
+    return "UTC";
+  }
+}
+
 function ResultsPage() {
   const navigate = useNavigate();
   const save = useServerFn(saveLeadPlan);
@@ -163,6 +171,7 @@ function ResultsPage() {
               submissionId: access.submissionId,
               sessionTokenHash: access.hash,
               assessment: answers,
+              timeZone: browserTimeZone(),
             },
           });
         } else if (intakeDraft) {
@@ -174,6 +183,7 @@ function ResultsPage() {
               email: intakeDraft.email,
               consentGranted: true,
               assessment: answers,
+              timeZone: browserTimeZone(),
             },
           });
         }

@@ -40,6 +40,8 @@ export type PlanReadyRenderInput = {
   returnUrl: string;
   /** Absolute purpose-limited email-preferences URL on the app origin. */
   preferencesUrl: string;
+  /** Saved day numbers at dispatch time, used only for progress-aware copy. */
+  completedDays?: number[];
 };
 
 export type PlanReadyRendered = {
@@ -58,6 +60,20 @@ export function renderPlanReady(input: PlanReadyRenderInput): PlanReadyRendered 
 
   const returnUrl = input.returnUrl;
   const preferencesUrl = input.preferencesUrl;
+  const completed = new Set(input.completedDays ?? []);
+  const nextDay = Array.from({ length: 7 }, (_, index) => index + 1).find(
+    (day) => !completed.has(day),
+  );
+  const closingLine =
+    completed.size === 0
+      ? "Start Day 1 when you're ready."
+      : nextDay
+        ? `Your progress is saved. Continue with Day ${nextDay} when it's scheduled.`
+        : "Your completed plan and saved progress are ready whenever you want to review them.";
+  const previewText =
+    completed.size === 0
+      ? PLAN_READY_PREVIEW_TEXT
+      : "Open your personalized plan and continue from your latest saved progress.";
 
   const text = [
     `Hey ${greetingName},`,
@@ -70,7 +86,7 @@ export function renderPlanReady(input: PlanReadyRenderInput): PlanReadyRendered 
     "",
     "The link opens the same saved plan and brings back your latest progress on any device. No password needed.",
     "",
-    "Start Day 1 when you're ready.",
+    closingLine,
     "",
     "Move or Rust.",
     "",
@@ -91,7 +107,7 @@ export function renderPlanReady(input: PlanReadyRenderInput): PlanReadyRendered 
 <title>${escapeHtml(subject)}</title>
 </head>
 <body style="margin:0;padding:0;background-color:#ffffff;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;">
-<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(PLAN_READY_PREVIEW_TEXT)}</div>
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(previewText)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ffffff;">
 <tr><td align="center" style="padding:24px 16px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;text-align:left;">
@@ -103,7 +119,7 @@ export function renderPlanReady(input: PlanReadyRenderInput): PlanReadyRendered 
 <a href="${escapeHtml(returnUrl)}" style="display:inline-block;padding:14px 24px;background-color:#1a1a1a;color:#ffffff;text-decoration:none;font-weight:600;border-radius:6px;">${PLAN_READY_CTA_LABEL}</a>
 </p>
 <p style="margin:0 0 16px 0;">The link opens the same saved plan and brings back your latest progress on any device. No password needed.</p>
-<p style="margin:0 0 16px 0;">Start Day 1 when you're ready.</p>
+<p style="margin:0 0 16px 0;">${escapeHtml(closingLine)}</p>
 <p style="margin:0 0 16px 0;">Move or Rust.</p>
 <p style="margin:0 0 24px 0;">Todd<br />Gen X Jumps</p>
 <p style="margin:0 0 8px 0;font-size:13px;color:#555555;">Or open this link directly:<br /><a href="${escapeHtml(returnUrl)}" style="color:#555555;">${escapeHtml(returnUrl)}</a></p>
@@ -116,7 +132,7 @@ export function renderPlanReady(input: PlanReadyRenderInput): PlanReadyRendered 
 </table>
 </body></html>`;
 
-  return { subject, previewText: PLAN_READY_PREVIEW_TEXT, html, text, personalizedName: name };
+  return { subject, previewText, html, text, personalizedName: name };
 }
 
 /** Values that must never appear in a Plan Ready payload. Used by tests and guards. */

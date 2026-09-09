@@ -36,4 +36,9 @@ describe("Home Screen install experience", () => {
     expect(manifest).toContain('"display": "standalone"');
     expect(manifest).toContain('"start_url": "/your-plan"');
   });
+
+  it("uses platform-appropriate installed confirmation copy", () => {
+    expect(component).toContain("Gen X Jumps is installed.");
+    expect(component).toContain("Gen X Jumps is on your Home Screen.");
+  });
 });

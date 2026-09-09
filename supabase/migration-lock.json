@@ -251,6 +251,13 @@
       "sha256": "d6fe2586a2fc5fe00fe917ad3900bf2cf91b5306f45bec7dcdc9698bc1d22a0b",
       "statementSha256": "d3381405528439c97dde7b4d3e8da9dc9779a6ef3e53bd4473c8f53dbbf5817b",
       "version": "20260907210000"
+    },
+    {
+      "file": "20260909161000_lead_plan_calendar_access.sql",
+      "name": "lead_plan_calendar_access",
+      "sha256": "681deb7bd0f1b5e9b526d9ea72f0a524e62bc4cd6eaaa39c49afa846749901a8",
+      "statementSha256": "76c3b69a93e7e564100952992116c4b6032af744f8c50fb16e85f84391c6867b",
+      "version": "20260909161000"
     }
   ],
   "version": 1

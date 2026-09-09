@@ -19,6 +19,8 @@ function source(relativePath: string): string {
 const intakeRoute = source("../../routes/intake.7-day.ts");
 const welcomeRoute = source("../../routes/welcome.tsx");
 const completionRoute = source("../../routes/assessment.complete.tsx");
+const leadFunctions = source("../lead.functions.ts");
+const handoffServer = source("../lead-intake-handoff.server.ts");
 
 describe("website lead intake handoff", () => {
   it("accepts the approved first-name, email, and explicit-consent payload", () => {
@@ -190,5 +192,14 @@ describe("website lead intake handoff", () => {
     expect(completionRoute).toContain('navigate({ to: "/plan-ready", replace: true })');
     expect(completionRoute).not.toContain('htmlFor="firstName"');
     expect(completionRoute).not.toContain('htmlFor="email"');
+  });
+
+  it("automatically scopes closed-intake email testing to the completed controlled plan", () => {
+    expect(leadFunctions).toContain("admitControlledPlanEmailScope(result.leadPlanId)");
+    expect(leadFunctions).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
+    expect(handoffServer).toContain("controlled_lead_plan_id: leadPlanId");
+    expect(handoffServer).toContain('.eq("genuine_plans_admitted", false)');
+    expect(handoffServer).not.toContain("genuine_plans_admitted: true");
+    expect(handoffServer).not.toContain("sending_enabled: true");
   });
 });

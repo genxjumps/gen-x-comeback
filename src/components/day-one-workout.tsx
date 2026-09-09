@@ -192,11 +192,13 @@ export function DayOneWorkout() {
         )}
       </section>
 
-      <div className="mt-6">
-        <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-          <Link to="/your-plan">Back to My Plan</Link>
-        </Button>
-      </div>
+      {!completed ? (
+        <div className="mt-6">
+          <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+            <Link to="/your-plan">Back to My Plan</Link>
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }

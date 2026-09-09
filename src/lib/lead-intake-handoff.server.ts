@@ -213,3 +213,23 @@ export async function completeLeadIntake(
   if (error) throw new Error(error.message);
   if (data !== true) throw new Error("Lead intake completion was rejected");
 }
+
+/**
+ * During closed-intake testing, move the production email fence to the newly
+ * completed controlled plan. This never enables sending or admits genuine
+ * plans; it only removes the manual per-alias control update.
+ */
+export async function admitControlledPlanEmailScope(leadPlanId: string): Promise<void> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("email_production_control")
+    .update({ controlled_lead_plan_id: leadPlanId, updated_at: new Date().toISOString() })
+    .eq("singleton_id", 1)
+    .eq("genuine_plans_admitted", false)
+    .select("controlled_lead_plan_id")
+    .limit(1);
+  if (error) throw new Error(error.message);
+  if (data?.[0]?.controlled_lead_plan_id !== leadPlanId) {
+    throw new Error("Controlled email scope was not updated");
+  }
+}

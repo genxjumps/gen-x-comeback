@@ -9,28 +9,42 @@ import {
   cardioGuidance,
   completionLabel,
   movementDuration,
+  planDayHeading,
+  planDayTiming,
+  planWeekday,
   type CardioContext,
+  type PlanCalendar,
   type PlanDayView,
 } from "@/lib/lead-plan";
 import { completePlanDay, getDayBrief } from "@/lib/lead.functions";
 import { W01_APPROACH } from "@/lib/w01-content";
-import { missingVideoNotice, workoutVideoSrc } from "@/lib/workout-videos";
+import { missingVideoNotice, workoutVideoPoster, workoutVideoSrc } from "@/lib/workout-videos";
 
 type Brief = {
   cardio: CardioContext;
   completedDays: number[];
   tier: string;
   day: PlanDayView | null;
+  calendar: PlanCalendar;
 };
 
 const SECTION = "mt-4 rounded-lg border border-border bg-card p-4";
 const LABEL = "text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground";
 
-function VideoArea({ code, title }: { code: string; title: string }) {
+function VideoArea({
+  code,
+  title,
+  lockedLabel,
+}: {
+  code: string;
+  title: string;
+  lockedLabel?: string;
+}) {
   const src = workoutVideoSrc(code);
+  const poster = workoutVideoPoster(code);
   return (
-    <div className="mt-6 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-      {src ? (
+    <div className="relative mt-6 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
+      {src && !lockedLabel ? (
         <iframe
           src={src}
           loading="lazy"
@@ -39,6 +53,18 @@ function VideoArea({ code, title }: { code: string; title: string }) {
           className="h-full w-full border-0"
           title={`${code} - ${title}`}
         />
+      ) : src && lockedLabel ? (
+        <div
+          className="flex h-full w-full items-center justify-center bg-cover bg-center p-5"
+          style={poster ? { backgroundImage: `url(${poster})` } : undefined}
+        >
+          <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
+          <div className="relative text-center text-white">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em]">{code}</p>
+            <p className="mt-2 text-lg font-semibold tracking-tight">{lockedLabel}</p>
+            <p className="mt-1 text-xs text-white/75">Your workout opens on schedule.</p>
+          </div>
+        </div>
       ) : (
         <div className="flex h-full w-full items-center justify-center p-4">
           <p className="text-center text-sm text-muted-foreground">{missingVideoNotice(code)}</p>
@@ -96,6 +122,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
             completedDays: result.completedDays,
             tier: result.tier,
             day: result.day,
+            calendar: result.calendar,
           });
           setToken(stored);
           setStatus("allowed");
@@ -117,9 +144,11 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
         brief.completedDays.includes(d),
       )
     : false;
+  const timing = brief ? planDayTiming(brief.calendar, dayNumber) : null;
+  const dayAvailable = completed || (priorDone && timing?.available === true);
 
   async function markComplete() {
-    if (status !== "allowed" || marking || completed || !priorDone) return;
+    if (status !== "allowed" || marking || completed || !dayAvailable) return;
     setMarking(true);
     setMarkError(null);
     try {
@@ -152,6 +181,14 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
   const kind = assignmentType(day);
   const title = day?.title ?? "Workout";
   const optional = day?.optional ?? null;
+  const timingHeading = timing ? planDayHeading(day, timing) : "Upcoming";
+  const lockedVideoLabel = completed
+    ? undefined
+    : !priorDone
+      ? `Complete Day ${dayNumber - 1} First`
+      : timing && !timing.available
+        ? `Available ${planWeekday(timing.availableOn)}`
+        : undefined;
 
   const duration =
     kind === "workout"
@@ -174,7 +211,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
       </Link>
 
       <p className="gxj-kicker mt-6 text-[10px] font-semibold uppercase tracking-[0.16em]">
-        Day {dayNumber}
+        Day {dayNumber} &middot; {timingHeading}
       </p>
       <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {title}
@@ -206,7 +243,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
 
       {kind === "workout" && day?.code ? (
         <>
-          <VideoArea code={day.code} title={title} />
+          <VideoArea code={day.code} title={title} lockedLabel={lockedVideoLabel} />
           <div className="mt-2" />
           <CardioSection cardio={brief.cardio} />
           <ApproachSection />
@@ -227,7 +264,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               About {optional.minutes} minutes &middot; optional, not required to complete this day
             </p>
           </section>
-          <VideoArea code={optional.code} title={optional.title} />
+          <VideoArea code={optional.code} title={optional.title} lockedLabel={lockedVideoLabel} />
           <CardioSection cardio={brief.cardio} />
           <ApproachSection />
         </>
@@ -256,6 +293,14 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               </Link>
             </Button>
           </div>
+        ) : timing && !timing.available ? (
+          <div className="rounded-lg border border-border bg-muted/30 p-4">
+            <p className="text-sm font-semibold">Available {planWeekday(timing.availableOn)}</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              You can review the details now. This day can be completed when its scheduled date
+              arrives.
+            </p>
+          </div>
         ) : (
           <>
             <Button
@@ -275,11 +320,13 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
         )}
       </section>
 
-      <div className="mt-6">
-        <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-          <Link to="/your-plan">Back to My Plan</Link>
-        </Button>
-      </div>
+      {!completed && (kind === "workout" || (kind === "recovery" && optional)) ? (
+        <div className="mt-6">
+          <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+            <Link to="/your-plan">Back to My Plan</Link>
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }
