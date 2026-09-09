@@ -318,6 +318,10 @@
       "sha256": "805e34794845e742fb182cf1a2c7ed606bcb31ab3ab19a6995022efae7e7500c"
     },
     {
+      "path": "src/lib/__tests__/signup-response-loss.test.ts",
+      "sha256": "21e9926372042297c2c5587db436afc9a67a45995654a4fd8ef05f69ad6489c6"
+    },
+    {
       "path": "src/lib/accelerator/__tests__/access.test.ts",
       "sha256": "b63013a2c02455c1b3762533434d7a65df0b9fd18454812307861f2377292a7d"
     },
