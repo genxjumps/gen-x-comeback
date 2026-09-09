@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied } from "@/components/plan-access";
+import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { readStoredToken } from "@/lib/access-token";
 import {
   assignmentType,
@@ -18,7 +19,6 @@ import {
 } from "@/lib/lead-plan";
 import { completePlanDay, getDayBrief } from "@/lib/lead.functions";
 import { W01_APPROACH } from "@/lib/w01-content";
-import { missingVideoNotice, workoutVideoPoster, workoutVideoSrc } from "@/lib/workout-videos";
 
 type Brief = {
   cardio: CardioContext;
@@ -30,49 +30,6 @@ type Brief = {
 
 const SECTION = "mt-4 rounded-lg border border-border bg-card p-4";
 const LABEL = "text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground";
-
-function VideoArea({
-  code,
-  title,
-  lockedLabel,
-}: {
-  code: string;
-  title: string;
-  lockedLabel?: string;
-}) {
-  const src = workoutVideoSrc(code);
-  const poster = workoutVideoPoster(code);
-  return (
-    <div className="relative mt-6 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-      {src && !lockedLabel ? (
-        <iframe
-          src={src}
-          loading="lazy"
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-          allowFullScreen
-          className="h-full w-full border-0"
-          title={`${code} - ${title}`}
-        />
-      ) : src && lockedLabel ? (
-        <div
-          className="flex h-full w-full items-center justify-center bg-cover bg-center p-5"
-          style={poster ? { backgroundImage: `url(${poster})` } : undefined}
-        >
-          <div className="absolute inset-0 bg-black/70" aria-hidden="true" />
-          <div className="relative text-center text-white">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em]">{code}</p>
-            <p className="mt-2 text-lg font-semibold tracking-tight">{lockedLabel}</p>
-            <p className="mt-1 text-xs text-white/75">Your workout opens on schedule.</p>
-          </div>
-        </div>
-      ) : (
-        <div className="flex h-full w-full items-center justify-center p-4">
-          <p className="text-center text-sm text-muted-foreground">{missingVideoNotice(code)}</p>
-        </div>
-      )}
-    </div>
-  );
-}
 
 function CardioSection({ cardio }: { cardio: CardioContext }) {
   return (
@@ -182,13 +139,21 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
   const title = day?.title ?? "Workout";
   const optional = day?.optional ?? null;
   const timingHeading = timing ? planDayHeading(day, timing) : "Upcoming";
-  const lockedVideoLabel = completed
-    ? undefined
+  const mediaState = completed
+    ? ({ type: "completed" } as const)
     : !priorDone
-      ? `Complete Day ${dayNumber - 1} First`
+      ? ({
+          type: "blocked",
+          previousDay: dayNumber - 1,
+          availableLabel: timing ? planWeekday(timing.availableOn) : "on schedule",
+        } as const)
       : timing && !timing.available
-        ? `Available ${planWeekday(timing.availableOn)}`
-        : undefined;
+        ? ({
+            type: "scheduled",
+            availableLabel: planWeekday(timing.availableOn),
+          } as const)
+        : ({ type: "ready" } as const);
+  const hasWorkoutMedia = kind === "workout" || (kind === "recovery" && Boolean(optional));
 
   const duration =
     kind === "workout"
@@ -243,8 +208,12 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
 
       {kind === "workout" && day?.code ? (
         <>
-          <VideoArea code={day.code} title={title} lockedLabel={lockedVideoLabel} />
-          <div className="mt-2" />
+          <WorkoutMediaCard
+            dayNumber={dayNumber}
+            code={day.code}
+            title={title}
+            state={mediaState}
+          />
           <CardioSection cardio={brief.cardio} />
           <ApproachSection />
         </>
@@ -264,7 +233,12 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               About {optional.minutes} minutes &middot; optional, not required to complete this day
             </p>
           </section>
-          <VideoArea code={optional.code} title={optional.title} lockedLabel={lockedVideoLabel} />
+          <WorkoutMediaCard
+            dayNumber={dayNumber}
+            code={optional.code}
+            title={optional.title}
+            state={mediaState}
+          />
           <CardioSection cardio={brief.cardio} />
           <ApproachSection />
         </>
@@ -281,7 +255,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               <Link to="/your-plan">Continue to My Plan</Link>
             </Button>
           </div>
-        ) : !priorDone ? (
+        ) : !priorDone && !hasWorkoutMedia ? (
           <div className="rounded-lg border border-border bg-muted/30 p-4">
             <p className="text-sm leading-relaxed text-muted-foreground">
               Day {dayNumber} is upcoming. Complete Day {previousDay} first, then you can mark Day{" "}
@@ -293,7 +267,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               </Link>
             </Button>
           </div>
-        ) : timing && !timing.available ? (
+        ) : timing && !timing.available && !hasWorkoutMedia ? (
           <div className="rounded-lg border border-border bg-muted/30 p-4">
             <p className="text-sm font-semibold">Available {planWeekday(timing.availableOn)}</p>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
@@ -301,7 +275,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               arrives.
             </p>
           </div>
-        ) : (
+        ) : priorDone && (!timing || timing.available) ? (
           <>
             <Button
               size="lg"
@@ -317,7 +291,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               </p>
             ) : null}
           </>
-        )}
+        ) : null}
       </section>
 
       {!completed && (kind === "workout" || (kind === "recovery" && optional)) ? (
