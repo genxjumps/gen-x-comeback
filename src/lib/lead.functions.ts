@@ -25,6 +25,7 @@ import {
   leadInputSchema,
   onboardingEventInputSchema,
   regenerateInputSchema,
+  restartPlanInputSchema,
   tokenOnlyInputSchema,
 } from "@/lib/lead-schemas";
 import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
@@ -254,6 +255,8 @@ async function commitNewPlan(
   if (result.outcome === "conflict" || result.outcome === "stale_replay") {
     throw new Error("Submission conflict");
   }
+  if (result.outcome === "existing")
+    throw new Error("Use your secure link to resume your saved plan");
   const { configureLeadPlanCalendar } = await import("@/lib/lead-plan-calendar.server");
   await configureLeadPlanCalendar(result.lead_plan_id, data.timeZone);
   return {
@@ -283,28 +286,60 @@ export const saveLeadPlan = createServerFn({ method: "POST" })
 
 export const saveLeadPlanFromHandoff = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => handoffLeadInputSchema.parse(data))
-  .handler(async ({ data }): Promise<SaveLeadPlanResult> => {
-    const { currentCookieHeader } = await import("@/lib/plan-access.server");
-    const { claimLeadIntake, completeLeadIntake, admitControlledPlanEmailScope } =
-      await import("@/lib/lead-intake-handoff.server");
-    const intake = await claimLeadIntake(await currentCookieHeader(), data.submissionId);
-    if (!intake) throw new Error("Lead intake is missing or expired");
+  .handler(
+    async ({ data }): Promise<{ outcome: "saved" | "resume" | "expired"; replayed?: boolean }> => {
+      const { currentCookieHeader } = await import("@/lib/plan-access.server");
+      const { signupRpc, signupCookieHash, readSignupIntake } =
+        await import("@/lib/signup-recovery.server");
+      const cookie = await currentCookieHeader();
+      const hash = await signupCookieHash(cookie);
+      const intake = await readSignupIntake(cookie);
+      if (!hash || !intake) return { outcome: "expired" };
+      const { snapshot } = planFromAnswers(data.assessment as Answers);
+      const result = await signupRpc<{
+        outcome: "saved" | "resume" | "expired";
+        replayed?: boolean;
+        leadPlanId?: string;
+      }>("save_signup_plan", {
+        p_token_hash: hash,
+        p_submission_id: data.submissionId,
+        p_session_token_hash: data.sessionTokenHash,
+        p_request_fingerprint: await requestFingerprint([
+          "signup",
+          intake.intake_id,
+          JSON.stringify(data.assessment),
+          data.timeZone,
+        ]),
+        p_assessment: data.assessment,
+        p_plan: snapshot,
+        p_time_zone: data.timeZone,
+      });
+      if (result.outcome === "saved" && result.leadPlanId) {
+        const { issueSignupPlanCookie } = await import("@/lib/signup-recovery.server");
+        await issueSignupPlanCookie(result.leadPlanId);
+      }
+      return { outcome: result.outcome, replayed: result.replayed };
+    },
+  );
 
-    const result = await commitNewPlan(
-      { ...data, assessment: data.assessment as Answers },
-      {
-        emailNormalized: intake.emailNormalized,
-        emailOriginal: intake.emailOriginal,
-        firstName: intake.firstName,
-        consentCopy: intake.consentCopy,
-        consentVersion: intake.consentVersion,
-      },
-    );
-    await completeLeadIntake(intake.intakeId, data.submissionId, result.leadPlanId);
-    if (!NEW_PLAN_INTAKE_OPEN) {
-      await admitControlledPlanEmailScope(result.leadPlanId);
+export const restartCompletedPlan = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => restartPlanInputSchema.parse(data))
+  .handler(async ({ data }): Promise<{ ok: boolean }> => {
+    const access = (await authorize(data.token)) ?? (await authorize(data.retryToken));
+    if (!access) return { ok: false };
+    const { signupRpc } = await import("@/lib/signup-recovery.server");
+    const ok = await signupRpc<boolean>("restart_completed_signup_plan", {
+      p_lead_plan_id: access.leadPlanId,
+      p_expected_version: data.expectedVersion,
+      p_submission_id: data.submissionId,
+      p_session_token_hash: data.sessionTokenHash,
+      p_time_zone: data.timeZone,
+    });
+    if (ok) {
+      const { issueSignupPlanCookie } = await import("@/lib/signup-recovery.server");
+      await issueSignupPlanCookie(access.leadPlanId);
     }
-    return { firstName: result.firstName, plan: result.plan, replayed: result.replayed };
+    return { ok };
   });
 
 export const recordOnboardingEvent = createServerFn({ method: "POST" })
@@ -331,6 +366,8 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
     const access = await authorize(data.token);
     if (!access) return { ok: false };
 
+    const completed = await listCompletedDays(access.leadPlanId);
+    if (completed.length >= 7) return { ok: false };
     const answers = data.assessment as Answers;
     const { plan, snapshot } = planFromAnswers(answers);
 
@@ -353,7 +390,7 @@ export const regeneratePlanWithToken = createServerFn({ method: "POST" })
 
     const result = rows?.[0];
     if (!result) return { ok: false };
-    if (result.outcome === "conflict" || result.outcome === "stale_replay") return { ok: false };
+    if (!["reassessment", "unchanged", "replay"].includes(result.outcome)) return { ok: false };
 
     return { ok: true, firstName: result.first_name, plan };
   });
@@ -380,6 +417,7 @@ export const getPlanHub = createServerFn({ method: "POST" })
       ok: true,
       data: {
         firstName: access.firstName,
+        planVersionId: access.planVersionId,
         tier: typeof snapshot.tier === "string" ? snapshot.tier : "",
         protein: {
           grams: typeof snapshot.protein?.grams === "number" ? snapshot.protein.grams : null,
@@ -396,4 +434,15 @@ export const getPlanHub = createServerFn({ method: "POST" })
         calendar: calendarFrom(saved),
       },
     };
+  });
+
+export const beginPlanUpdate = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
+  .handler(async ({ data }) => {
+    const access = await authorize(data.token);
+    if (!access || (await listCompletedDays(access.leadPlanId)).length >= 7) return { ok: false };
+    const { deleteCookie } = await import("@tanstack/react-start/server");
+    const { LEAD_INTAKE_COOKIE } = await import("@/lib/lead-intake-handoff");
+    deleteCookie(LEAD_INTAKE_COOKIE, { path: "/" });
+    return { ok: true };
   });

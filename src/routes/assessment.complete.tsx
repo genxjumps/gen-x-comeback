@@ -5,14 +5,16 @@ import { Button } from "@/components/ui/button";
 import { IntakeClosed } from "@/components/intake-closed";
 import { Separator } from "@/components/ui/separator";
 import { buildPlan, isCompleteDraft, readAnswers, type Answers } from "@/lib/plan";
+import { bindSignupDraft } from "@/lib/signup-draft";
 import { ACCESS_TOKEN_STORAGE_KEY, RAW_TOKEN_RE } from "@/lib/lead-plan";
 import {
   regeneratePlanWithToken,
+  verifyAccessToken,
   saveLeadPlan,
   saveLeadPlanFromHandoff,
 } from "@/lib/lead.functions";
 import { getSubmissionAttempt } from "@/lib/plan-submission";
-import { readStoredToken } from "@/lib/access-token";
+import { readStoredToken, clearStoredToken } from "@/lib/access-token";
 import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
 import { clearLeadIntakeDraft, readLeadIntakeDraft } from "@/lib/lead-intake-draft";
 import type { LeadIntakeDraft } from "@/lib/lead-intake-draft";
@@ -69,6 +71,7 @@ function ResultsPage() {
   const save = useServerFn(saveLeadPlan);
   const saveFromHandoff = useServerFn(saveLeadPlanFromHandoff);
   const regenerate = useServerFn(regeneratePlanWithToken);
+  const verify = useServerFn(verifyAccessToken);
   const loadHandoff = useServerFn(getLeadIntakeWelcome);
 
   const [answers, setAnswers] = useState<Answers | null>(null);
@@ -100,36 +103,41 @@ function ResultsPage() {
 
     void (async () => {
       try {
-        const handoff = await loadHandoff({ data: {} }).catch(() => null);
+        const handoff = await loadHandoff({ data: { token } }).catch(() => null);
         if (cancelled) return;
-        const hasHandoff = handoff?.ok === true;
+        if (handoff?.ok && handoff.state !== "setup") {
+          if (handoff.useCookie) clearStoredToken();
+          navigate({
+            to: handoff.state === "plan" ? "/your-plan" : "/welcome",
+            hash: handoff.platformAuthTokenHash
+              ? `gxj_auth=${encodeURIComponent(handoff.platformAuthTokenHash)}`
+              : undefined,
+            replace: true,
+          });
+          return;
+        }
+        const hasHandoff = handoff?.ok === true && handoff.state === "setup";
         setHandoffStatus(hasHandoff ? "available" : "missing");
 
         // A fresh website signup is authoritative. Do not accidentally rebuild
         // an older plan that happens to be recognized in this browser.
-        if (hasHandoff) return;
+        if (hasHandoff) {
+          bindSignupDraft(handoff.draftKey);
+          const scoped = readAnswers();
+          if (!isCompleteDraft(scoped)) {
+            setAnswers(null);
+            navigate({ to: "/welcome", replace: true });
+            return;
+          }
+          setAnswers(scoped);
+          return;
+        }
 
-        // Exact retries retain the same binding; changed answers mint a fresh one.
-        const next = await getSubmissionAttempt(a);
-        const result = await regenerate({
-          data: {
-            submissionId: next.submissionId,
-            sessionTokenHash: next.hash,
-            token,
-            assessment: a,
-          },
-        });
+        // Recognition never rebuilds a plan during a page load.
+        const result = await verify({ data: { token } });
         if (cancelled) return;
         if (result.ok) {
-          try {
-            window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, next.raw);
-          } catch {
-            /* ignore storage errors */
-          }
           setRecognized(true);
-          setUnlocked(true);
-          // Latest answers are processed and saved: the private hub is the destination.
-          if (!cancelled) navigate({ to: "/your-plan", replace: true });
         } else if (!recoveryToken && token) {
           try {
             window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
@@ -147,7 +155,7 @@ function ResultsPage() {
     return () => {
       cancelled = true;
     };
-  }, [loadHandoff, navigate, regenerate]);
+  }, [loadHandoff, navigate, verify]);
 
   useEffect(() => {
     if (
@@ -160,13 +168,18 @@ function ResultsPage() {
       return;
     }
     if (!intakeDraft && handoffStatus !== "available") return;
+    if (handoffStatus !== "available") {
+      clearLeadIntakeDraft();
+      navigate({ to: "/welcome", replace: true });
+      return;
+    }
     frontEnrollmentAttempted.current = true;
     setError(null);
     void (async () => {
       try {
         const access = await getSubmissionAttempt(answers);
         if (handoffStatus === "available") {
-          await saveFromHandoff({
+          const saved = await saveFromHandoff({
             data: {
               submissionId: access.submissionId,
               sessionTokenHash: access.hash,
@@ -174,6 +187,10 @@ function ResultsPage() {
               timeZone: browserTimeZone(),
             },
           });
+          if (saved.outcome !== "saved") {
+            navigate({ to: "/welcome", replace: true });
+            return;
+          }
         } else if (intakeDraft) {
           await save({
             data: {
@@ -229,8 +246,8 @@ function ResultsPage() {
       </p>
       {recognized ? (
         <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-          This browser recognizes your previous access. Your latest answers were used to rebuild
-          this plan.
+          Your saved plan is still intact. Confirm below if you want to replace it with these
+          answers.
         </p>
       ) : null}
 
@@ -326,7 +343,50 @@ function ResultsPage() {
 
       <Separator className="my-8" />
 
-      {unlocked ? (
+      {recognized && !unlocked ? (
+        <section className="rounded-lg border border-border bg-card p-4">
+          <h2 className="text-lg font-semibold">Replace My Current Plan?</h2>
+          <p className="mt-2 text-sm">
+            This saves these answers and resets your current progress. Completed plans must be
+            restarted from My Plan.
+          </p>
+          <Button
+            className="mt-4"
+            onClick={async () => {
+              if (!answers) return;
+              try {
+                const next = await getSubmissionAttempt(answers);
+                const result = await regenerate({
+                  data: {
+                    submissionId: next.submissionId,
+                    sessionTokenHash: next.hash,
+                    token: readStoredToken(),
+                    assessment: answers,
+                  },
+                });
+                if (!result.ok) {
+                  navigate({ to: "/your-plan", replace: true });
+                  return;
+                }
+                window.localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, next.raw);
+                navigate({ to: "/your-plan", replace: true });
+              } catch {
+                setError("We couldn't update your plan. Try again or return to My Plan.");
+              }
+            }}
+          >
+            Confirm - Replace My Plan
+          </Button>
+          <Button asChild variant="outline" className="mt-4 ml-3">
+            <Link to="/your-plan">Keep My Plan</Link>
+          </Button>
+          {error ? (
+            <p role="alert" className="mt-3">
+              {error}
+            </p>
+          ) : null}
+        </section>
+      ) : unlocked ? (
         <section className="rounded-lg border border-border bg-card p-4">
           <h2 className="text-lg font-semibold tracking-tight">
             Your Full 7-Day Workout Plan Is Unlocked

@@ -224,6 +224,7 @@ export function completionLabel(day: PlanDayView | null, dayNumber: number): str
 }
 
 export type PlanHubData = {
+  planVersionId?: string;
   firstName: string;
   tier: string;
   protein: { grams: number | null; fallback: boolean };

@@ -11,7 +11,7 @@
     },
     {
       "path": "bun.lock",
-      "sha256": "bc90f548b39fc00d3fb354eab7c9d8979f91b6c3ec67ff18a01ebe2d8bb51060"
+      "sha256": "7ada5479f86ec7f282d519418a849924555daafbbbc6e609c234fb6ab0d7a7d0"
     },
     {
       "path": "bunfig.toml",
@@ -27,7 +27,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "b530b4852d17a33f72cff0ffa98946349b75b717077cb1cab57e9275f1483495"
+      "sha256": "15c539e1715a86fb3ca646c340a4666b6a0e939cdf2f08562bacd18ff2e79c9d"
     },
     {
       "path": "public/apple-touch-icon.png",
@@ -120,6 +120,10 @@
     {
       "path": "scripts/release-preflight.ts",
       "sha256": "1f9f4c648e0050322415d0be49bf1bff1c51b20956576563f4be9573d6d70ddb"
+    },
+    {
+      "path": "scripts/test-signup-recovery-db.mjs",
+      "sha256": "ab3d512ce2f879e56fdb3ec63ff3cd22a7c4a8dc608a807a7caa13d28cdee393"
     },
     {
       "path": "scripts/update-migration-lock.ts",
@@ -246,6 +250,10 @@
       "sha256": "48d45443d2c0cfda9c4223bcd5029951715023cb3b4794586376912687ec6745"
     },
     {
+      "path": "src/integrations/supabase/signup-recovery.types.ts",
+      "sha256": "d4ff40aca26aa5a493216a187d3287b5ac0ea295e05cda020f38b9ab89cbde67"
+    },
+    {
       "path": "src/integrations/supabase/types.ts",
       "sha256": "0acd0ef5f608023338e7e7a5b5b7ebe406ee3d7684f18e7f2abbe8c789c5d188"
     },
@@ -267,7 +275,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
-      "sha256": "ab323589512747f6a1d954c409143d1dd431cd3935e1753e8ae63960ba705e67"
+      "sha256": "ba730a92d51abdfa27a12a0cb3526b563412b135c341864092ee63b24e00057c"
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
@@ -279,7 +287,7 @@
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
-      "sha256": "ea8984f8adb0a85fc977b1884e4c968de904f1fe974bb76f97fc057068f0f57a"
+      "sha256": "465d6affbdc0a08f7b948bfad3dd9955f1ecda32f942449dc06afce409ef1d48"
     },
     {
       "path": "src/lib/__tests__/pwa-install-contract.test.ts",
@@ -296,6 +304,14 @@
     {
       "path": "src/lib/__tests__/safe-supabase-auth-attacher-contract.test.ts",
       "sha256": "67bc23f0f9a9b01f3301cbb67b2a260842f86e8290cbc19be22095760e49287e"
+    },
+    {
+      "path": "src/lib/__tests__/signup-destination.test.ts",
+      "sha256": "d21039ce6bd8b15969261d0c8040dc03549af445c7400c6766d3cad8d1cbda85"
+    },
+    {
+      "path": "src/lib/__tests__/signup-recovery.test.ts",
+      "sha256": "805e34794845e742fb182cf1a2c7ed606bcb31ab3ab19a6995022efae7e7500c"
     },
     {
       "path": "src/lib/accelerator/__tests__/access.test.ts",
@@ -415,7 +431,7 @@
     },
     {
       "path": "src/lib/access-token.ts",
-      "sha256": "2fc0b88a8ee2c482f3670c40275a28117efc2e189081b140c606fe199b121061"
+      "sha256": "cb43f10fdab05cd2760f111ad316fe102d14e8fa3e6e65865346bed7646f02e5"
     },
     {
       "path": "src/lib/account/__tests__/customer-account-contract.test.ts",
@@ -598,6 +614,10 @@
       "sha256": "10341c1eb4e687e53c075d136691eff2c6d05d2b4ca28368a5502f5444a8e1a2"
     },
     {
+      "path": "src/lib/email/__tests__/signup-welcome-dispatch.test.ts",
+      "sha256": "9accfc5793498a23606a827b40fb6144aad79c3ecab381063619a6512d9a0005"
+    },
+    {
       "path": "src/lib/email/__tests__/stalled-final-rescue-guard.test.ts",
       "sha256": "344fd12c25a2f32eaf55cd038a18eedc7ae5a8bb8f11be41fcaaefead352835c"
     },
@@ -750,6 +770,14 @@
       "sha256": "1effb18f7cee9c6659e103a99423ae81c187d33f011f86f71a2fd5254da00531"
     },
     {
+      "path": "src/lib/email/signup-welcome.server.ts",
+      "sha256": "d37e4f05f54aa0d817da6c646e498333dac3451e847fc3863a3903faa6ce53e3"
+    },
+    {
+      "path": "src/lib/email/signup-welcome.ts",
+      "sha256": "1e0e2f554b094da4e458a1aa242d5af815cc6e0fabf23d2213930eccf20d9127"
+    },
+    {
       "path": "src/lib/email/staging-config.server.ts",
       "sha256": "afcbc71b32603cfe26a3f77e4748037c4605311cd0a148510a1cb87fa31fee3a"
     },
@@ -799,7 +827,7 @@
     },
     {
       "path": "src/lib/email/webhook.server.ts",
-      "sha256": "511eb7fa4087bad14189f2d4f36aa14ecd00e214dec30d8e9d0af6cba13818ad"
+      "sha256": "1c20c65ce5b9a7df90281ea35fd7e222c0f97154c361c83aeb71534ea23c4a27"
     },
     {
       "path": "src/lib/error-capture.ts",
@@ -819,7 +847,7 @@
     },
     {
       "path": "src/lib/lead-intake-handoff.server.ts",
-      "sha256": "014543a2253983085c5a3887818094ac493c8ecdf5e77ebb252e48e07ae48920"
+      "sha256": "de6ee27ac7b37950fd7456508bc0ca64fd0cad8a8f8cdc217373178131a24b63"
     },
     {
       "path": "src/lib/lead-intake-handoff.ts",
@@ -827,7 +855,7 @@
     },
     {
       "path": "src/lib/lead-intake.functions.ts",
-      "sha256": "1d8303e113b201b9fd953e3a00a2de0f31c2844ee0c90151680c53b63b2aba84"
+      "sha256": "5223d0ecf4d21bf7fb0d2cce8403e314abe22e049d17bd8a27611109af1c6154"
     },
     {
       "path": "src/lib/lead-plan-calendar.server.ts",
@@ -835,15 +863,15 @@
     },
     {
       "path": "src/lib/lead-plan.ts",
-      "sha256": "bb749a7c715de1d7f20daef4e037fa1f199b2ae1ea69e5e43983c65a23bed51d"
+      "sha256": "c20cf6ea3eac0a170ce3833319b7ccb2596a0bf342e1665d6868f7d2faf4370e"
     },
     {
       "path": "src/lib/lead-schemas.ts",
-      "sha256": "6a06086b00aeeb6640acdaba25dc0bcac5a19ec9cf0cc2cf449b35fde0e3d1d1"
+      "sha256": "5d146d82631ab813a7922ede59544ca2e2a390c7dcfeb3bf68fc609af15c3083"
     },
     {
       "path": "src/lib/lead.functions.ts",
-      "sha256": "216f2ce8b622c69ce4a4ce8d11b9a3e8047336ef4f9eb78df16e1d7487b37b6d"
+      "sha256": "ad41a5b0ec25424b2806fad9304524eb82eda762234ba0fbbc04cad43c771090"
     },
     {
       "path": "src/lib/lovable-error-reporting.ts",
@@ -966,6 +994,14 @@
       "sha256": "b5b93fdb7d6a22b62c1db276dea0f1730a444464530a4c41f7908d2e4a7d909b"
     },
     {
+      "path": "src/lib/signup-draft.ts",
+      "sha256": "5b9983a717393d4909c7e0d3534c1f9643f49bf5fa84847928bb810b0e3ced7a"
+    },
+    {
+      "path": "src/lib/signup-recovery.server.ts",
+      "sha256": "913e9911b717ceed867379d5411f84619469620dc42a0bec2fda8b4a366eabfc"
+    },
+    {
       "path": "src/lib/static-page.ts",
       "sha256": "2c2163d71572d6cc3cfa54c0804555fd0fc856096e50fbefd424cbdc864416b9"
     },
@@ -975,7 +1011,7 @@
     },
     {
       "path": "src/lib/use-new-plan-intake-access.ts",
-      "sha256": "393b4c3c9e6201d6e4b01764437f376209fccacb5663298acfbfedb5d3e4c6c3"
+      "sha256": "d517611cc44e3d82a0d0a58afb938289e9524cc64318b2baa0486fc6abfc3533"
     },
     {
       "path": "src/lib/utils.ts",
@@ -995,7 +1031,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "ce5438c321882724d41c5aa0d3af3657927093531096cdc41c5fecaad353d1e8"
+      "sha256": "bca20233921a06a117d54c7fab7de344fbf2d260123706d9bb3d59748142089d"
     },
     {
       "path": "src/router.tsx",
@@ -1023,7 +1059,7 @@
     },
     {
       "path": "src/routes/api/public/email/dispatch.ts",
-      "sha256": "586c30fab96bc29bfcf3e1c93f3245e3dd08b0b218ff5e0203d919dbb207adea"
+      "sha256": "aa041c2f3760df25b0e3d8959e23724e3df8bcbc1099399f3bc4dd218c429fa4"
     },
     {
       "path": "src/routes/api/public/email/webhook.ts",
@@ -1039,15 +1075,15 @@
     },
     {
       "path": "src/routes/assessment.complete.tsx",
-      "sha256": "b704d5bc30777588d5b2a0a01a16657cc5e14d0b953b14355724c9d90b5d23ef"
+      "sha256": "41989ee0f399cb594a711df466a0294628b6efdaa22024838b5ec9f1bf3a5a43"
     },
     {
       "path": "src/routes/assessment.index.tsx",
-      "sha256": "db920c06362dcc32de67f92386b31d63c19e464da47d2caa38267ee55bac2ea4"
+      "sha256": "eea05be3946216c79eed3841b168822ac8a59c112964e6e2b39dc61e46c8861f"
     },
     {
       "path": "src/routes/assessment.start.tsx",
-      "sha256": "375a39a257c6c1b86d6d822701786338e1ed830ee8b199f88924e4123a17e096"
+      "sha256": "8ed928d748c9fa26cd08f08122b7c3e618738ad61f91961f8b8cc7fed0ad89b4"
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
@@ -1067,7 +1103,7 @@
     },
     {
       "path": "src/routes/intake.7-day.ts",
-      "sha256": "f13b1e648c0c038547c4b766669ac0a4b14b6a28d77205abfc413f386affbdf3"
+      "sha256": "4164ad197c06a6d2960743b54190f9f3dc1e44f358e036594f6b5c62a7eb23bb"
     },
     {
       "path": "src/routes/jump-ropes.tsx",
@@ -1126,6 +1162,10 @@
       "sha256": "dd0d72da6182ac2e84506bd72cf461f5fa6aa71e24d94a7bdf7a816810d2f733"
     },
     {
+      "path": "src/routes/signup.return.ts",
+      "sha256": "804446d52d268904276983d2a5a5502264106dc9bfa42cf35e7eb5359ee46c77"
+    },
+    {
       "path": "src/routes/sitemap[.]xml.ts",
       "sha256": "fdd4d27e844a82298023ba4894ffd8868a081f70765639cf220b54539d9e9cd6"
     },
@@ -1135,7 +1175,7 @@
     },
     {
       "path": "src/routes/welcome.tsx",
-      "sha256": "3d78805f3f8f609dc705a2b96ae91f9ba5c00ae8436aac82e721169a93a202af"
+      "sha256": "933be5e598f2d09a788852981d13e2eebc87dedbe8c880c29837c85d78f0166a"
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",
@@ -1143,7 +1183,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "8b8df1e76ff78536f3e1b12d97a95e07f9a5d30f6309ca8ce926771cff8819a5"
+      "sha256": "ed142ad1653125c274705ae3ddbab6c3b59fccc75601691c3f6d7f3c1e34fab5"
     },
     {
       "path": "src/server.ts",
@@ -1171,7 +1211,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "d795928f3d1ea1eff83519f95288d63741a7955f467b59d62e4654d0906a0b5d"
+      "sha256": "d1aee8aac71f6f12ba3ace61e66a8cda7772a8233966a2bacfe97917ce3914ca"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1320,6 +1360,14 @@
     {
       "path": "supabase/migrations/20260909161000_lead_plan_calendar_access.sql",
       "sha256": "681deb7bd0f1b5e9b526d9ea72f0a524e62bc4cd6eaaa39c49afa846749901a8"
+    },
+    {
+      "path": "supabase/migrations/20260909190000_seven_day_signup_recovery.sql",
+      "sha256": "a9a7d6a980875602100a8994deccef406162535976d58804e0f054f34be665e6"
+    },
+    {
+      "path": "supabase/signup-recovery.acceptance.sql",
+      "sha256": "d3cdfbbaa4814392b6beac37100b2ae37443e2831fe1220cc9c26a3ac054f861"
     },
     {
       "path": "tsconfig.json",

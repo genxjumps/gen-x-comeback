@@ -195,11 +195,14 @@ describe("website lead intake handoff", () => {
   });
 
   it("automatically scopes closed-intake email testing to the completed controlled plan", () => {
-    expect(leadFunctions).toContain("admitControlledPlanEmailScope(result.leadPlanId)");
-    expect(leadFunctions).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
-    expect(handoffServer).toContain("controlled_lead_plan_id: leadPlanId");
-    expect(handoffServer).toContain('.eq("genuine_plans_admitted", false)');
-    expect(handoffServer).not.toContain("genuine_plans_admitted: true");
-    expect(handoffServer).not.toContain("sending_enabled: true");
+    const migration = source(
+      "../../../supabase/migrations/20260909190000_seven_day_signup_recovery.sql",
+    );
+    expect(leadFunctions).toContain('"save_signup_plan"');
+    expect(migration).toContain("IF v_intake.controlled_test THEN");
+    expect(migration).toContain("controlled_lead_plan_id = v_result.lead_plan_id");
+    expect(migration).toContain("AND NOT genuine_plans_admitted");
+    expect(migration).not.toContain("genuine_plans_admitted=true");
+    expect(migration).not.toContain("sending_enabled=true");
   });
 });

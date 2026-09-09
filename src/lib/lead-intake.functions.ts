@@ -1,16 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
-
-export type LeadIntakeWelcomeResult =
-  | { ok: true; firstName: string }
-  | { ok: false; reason: "missing_or_expired" };
-
+import { tokenOnlyInputSchema } from "@/lib/lead-schemas";
+import type { SignupDestination } from "@/lib/signup-recovery.server";
+export type LeadIntakeWelcomeResult = SignupDestination;
 export const getLeadIntakeWelcome = createServerFn({ method: "POST" })
-  .inputValidator(() => ({}))
-  .handler(async (): Promise<LeadIntakeWelcomeResult> => {
+  .inputValidator((data: unknown) => tokenOnlyInputSchema.parse(data))
+  .handler(async ({ data }): Promise<LeadIntakeWelcomeResult> => {
     const { currentCookieHeader } = await import("@/lib/plan-access.server");
-    const { resolveLeadIntake } = await import("@/lib/lead-intake-handoff.server");
-    const intake = await resolveLeadIntake(await currentCookieHeader());
-    return intake
-      ? { ok: true, firstName: intake.firstName }
-      : { ok: false, reason: "missing_or_expired" };
+    const { resolveSignupDestination } = await import("@/lib/signup-recovery.server");
+    return resolveSignupDestination(await currentCookieHeader(), data.token);
   });

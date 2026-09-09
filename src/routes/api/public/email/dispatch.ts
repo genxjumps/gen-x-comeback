@@ -203,6 +203,11 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         }
 
         try {
+          const { dispatchSignupWelcome } = await import("@/lib/email/signup-welcome.server");
+          const signupWelcome = await dispatchSignupWelcome(
+            authentication.invocationId,
+            gate.providerSubmissionLimit,
+          );
           const { runDispatchCycle } = await import("@/lib/email/dispatch-cycle.server");
           const cycle = await runDispatchCycle(runtime.deps, {
             limit: gate.providerSubmissionLimit,
@@ -219,6 +224,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             gate.providerSubmissionLimit,
           );
           const summaries = [
+            signupWelcome,
             cycle.planReady,
             cycle.recovery,
             cycle.planCompleted,
@@ -262,6 +268,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
               start_day_1: cycle.startDayOne,
               final_rescue: cycle.finalRescue,
               paid_access: paidAccess,
+              signup_welcome: signupWelcome,
             },
             { headers: { "cache-control": "no-store" } },
           );

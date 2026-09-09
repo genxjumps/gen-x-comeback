@@ -27,6 +27,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
 import { Route as Start7DayRouteImport } from './routes/start.7-day'
+import { Route as SignupReturnRouteImport } from './routes/signup.return'
 import { Route as ProgramsAcceleratorRouteImport } from './routes/programs_.accelerator'
 import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as PreviewAcceleratorRouteImport } from './routes/preview.accelerator'
@@ -132,6 +133,11 @@ const AssessmentIndexRoute = AssessmentIndexRouteImport.update({
 const Start7DayRoute = Start7DayRouteImport.update({
   id: '/start/7-day',
   path: '/start/7-day',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupReturnRoute = SignupReturnRouteImport.update({
+  id: '/signup/return',
+  path: '/signup/return',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProgramsAcceleratorRoute = ProgramsAcceleratorRouteImport.update({
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
+  '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
+  '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs_/accelerator': typeof ProgramsAcceleratorRoute
+  '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
@@ -353,6 +362,7 @@ export interface FileRouteTypes {
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs/accelerator'
+    | '/signup/return'
     | '/start/7-day'
     | '/assessment/'
     | '/your-plan/'
@@ -389,6 +399,7 @@ export interface FileRouteTypes {
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs/accelerator'
+    | '/signup/return'
     | '/start/7-day'
     | '/assessment'
     | '/your-plan'
@@ -425,6 +436,7 @@ export interface FileRouteTypes {
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs_/accelerator'
+    | '/signup/return'
     | '/start/7-day'
     | '/assessment/'
     | '/your-plan/'
@@ -462,6 +474,7 @@ export interface RootRouteChildren {
   PreviewAcceleratorRoute: typeof PreviewAcceleratorRoute
   PreviewW01Route: typeof PreviewW01Route
   ProgramsAcceleratorRoute: typeof ProgramsAcceleratorRoute
+  SignupReturnRoute: typeof SignupReturnRoute
   Start7DayRoute: typeof Start7DayRoute
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
@@ -603,6 +616,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Start7DayRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/signup/return': {
+      id: '/signup/return'
+      path: '/signup/return'
+      fullPath: '/signup/return'
+      preLoaderRoute: typeof SignupReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/programs_/accelerator': {
       id: '/programs_/accelerator'
       path: '/programs/accelerator'
@@ -742,6 +762,7 @@ const rootRouteChildren: RootRouteChildren = {
   PreviewAcceleratorRoute: PreviewAcceleratorRoute,
   PreviewW01Route: PreviewW01Route,
   ProgramsAcceleratorRoute: ProgramsAcceleratorRoute,
+  SignupReturnRoute: SignupReturnRoute,
   Start7DayRoute: Start7DayRoute,
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,

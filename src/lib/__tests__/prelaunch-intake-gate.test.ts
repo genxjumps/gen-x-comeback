@@ -34,7 +34,7 @@ describe("pre-launch intake gate", () => {
 
     expect(handoffRoute).toContain("controlledTestLeadIntakeAllowed(parsed.data.email, request)");
     expect(handoffRoute.indexOf("if (!NEW_PLAN_INTAKE_OPEN)")).toBeLessThan(
-      handoffRoute.indexOf("createWebsiteLeadIntake(parsed.data"),
+      handoffRoute.indexOf("const intake = await createWebsiteLeadIntake("),
     );
   });
 
@@ -64,7 +64,7 @@ describe("pre-launch intake gate", () => {
       handoffSaveStart,
     );
     const handoffSaveHandler = leadFunctions.slice(handoffSaveStart, handoffSaveEnd);
-    expect(handoffSaveHandler).toContain("claimLeadIntake");
+    expect(handoffSaveHandler).toContain('"save_signup_plan"');
     expect(handoffSaveHandler).not.toContain('throw new Error("New plan intake is closed")');
   });
 });

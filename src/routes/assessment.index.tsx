@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IntakeClosed } from "@/components/intake-closed";
+import { firstUnfinishedAssessmentStep } from "@/lib/signup-draft";
 import { useNewPlanIntakeAccess } from "@/lib/use-new-plan-intake-access";
 import {
   Select,
@@ -163,6 +164,7 @@ function Assessment() {
   const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
+    if (intakeAccess !== "allowed") return;
     try {
       const raw = window.localStorage.getItem(ASSESSMENT_STORAGE_KEY);
       if (raw) {
@@ -176,14 +178,13 @@ function Assessment() {
           q4,
           equipment: parsed.equipment ?? [],
         });
-        // Prefilled answers are restored, but the flow always begins at Step 1 and
-        // advances one stage per Continue press. The saved step is intentionally ignored.
+        setStep(firstUnfinishedAssessmentStep({ ...savedAnswers, q4 }));
       }
     } catch {
       /* ignore malformed draft */
     }
     setLoaded(true);
-  }, []);
+  }, [intakeAccess]);
 
   useEffect(() => {
     if (!loaded) return;

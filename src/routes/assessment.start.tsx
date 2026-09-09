@@ -42,13 +42,14 @@ function BeforeYouStart() {
   const [ineligible, setIneligible] = useState(false);
 
   useEffect(() => {
+    if (intakeAccess !== "allowed") return;
     try {
       const stored = window.localStorage.getItem(ELIGIBILITY_STORAGE_KEY);
       if (stored && options.some((o) => o.value === stored)) setAnswer(stored);
     } catch {
       // ignore
     }
-  }, []);
+  }, [intakeAccess]);
 
   const onAnswerChange = (value: string) => {
     setAnswer(value);

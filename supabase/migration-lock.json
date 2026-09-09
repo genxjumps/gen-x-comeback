@@ -258,6 +258,13 @@
       "sha256": "681deb7bd0f1b5e9b526d9ea72f0a524e62bc4cd6eaaa39c49afa846749901a8",
       "statementSha256": "76c3b69a93e7e564100952992116c4b6032af744f8c50fb16e85f84391c6867b",
       "version": "20260909161000"
+    },
+    {
+      "file": "20260909190000_seven_day_signup_recovery.sql",
+      "name": "seven_day_signup_recovery",
+      "sha256": "a9a7d6a980875602100a8994deccef406162535976d58804e0f054f34be665e6",
+      "statementSha256": "cea88a9c1cf006916cbf4dc5d8780b5133830af77fcebe993d2f8da2c496c752",
+      "version": "20260909190000"
     }
   ],
   "version": 1

@@ -7,7 +7,7 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 ## Participant flow
 
 1. The website hero submits first name, email, explicit consent, and attribution fields to `POST /intake/7-day`.
-2. The app validates the website origin, rate-limits the request, stores a 24-hour one-time intake, and sets an HTTP-only handoff cookie.
+2. The app validates the website origin, rate-limits the request, stores a 24-hour intake handoff, queues the welcome email, and sets an HTTP-only handoff cookie. Existing plans follow the approved recovery contract below.
 3. The participant lands on `/welcome` and sees three scannable states: Access saved, Quick setup, Plan ready.
 4. `Build My 7-Day Plan` starts the assessment. The participant is told it takes about two minutes and requires no password.
 5. Assessment completion claims the intake and creates the plan without another identity form.
@@ -38,15 +38,62 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 
 The approved consent text is stored with the opt-in. A durable MailerLite sync job is queued at website opt-in, independently of assessment completion. Existing plan-based sync remains in place and provider upserts are idempotent.
 
-An immediate welcome-and-resume email after website opt-in is an approved follow-up requirement. It must return an unfinished participant to the welcome screen or first unanswered assessment step without waiting for Plan Ready. Plan Ready remains a separate email sent only after the plan is successfully committed.
+The immediate welcome-and-resume email is implemented in the bounded signup-recovery checkpoint below. It returns an unfinished participant to welcome or their same-browser draft without waiting for Plan Ready. Plan Ready remains a separate email sent only after the plan is successfully committed.
 
 During closed-intake testing, successful completion of an allowed handoff moves the existing production email fence to that exact new plan. It does not enable sending or admit genuine plans. This lets a new allowed Gmail plus alias receive its test Plan Ready email without manually replacing a secret or database control value after every run.
 
 Plan Ready resolves saved completion progress when the queued message is actually dispatched. A delayed message must direct the participant to the next unfinished scheduled day instead of telling someone who already completed Day 1 to start Day 1.
 
-## Open product decision
+## Approved abandonment and repeat-signup contract
 
-When an email with an existing 7-Day Plan opts in again, the app must never fail silently or create a duplicate identity. Before public launch, decide whether the participant should resume the existing plan, rebuild and replace it, or explicitly choose between those actions. The September 9 controlled test exposed a database ambiguity in the current replacement path; that defect and the participant-facing behavior require a separate repair checkpoint.
+Approved September 9, 2026. The implementation is prepared on
+`agent/seven-day-signup-recovery`; migration application, merge, publication,
+and opening public intake remain separate approvals.
+
+- Signup queues a transactional welcome-and-resume email before assessment completion.
+  Its durable outbox is independent of MailerLite. A best-effort wake invokes the
+  existing authenticated scheduler; the five-minute tick retries if the wake fails.
+- Rapid submissions for the same normalized email share one welcome job per
+  five-minute bucket. Per-email and per-caller rate limits apply. Provider retries
+  retain exactly the same payload, token, and idempotency key and stop before the
+  provider's 24-hour deduplication horizon.
+- No saved plan: the secure link returns to `/welcome`. Browser-local answers may
+  resume at the first unfinished assessment stage only in the browser holding
+  that participant's draft. A different browser/device starts fresh at Step 1
+  after the existing eligibility check. Answers are not synchronized to the server.
+- Incomplete saved plan: resume that exact plan, preserving its version, calendar,
+  progress, sessions, and existing lifecycle jobs.
+- Completed saved plan: open the completed plan. Only secure access followed by
+  an explicit confirmation in My Plan can start another week. Repeat signup and
+  welcome-link exchange never restart anything. Restart uses the same workouts,
+  archives the completed run, starts Day 1 on today's local date, and is idempotent.
+- A matching authorized session may open its own saved plan immediately. Typing
+  an email and receiving a signup cookie does not prove ownership of an existing
+  plan. Otherwise the participant uses the emailed secure link.
+- Email credentials and the original signup cookie are separate capabilities.
+  `/signup/return` GET only renders a button; deliberate same-origin POST establishes
+  a new browser session. Reusing a valid link does not revoke another browser's
+  access. Welcome links last 30 days and resolve current saved state when opened.
+- Draft ownership uses an opaque server-derived participant key. Another identity
+  in the same browser cannot inherit the previous participant's assessment.
+- Plan save, calendar configuration, intake completion, controlled Plan Ready scope,
+  and Plan Ready outbox creation succeed or roll back together. Retry returns the
+  original saved result. Distinct submissions for an existing email never replace it.
+- The legacy Update My Plan action also requires a deliberate confirmation before
+  applying changed answers. Completed plans use the separate restart action.
+- Welcome is requested transactional access, independent of marketing and proactive
+  Plan-email consent. Existing consent flags remain distinct; opening a welcome
+  link changes neither preference. Explicit signup marketing consent remains in
+  the intake's MailerLite sync path. Plan Ready remains a separate post-save email.
+- Sending uses existing activation and suppression controls and the shared rolling
+  provider reservation limit. During closed intake only server-admitted controlled
+  test intakes qualify for welcome delivery. No control is enabled by the migration.
+- Missing/expired links and save conflicts offer a path back to welcome or a new
+  signup with the same email. They never instruct the participant to use a different
+  email or replace saved progress to work around an error.
+
+See [checkpoint verification](SIGNUP-RECOVERY-CHECKPOINT.md) for test evidence,
+release dependencies, and the remaining controlled live tests.
 
 ## Home Screen behavior
 
