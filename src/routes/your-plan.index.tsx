@@ -9,6 +9,8 @@ import {
   TOTAL_ASSIGNMENTS,
   assignmentKind,
   currentAssignmentDay,
+  planDayHeading,
+  planDayTiming,
   type PlanHubData,
 } from "@/lib/lead-plan";
 import { getPlanHub, recordOnboardingEvent, startDayOne } from "@/lib/lead.functions";
@@ -110,6 +112,7 @@ function PlanHubPage() {
   const completedCount = hub.completedDays.filter((d) => hub.days.some((x) => x.day === d)).length;
   const current = currentAssignmentDay(hub.days, hub.completedDays);
   const currentEntry = current ? hub.days.find((d) => d.day === current) : null;
+  const currentTiming = current ? planDayTiming(hub.calendar, current) : null;
   const pct = Math.round((completedCount / TOTAL_ASSIGNMENTS) * 100);
 
   async function openDayOne() {
@@ -172,7 +175,9 @@ function PlanHubPage() {
         }`}
       >
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-          Today’s Workout
+          {currentEntry && currentTiming
+            ? planDayHeading(currentEntry, currentTiming)
+            : "Plan Complete"}
         </h2>
         {currentEntry ? (
           <>
@@ -240,7 +245,18 @@ function PlanHubPage() {
           {hub.days.map((d) => {
             const complete = hub.completedDays.includes(d.day);
             const isCurrent = d.day === current;
-            const status = complete ? "Complete" : isCurrent ? "Current" : "Upcoming";
+            const timing = planDayTiming(hub.calendar, d.day);
+            const status = complete
+              ? "Complete"
+              : !isCurrent
+                ? "Upcoming"
+                : timing.relation === "today"
+                  ? "Today"
+                  : timing.relation === "tomorrow"
+                    ? "Tomorrow"
+                    : timing.relation === "past"
+                      ? "Next"
+                      : "Upcoming";
             return (
               <li key={d.day} className={isCurrent ? "bg-gxj-mint" : "bg-muted/30"}>
                 <RowLink day={d.day}>

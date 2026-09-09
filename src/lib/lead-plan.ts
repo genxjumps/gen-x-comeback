@@ -52,8 +52,86 @@ export type DayBriefResult =
       completedDays: number[];
       tier: string;
       day: PlanDayView | null;
+      calendar: PlanCalendar;
     }
   | { ok: false };
+
+/** Stable calendar anchor for the seven-day plan. Dates are YYYY-MM-DD values. */
+export type PlanCalendar = {
+  startOn: string;
+  today: string;
+  timeZone: string;
+};
+
+export type PlanDayTiming = {
+  availableOn: string;
+  relation: "past" | "today" | "tomorrow" | "future";
+  available: boolean;
+};
+
+const DAY_MS = 86_400_000;
+
+/** Current YYYY-MM-DD in a validated IANA time zone. */
+export function isoDateInTimeZone(date: Date, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const value = (type: "year" | "month" | "day") =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  return `${value("year")}-${value("month")}-${value("day")}`;
+}
+
+function dateOrdinal(isoDate: string): number {
+  return Math.floor(Date.parse(`${isoDate}T00:00:00Z`) / DAY_MS);
+}
+
+function isoDateFromOrdinal(ordinal: number): string {
+  return new Date(ordinal * DAY_MS).toISOString().slice(0, 10);
+}
+
+/** Assigns one fixed local calendar date to each plan day. */
+export function planDayTiming(calendar: PlanCalendar, dayNumber: number): PlanDayTiming {
+  const availableOrdinal = dateOrdinal(calendar.startOn) + Math.max(0, dayNumber - 1);
+  const todayOrdinal = dateOrdinal(calendar.today);
+  const delta = availableOrdinal - todayOrdinal;
+  return {
+    availableOn: isoDateFromOrdinal(availableOrdinal),
+    relation: delta < 0 ? "past" : delta === 0 ? "today" : delta === 1 ? "tomorrow" : "future",
+    available: delta <= 0,
+  };
+}
+
+/** Weekday label for an already-local ISO date, independent of the viewer's device zone. */
+export function planWeekday(isoDate: string): string {
+  return new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone: "UTC" }).format(
+    new Date(`${isoDate}T12:00:00Z`),
+  );
+}
+
+function timingNoun(day: PlanDayView | null): string {
+  switch (assignmentType(day)) {
+    case "walk":
+      return "Movement";
+    case "recovery":
+      return "Recovery";
+    case "rest":
+      return "Rest Day";
+    default:
+      return "Workout";
+  }
+}
+
+/** Calendar-aware heading for the earliest unfinished plan day. */
+export function planDayHeading(day: PlanDayView | null, timing: PlanDayTiming): string {
+  const noun = timingNoun(day);
+  if (timing.relation === "today") return `Today’s ${noun}`;
+  if (timing.relation === "tomorrow") return `Tomorrow’s ${noun}`;
+  if (timing.relation === "future") return `Available ${planWeekday(timing.availableOn)}`;
+  return `Your Next ${noun}`;
+}
 
 /** Tier-appropriate easy-movement duration for a saved walk assignment. */
 export function movementDuration(tier: string): string {
@@ -157,6 +235,7 @@ export type PlanHubData = {
   };
   days: PlanDayView[];
   completedDays: number[];
+  calendar: PlanCalendar;
 };
 
 export type PlanHubResult = { ok: true; data: PlanHubData } | { ok: false };

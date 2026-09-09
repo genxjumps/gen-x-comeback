@@ -4,6 +4,7 @@ import type { Answers } from "@/lib/plan";
 import {
   CONSENT_COPY,
   CONSENT_VERSION,
+  isoDateInTimeZone,
   planFromAnswers,
   ropeLevelFromExperience,
   toPlanDayView,
@@ -60,11 +61,19 @@ async function loadSaved(leadPlanId: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
     .from("lead_plans")
-    .select("assessment_json, plan_json")
+    .select("assessment_json, plan_json, plan_start_on, plan_time_zone")
     .eq("id", leadPlanId)
     .limit(1);
   if (error) throw new Error(error.message);
   return data?.[0] ?? null;
+}
+
+function calendarFrom(saved: { plan_start_on: string; plan_time_zone: string }) {
+  return {
+    startOn: saved.plan_start_on,
+    timeZone: saved.plan_time_zone,
+    today: isoDateInTimeZone(new Date(), saved.plan_time_zone),
+  };
 }
 
 /** Derives the cardio guidance fields from server-stored data only. */
@@ -125,6 +134,7 @@ export const getDayBrief = createServerFn({ method: "POST" })
       cardio: cardioFrom(saved.assessment_json, saved.plan_json),
       day: raw ? toPlanDayView(raw, data.day - 1) : null,
       completedDays: await listCompletedDays(access.leadPlanId),
+      calendar: calendarFrom(saved),
     };
   });
 
@@ -147,6 +157,11 @@ export const completePlanDay = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<ProgressResult> => {
     const access = await authorize(data.token);
     if (!access) return { ok: false };
+
+    const { leadPlanDayAvailable } = await import("@/lib/lead-plan-calendar.server");
+    if (!(await leadPlanDayAvailable(access.leadPlanId, access.planVersionId, data.day))) {
+      return { ok: false };
+    }
 
     // Sequential progression is enforced server-side: every earlier day must
     // already be complete, so direct URL access cannot complete a day early.
@@ -204,7 +219,12 @@ type NewPlanIdentity = {
 };
 
 async function commitNewPlan(
-  data: { submissionId: string; sessionTokenHash: string; assessment: Answers },
+  data: {
+    submissionId: string;
+    sessionTokenHash: string;
+    assessment: Answers;
+    timeZone: string;
+  },
   identity: NewPlanIdentity,
 ): Promise<SaveLeadPlanResult & { leadPlanId: string }> {
   const { plan, snapshot } = planFromAnswers(data.assessment);
@@ -217,6 +237,7 @@ async function commitNewPlan(
       identity.emailNormalized,
       identity.firstName,
       JSON.stringify(data.assessment),
+      data.timeZone,
     ]),
     p_email_normalized: identity.emailNormalized,
     p_email_original: identity.emailOriginal,
@@ -233,6 +254,8 @@ async function commitNewPlan(
   if (result.outcome === "conflict" || result.outcome === "stale_replay") {
     throw new Error("Submission conflict");
   }
+  const { configureLeadPlanCalendar } = await import("@/lib/lead-plan-calendar.server");
+  await configureLeadPlanCalendar(result.lead_plan_id, data.timeZone);
   return {
     leadPlanId: result.lead_plan_id,
     firstName: result.first_name,
@@ -262,7 +285,7 @@ export const saveLeadPlanFromHandoff = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => handoffLeadInputSchema.parse(data))
   .handler(async ({ data }): Promise<SaveLeadPlanResult> => {
     const { currentCookieHeader } = await import("@/lib/plan-access.server");
-    const { claimLeadIntake, completeLeadIntake } =
+    const { claimLeadIntake, completeLeadIntake, admitControlledPlanEmailScope } =
       await import("@/lib/lead-intake-handoff.server");
     const intake = await claimLeadIntake(await currentCookieHeader(), data.submissionId);
     if (!intake) throw new Error("Lead intake is missing or expired");
@@ -278,6 +301,9 @@ export const saveLeadPlanFromHandoff = createServerFn({ method: "POST" })
       },
     );
     await completeLeadIntake(intake.intakeId, data.submissionId, result.leadPlanId);
+    if (!NEW_PLAN_INTAKE_OPEN) {
+      await admitControlledPlanEmailScope(result.leadPlanId);
+    }
     return { firstName: result.firstName, plan: result.plan, replayed: result.replayed };
   });
 
@@ -367,6 +393,7 @@ export const getPlanHub = createServerFn({ method: "POST" })
         },
         days,
         completedDays: await listCompletedDays(access.leadPlanId),
+        calendar: calendarFrom(saved),
       },
     };
   });

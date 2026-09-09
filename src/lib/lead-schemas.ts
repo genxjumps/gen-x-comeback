@@ -54,6 +54,7 @@ const tokenHashSchema = z.string().regex(/^[a-f0-9]{64}$/, "Invalid token hash")
 
 /** Required client-generated idempotency key for an exact submit replay. */
 const submissionIdSchema = z.string().uuid("Invalid submission id");
+const timeZoneSchema = z.string().trim().min(1).max(100).default("UTC");
 
 export const leadInputSchema = z.object({
   submissionId: submissionIdSchema,
@@ -69,12 +70,14 @@ export const leadInputSchema = z.object({
     .refine((v) => z.string().email().max(254).safeParse(v).success, "Invalid email"),
   consentGranted: z.literal(true),
   assessment: answersSchema,
+  timeZone: timeZoneSchema,
 });
 
 export const handoffLeadInputSchema = z.object({
   submissionId: submissionIdSchema,
   sessionTokenHash: tokenHashSchema,
   assessment: answersSchema,
+  timeZone: timeZoneSchema,
 });
 
 export const onboardingEventInputSchema = z.object({

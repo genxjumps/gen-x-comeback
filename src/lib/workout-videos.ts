@@ -19,6 +19,17 @@ export function workoutVideoSrc(code: string | null | undefined): string | null 
   return WORKOUT_VIDEOS[code] ?? null;
 }
 
+/** Cloudflare poster URL belonging to the same configured workout asset. */
+export function workoutVideoPoster(code: string | null | undefined): string | null {
+  const src = workoutVideoSrc(code);
+  if (!src) return null;
+  try {
+    return new URL(src).searchParams.get("poster");
+  } catch {
+    return null;
+  }
+}
+
 /** Explicit internal-beta notice for a workout code with no connected asset. */
 export function missingVideoNotice(code: string): string {
   return `${code} video asset not connected yet.`;

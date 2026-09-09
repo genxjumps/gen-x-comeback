@@ -131,11 +131,11 @@
     },
     {
       "path": "src/components/day-assignment.tsx",
-      "sha256": "42f5827d70148fb792cfd70e8103e3136280cb80dd91771baac9adac05b49ae9"
+      "sha256": "a033c321f0a208e7a4da7ce7c6e3b6df6637a8040364cf35d99598cea59f05b7"
     },
     {
       "path": "src/components/day-one-workout.tsx",
-      "sha256": "a23b0b9620f3218b89961de2680f8db22b041794344857058eeef97f8ea50416"
+      "sha256": "c48b7bfac7d81e7df7b3272bf76146e592a1e91c475e6051f6f82e46c2bf2099"
     },
     {
       "path": "src/components/intake-closed.tsx",
@@ -159,7 +159,7 @@
     },
     {
       "path": "src/components/pwa-install.tsx",
-      "sha256": "91bc81c388df8111a0270fd24523e4cabab584fe0d95cd2e402be4e9cc80ec22"
+      "sha256": "a58c619a01310e7358472b53038d3eb3c9988188a82a0408e19413bc478b19d9"
     },
     {
       "path": "src/components/ui/button.tsx",
@@ -215,7 +215,7 @@
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "sha256": "3c13f70c6b7fbea6a32387b0bf46b8632bb76fee63562d175789a15ec2707f1b"
+      "sha256": "0acd0ef5f608023338e7e7a5b5b7ebe406ee3d7684f18e7f2abbe8c789c5d188"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -235,7 +235,11 @@
     },
     {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
-      "sha256": "4780ea9f793757a9e585b982bcf1a9da075b474d7330d3d7643c2ce5be25ced8"
+      "sha256": "ab323589512747f6a1d954c409143d1dd431cd3935e1753e8ae63960ba705e67"
+    },
+    {
+      "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
+      "sha256": "4508201605627c95cade9e88f74e1023bed6004faa5fc3e08a477e25e825c550"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
@@ -247,7 +251,7 @@
     },
     {
       "path": "src/lib/__tests__/pwa-install-contract.test.ts",
-      "sha256": "c8d2b14d921eb13d6a89ba38add0fa860b22a197e9f4d1069ac3da2a80466c30"
+      "sha256": "e61aa0cc675495d5d3e2735f41b124bc834e79b7d9708e18737fbb4ed8621c1a"
     },
     {
       "path": "src/lib/__tests__/release-fingerprint.test.ts",
@@ -527,7 +531,7 @@
     },
     {
       "path": "src/lib/email/__tests__/plan-ready.test.ts",
-      "sha256": "45c6f34529d15b33caf449332450cb13457b9af3f38227c981f6adac963ef200"
+      "sha256": "6d689d1915fc5c1e3db05af2e304331a9f9670ed04278e7d086b4eb3fbcd2268"
     },
     {
       "path": "src/lib/email/__tests__/production-scheduler.test.ts",
@@ -607,7 +611,7 @@
     },
     {
       "path": "src/lib/email/dispatch.ts",
-      "sha256": "982ff1d5dc7d60fd0817bb77fef953137e67b45fe47de6bcb51f4c580d9d3e79"
+      "sha256": "6c5ff5643af9c075e3ec837deb7870e3861af1de440fb5f64e9d767e2c225c49"
     },
     {
       "path": "src/lib/email/event-names.ts",
@@ -675,7 +679,7 @@
     },
     {
       "path": "src/lib/email/plan-ready-template.ts",
-      "sha256": "fa176135c410ea712bb5b4f2a45a6e50c9a820868005bdc1e030f1477937d21e"
+      "sha256": "c93bde824fe47a91c8495be981c4f5c720bdc5864be4bfeddc7d5b12ec2d393b"
     },
     {
       "path": "src/lib/email/production-scheduler.server.ts",
@@ -747,7 +751,7 @@
     },
     {
       "path": "src/lib/email/store.server.ts",
-      "sha256": "928e44905370976b59a01686fdc9ae34a241cd05754f2a23abe4efd41f2a8512"
+      "sha256": "81fb2dc5b857683a56e22a6850dd93c3054dca5341504d6f511491f828639eed"
     },
     {
       "path": "src/lib/email/store.ts",
@@ -755,7 +759,7 @@
     },
     {
       "path": "src/lib/email/types.ts",
-      "sha256": "9340862b15f4ba4228fb03af5173b7bcd274dc2321c00a8f47ed426632036528"
+      "sha256": "1b69e60d4ece6b02586d03ba77fe72a7dea7f8d76a48224354de8e15f980de0b"
     },
     {
       "path": "src/lib/email/webhook-signature.ts",
@@ -783,7 +787,7 @@
     },
     {
       "path": "src/lib/lead-intake-handoff.server.ts",
-      "sha256": "6278ba995529e752fb35a256ca65e7b5dd1322c7bde73f194f95a705d750c29e"
+      "sha256": "014543a2253983085c5a3887818094ac493c8ecdf5e77ebb252e48e07ae48920"
     },
     {
       "path": "src/lib/lead-intake-handoff.ts",
@@ -794,16 +798,20 @@
       "sha256": "1d8303e113b201b9fd953e3a00a2de0f31c2844ee0c90151680c53b63b2aba84"
     },
     {
+      "path": "src/lib/lead-plan-calendar.server.ts",
+      "sha256": "76c6fc9dd1abcbc860a2e2172e851611964e7ba36a76e40c6c9cdee45b60a581"
+    },
+    {
       "path": "src/lib/lead-plan.ts",
-      "sha256": "3e8105381e017d4afc930aa93704bc3e9e5dde6e39546ce9b39c3d4962e29def"
+      "sha256": "bb749a7c715de1d7f20daef4e037fa1f199b2ae1ea69e5e43983c65a23bed51d"
     },
     {
       "path": "src/lib/lead-schemas.ts",
-      "sha256": "136718c495c2cf3863f1b2e970eddd47754fbbfbac52d6f458a07b588b603bb7"
+      "sha256": "6a06086b00aeeb6640acdaba25dc0bcac5a19ec9cf0cc2cf449b35fde0e3d1d1"
     },
     {
       "path": "src/lib/lead.functions.ts",
-      "sha256": "c0acd1a0ca56c92e51440584113c7da0be9aa59a0589db3324d24d48ac852840"
+      "sha256": "216f2ce8b622c69ce4a4ce8d11b9a3e8047336ef4f9eb78df16e1d7487b37b6d"
     },
     {
       "path": "src/lib/lovable-error-reporting.ts",
@@ -947,7 +955,7 @@
     },
     {
       "path": "src/lib/workout-videos.ts",
-      "sha256": "dc9d21a2a6897c7dc950259a29cfff253fdccb3c6e80bbb02c2e0ad885a4ce41"
+      "sha256": "f6369a240f97bd9dbd96abfe4738db41b7a96e921de6c2160fc85179e769b817"
     },
     {
       "path": "src/release-identity.d.ts",
@@ -999,7 +1007,7 @@
     },
     {
       "path": "src/routes/assessment.complete.tsx",
-      "sha256": "58f42d1188bb4f17b5d25447d2acd6a8d3df949cbd2ed8b81f03ee57d20079e8"
+      "sha256": "b704d5bc30777588d5b2a0a01a16657cc5e14d0b953b14355724c9d90b5d23ef"
     },
     {
       "path": "src/routes/assessment.index.tsx",
@@ -1103,7 +1111,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "36e7cefba7651cc328e93f81812d6980d28668e335a20338ad8b53807ddaf533"
+      "sha256": "8b8df1e76ff78536f3e1b12d97a95e07f9a5d30f6309ca8ce926771cff8819a5"
     },
     {
       "path": "src/server.ts",
@@ -1131,7 +1139,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "a9d0c0f60c23637bbb141ac13a07b45315e85e06445d48ee1c809f73f279d3a8"
+      "sha256": "d795928f3d1ea1eff83519f95288d63741a7955f467b59d62e4654d0906a0b5d"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1276,6 +1284,10 @@
     {
       "path": "supabase/migrations/20260907210000_website_lead_intake_handoff.sql",
       "sha256": "d6fe2586a2fc5fe00fe917ad3900bf2cf91b5306f45bec7dcdc9698bc1d22a0b"
+    },
+    {
+      "path": "supabase/migrations/20260909161000_lead_plan_calendar_access.sql",
+      "sha256": "681deb7bd0f1b5e9b526d9ea72f0a524e62bc4cd6eaaa39c49afa846749901a8"
     },
     {
       "path": "tsconfig.json",

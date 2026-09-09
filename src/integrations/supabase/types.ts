@@ -914,11 +914,14 @@ export type Database = {
           marketing_consent_at: string | null;
           marketing_consent_source: string | null;
           marketing_unsubscribed_at: string | null;
+          plan_calendar_configured_at: string | null;
           plan_email_consent_active: boolean;
           plan_email_consent_at: string | null;
           plan_email_consent_source: string | null;
           plan_email_unsubscribed_at: string | null;
           plan_json: Json;
+          plan_start_on: string;
+          plan_time_zone: string;
           plan_version_id: string;
           updated_at: string;
         };
@@ -942,11 +945,14 @@ export type Database = {
           marketing_consent_at?: string | null;
           marketing_consent_source?: string | null;
           marketing_unsubscribed_at?: string | null;
+          plan_calendar_configured_at?: string | null;
           plan_email_consent_active?: boolean;
           plan_email_consent_at?: string | null;
           plan_email_consent_source?: string | null;
           plan_email_unsubscribed_at?: string | null;
           plan_json: Json;
+          plan_start_on?: string;
+          plan_time_zone?: string;
           plan_version_id?: string;
           updated_at?: string;
         };
@@ -970,11 +976,14 @@ export type Database = {
           marketing_consent_at?: string | null;
           marketing_consent_source?: string | null;
           marketing_unsubscribed_at?: string | null;
+          plan_calendar_configured_at?: string | null;
           plan_email_consent_active?: boolean;
           plan_email_consent_at?: string | null;
           plan_email_consent_source?: string | null;
           plan_email_unsubscribed_at?: string | null;
           plan_json?: Json;
+          plan_start_on?: string;
+          plan_time_zone?: string;
           plan_version_id?: string;
           updated_at?: string;
         };
@@ -2209,6 +2218,10 @@ export type Database = {
         Args: { p_url: string };
         Returns: Json;
       };
+      configure_lead_plan_calendar: {
+        Args: { p_lead_plan_id: string; p_time_zone: string };
+        Returns: boolean;
+      };
       consume_rate_limit: {
         Args: { p_bucket: string; p_limit: number; p_window_seconds: number };
         Returns: boolean;
@@ -2317,6 +2330,14 @@ export type Database = {
         Returns: boolean;
       };
       invoke_email_dispatch_scheduler: { Args: never; Returns: string };
+      lead_plan_day_is_available: {
+        Args: {
+          p_day_number: number;
+          p_lead_plan_id: string;
+          p_plan_version_id: string;
+        };
+        Returns: boolean;
+      };
       mark_day_1_started: {
         Args: { p_lead_plan_id: string; p_plan_version_id: string };
         Returns: {

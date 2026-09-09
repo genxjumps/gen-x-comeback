@@ -169,7 +169,9 @@ export function InstallExperience({
       <div className="rounded-lg border border-gxj-teal bg-gxj-mint p-4" role="status">
         <p className="flex items-center gap-2 text-sm font-semibold">
           <Check aria-hidden="true" className="size-5 text-gxj-teal" />
-          Gen X Jumps is on your Home Screen.
+          {platform === "desktop"
+            ? "Gen X Jumps is installed."
+            : "Gen X Jumps is on your Home Screen."}
         </p>
         {onContinue ? (
           <Button type="button" className="mt-4 w-full sm:w-auto" onClick={onContinue}>

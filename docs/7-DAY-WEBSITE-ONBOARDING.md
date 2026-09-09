@@ -14,6 +14,14 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 6. `/plan-ready` immediately offers device-appropriate Home Screen installation. Choosing `Not Now - View My Plan` always opens the plan.
 7. A dismissed install prompt can reappear as a compact plan-page nudge after 24 hours.
 
+## Calendar and progression behavior
+
+- The participant's browser time zone is captured when the plan is first saved. The server anchors Day 1 to that local calendar date; Day N is assigned to Day 1 plus N minus one calendar days. Unlocking is never based on an elapsed 24-hour timer.
+- The earliest unfinished assignment is labeled `Tomorrow's Workout/Movement` before its assigned date, `Today's Workout/Movement` on its assigned date, and `Your Next Workout/Movement` after a missed date. Recovery and rest use the equivalent assignment noun. Do not label a missed assignment `Yesterday's Workout` and do not introduce stacking or guilt language.
+- Participants may read future-day details, guidance, modifications, and equipment notes. A future workout video remains a non-playing poster until both its assigned date has arrived and every earlier day is complete.
+- Completion is enforced on the server. A day cannot be marked complete before its local assigned date or before an earlier required day.
+- A completed assignment screen has one primary route back to the plan. Short movement and rest pages do not repeat a second bottom `Back to My Plan` action.
+
 ## Security and privacy
 
 - The public intake route fails closed with `NEW_PLAN_INTAKE_OPEN`.
@@ -30,6 +38,10 @@ The approved consent text is stored with the opt-in. A durable MailerLite sync j
 
 An immediate welcome-and-resume email after website opt-in is an approved follow-up requirement. It must return an unfinished participant to the welcome screen or first unanswered assessment step without waiting for Plan Ready. Plan Ready remains a separate email sent only after the plan is successfully committed.
 
+During closed-intake testing, successful completion of an allowed handoff moves the existing production email fence to that exact new plan. It does not enable sending or admit genuine plans. This lets a new allowed Gmail plus alias receive its test Plan Ready email without manually replacing a secret or database control value after every run.
+
+Plan Ready resolves saved completion progress when the queued message is actually dispatched. A delayed message must direct the participant to the next unfinished scheduled day instead of telling someone who already completed Day 1 to start Day 1.
+
 ## Open product decision
 
 When an email with an existing 7-Day Plan opts in again, the app must never fail silently or create a duplicate identity. Before public launch, decide whether the participant should resume the existing plan, rebuild and replace it, or explicitly choose between those actions. The September 9 controlled test exposed a database ambiguity in the current replacement path; that defect and the participant-facing behavior require a separate repair checkpoint.
@@ -40,6 +52,7 @@ When an email with an existing 7-Day Plan opts in again, the app must never fail
 - Android or compatible desktop browser: use the captured native install prompt when available.
 - Other browsers: show the browser-menu installation path.
 - Standalone display is detected and remembered.
+- Successful desktop installation says `Gen X Jumps is installed.` Successful mobile installation says `Gen X Jumps is on your Home Screen.`
 - Installation events are recorded without storing additional personal information.
 
 ## Release controls
@@ -65,3 +78,8 @@ When an email with an existing 7-Day Plan opts in again, the app must never fail
 | iPhone install             | Share, Add to Home Screen, Add instructions       |
 | Install dismissed          | Plan opens; nudge waits 24 hours                  |
 | Standalone launch          | Plan opens without another install prompt         |
+| Day 1 completed same day   | Day 2 is Tomorrow's Movement and cannot complete  |
+| Assigned date arrives      | Assignment changes to Today's type and unlocks    |
+| Assigned date was missed   | Earliest unfinished day changes to Your Next type |
+| Future workout opened      | Details show; video stays locked behind poster    |
+| Delayed Plan Ready email   | Closing line reflects current saved progress      |
