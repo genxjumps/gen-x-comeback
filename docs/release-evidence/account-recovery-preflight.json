@@ -1,0 +1,29 @@
+{
+  "accountRecoveryAcceptancePassed": true,
+  "afterLedgerRows": 41,
+  "afterSchemaSha256": "f0949d0ecbb1842cc874ba5c283ad905795726d0cca976adf12eb8088f96550e",
+  "beforeLedgerRows": 40,
+  "beforeSchemaSha256": "669eb39064a2dbfdbe52693da5dc3aa04bbc7a39a8cecac5d13f38da43736023",
+  "controlsSha256": "9636f7fc53cfd0b562e600243c11de1a551fbc6487ad1f5168973324a6ca05c8",
+  "defaultPrivilegesSha256": "39f188a5dcf50ec57ced7cabec5e514d177182569d92c8374378e5183c08f1a1",
+  "envelopeBytes": 58718,
+  "envelopeSha256": "42c04e7e682a4c8cb7b6afe8d499cacf36841deb8fecfe887ab80b62051c2d0c",
+  "pending": [
+    {
+      "file": "20260910170000_account_recovery_without_ownership.sql",
+      "name": "account_recovery_without_ownership",
+      "sha256": "91b3e22b73019ea7e82dd9cca666819ec31ab88c0a50846f6077a94a9845f7a6",
+      "statementSha256": "e52d26d17c4401cebca48b1912e7a1da47990fc9d36fe286cd706d4defbef6d7",
+      "version": "20260910170000"
+    }
+  ],
+  "permissionsPassed": true,
+  "preparedAt": "2026-09-10T17:27:44.302Z",
+  "qualityGateRun": 34507648811,
+  "refundAcceptancePassed": true,
+  "release": "a60cf0be6a92b26a780badcb75680b7c7fbbdd17",
+  "remoteWrites": false,
+  "repeatedApplicationDenied": true,
+  "rollbackPassed": true,
+  "successfulCommitPassed": true
+}
