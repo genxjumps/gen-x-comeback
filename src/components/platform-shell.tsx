@@ -3,6 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Apple, Bell, ChartNoAxesColumnIncreasing, Compass, Dumbbell, Home } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { AccountNavigation } from "@/components/account-navigation";
+
 import { getPlatformNotifications } from "@/lib/notifications/functions";
 
 const primaryNavigation = [
@@ -72,9 +74,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link to="/account" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-              Account
-            </Link>
+            <AccountNavigation />
             <Link
               to="/notifications"
               aria-label={
