@@ -106,7 +106,7 @@ function AcceleratorCheckoutSuccess() {
                 )}
               </Button>
               <p className="mt-4 text-sm text-muted-foreground">
-                Your Nutrition is available from the main menu. Set your calorie and macro targets,
+                My Nutrition is available from the main menu. Set your calorie and macro targets,
                 then adjust how they fit across your meals.
               </p>
             </div>

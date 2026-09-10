@@ -41,7 +41,7 @@ import { MEAL_OCCASIONS } from "@/lib/nutrition/types";
 export const Route = createFileRoute("/nutrition")({
   head: () => ({
     meta: [
-      { title: "Your Nutrition | Gen X Jumps" },
+      { title: "My Nutrition | Gen X Jumps" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -247,7 +247,7 @@ function NutritionWelcome({ onStart }: { onStart: () => void }) {
     <div className="space-y-4">
       <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
         <p className="text-sm leading-relaxed">
-          Your Nutrition gives you starting calorie and macro targets, then shows how those numbers
+          My Nutrition gives you starting calorie and macro targets, then shows how those numbers
           fit across the way you actually eat. It does not require food logging.
         </p>
         <ul className="mt-4 space-y-2 text-sm font-medium">
@@ -664,7 +664,7 @@ function NutritionResults({
               to="/progress"
               className="font-medium text-foreground underline underline-offset-4"
             >
-              Your Progress
+              My Progress
             </Link>
             .
           </p>
@@ -996,14 +996,14 @@ function Nutrition() {
     }
   }
 
-  if (!result) return <p className="text-sm text-muted-foreground">Loading Your Nutrition...</p>;
+  if (!result) return <p className="text-sm text-muted-foreground">Loading your nutrition...</p>;
   if (!result.ok) {
-    return <p className="text-sm text-muted-foreground">Your Nutrition could not be loaded.</p>;
+    return <p className="text-sm text-muted-foreground">Your nutrition could not be loaded.</p>;
   }
   if (result.access === "locked") {
     return (
       <PlatformPage
-        kicker="Your Nutrition"
+        kicker="My Nutrition"
         title="Available With An Eligible Paid Program"
         description="The free 7-Day Comeback Plan does not unlock the nutrition tool. Your workouts and saved progress are unaffected."
       >
@@ -1016,7 +1016,7 @@ function Nutrition() {
 
   return (
     <PlatformPage
-      kicker="Your Nutrition"
+      kicker="My Nutrition"
       title="Calories Matter. Protein First. Meals Stay Simple."
       description="Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
     >

@@ -16,3 +16,22 @@ The existing completion email links to the completed plan, so it reaches this sa
 ## Verification boundary
 
 Local tests cover account/guest routing, owner suppression, disabled controls, and the existing Stripe identity, provisioning, setup, and nutrition access contracts. Full local and GitHub release gates are required. A live signed-in end-to-end run from a completed 7-Day through a controlled test purchase, setup, and nutrition still requires the customer's authenticated session. Source tests don't establish payment receipt or customer acceptance. Legacy-session-only, mixed-identity, refund, and other scenario work remains separate; public sales aren't declared operational by this checkpoint.
+
+## Member labels and pre-test follow-up
+
+Member navigation, destination labels, Home cards, and destination buttons use
+**My Programs**, **My Progress**, **My Nutrition**, and **My Account** consistently
+on desktop and mobile. Conversational guidance keeps second-person language
+(e.g. "Your next step" and "Your programs couldn't be loaded"). Descriptive
+headlines aren't destination labels. Routes, ownership, and checkout behavior
+aren't changed by this copy pass.
+
+Todd reported Home showing Programs unavailable and Progress unavailable while
+nutrition showed Not unlocked. The first two share `getMyPrograms`; they aren't
+proof of missing ownership or erased progress. Read-only inspection confirmed
+the queried measurement/enrollment/active-program/completion fields and
+service-role SELECT grants. The available review browser is signed out, so the
+reported account-specific failure hasn't been reproduced or declared repaired.
+Before the signed-in purchase test, refresh Home in the existing account and
+confirm these cards load. If they still fail, capture the failed request/error
+in that authenticated session before changing account or access logic.

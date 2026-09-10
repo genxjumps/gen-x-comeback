@@ -98,7 +98,7 @@ function PlatformHome() {
             : ["No programs yet"],
     },
     {
-      title: "Your Progress",
+      title: "My Progress",
       to: "/progress",
       icon: ChartNoAxesColumnIncreasing,
       lines: !programs
@@ -121,7 +121,7 @@ function PlatformHome() {
             ],
     },
     {
-      title: "Your Nutrition",
+      title: "My Nutrition",
       to: "/nutrition",
       icon: Apple,
       lines: !nutrition

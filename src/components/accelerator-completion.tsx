@@ -223,7 +223,7 @@ export function AcceleratorCompletion({
           <Link to="/programs">Explore Other Programs</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/progress">View Your Progress</Link>
+          <Link to="/progress">View My Progress</Link>
         </Button>
         {canUndo ? (
           <Button type="button" variant="outline" disabled={savingUndo} onClick={onUndo}>

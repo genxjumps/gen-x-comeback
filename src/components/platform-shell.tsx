@@ -11,8 +11,8 @@ import { getPlatformNotifications } from "@/lib/notifications/functions";
 const primaryNavigation = [
   { label: "Home", to: "/home", icon: Home },
   { label: "My Programs", to: "/my-programs", icon: Dumbbell },
-  { label: "Progress", to: "/progress", icon: ChartNoAxesColumnIncreasing },
-  { label: "Nutrition", to: "/nutrition", icon: Apple },
+  { label: "My Progress", to: "/progress", icon: ChartNoAxesColumnIncreasing },
+  { label: "My Nutrition", to: "/nutrition", icon: Apple },
   { label: "Explore", to: "/programs", icon: Compass },
 ] as const;
 
@@ -136,7 +136,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
                 }`}
               >
                 <Icon aria-hidden="true" className="size-5" strokeWidth={active ? 2.5 : 2} />
-                <span>{item.label === "My Programs" ? "Programs" : item.label}</span>
+                <span>{item.label}</span>
               </Link>
             );
           })}

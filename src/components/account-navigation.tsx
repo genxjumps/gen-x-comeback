@@ -182,7 +182,7 @@ export function AccountNavigationContent({
           href="/account"
           className="flex min-h-11 items-center rounded-md px-2 text-sm font-medium hover:bg-muted"
         >
-          Account
+          My Account
         </a>
         {identity !== null || error || busy ? (
           <button

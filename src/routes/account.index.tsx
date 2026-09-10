@@ -8,10 +8,7 @@ import { readStoredToken } from "@/lib/access-token";
 import { getAccountIdentity, type AccountIdentityResult } from "@/lib/account/functions";
 export const Route = createFileRoute("/account/")({
   head: () => ({
-    meta: [
-      { title: "Your Account | Gen X Jumps" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+    meta: [{ title: "My Account | Gen X Jumps" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: Account,
 });
@@ -44,7 +41,7 @@ function Account() {
   const email = identity?.ok ? (identity.accountEmail ?? identity.planEmail) : null;
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <h1 className="gxj-display-title text-3xl">Your Account</h1>
+      <h1 className="gxj-display-title text-3xl">My Account</h1>
       {identity === null ? (
         <p className="mt-5" role="status">
           Loading your account...
