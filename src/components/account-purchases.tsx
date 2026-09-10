@@ -7,7 +7,10 @@ import {
   type RefundPurchasesResult,
 } from "@/lib/commerce/refund.functions";
 
-const date = (value: string) => new Date(value).toLocaleString();
+const date = (value: string) =>
+  new Date(value).toLocaleDateString(undefined, { dateStyle: "medium" });
+const deadline = (value: string) =>
+  new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 export function AccountPurchases() {
   const load = useServerFn(getRefundPurchases);
   const submit = useServerFn(requestAcceleratorRefund);
@@ -65,10 +68,6 @@ export function AccountPurchases() {
       <h2 id="purchases-heading" className="text-xl font-semibold">
         Purchases &amp; Billing
       </h2>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Your purchases and refund status. Refund requests are available within seven days of
-        purchase.
-      </p>
       {message ? (
         <p role="status" className="mt-4 text-sm">
           {message}
@@ -78,7 +77,7 @@ export function AccountPurchases() {
         <p className="mt-5">Loading your purchases...</p>
       ) : !result.ok ? (
         <div className="mt-5">
-          <p>We couldn’t load your purchases.</p>
+          <p role="alert">We couldn’t load your purchases.</p>
           <Button
             className="mt-3"
             onClick={() =>
@@ -91,27 +90,46 @@ export function AccountPurchases() {
           </Button>
         </div>
       ) : result.purchases.length === 0 ? (
-        <p className="mt-5">There aren’t any Accelerator purchases on this account.</p>
+        <p className="mt-5">No Accelerator purchases yet.</p>
       ) : (
         <div className="mt-5 space-y-4">
           {result.purchases.map((p) => (
             <section key={p.purchaseId} className="border-b border-border py-6 last:border-b-0">
-              <h2 className="font-semibold">28-Day Fat Loss Accelerator - $37</h2>
-              <p className="mt-2 text-sm">Purchased {date(p.purchasedAt)}</p>
-              {p.purchaseStatus !== "refunded" ? (
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Refund request deadline: {date(p.deadline)} (your local time)
-                </p>
-              ) : null}
+              <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+                <div className="min-w-0">
+                  <h3 className="font-semibold">28-Day Fat Loss Accelerator</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Purchased {date(p.purchasedAt)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <p className="font-semibold tabular-nums">$37</p>
+                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">
+                    {p.purchaseStatus === "refunded"
+                      ? "Refunded"
+                      : p.requestedAt
+                        ? "Refund Requested"
+                        : p.purchaseStatus === "disputed"
+                          ? "Disputed"
+                          : p.purchaseStatus === "canceled"
+                            ? "Canceled"
+                            : "Paid"}
+                  </span>
+                </div>
+              </div>
               {p.purchaseStatus === "refunded" ? (
-                <p className="mt-3">Refunded. Access from this purchase has ended.</p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Access from this purchase has ended.
+                </p>
               ) : p.requestedAt ? (
-                <p className="mt-3">
-                  Request received {date(p.requestedAt)}. It’s saved for review, even if the request
-                  deadline has now passed.
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Submitted {date(p.requestedAt)}. Todd will review your request.
                 </p>
               ) : p.canRequest ? (
                 <div className="mt-4">
+                  <p className="mb-3 text-sm text-muted-foreground">
+                    7-day guarantee. Request a refund by {deadline(p.deadline)} (your local time).
+                  </p>
                   {confirm === p.purchaseId ? (
                     <div>
                       <p>Send a refund request for this purchase?</p>
@@ -142,7 +160,9 @@ export function AccountPurchases() {
                   )}
                 </div>
               ) : (
-                <p className="mt-3">This purchase isn’t eligible for a new refund request.</p>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Refund requests are closed for this purchase.
+                </p>
               )}
             </section>
           ))}
