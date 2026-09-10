@@ -7,6 +7,7 @@ import { createResendAdapter, createFakeAdapter } from "@/lib/email/adapters.ser
 import { hashAccessToken } from "@/lib/lead-plan";
 import { renderSignupWelcome, welcomeRetryDecision } from "@/lib/email/signup-welcome";
 import type { EmailAdapter } from "@/lib/email/types";
+import { prepareEmail, RecoverableQueueError } from "@/lib/email/queue-isolation";
 
 export type WelcomeJob = SignupRecoveryRows["lead_intake_welcome_jobs"];
 
@@ -22,10 +23,12 @@ export async function dispatchSignupWelcome(
     outcomes: [],
   };
   if (!evaluateSendingGate(config).enabled || !secret) return summary;
-  const jobs = await signupRpc<WelcomeJob[]>("claim_signup_welcome_jobs", {
-    p_invocation_id: invocationId,
-    p_limit: limit,
-  });
+  const jobs = await prepareEmail("welcome_claim", () =>
+    signupRpc<WelcomeJob[]>("claim_signup_welcome_jobs", {
+      p_invocation_id: invocationId,
+      p_limit: limit,
+    }),
+  );
   summary.claimed = jobs.length;
   const adapter =
     adapterOverride ??
@@ -53,22 +56,25 @@ export async function dispatchSignupWelcome(
       await finish("failed_permanent", { last_error_code: "retry_horizon_exceeded" });
       continue;
     }
-    const { data: intakes, error } = await db
-      .from("lead_intakes")
-      .select("email_original")
-      .eq("intake_id", job.intake_id)
-      .limit(1);
-    if (error || !intakes?.[0]) throw new Error("welcome_identity_unavailable");
+    const { data: intakes, error } = await prepareEmail<{ data: unknown[] | null; error: unknown }>(
+      "welcome_identity",
+      () =>
+        db.from("lead_intakes").select("email_original").eq("intake_id", job.intake_id).limit(1),
+    );
+    if (error || !intakes?.[0]) throw new RecoverableQueueError("welcome_identity");
     const raw = createHmac("sha256", secret)
       .update(`gxj:signup-welcome:v1:${job.job_id}`)
       .digest("base64url");
     const expires = job.token_expires_at ?? new Date(Date.now() + 30 * 86400000).toISOString();
-    const { error: tokenError } = await db
-      .from("lead_intake_welcome_jobs")
-      .update({ token_hash: await hashAccessToken(raw), token_expires_at: expires })
-      .eq("job_id", job.job_id)
-      .eq("claim_token", job.claim_token);
-    if (tokenError) throw new Error("welcome_token_unavailable");
+    const tokenHash = await hashAccessToken(raw);
+    const { error: tokenError } = await prepareEmail<{ error: unknown }>("welcome_token", () =>
+      db
+        .from("lead_intake_welcome_jobs")
+        .update({ token_hash: tokenHash, token_expires_at: expires })
+        .eq("job_id", job.job_id)
+        .eq("claim_token", job.claim_token),
+    );
+    if (tokenError) throw new RecoverableQueueError("welcome_token");
     const rendered = renderSignupWelcome(`${resolveAppOrigin(config)}/signup/return?token=${raw}`);
     const fence = await signupRpc<{ outcome: string; submission_attempt_id?: string }>(
       "begin_signup_welcome_attempt",

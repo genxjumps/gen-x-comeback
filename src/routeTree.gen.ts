@@ -47,6 +47,7 @@ import { Route as CheckoutAcceleratorSuccessRouteImport } from './routes/checkou
 import { Route as ApiPublicReleaseRouteImport } from './routes/api/public/release'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as ApiPublicEmailWebhookRouteImport } from './routes/api/public/email/webhook'
+import { Route as ApiPublicEmailHealthRouteImport } from './routes/api/public/email/health'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
 
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -243,6 +244,11 @@ const ApiPublicEmailWebhookRoute = ApiPublicEmailWebhookRouteImport.update({
   path: '/api/public/email/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicEmailHealthRoute = ApiPublicEmailHealthRouteImport.update({
+  id: '/api/public/email/health',
+  path: '/api/public/email/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicEmailDispatchRoute = ApiPublicEmailDispatchRouteImport.update({
   id: '/api/public/email/dispatch',
   path: '/api/public/email/dispatch',
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/health': typeof ApiPublicEmailHealthRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -328,6 +335,7 @@ export interface FileRoutesByTo {
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/health': typeof ApiPublicEmailHealthRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -370,6 +378,7 @@ export interface FileRoutesById {
   '/my-programs_/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
   '/api/public/email/dispatch': typeof ApiPublicEmailDispatchRoute
+  '/api/public/email/health': typeof ApiPublicEmailHealthRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
@@ -413,6 +422,7 @@ export interface FileRouteTypes {
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
+    | '/api/public/email/health'
     | '/api/public/email/webhook'
     | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -454,6 +464,7 @@ export interface FileRouteTypes {
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
+    | '/api/public/email/health'
     | '/api/public/email/webhook'
     | '/api/public/stripe/webhook'
   id:
@@ -495,6 +506,7 @@ export interface FileRouteTypes {
     | '/my-programs_/accelerator/setup'
     | '/your-plan/day/$day'
     | '/api/public/email/dispatch'
+    | '/api/public/email/health'
     | '/api/public/email/webhook'
     | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
@@ -537,6 +549,7 @@ export interface RootRouteChildren {
   MyProgramsAcceleratorSetupRoute: typeof MyProgramsAcceleratorSetupRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
   ApiPublicEmailDispatchRoute: typeof ApiPublicEmailDispatchRoute
+  ApiPublicEmailHealthRoute: typeof ApiPublicEmailHealthRoute
   ApiPublicEmailWebhookRoute: typeof ApiPublicEmailWebhookRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
@@ -809,6 +822,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEmailWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/email/health': {
+      id: '/api/public/email/health'
+      path: '/api/public/email/health'
+      fullPath: '/api/public/email/health'
+      preLoaderRoute: typeof ApiPublicEmailHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/email/dispatch': {
       id: '/api/public/email/dispatch'
       path: '/api/public/email/dispatch'
@@ -857,6 +877,7 @@ const rootRouteChildren: RootRouteChildren = {
   MyProgramsAcceleratorSetupRoute: MyProgramsAcceleratorSetupRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,
   ApiPublicEmailDispatchRoute: ApiPublicEmailDispatchRoute,
+  ApiPublicEmailHealthRoute: ApiPublicEmailHealthRoute,
   ApiPublicEmailWebhookRoute: ApiPublicEmailWebhookRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }

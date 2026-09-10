@@ -5,6 +5,7 @@ import type { PaidAccessDispatchDeps } from "@/lib/email/paid-access-dispatch.se
 import { createPaidAccessStore } from "@/lib/email/paid-access-store.server";
 import { hashAccessToken } from "@/lib/lead-plan";
 import type { EmailAdapter } from "@/lib/email/types";
+import { isolatePreparation } from "@/lib/email/queue-isolation";
 
 export type PaidAccessRuntime =
   | { enabled: true; deps: PaidAccessDispatchDeps }
@@ -32,7 +33,13 @@ export async function buildPaidAccessDispatchDeps(
   return {
     enabled: true,
     deps: {
-      store: await createPaidAccessStore(invocationId),
+      store: isolatePreparation(await createPaidAccessStore(invocationId), [
+        "claimJobs",
+        "getCustomer",
+        "entitlementIsActive",
+        "suppressionReason",
+        "upsertToken",
+      ]),
       adapter,
       now: () => new Date(),
       appOrigin: resolveAppOrigin(config),

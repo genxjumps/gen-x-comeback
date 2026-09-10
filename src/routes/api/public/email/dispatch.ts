@@ -204,14 +204,19 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
 
         try {
           const { dispatchSignupWelcome } = await import("@/lib/email/signup-welcome.server");
-          const signupWelcome = await dispatchSignupWelcome(
-            authentication.invocationId,
-            gate.providerSubmissionLimit,
+          const { createQueueRunner } = await import("@/lib/email/queue-isolation");
+          const { reportQueueHealth } = await import("@/lib/email/queue-health.server");
+          const queues = createQueueRunner(reportQueueHealth);
+          const signupWelcome = await queues.run(
+            "signup_welcome",
+            () => dispatchSignupWelcome(authentication.invocationId, gate.providerSubmissionLimit),
+            { claimed: 0, outcomes: [] },
           );
           const { runDispatchCycle } = await import("@/lib/email/dispatch-cycle.server");
           const cycle = await runDispatchCycle(runtime.deps, {
             limit: gate.providerSubmissionLimit,
             staleAlerts: true,
+            runQueue: queues.run,
           });
           const { buildPaidAccessDispatchDeps } =
             await import("@/lib/email/paid-access-runtime.server");
@@ -222,6 +227,7 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           const paidAccess = await dispatchPaidAccessJobs(
             paidRuntime.deps,
             gate.providerSubmissionLimit,
+            queues.run,
           );
           const summaries = [
             signupWelcome,
@@ -245,10 +251,13 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           const eligibleJobsAfter = await countProductionEligibleJobs();
           await finishSchedulerInvocation({
             invocationId: authentication.invocationId,
-            succeeded: true,
+            succeeded: queues.failures.length === 0,
             sendingEnabled: true,
             claimedCount: claimed,
             eligibleJobsAfter,
+            failureCode: queues.failures.length
+              ? "queue_failure:" + [...new Set(queues.failures)].join(",")
+              : null,
           });
           return Response.json(
             {
@@ -269,8 +278,13 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
               final_rescue: cycle.finalRescue,
               paid_access: paidAccess,
               signup_welcome: signupWelcome,
+              failed_queues: [...new Set(queues.failures)],
+              partial_summary: queues.failures.length > 0,
             },
-            { headers: { "cache-control": "no-store" } },
+            {
+              status: queues.failures.length ? 503 : 200,
+              headers: { "cache-control": "no-store" },
+            },
           );
         } catch {
           const { disableProductionSending } =
