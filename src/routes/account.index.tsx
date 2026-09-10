@@ -44,8 +44,7 @@ function Account() {
   const email = identity?.ok ? (identity.accountEmail ?? identity.planEmail) : null;
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <p className="gxj-kicker text-xs font-semibold uppercase tracking-widest">Account</p>
-      <h1 className="gxj-display-title mt-3 text-3xl">Your Account</h1>
+      <h1 className="gxj-display-title text-3xl">Your Account</h1>
       {identity === null ? (
         <p className="mt-5" role="status">
           Loading your account...

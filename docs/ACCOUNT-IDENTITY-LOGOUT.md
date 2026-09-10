@@ -214,3 +214,20 @@ AccountNavigation retains the existing logout operation, visible failure/retry h
 and concise menu. The explanation is not added to the menu. Account identity-loading
 errors still offer Try Again. Profile, inline purchases, and signed-out recovery remain.
 This supersedes the earlier Account-page logout placement; logout behavior itself is unchanged.
+
+## Account purchase presentation cleanup
+
+The continued Account cleanup removes the duplicate Account eyebrow and the purchase-section
+intro that repeats its heading. Purchase rows separate the program title, amount, readable
+purchase date, and a text status badge. Program names use h3 below Purchases & Billing's h2.
+No new pricing logic is introduced: the existing fixed $37 Accelerator display is retained.
+
+History dates use the browser's medium date format; eligible refund deadlines include local
+date and time to the minute. The seven-day guarantee/deadline appears only beside an eligible
+request action. Requested and refunded purchases show their status and relevant short details
+without an obsolete deadline. Eligibility and refund outcomes still come from the existing server
+functions. Purchase-load errors are announced as alerts. No financial or access state is changed.
+
+Acceptance: readable purchase rows at narrow and wide widths, explicit status labels, deadline
+at the eligible action, concise empty/requested/refunded states, and unchanged request handling.
+Signed-in visual acceptance remains in Todd's current session after publication.
