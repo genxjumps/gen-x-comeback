@@ -204,3 +204,13 @@ Acceptance: stable account/bell header across main app and Account; purchases vi
 for a platform account; old URLs resolve to Account's purchases section; signed-out/free-plan
 Account remains accessible without exposing purchase details. Signed-in visual acceptance follows
 publication in Todd's current session; automated checks do not manufacture authentication.
+
+## Account navigation cleanup
+
+Todd requested removing the duplicate logout block (including its explanation) and
+Back to My Programs link from Account. These actions are available through the shared
+navigation. Account no longer maintains a second logout handler or logout error state;
+AccountNavigation retains the existing logout operation, visible failure/retry handling,
+and concise menu. The explanation is not added to the menu. Account identity-loading
+errors still offer Try Again. Profile, inline purchases, and signed-out recovery remain.
+This supersedes the earlier Account-page logout placement; logout behavior itself is unchanged.
