@@ -246,6 +246,15 @@ same ownership-aware destination and action rules above.
 
 ## Account, access, ownership, and enrollment
 
+- An Account link must be available in the installed app and browser layouts. It shows the
+  server-verified signed-in email and provides an explicit Log Out action.
+- Log Out ends access in the current browser/storage context, including its free-plan credentials
+  and unfinished local assessment. It preserves saved programs, progress, purchases, consent, and
+  other devices' independent sessions. The next sign-in uses a secure email link.
+- Contact updates and billing self-service remain separately scoped follow-ups. No editable email,
+  payment details, or sign-out-everywhere action is added by the identity/logout checkpoint.
+  See [the checkpoint contract](ACCOUNT-IDENTITY-LOGOUT.md) and
+  [account-management backlog #97](https://github.com/genxjumps/gen-x-comeback/issues/97).
 - One customer account must work across supported devices.
 - Access is passwordless by secure email link or code.
 - A verified purchase grants a durable product entitlement.

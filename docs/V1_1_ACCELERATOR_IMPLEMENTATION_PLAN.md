@@ -232,6 +232,24 @@ runs under the unified customer account.
 
 ## Drift control
 
+### Approved account-management follow-up (September 10, 2026)
+
+The controlled refund test exposed account-switching friction. Todd approved visible account
+identity and logout as the next bounded coding checkpoint after the full-refund flow passed.
+The Account screen must be reachable in the browser and installed PWA, show the verified identity,
+and clear current-browser access without deleting saved work or signing out other devices.
+The detailed contract and release checks are in [ACCOUNT-IDENTITY-LOGOUT.md](ACCOUNT-IDENTITY-LOGOUT.md).
+
+Contact updates and possible purchase/billing self-service are recorded in
+[issue #97](https://github.com/genxjumps/gen-x-comeback/issues/97). They need their own field,
+identity-verification, provider, and acceptance decisions before implementation. This is customer
+self-service, not an expansion of Todd's private reviewer permissions.
+
+Carry the controlled refund evidence from
+[issue #98](https://github.com/genxjumps/gen-x-comeback/issues/98) with this implementation PR.
+The source-drift reconciliation and signed-event replay items remain open until independently
+verified; recording the successful main refund flow does not close those checks.
+
 Only the active checkpoint may change source. A new idea is handled in one of three ways:
 
 1. Add it to the active checkpoint only when it is required for the approved acceptance criteria.

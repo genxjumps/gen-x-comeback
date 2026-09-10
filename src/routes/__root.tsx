@@ -15,6 +15,7 @@ import { PwaInstallCapture } from "@/components/pwa-install";
 import { Button } from "@/components/ui/button";
 import { PlatformAccessBoundary } from "@/components/platform-access-boundary";
 import { PlatformShell } from "@/components/platform-shell";
+import { AccountSessionSync } from "@/components/account-session-sync";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -151,6 +152,7 @@ function RootComponent() {
   if (inPlatform) {
     return (
       <QueryClientProvider client={queryClient}>
+        <AccountSessionSync />
         <PlatformAccessBoundary>
           <PlatformShell>
             <Outlet />
@@ -162,6 +164,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AccountSessionSync />
       <AuthSessionBootstrap />
       <div className="flex min-h-screen flex-col bg-background text-foreground">
         <header className="border-b border-border">
@@ -190,6 +193,12 @@ function RootComponent() {
                 Gen X Jumps
               </Link>
             )}
+            <Link
+              to="/account"
+              className="ml-auto shrink-0 rounded-md px-2 py-2 text-sm font-medium hover:bg-muted"
+            >
+              Account
+            </Link>
           </div>
         </header>
 
