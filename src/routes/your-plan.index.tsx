@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { SevenDayNextStep } from "@/components/seven-day-next-step";
 import { Button } from "@/components/ui/button";
 import { AccessDenied } from "@/components/plan-access";
 import { InstallNudge, type InstallEventName } from "@/components/pwa-install";
@@ -165,16 +166,20 @@ function PlanHubPage() {
         <div className="h-full bg-gxj-teal" style={{ width: `${pct}%` }} />
       </div>
 
-      <InstallNudge track={trackInstall} />
+      {completedCount === TOTAL_ASSIGNMENTS ? (
+        <SevenDayNextStep />
+      ) : (
+        <InstallNudge track={trackInstall} />
+      )}
       {completedCount === TOTAL_ASSIGNMENTS && hub.planVersionId ? (
         <section className="mt-6 rounded-lg border border-border bg-card p-4">
-          <h2 className="text-lg font-semibold">You Finished Your 7-Day Plan</h2>
+          <h2 className="text-lg font-semibold">Want to Repeat Your 7-Day Plan?</h2>
           <p className="mt-2 text-sm">
             Your completed week stays saved. Start another week with the same workouts whenever
             you're ready.
           </p>
           {!confirmRestart ? (
-            <Button className="mt-4" onClick={() => setConfirmRestart(true)}>
+            <Button variant="outline" className="mt-4" onClick={() => setConfirmRestart(true)}>
               Restart My 7-Day Plan
             </Button>
           ) : (
