@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -114,6 +114,18 @@ function Account() {
             </p>
           ) : null}
         </div>
+      ) : null}
+      {identity?.ok && identity.accountEmail && !error ? (
+        <section className="mt-8 border-t border-border pt-6">
+          <h2 className="text-lg font-semibold">
+            <Link to="/account/purchases" className="underline underline-offset-4">
+              Purchases &amp; Billing
+            </Link>
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Purchase history and refund requests.
+          </p>
+        </section>
       ) : null}
       {error ? (
         <p role="alert" className="mt-5">

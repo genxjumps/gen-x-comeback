@@ -158,3 +158,24 @@ transition under that operational approval: older workers don't understand accou
 After matching source/schema publication, restore the prior sending value and verify a fresh
 controlled recovery request, delivery, clean-browser sign-in, purchase/refund visibility and denial
 of refunded workout access. Don't open intake, restore ownership or reapply historical migrations.
+
+## Account purchase navigation (September 10, 2026)
+
+Approved scope: relocate the existing purchase history and refund-request experience
+under Account → Purchases & Billing, removing the purchase/refund link from My Programs.
+The Account section appears for a resolved platform account, including refunded-only
+customers. Free-plan-only and signed-out identities do not get a billing link.
+
+- `/account/purchases` is the canonical purchase/refund page, with Back to Account.
+- `/my-programs/accelerator/refund` redirects to it so saved links still work.
+- The new page retains the platform access boundary and existing customer-scoped server
+  functions. Refund eligibility, confirmation, request status, and revoked access are unchanged.
+- This relocation adds no receipts, invoices, contact editing, payment-method management,
+  database changes, or email changes.
+- Todd verified the refunded test account could sign in, see its $37 purchase and confirmed
+  refund, and see no owned program before this navigation change. Direct workout-denial
+  verification is separate from the owned-program listing.
+
+Acceptance: Account exposes Purchases & Billing for platform accounts; purchase history
+and refund actions load there; the legacy URL redirects; My Programs has no refund link;
+unauthenticated access remains protected. Live navigation verification is pending deployment.

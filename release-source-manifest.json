@@ -1119,7 +1119,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "28e4c2ffe42cfd33be8214b541e278ce83c0895894971fc6a557ffeceff00789"
+      "sha256": "f9fef550e0a7a0268ba12b518529f38fe5d0a32c6c78db2c22f99b302c66d258"
     },
     {
       "path": "src/router.tsx",
@@ -1131,7 +1131,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "166ee705eb8734d7e1a896a3cb0f32d44bf76085637f90cddff356bd95201581"
+      "sha256": "5211c6dbe3d3617df4163a145a25751aab9e7baae00b8ca65a10ce9a0aa65a00"
     },
     {
       "path": "src/routes/accelerator.tsx",
@@ -1139,7 +1139,11 @@
     },
     {
       "path": "src/routes/account.index.tsx",
-      "sha256": "b1e28a44ea667f2a41379ffdb4a1388af47def364809c4be0c7fcefe5c0c26d8"
+      "sha256": "790212975576cb9c1fa107d5633c88a1e9bb83d942cec1754e367f6260f62ef3"
+    },
+    {
+      "path": "src/routes/account.purchases.tsx",
+      "sha256": "d026534577e39a25a2c5cd26788137a0455c59fd88c5c6b00436735e9a533567"
     },
     {
       "path": "src/routes/account.return.ts",
@@ -1215,11 +1219,11 @@
     },
     {
       "path": "src/routes/my-programs.tsx",
-      "sha256": "f9f8fc4555c93825f074566ce6be2660a5a840df82449799ed7a03e6756630ed"
+      "sha256": "a3bf022e29dcbe996ac52b1d5440ea2e898adb557c8a8b659794e15e5533b9bc"
     },
     {
       "path": "src/routes/my-programs_.accelerator.refund.tsx",
-      "sha256": "a711b732f7ac1571df907e43ea19f1cebbfdf6d058443e9d9aa2463e63f81941"
+      "sha256": "cb6646ac6377c96e118925c0f6590af284bf1ec983f824f94af6331be00fc39f"
     },
     {
       "path": "src/routes/my-programs_.accelerator.runs.tsx",
