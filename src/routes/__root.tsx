@@ -136,6 +136,7 @@ function RootComponent() {
   const inOnboarding = pathname === "/welcome" || pathname === "/plan-ready";
   const inPlan = pathname === "/your-plan" || pathname.startsWith("/your-plan/");
   const inJumpRopes = pathname === "/jump-ropes";
+  const inAccount = pathname === "/account" || pathname === "/account/";
   const inPlatform =
     pathname === "/home" ||
     pathname === "/my-programs" ||
@@ -151,14 +152,21 @@ function RootComponent() {
     pathname === "/account/purchases" ||
     pathname === "/my-programs/accelerator/refund";
 
-  if (inPlatform) {
+  if (inPlatform || inAccount) {
     return (
       <QueryClientProvider client={queryClient}>
         <AccountSessionSync />
         <PlatformShell>
-          <PlatformAccessBoundary>
-            <Outlet />
-          </PlatformAccessBoundary>
+          {inAccount ? (
+            <>
+              <AuthSessionBootstrap />
+              <Outlet />
+            </>
+          ) : (
+            <PlatformAccessBoundary>
+              <Outlet />
+            </PlatformAccessBoundary>
+          )}
         </PlatformShell>
       </QueryClientProvider>
     );

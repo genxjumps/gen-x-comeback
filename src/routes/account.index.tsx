@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQueryClient } from "@tanstack/react-query";
+import { AccountPurchases } from "@/components/account-purchases";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { readStoredToken } from "@/lib/access-token";
@@ -78,7 +79,7 @@ function Account() {
 
   const email = identity?.ok ? (identity.accountEmail ?? identity.planEmail) : null;
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
+    <div className="mx-auto w-full max-w-3xl">
       <p className="gxj-kicker text-xs font-semibold uppercase tracking-widest">Account</p>
       <h1 className="gxj-display-title mt-3 text-3xl">Your Account</h1>
       {identity === null ? (
@@ -96,7 +97,8 @@ function Account() {
       ) : null}
       {email && !error ? (
         <div className="mt-6">
-          <p className="text-sm text-muted-foreground">Signed in as</p>
+          <h2 className="text-xl font-semibold">Profile</h2>
+          <p className="mt-4 text-sm text-muted-foreground">Email</p>
           <p className="mt-1 break-all font-semibold">{email}</p>
           <a
             href={identity?.ok && identity.accountEmail ? "/home" : "/your-plan"}
@@ -116,16 +118,7 @@ function Account() {
         </div>
       ) : null}
       {identity?.ok && identity.accountEmail && !error ? (
-        <section className="mt-8 border-t border-border pt-6">
-          <h2 className="text-lg font-semibold">
-            <Link to="/account/purchases" className="underline underline-offset-4">
-              Purchases &amp; Billing
-            </Link>
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Purchase history and refund requests.
-          </p>
-        </section>
+        <AccountPurchases key={identity.accountEmail} />
       ) : null}
       {error ? (
         <p role="alert" className="mt-5">
@@ -139,7 +132,7 @@ function Account() {
           </Button>
         </div>
       ) : null}
-      {identity !== null ? (
+      {identity !== null && (email || !identity.ok || error) ? (
         <div className="mt-8 border-t border-border pt-6">
           <p className="text-sm text-muted-foreground">
             Log out of this browser or installed app. Your saved programs and progress stay safe.
