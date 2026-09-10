@@ -1143,7 +1143,7 @@
     },
     {
       "path": "src/routes/account.index.tsx",
-      "sha256": "bf68c9e3bbed75f33cd5c2f72e2295586cd138526e7f9e43a9d3b725db9936b2"
+      "sha256": "fa497eb4f8e5cf5c19ce227dd34247e67908ce256d95c2e8a0dc7b7b09ff966f"
     },
     {
       "path": "src/routes/account.purchases.tsx",
