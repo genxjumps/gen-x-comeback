@@ -179,3 +179,28 @@ customers. Free-plan-only and signed-out identities do not get a billing link.
 Acceptance: Account exposes Purchases & Billing for platform accounts; purchase history
 and refund actions load there; the legacy URL redirects; My Programs has no refund link;
 unauthenticated access remains protected. Live navigation verification is pending deployment.
+
+## Inline Account purchase details and consistent header
+
+Todd approved replacing the extra billing click with purchase details directly on Account.
+This supersedes the separate purchase-page navigation above.
+
+- Account uses the same PlatformShell as the main app, keeping the account control and
+  notification bell together in their existing positions. Account itself stays outside
+  PlatformAccessBoundary so signed-out and free-plan-only users can still identify their
+  session, recover access, or log out. AuthSessionBootstrap remains on Account.
+- Platform account identities render AccountPurchases inline beneath Profile. The component
+  is keyed by account email so purchase state resets when the resolved identity changes.
+- Existing purchase history, refund eligibility, confirmation, submission, and retry handling
+  are retained. Both former purchase URLs redirect to `/account#purchases`.
+- Purchase rows use spacing and dividers rather than enclosing cards. Refunded purchases show
+  their final status without an obsolete request deadline. Request consequences appear beside
+  the confirmation action. Profile shows the verified email; name editing and preferences remain
+  separate future work. No invoices, payment methods, database, or email behavior is added.
+- Signed-out Account does not show purchases or a redundant Log Out button. Identity-load and
+  logout failures retain retry/logout actions.
+
+Acceptance: stable account/bell header across main app and Account; purchases visible immediately
+for a platform account; old URLs resolve to Account's purchases section; signed-out/free-plan
+Account remains accessible without exposing purchase details. Signed-in visual acceptance follows
+publication in Todd's current session; automated checks do not manufacture authentication.

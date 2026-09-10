@@ -166,6 +166,10 @@
       "sha256": "98f3235a30038102071d6728b567754f9ab54363b03e34ae0a8763d6094e89d1"
     },
     {
+      "path": "src/components/account-purchases.tsx",
+      "sha256": "ba1a8dac718ff19ff6276fabfa5ddc01f53def36d5ba6d586a4650d176665dc8"
+    },
+    {
       "path": "src/components/account-session-sync.tsx",
       "sha256": "03b599bdc2494568504d0ec73c07f33828c59cf28493b5abc8679ee8af4bdaf7"
     },
@@ -1131,7 +1135,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "5211c6dbe3d3617df4163a145a25751aab9e7baae00b8ca65a10ce9a0aa65a00"
+      "sha256": "e6f0a034f7afd65949f476432d1f0d996da0f137b920640122aee89adfc62835"
     },
     {
       "path": "src/routes/accelerator.tsx",
@@ -1139,11 +1143,11 @@
     },
     {
       "path": "src/routes/account.index.tsx",
-      "sha256": "790212975576cb9c1fa107d5633c88a1e9bb83d942cec1754e367f6260f62ef3"
+      "sha256": "bf68c9e3bbed75f33cd5c2f72e2295586cd138526e7f9e43a9d3b725db9936b2"
     },
     {
       "path": "src/routes/account.purchases.tsx",
-      "sha256": "d026534577e39a25a2c5cd26788137a0455c59fd88c5c6b00436735e9a533567"
+      "sha256": "9cbab7c5701af1c2f8e8cfea051705ec277320a9cc2ba9261e50848defe33cdd"
     },
     {
       "path": "src/routes/account.return.ts",
@@ -1223,7 +1227,7 @@
     },
     {
       "path": "src/routes/my-programs_.accelerator.refund.tsx",
-      "sha256": "cb6646ac6377c96e118925c0f6590af284bf1ec983f824f94af6331be00fc39f"
+      "sha256": "0589b174e906f052126c82b684d8973c4ff46e166534378de8b2949bbc8998af"
     },
     {
       "path": "src/routes/my-programs_.accelerator.runs.tsx",
