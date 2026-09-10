@@ -25,13 +25,14 @@ export function renderPaidAccessEmail(input: { kind: PaidAccessEmailKind; return
     : "Your secure Gen X Jumps access link";
   const previewText = purchase
     ? "Your Accelerator is ready whenever you are."
-    : "Open your programs and continue where you left off.";
+    : "Sign in to your Gen X Jumps account.";
   const opening = purchase
     ? "Your 28-Day Fat Loss Accelerator purchase is confirmed."
     : "Here’s the secure access link you requested.";
   const detail = purchase
     ? "You can use this email later or open it on another device. Your access does not expire."
-    : "This link opens your purchased Gen X Jumps programs on any device. No password needed.";
+    : "Use this link to sign in to your Gen X Jumps account on any device. No password needed.";
+  const cta = purchase ? PAID_ACCESS_CTA : "Sign In";
   const footer = purchase
     ? "You received this transactional email because this address completed a Gen X Jumps purchase."
     : "You received this transactional email because a secure access link was requested for this address.";
@@ -43,7 +44,7 @@ export function renderPaidAccessEmail(input: { kind: PaidAccessEmailKind; return
     "",
     detail,
     "",
-    `${PAID_ACCESS_CTA}: ${input.returnUrl}`,
+    `${cta}: ${input.returnUrl}`,
     "",
     "Move or Rust.",
     "",
@@ -71,7 +72,7 @@ export function renderPaidAccessEmail(input: { kind: PaidAccessEmailKind; return
 <p style="margin:0 0 16px 0;">Hey there,</p>
 <p style="margin:0 0 16px 0;">${escapeHtml(opening)}</p>
 <p style="margin:0 0 24px 0;">${escapeHtml(detail)}</p>
-<p style="margin:0 0 24px 0;"><a href="${escapeHtml(input.returnUrl)}" style="display:inline-block;padding:14px 24px;background-color:#1a1a1a;color:#ffffff;text-decoration:none;font-weight:600;border-radius:6px;">${PAID_ACCESS_CTA}</a></p>
+<p style="margin:0 0 24px 0;"><a href="${escapeHtml(input.returnUrl)}" style="display:inline-block;padding:14px 24px;background-color:#1a1a1a;color:#ffffff;text-decoration:none;font-weight:600;border-radius:6px;">${cta}</a></p>
 <p style="margin:0 0 16px 0;">Move or Rust.</p>
 <p style="margin:0 0 24px 0;">Todd<br />Gen X Jumps</p>
 <p style="margin:0 0 8px 0;font-size:13px;color:#555555;">Or open this link directly:<br /><a href="${escapeHtml(input.returnUrl)}" style="color:#555555;">${escapeHtml(input.returnUrl)}</a></p>

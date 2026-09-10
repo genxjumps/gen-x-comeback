@@ -123,7 +123,7 @@
     },
     {
       "path": "scripts/test-accelerator-refunds-db.mjs",
-      "sha256": "9d45ed2bdc05bd12dd9021db86d34b37660d2f9abd0582f529d4bc2beb1273f3"
+      "sha256": "a4d874d0af99fdfd1f9def25e5ea4c7e9d509d5b4e3f88f96fb8fa8da500c6d3"
     },
     {
       "path": "scripts/test-signup-recovery-db.mjs",
@@ -271,7 +271,7 @@
     },
     {
       "path": "src/integrations/supabase/types.ts",
-      "sha256": "0acd0ef5f608023338e7e7a5b5b7ebe406ee3d7684f18e7f2abbe8c789c5d188"
+      "sha256": "600360891e01b204d0b5f26b44d47f1e28af01bafb9d8443d8aaa7a54f12c230"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -458,6 +458,10 @@
       "sha256": "cb43f10fdab05cd2760f111ad316fe102d14e8fa3e6e65865346bed7646f02e5"
     },
     {
+      "path": "src/lib/account/__tests__/account-recovery-exchange.test.ts",
+      "sha256": "1e36c95cb1f65b4bc907e2c0b1b07fd3c30efe908e176521a589a8eda76255e7"
+    },
+    {
       "path": "src/lib/account/__tests__/browser-session.test.ts",
       "sha256": "1818c2997c47829940fdca8f0ecc71e9f54289435bf52dc1fd96fd2c578fd7f8"
     },
@@ -499,7 +503,7 @@
     },
     {
       "path": "src/lib/account/paid-access-exchange.server.ts",
-      "sha256": "d362bd83c8aeda725191b180d8a8077fde43e909057d88e6cd70396aa97a107c"
+      "sha256": "3de30c3f722ade5bb7ab9b803a6982d44441d82dc3981ff5a5c81c892810cc3c"
     },
     {
       "path": "src/lib/account/types.ts",
@@ -631,7 +635,7 @@
     },
     {
       "path": "src/lib/email/__tests__/paid-access-recovery.test.ts",
-      "sha256": "2460d67c5a153a3a51bc76a9166812657756ce0534b13426f2fbc728d7023a1e"
+      "sha256": "ef3015ba158c66901346a536bd27268d3464b2c9e4ca24770147edc8d0e1cc58"
     },
     {
       "path": "src/lib/email/__tests__/plan-completed.test.ts",
@@ -763,7 +767,7 @@
     },
     {
       "path": "src/lib/email/paid-access-dispatch.server.ts",
-      "sha256": "ff59a6c48be526c4f01ea85543638c95701963c6f42837400e389fa472f1e51a"
+      "sha256": "092b18b8fa05aa043ce1951fddd20091ff14417aa5d8a23a2d2c5fd652b8d9e6"
     },
     {
       "path": "src/lib/email/paid-access-runtime.server.ts",
@@ -771,15 +775,15 @@
     },
     {
       "path": "src/lib/email/paid-access-store.server.ts",
-      "sha256": "b0a3cb865644aeab052dc9df3cf9b3dee91cce8360ef59015ffd391d30e79165"
+      "sha256": "17734c1945c50d4732996231be4efa3576a169fe3eb906ebc67a19091909eff9"
     },
     {
       "path": "src/lib/email/paid-access-template.ts",
-      "sha256": "4c34c71c1206c3db94498c1ed49903c0f2a5fdcfa7710a90c8ca74abde449956"
+      "sha256": "35fa5eb42147a3d84915412b46ab39e3dabf76341c2e99d4ae62fa8037951152"
     },
     {
       "path": "src/lib/email/paid-access-types.ts",
-      "sha256": "7efdb34c5ea7add07bf51f876d0ff92601b380fb0b88686e85464f376653dc17"
+      "sha256": "4f3bd7fcd6f964123870fa793a3a074aa48c35b36a9a4c6f1912c5aac168b4bc"
     },
     {
       "path": "src/lib/email/plan-completed-resolver.ts",
@@ -1119,7 +1123,7 @@
     },
     {
       "path": "src/routes/account.return.ts",
-      "sha256": "78d204fafbc71af1545439f2337e75b9b23cb6602876c1cbe24fbcc7e45db5b2"
+      "sha256": "60e5d2222734df7dc557fd221d123e4bd5fddc4031c0e678ea828dcca7eaba3c"
     },
     {
       "path": "src/routes/admin.customers.tsx",
@@ -1286,6 +1290,10 @@
       "sha256": "62142b735b4f3ed6b9d94001547d76a66d223af5a070b02dce417824eb972a7a"
     },
     {
+      "path": "supabase/account-recovery.acceptance.sql",
+      "sha256": "186fc59b6ce84dfab776b0429b5230c2e0f7cea6c2feb381b7d4b16fdc518b80"
+    },
+    {
       "path": "supabase/config.toml",
       "sha256": "4f6e1de06c10e4b7300badd18eea08b4d70499e177f0c96430b881e5a6f7002b"
     },
@@ -1303,7 +1311,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "c7621095b9dd6f4dc9807e5a56432b8e07f0658275bfc55f4fd33b3a6fd1de86"
+      "sha256": "ec10759efdbcf667f987afca72eae06181d694aff325e4a3fb2d42f0d08c8a65"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1464,6 +1472,10 @@
     {
       "path": "supabase/migrations/20260910110000_accelerator_refund_permissions.sql",
       "sha256": "f44c4a4e09c6ae1919fc9260d677626b3d46d84bbe84dc2224963d0120750e23"
+    },
+    {
+      "path": "supabase/migrations/20260910170000_account_recovery_without_ownership.sql",
+      "sha256": "91b3e22b73019ea7e82dd9cca666819ec31ab88c0a50846f6077a94a9845f7a6"
     },
     {
       "path": "supabase/signup-recovery.acceptance.sql",

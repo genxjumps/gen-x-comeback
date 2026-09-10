@@ -6,7 +6,7 @@ export type PaidAccessJobRow = {
   job_version: "v1";
   template_version: "paid_access_v1";
   customer_id: string;
-  entitlement_id: string;
+  entitlement_id: string | null;
   idempotency_key: string;
   eligible_at: string;
   status: EmailJobStatus;
