@@ -1,0 +1,27 @@
+{
+  "status": "production-verified",
+  "verifiedAt": "2026-09-10T11:56:16.450Z",
+  "deploymentId": "8dacf11a-5236-43ca-9463-290efdd8c25a",
+  "releaseSha": "f8f10a38b111d777fa15c7e7a1ce9bdf1d4f6ab9",
+  "sourceFingerprint": "sha256:1d9dbcbaf79a9f821b01447254be809243f9514eb3bf493bee529efd27d06fdf",
+  "lovableLatestCommitSha": "f8f10a38b111d777fa15c7e7a1ce9bdf1d4f6ab9",
+  "qualityGate": {
+    "jobId": 102858937163,
+    "jobUrl": "https://github.com/genxjumps/gen-x-comeback/actions/runs/34473582696/job/102858937163",
+    "runId": 34473582696,
+    "runUrl": "https://github.com/genxjumps/gen-x-comeback/actions/runs/34473582696"
+  },
+  "production": {
+    "application": "gen-x-comeback",
+    "commit": "f8f10a38b111d777fa15c7e7a1ce9bdf1d4f6ab9",
+    "identityProof": "commit-and-source-fingerprint",
+    "sourceFingerprint": "sha256:1d9dbcbaf79a9f821b01447254be809243f9514eb3bf493bee529efd27d06fdf"
+  },
+  "scope": "App publication and live identity verified. This does not prove Stripe Edge Function deployment or the end-to-end refund flow.",
+  "remaining": [
+    "Verify Stripe Edge Function deployment independently",
+    "Separately approved reviewer provisioning and refund webhook subscriptions",
+    "Separately approved controlled Stripe refund and browser smoke test"
+  ],
+  "operationalChanges": "No intake, secret, webhook, reviewer, or refund changes were performed during this deployment."
+}
