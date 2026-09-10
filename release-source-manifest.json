@@ -143,11 +143,11 @@
     },
     {
       "path": "src/components/accelerator-completion.tsx",
-      "sha256": "1a024828b0335c5acad13fd9010a8c0c21da9368b00ea618dd67dcc85fd02f10"
+      "sha256": "69d106db412d09dcf1ea1837079b6e15194677a3cd1db2bea3d19679eb0d5e1c"
     },
     {
       "path": "src/components/accelerator-flow-preview.tsx",
-      "sha256": "164ac5b68878b3e343051442c3032c58db61680f09a1088533078ed1e6a23678"
+      "sha256": "81a00af28afa870c2af6cd0753aaf71a2742179395d75e5faa13fc1c6bac452a"
     },
     {
       "path": "src/components/accelerator-program-preview.tsx",
@@ -163,7 +163,7 @@
     },
     {
       "path": "src/components/account-navigation.tsx",
-      "sha256": "98f3235a30038102071d6728b567754f9ab54363b03e34ae0a8763d6094e89d1"
+      "sha256": "579f82fb7f0f727bdbc11a78502db6dab24e76e9aa0891617f420f85b6a0d972"
     },
     {
       "path": "src/components/account-purchases.tsx",
@@ -203,7 +203,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "4f4141a4c799aea8d89ac493c362a45d17bf48816fcf5f85764da73baacc2fdd"
+      "sha256": "616a7494ef588a7a14cd678120a60ba998987bf26e798ef20c899dcdffa9fc89"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -367,7 +367,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/home-snapshot.test.ts",
-      "sha256": "649b973ce57ae67706d1e856458ea7f3b479438478004cc79743c7d7efa12507"
+      "sha256": "df8e9f61ff99ba01c83a9d0552cbf907db80476db6fe979ff70fcc6858656a7f"
     },
     {
       "path": "src/lib/accelerator/__tests__/measurement-history-contract.test.ts",
@@ -435,7 +435,7 @@
     },
     {
       "path": "src/lib/accelerator/home-snapshot.ts",
-      "sha256": "a11b808360b17fb5c0b0392ba22a1885aa9073d87d0f41241947aa8053346acf"
+      "sha256": "3a61f4f83d59afe27c916952a989cd4e949186af2138259c7c38054c9070d605"
     },
     {
       "path": "src/lib/accelerator/measurement-row.ts",
@@ -1163,7 +1163,7 @@
     },
     {
       "path": "src/routes/account.index.tsx",
-      "sha256": "b56ad7aa55a690760f850e9029cebe71354f9f0b640f2aefb8a9a910eac1dc1f"
+      "sha256": "2124b9993072eb69cf6de9dc68f306ec45f711e92c3aedbea95a61577308a047"
     },
     {
       "path": "src/routes/account.purchases.tsx",
@@ -1215,7 +1215,7 @@
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
-      "sha256": "458d5caa15d4bbb2da0e1a688c5d8280051bc3da5c0d4750cc05897a726a6dda"
+      "sha256": "db388a1ae3e0e0754b48d05a2d5a6afe866b40a8f8e80cdbf6682fe9e0b5ee84"
     },
     {
       "path": "src/routes/email-preferences.ts",
@@ -1223,7 +1223,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "07cad9e26bc5b79dbd3a2f5a8b1ab4ed9decc57324f00e627546f2cc7593044b"
+      "sha256": "25d15721fdc1c4574d9db3a587e472d9c68c5db18eafe1d7fed72f58c2861879"
     },
     {
       "path": "src/routes/index.tsx",
@@ -1263,7 +1263,7 @@
     },
     {
       "path": "src/routes/nutrition.tsx",
-      "sha256": "1dfbd4880ad343cb41d3fc2a19210f6e15a5801326f8163841c3f3646a3fa41c"
+      "sha256": "91a308346a1f9a4ccf6d594283d1f587af2e100860243e9ef2c9e9e62fcc665c"
     },
     {
       "path": "src/routes/plan-ready.tsx",
@@ -1287,7 +1287,7 @@
     },
     {
       "path": "src/routes/progress.tsx",
-      "sha256": "8e59355edfe4b5d00ef070ce8b24cfaf98291c00619d7cfcf02de3f58b80f1ce"
+      "sha256": "a186e3681b96cf8d45c985673114f076eca67d849c7b9776773b371cb3132339"
     },
     {
       "path": "src/routes/recover.ts",

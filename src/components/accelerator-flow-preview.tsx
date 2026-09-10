@@ -63,8 +63,8 @@ function HomePreview({ openDaily }: { openDaily: () => void }) {
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {[
           ["My Programs", "Owned programs and previous runs"],
-          ["Your Progress", "Latest measurements and history"],
-          ["Your Nutrition", "Guidance and targets"],
+          ["My Progress", "Latest measurements and history"],
+          ["My Nutrition", "Guidance and targets"],
           ["Explore Programs", "Find the next structured program"],
         ].map(([title, description]) => (
           <section key={title} className="rounded-lg border border-border bg-card p-5">
@@ -156,7 +156,7 @@ function ProgressPreview() {
   const [details, setDetails] = useState(false);
   return (
     <PreviewPage
-      kicker="Your Progress"
+      kicker="My Progress"
       title="See The Work Adding Up"
       description="The everyday view stays simple. Detailed history is available only when you ask for it."
     >

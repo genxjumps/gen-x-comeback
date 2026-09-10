@@ -45,7 +45,7 @@ describe("homepage next step", () => {
       null,
     );
     expect(card.title).toContain("ready");
-    expect(card.button).toBe("Start Your Program");
+    expect(card.button).toBe("Start My Program");
   });
   it("keeps completed history distinct from paused and active work", () => {
     const card = homeAssignment(
@@ -56,7 +56,7 @@ describe("homepage next step", () => {
       null,
     );
     expect(card.title).toContain("completed");
-    expect(card.button).toBe("View Your Programs");
+    expect(card.button).toBe("View My Programs");
   });
   it("does not invent a workout when an active program's detail request fails", () => {
     const card = homeAssignment({ ...empty, activeProgram: "accelerator" }, null);

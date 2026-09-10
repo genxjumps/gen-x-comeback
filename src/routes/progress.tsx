@@ -26,7 +26,7 @@ import type {
 export const Route = createFileRoute("/progress")({
   head: () => ({
     meta: [
-      { title: "Your Progress | Gen X Jumps" },
+      { title: "My Progress | Gen X Jumps" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -368,7 +368,7 @@ function Progress() {
 
   return (
     <PlatformPage
-      kicker="Your Progress"
+      kicker="My Progress"
       title="See The Work Adding Up"
       description="Your current program and latest optional measurements stay simple here. Open the details only when you want the full history."
     >

@@ -59,7 +59,7 @@ export function homeAssignment(
             title: "Your Accelerator is ready",
             description: "28 days. Start Day 1 when you're ready.",
             to: "/my-programs",
-            button: "Start Your Program",
+            button: "Start My Program",
           }
         : programs.accelerator || programs.leadPlans.length
           ? {
@@ -67,7 +67,7 @@ export function homeAssignment(
               title: "Your completed programs are saved",
               description: "Review your results or choose what comes next.",
               to: "/my-programs",
-              button: "View Your Programs",
+              button: "View My Programs",
             }
           : {
               label: "Your Next Step",
@@ -118,7 +118,7 @@ export function homeAssignment(
   ) {
     dailyAssignment = {
       title: "28-Day Accelerator Complete",
-      description: "Your completed run and results remain saved in My Programs and Your Progress.",
+      description: "Your completed run and results remain saved in My Programs and My Progress.",
       to: "/accelerator",
       button: "Open Completed Program",
       label: "Program Complete",
@@ -131,7 +131,7 @@ export function homeAssignment(
         title: `Day ${nextDay}: 7-Day Comeback Plan`,
         description: `${plan.completedDays} of ${plan.totalDays} days complete. Your progress is saved.`,
         to: "/your-plan",
-        button: "Open Your Plan",
+        button: "Open My Plan",
         label: "Your Next Day",
       };
     }
