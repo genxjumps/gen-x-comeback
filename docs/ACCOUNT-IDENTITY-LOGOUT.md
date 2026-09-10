@@ -93,6 +93,8 @@ screens retain their behavior and copy.
   and logout remains available after an identity error.
 - The menu uses native disclosure keyboard behavior, normal Tab order, Escape with focus return,
   outside-click dismissal and touch-sized controls. Long emails wrap within the viewport.
+  The account trigger's circle matches the existing notification bell's 40px (`size-10`) circle,
+  as requested after live review; the glyph and menu contents remain unchanged.
 - Logout uses the existing same-browser cleanup orchestration, prevents repeat submission,
   discards cached state and returns to the existing Account screen. The menu does not include
   explanatory logout copy; the existing Account screen retains its unsaved-answer disclosure.

@@ -125,7 +125,7 @@ export function AccountNavigation() {
     >
       <summary
         aria-label="Account menu"
-        className="grid size-11 cursor-pointer list-none place-items-center rounded-full border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden"
+        className="grid size-10 cursor-pointer list-none place-items-center rounded-full border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden"
       >
         <UserRound aria-hidden="true" className="size-5" />
       </summary>
