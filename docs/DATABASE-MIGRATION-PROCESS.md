@@ -88,6 +88,11 @@ the exact 40-row ledger and independently verified resulting schema. That comple
 transport and pre-launch test exception doesn't authorize future migrations.
 All other migrations retain the normal workflow below.
 
+The [account recovery Cloud procedure](ACCOUNT-RECOVERY-CLOUD-PROCEDURE.md) is a
+proposed, separately adopted exception for migration 20260910170000 only. It
+becomes operative only after Todd explicitly approves adopting and merging it.
+Migration/deployment approval alone doesn't silently adopt this process change.
+
 1. Create one new migration from the current release branch with a version later than every locked migration.
 2. Keep the change forward-compatible. Use expand/migrate/contract across separate releases when removing or changing data used by the running app.
 3. Test a complete replay against an isolated database and run database linting.
