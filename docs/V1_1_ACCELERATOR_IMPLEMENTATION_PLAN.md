@@ -136,6 +136,9 @@ without opening public enrollment or silently activating customer email:
    cross-device passwordless access; it is not required before the buyer can use the app in the
    browser that completed Checkout.
 5. Seven-day refund-request handling and correct purchase/entitlement state changes.
+   The approved manual-review implementation and verification boundary are recorded
+   in [`V1_1_ACCELERATOR_REFUNDS.md`](V1_1_ACCELERATOR_REFUNDS.md). Source and isolated
+   verification do not authorize migration application, provider refunds, or release.
 6. The 7-Day-to-Accelerator bridge: one completion-screen recommendation, matching completion-email
    destination, and ownership-aware Explore, Set Up, Continue, or Start Another Run actions.
 7. Sales-page checkout-button connection after the complete paid-customer journey passes in the

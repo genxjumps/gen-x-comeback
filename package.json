@@ -21,9 +21,11 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "verify": "bun run migration:check && bun run test && bun run signup:db:test && bun run typecheck && bun run lint && bun run format:check && bun run build",
+    "verify": "bun run migration:check && bun run test && bun run signup:db:test && bun run refunds:db:test && bun run typecheck && bun run lint && bun run format:check && bun run build",
     "signup:db:test": "node scripts/test-signup-recovery-db.mjs",
-    "signup:db:types": "node scripts/test-signup-recovery-db.mjs --types"
+    "signup:db:types": "node scripts/test-signup-recovery-db.mjs --types",
+    "refunds:db:test": "node scripts/test-accelerator-refunds-db.mjs",
+    "refunds:db:types": "node scripts/test-accelerator-refunds-db.mjs --types"
   },
   "dependencies": {
     "@fontsource/anton": "5.2.7",

@@ -1,5 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2.111.0";
 import Stripe from "npm:stripe@22.6.1";
+import { reconcileStripeRefund } from "./refunds.ts";
 
 declare const Deno: {
   env: { get(name: string): string | undefined };
@@ -152,8 +153,8 @@ function validUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
-function providerConfigIssue(config: Config): ConfigIssue | null {
-  if (!config.enabled) return "checkout_disabled";
+function providerConfigIssue(config: Config, requireCheckout = true): ConfigIssue | null {
+  if (requireCheckout && !config.enabled) return "checkout_disabled";
   if (!config.appOrigin) return "missing_app_origin";
   try {
     const origin = new URL(config.appOrigin);
@@ -536,7 +537,7 @@ async function fulfill(
 
     const guestCheckout = session.metadata?.["genx_checkout_kind"] === "guest";
     let authTokenHash: string | null = null;
-    let existingGuestHandoff: Awaited<ReturnType<typeof readGuestHandoff>> = null;
+    let existingGuestHandoff: Awaited<ReturnType<typeof readGuestHandoff>> | null = null;
     let customerAccountId: string;
     if (guestCheckout) {
       if (!config.guestEnabled) throw new Error("guest_checkout_disabled");
@@ -605,8 +606,19 @@ async function fulfill(
     });
     if (error) throw new Error("provision_rpc_error");
     const row = rows?.[0];
+    if (row?.outcome === "refunded_or_inactive") {
+      return { authTokenHash: null, entitlementId: null, replayed: true, refunded: true };
+    }
     if (!row || !["created", "replayed"].includes(row.outcome))
       throw new Error("provision_rejected");
+    const intent = session.payment_intent as Stripe.PaymentIntent;
+    const charge = intent.latest_charge as Stripe.Charge;
+    if (charge.amount_refunded > 0) {
+      const refund = await reconcileRefund(config, charge.id);
+      if (["refunded", "replayed"].includes(refund.outcome)) {
+        return { authTokenHash: null, entitlementId: null, replayed: true, refunded: true };
+      }
+    }
     if (guestCheckout && action === "webhook" && !existingGuestHandoff) {
       if (!authTokenHash) throw new Error("guest_identity_error");
       const handoff = await storeGuestHandoff(config, {
@@ -622,6 +634,7 @@ async function fulfill(
       authTokenHash,
       entitlementId: row.entitlement_id as string,
       replayed: row.replayed as boolean,
+      refunded: false,
     };
   } catch (error) {
     const reason = safeFailureReason(error);
@@ -676,14 +689,39 @@ async function confirmCheckout(config: Config, body: Record<string, unknown>): P
     return json({ ok: false, reason: "invalid" }, 400);
   try {
     const result = await fulfill(config, sessionId, "confirm_checkout", expectedCustomerAccountId);
+    if (result.refunded) return json({ ok: false, reason: "invalid" }, 400);
     return json({ ok: true, entitlementId: result.entitlementId });
   } catch {
     return json({ ok: false, reason: "invalid" }, 400);
   }
 }
 
+async function reconcileRefund(config: Config, chargeId: string) {
+  const stripe = stripeClient(config);
+  return reconcileStripeRefund(
+    chargeId,
+    {
+      charge: (id) => stripe.charges.retrieve(id),
+      sessions: async (payment_intent) => {
+        const result = await stripe.checkout.sessions.list({ payment_intent, limit: 2 });
+        if (result.has_more) throw new Error("ambiguous_refund_purchase");
+        return result.data;
+      },
+      refunds: (charge) => stripe.refunds.list({ charge, limit: 100 }),
+    },
+    async (evidence) => {
+      const { data, error } = await adminClient(config).rpc(
+        "confirm_accelerator_full_refund",
+        evidence,
+      );
+      if (error || !data) throw new Error("refund_reconciliation_pending");
+      return data as { outcome: string };
+    },
+  );
+}
+
 async function webhook(config: Config, body: Record<string, unknown>): Promise<Response> {
-  if (providerConfigIssue(config)) return json({ error: "unavailable" }, 503);
+  if (providerConfigIssue(config, false)) return json({ error: "unavailable" }, 503);
   const rawBody = body.rawBody;
   const signature = body.signature;
   if (typeof rawBody !== "string" || typeof signature !== "string")
@@ -694,8 +732,31 @@ async function webhook(config: Config, body: Record<string, unknown>): Promise<R
       signature,
       config.webhookSecret!,
     );
+    if (event.livemode !== false) return json({ error: "live_event_rejected" }, 400);
+    if (
+      ["charge.refunded", "refund.created", "refund.updated", "refund.failed"].includes(event.type)
+    ) {
+      try {
+        const stripe = stripeClient(config);
+        const object = event.data.object as { id: string };
+        const refund =
+          event.type === "charge.refunded" ? null : await stripe.refunds.retrieve(object.id);
+        const chargeId = refund
+          ? typeof refund.charge === "string"
+            ? refund.charge
+            : refund.charge?.id
+          : object.id;
+        if (!chargeId) throw new Error("invalid_refund_charge");
+        const result = await reconcileRefund(config, chargeId);
+        return json({ received: true, ...result });
+      } catch {
+        // Stripe retries this delivery. Never acknowledge an unpersisted full refund.
+        return json({ error: "refund_reconciliation_failed" }, 500);
+      }
+    }
     if (event.type !== "checkout.session.completed")
       return json({ received: true, handled: false });
+    if (!config.enabled) return json({ error: "checkout_disabled" }, 503);
     try {
       const result = await fulfill(config, event.data.object.id, "webhook");
       return json({ received: true, handled: true, replayed: result.replayed });

@@ -267,6 +267,18 @@ non-enumerating recovery, idempotent writes, and server-enforced progress.
 The current paid-only access-session foundation must be reconciled with the approved single-account
 experience before the unapplied migration is accepted.
 
+## Refund requests
+
+Todd approved manual refund review on September 10, 2026. Customers can submit a
+request within seven days of purchase. The app records receipt without changing
+access; Todd reviews requests and issues approved refunds in Stripe. Only a
+Stripe-confirmed full refund ends access from that purchase. Pending, failed,
+canceled, or partial refunds do not remove access. Saved history is retained.
+The request, review, verification, and operational boundaries are specified in
+[`V1_1_ACCELERATOR_REFUNDS.md`](V1_1_ACCELERATOR_REFUNDS.md). Refund review uses a
+separate private allow-list and read-only queue; it does not expand the existing
+customer-progress admin role. Live payment processing remains separately gated.
+
 ## Starting the Accelerator
 
 The customer explicitly selects **Start Program** from a Not Started Accelerator.
