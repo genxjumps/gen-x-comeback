@@ -11,6 +11,7 @@ import {
 import type { DispatchDeps } from "@/lib/email/dispatch";
 import { hashAccessToken } from "@/lib/lead-plan";
 import type { EmailAdapter } from "@/lib/email/types";
+import { isolatePreparation } from "@/lib/email/queue-isolation";
 
 export type RuntimeDeps =
   | { enabled: true; deps: DispatchDeps }
@@ -38,8 +39,17 @@ export async function buildDispatchDeps(invocationId?: string): Promise<RuntimeD
   return {
     enabled: true,
     deps: {
-      store: await createSupabaseEmailStore(
-        invocationId ? { productionInvocationId: invocationId } : undefined,
+      store: isolatePreparation(
+        await createSupabaseEmailStore(
+          invocationId ? { productionInvocationId: invocationId } : undefined,
+        ),
+        [
+          "claimJobs",
+          "getLead",
+          "suppressionReason",
+          "insertReturnToken",
+          "upsertPreferenceCredential",
+        ],
       ),
       adapter,
       now: () => new Date(),

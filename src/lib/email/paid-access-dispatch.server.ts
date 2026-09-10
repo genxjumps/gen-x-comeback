@@ -15,6 +15,7 @@ import {
 } from "@/lib/email/paid-access-template";
 import type { PaidAccessStore } from "@/lib/email/paid-access-store.server";
 import type { PaidAccessJobPatch, PaidAccessJobRow } from "@/lib/email/paid-access-types";
+import type { QueueRunner } from "@/lib/email/queue-isolation";
 
 export type PaidAccessDispatchDeps = {
   store: PaidAccessStore;
@@ -291,8 +292,19 @@ async function dispatchType(
 export async function dispatchPaidAccessJobs(
   deps: PaidAccessDispatchDeps,
   limit = 25,
+  runQueue?: QueueRunner,
 ): Promise<{ purchase: PaidAccessDispatchSummary; recovery: PaidAccessDispatchSummary }> {
-  const recovery = await dispatchType(deps, PAID_RECOVERY_JOB_TYPE, limit);
-  const purchase = await dispatchType(deps, PAID_PURCHASE_ACCESS_JOB_TYPE, limit);
+  const run: QueueRunner = runQueue ?? (async (_name, work) => work());
+  const empty: PaidAccessDispatchSummary = { claimed: 0, outcomes: [] };
+  const recovery = await run(
+    "paid_recovery",
+    () => dispatchType(deps, PAID_RECOVERY_JOB_TYPE, limit),
+    empty,
+  );
+  const purchase = await run(
+    "paid_purchase",
+    () => dispatchType(deps, PAID_PURCHASE_ACCESS_JOB_TYPE, limit),
+    empty,
+  );
   return { purchase, recovery };
 }
