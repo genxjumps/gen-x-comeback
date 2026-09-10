@@ -123,7 +123,7 @@
     },
     {
       "path": "scripts/test-accelerator-refunds-db.mjs",
-      "sha256": "b870a03c3abdeb79bd67f04234c0d707cdf7928af453bdfc2cccc4bdf7ebc873"
+      "sha256": "9d45ed2bdc05bd12dd9021db86d34b37660d2f9abd0582f529d4bc2beb1273f3"
     },
     {
       "path": "scripts/test-signup-recovery-db.mjs",
@@ -1242,6 +1242,10 @@
       "sha256": "dd9fae9910cbef454a2b1d99e7cf2ad90a64ae612c8734cbb72fd48c74d9641e"
     },
     {
+      "path": "supabase/accelerator-refunds.permissions.sql",
+      "sha256": "62142b735b4f3ed6b9d94001547d76a66d223af5a070b02dce417824eb972a7a"
+    },
+    {
       "path": "supabase/config.toml",
       "sha256": "4f6e1de06c10e4b7300badd18eea08b4d70499e177f0c96430b881e5a6f7002b"
     },
@@ -1259,7 +1263,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "5a130af528d7a6db2241730417b6c9e4d6f403581c72dac7eccf13a4912c57f5"
+      "sha256": "c7621095b9dd6f4dc9807e5a56432b8e07f0658275bfc55f4fd33b3a6fd1de86"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1416,6 +1420,10 @@
     {
       "path": "supabase/migrations/20260910100000_accelerator_refund_requests.sql",
       "sha256": "604ce6c148d5e605f9b74621c2c540b3cdda4deb82c68f8cbdbfcd474dabfa8d"
+    },
+    {
+      "path": "supabase/migrations/20260910110000_accelerator_refund_permissions.sql",
+      "sha256": "f44c4a4e09c6ae1919fc9260d677626b3d46d84bbe84dc2224963d0120750e23"
     },
     {
       "path": "supabase/signup-recovery.acceptance.sql",
