@@ -132,6 +132,18 @@ browser success confirmation refuses to grant access from them.
   Stripe test refund remain required before live acceptance can be claimed.
 - Schema application follows `DATABASE-MIGRATION-PROCESS.md`; the new migration is
   `20260910100000_accelerator_refund_requests.sql`. Existing migrations are immutable.
+- Before any application, pair that foundation with
+  `20260910110000_accelerator_refund_permissions.sql` in one transaction. The
+  forward fix removes inherited non-owner table/function grants, including
+  Cloud's sandbox-role grants, and restores only service-role SELECT/INSERT/UPDATE
+  on the three tables and EXECUTE on the four refund functions. Owners retain
+  database administration. Global default privileges and unrelated objects aren't changed.
+- The refund harness runs both clean and observed Cloud default grants, proves
+  the original permission gap occurs, and checks actual role denials after the
+  fix. `supabase/accelerator-refunds.permissions.sql` provides catalog-only
+  post-application assertions. It doesn't create fixtures or contact a provider.
+- The proposed [refund Cloud procedure](REFUND-CLOUD-MIGRATION-PROCEDURE.md)
+  requires explicit adoption and merge, then separately approved application.
 - Public paid launch still requires separate staging and production-mode work.
 
 Provider references: [Stripe refund behavior](https://docs.stripe.com/refunds),

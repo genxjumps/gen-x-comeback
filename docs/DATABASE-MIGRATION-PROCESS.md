@@ -81,6 +81,13 @@ If a future audit disputes this reconciliation, stop. Reverse only the history-r
 
 ## Normal forward migration workflow
 
+The narrowly scoped [refund Cloud procedure](REFUND-CLOUD-MIGRATION-PROCEDURE.md)
+is proposed for explicit adoption with its PR merge. Once Todd adopts it, only
+the two named refund migrations may use its transport and pre-launch test
+exceptions. Application still requires a fresh comparison and separate approval.
+The prior signup-only exception doesn't authorize these migrations. All other
+migrations retain the normal workflow below.
+
 1. Create one new migration from the current release branch with a version later than every locked migration.
 2. Keep the change forward-compatible. Use expand/migrate/contract across separate releases when removing or changing data used by the running app.
 3. Test a complete replay against an isolated database and run database linting.
