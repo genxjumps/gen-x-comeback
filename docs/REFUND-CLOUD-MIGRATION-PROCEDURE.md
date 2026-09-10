@@ -1,9 +1,10 @@
 # Controlled refund Cloud migration procedure
 
-Status: proposed for Todd's explicit adoption with PR merge. Implementation
-approval permits preparing and testing this procedure; it doesn't authorize
-merging, applying SQL, configuring roles/providers, or publishing. Once adopted,
-application still requires its own explicit approval after fresh preflight.
+Status: Todd explicitly adopted this scoped procedure with PR #94. Both named
+migrations were then applied under separate approval on September 10, 2026;
+see the [execution evidence](release-evidence/2026-09-10-refund-migrations.md).
+This completed exception doesn't authorize new migrations, configuration changes,
+or publication. The procedure below records the requirements used for this pair.
 
 ## Exact scope
 
