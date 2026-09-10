@@ -163,7 +163,7 @@
     },
     {
       "path": "src/components/account-navigation.tsx",
-      "sha256": "9bf98ae62d7199a6574d78979527295c848d6efe49a49846482dc45bd8e2e563"
+      "sha256": "98f3235a30038102071d6728b567754f9ab54363b03e34ae0a8763d6094e89d1"
     },
     {
       "path": "src/components/account-session-sync.tsx",
