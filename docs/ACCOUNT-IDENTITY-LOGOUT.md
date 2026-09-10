@@ -85,15 +85,17 @@ screens retain their behavior and copy.
 - The platform header replaces its Account text link with an account icon beside the existing
   notification bell. The free-plan/assessment header uses the same account control in its existing
   account position; it does not add a new notification feature.
-- Verified signed-in access opens a compact disclosure showing the current email, Account and
-  deliberate Log Out. Mixed verified free/platform identities are both identified.
+- Verified signed-in access opens a compact disclosure showing only Signed in as, the current
+  email, Account and Log Out. The verified platform email takes priority; free-plan-only access
+  shows its verified plan email. Mixed-identity details remain on the existing Account screen.
 - Verified signed-out access shows Sign In linking to the existing `/recover` form. Loading or
   failed identity lookup is never presented as verified signed-out state. Account remains reachable,
   and logout remains available after an identity error.
 - The menu uses native disclosure keyboard behavior, normal Tab order, Escape with focus return,
   outside-click dismissal and touch-sized controls. Long emails wrap within the viewport.
-- Logout uses the existing same-browser cleanup orchestration, shows the unsaved-answer disclosure,
-  prevents repeat submission, discards cached state and returns to the existing Account screen.
+- Logout uses the existing same-browser cleanup orchestration, prevents repeat submission,
+  discards cached state and returns to the existing Account screen. The menu does not include
+  explanatory logout copy; the existing Account screen retains its unsaved-answer disclosure.
   A failed cleanup hides stale identity and keeps an explicit retry in the menu.
 - Contact, billing, preferences and support entries are not exposed until implemented. No new
   routes, migration, provider configuration, sign-in method or public-intake activation is included.
@@ -107,3 +109,9 @@ The platform header stays mounted outside the private-content boundary. Auth sig
 cannot hide a partial-logout error or its retry control. The boundary continues to guard page
 content; the header makes no access grants. Notification counts clear and reload when the Auth
 identity changes so a previous account's badge does not survive account switching.
+
+After reviewing the deployed menu, Todd explicitly approved this tidy navigation-only presentation.
+Loading, busy and actual error/retry messages remain functional exceptions. No Account screen,
+identity resolution, session revocation, draft cleanup or consent behavior changes with this copy
+removal. Future Account screen design (name, contact details, purchases, billing and invoices) is
+still a separate discussion and implementation checkpoint.

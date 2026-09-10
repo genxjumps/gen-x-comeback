@@ -163,7 +163,7 @@
     },
     {
       "path": "src/components/account-navigation.tsx",
-      "sha256": "2139e4ff9d5e78972471b673a91712b6c754f5b2f66be8da1f3fdd5362b3297f"
+      "sha256": "9bf98ae62d7199a6574d78979527295c848d6efe49a49846482dc45bd8e2e563"
     },
     {
       "path": "src/components/account-session-sync.tsx",
@@ -479,7 +479,7 @@
     },
     {
       "path": "src/lib/account/__tests__/navigation.test.ts",
-      "sha256": "7c54630ad75ceda6d87ab0be0ac1a176eb0cfde01834dc8ac9df267dfbfde482"
+      "sha256": "84cb08813480e465fd105102b1f194bcc8905aacfab551c1d7cb0006e2963c72"
     },
     {
       "path": "src/lib/account/browser-session.ts",

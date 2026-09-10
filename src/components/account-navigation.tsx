@@ -171,12 +171,6 @@ export function AccountNavigationContent({
         <div className="text-sm">
           <p className="text-muted-foreground">Signed in as</p>
           <p className="mt-1 break-all font-semibold">{email}</p>
-          {identity?.ok && identity.planEmail && identity.planEmail !== email ? (
-            <p className="mt-2 break-words text-muted-foreground">
-              This browser also has 7-Day Plan access for {identity.planEmail}. Logging out clears
-              both.
-            </p>
-          ) : null}
         </div>
       ) : (
         <p role="alert" className="text-sm">
@@ -191,20 +185,14 @@ export function AccountNavigationContent({
           Account
         </a>
         {identity !== null || error || busy ? (
-          <>
-            <p className="px-2 text-xs text-muted-foreground">
-              Logs out of this browser or installed app and clears unsaved assessment answers. Your
-              saved plans stay safe.
-            </p>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={onLogOut}
-              className="min-h-11 rounded-md px-2 text-left text-sm font-medium hover:bg-muted disabled:opacity-50"
-            >
-              {busy ? "Logging Out..." : error ? "Try Logging Out Again" : "Log Out"}
-            </button>
-          </>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onLogOut}
+            className="min-h-11 rounded-md px-2 text-left text-sm font-medium hover:bg-muted disabled:opacity-50"
+          >
+            {busy ? "Logging Out..." : error ? "Try Logging Out Again" : "Log Out"}
+          </button>
         ) : null}
       </nav>
     </>
