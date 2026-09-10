@@ -3,8 +3,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Apple, ChartNoAxesColumnIncreasing, Compass, Dumbbell } from "lucide-react";
 
+import { homeAssignment } from "@/lib/accelerator/home-snapshot";
 import { Button } from "@/components/ui/button";
 import { getAcceleratorHub, getMyPrograms } from "@/lib/accelerator/functions";
+import { getNutritionProfile } from "@/lib/nutrition/functions";
+import type { NutritionProfileResult } from "@/lib/nutrition/types";
 import type { AcceleratorHubData, MyProgramsResult } from "@/lib/accelerator/types";
 
 export const Route = createFileRoute("/home")({
@@ -18,55 +21,28 @@ export const Route = createFileRoute("/home")({
   component: PlatformHome,
 });
 
-const shortcuts = [
-  {
-    title: "My Programs",
-    description: "See your active, paused, completed, and not-started programs.",
-    to: "/my-programs",
-    icon: Dumbbell,
-  },
-  {
-    title: "Your Progress",
-    description: "See program progress and your latest measurements.",
-    to: "/progress",
-    icon: ChartNoAxesColumnIncreasing,
-  },
-  {
-    title: "Your Nutrition",
-    description: "Keep your practical nutrition guidance in one place.",
-    to: "/nutrition",
-    icon: Apple,
-  },
-  {
-    title: "Explore Programs",
-    description: "Find the next structured Gen X Jumps program.",
-    to: "/programs",
-    icon: Compass,
-  },
-] as const;
-
-type DailyAssignmentCard = {
-  title: string;
-  description: string;
-  to: "/my-programs" | "/accelerator" | "/your-plan";
-  button: string;
-  media: string;
-};
-
-function friendlyDate(value: string | null): string {
-  if (!value) return "the next calendar day";
-  return new Date(`${value}T00:00:00Z`).toLocaleDateString(undefined, {
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-}
-
 function PlatformHome() {
+  const loadNutrition = useServerFn(getNutritionProfile);
+  const [nutrition, setNutrition] = useState<NutritionProfileResult | null>(null);
   const loadPrograms = useServerFn(getMyPrograms);
   const loadAccelerator = useServerFn(getAcceleratorHub);
   const [programs, setPrograms] = useState<MyProgramsResult | null>(null);
   const [acceleratorHub, setAcceleratorHub] = useState<AcceleratorHubData | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void loadNutrition({ data: {} }).then(
+      (result) => {
+        if (active) setNutrition(result);
+      },
+      () => {
+        if (active) setNutrition({ ok: false });
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [loadNutrition]);
 
   useEffect(() => {
     let active = true;
@@ -84,60 +60,85 @@ function PlatformHome() {
     };
   }, [loadAccelerator, loadPrograms]);
 
-  let dailyAssignment: DailyAssignmentCard = {
-    title: "Choose Your Current Program",
-    description: "Start or resume an owned program from My Programs.",
-    to: "/my-programs",
-    button: "Open My Programs",
-    media: "No active workout",
-  };
+  const dailyAssignment = homeAssignment(programs, acceleratorHub);
 
-  if (
-    programs?.ok &&
-    programs.activeProgram === "accelerator" &&
-    acceleratorHub?.progress.currentDay
-  ) {
-    const day = acceleratorHub.snapshot.days.find(
-      ({ day }) => day === acceleratorHub.progress.currentDay,
-    );
-    if (day) {
-      const assignment = acceleratorHub.snapshot.assignments[day.assignment];
-      const waiting = !acceleratorHub.progress.canCompleteCurrent;
-      dailyAssignment = {
-        title: `Day ${day.day}: ${assignment.label}`,
-        description: waiting
-          ? `You completed today's work. Day ${day.day} opens ${friendlyDate(acceleratorHub.progress.availableOn)}.`
-          : `Week ${day.week} of the 28-Day Fat Loss Accelerator. Your place is saved even when life interrupts the schedule.`,
-        to: "/accelerator",
-        button: waiting ? "View Next Workout" : "Open Today’s Workout",
-        media: day.kind === "rest" ? "Rest-day guidance" : "Current workout video",
-      };
-    }
-  } else if (
-    programs?.ok &&
-    programs.activeProgram === "accelerator" &&
-    acceleratorHub?.progress.programCompleted
-  ) {
-    dailyAssignment = {
-      title: "28-Day Accelerator Complete",
-      description: "Your completed run and results remain saved in My Programs and Your Progress.",
-      to: "/accelerator",
-      button: "Open Completed Program",
-      media: "Completed program",
-    };
-  } else if (programs?.ok && programs.activeProgram === "lead_plan") {
-    const plan = programs.leadPlans.find(({ status }) => status === "active");
-    if (plan) {
-      const nextDay = Math.min(plan.completedDays + 1, plan.totalDays);
-      dailyAssignment = {
-        title: `Day ${nextDay}: 7-Day Comeback Plan`,
-        description: `${plan.completedDays} of ${plan.totalDays} days complete. Continue the same saved plan you already own.`,
-        to: "/your-plan",
-        button: "Open Today’s Workout",
-        media: "Current Comeback Plan workout",
-      };
-    }
-  }
+  const owned = programs?.ok ? programs : null;
+  const activePlan = owned?.leadPlans.find((plan) => plan.status === "active");
+  const programRows = owned
+    ? [
+        ...(owned.accelerator
+          ? [
+              {
+                name: "28-Day Fat Loss Accelerator",
+                status: owned.accelerator.status.replace("_", " "),
+                progress: `${owned.accelerator.currentRun?.completedDays ?? 0} of 28 days complete`,
+              },
+            ]
+          : []),
+        ...owned.leadPlans.map((plan) => ({
+          name: "7-Day Comeback Plan",
+          status: plan.status,
+          progress: `${plan.completedDays} of ${plan.totalDays} days complete`,
+        })),
+      ]
+    : [];
+  const targets =
+    nutrition?.ok && nutrition.access === "eligible" ? nutrition.profile?.targets : null;
+  const shortcuts = [
+    {
+      title: "My Programs",
+      to: "/my-programs",
+      icon: Dumbbell,
+      lines: !programs
+        ? ["Loading programs..."]
+        : !owned
+          ? ["Programs unavailable"]
+          : programRows.length
+            ? programRows.flatMap((row) => [row.name, `${row.status} · ${row.progress}`])
+            : ["No programs yet"],
+    },
+    {
+      title: "Your Progress",
+      to: "/progress",
+      icon: ChartNoAxesColumnIncreasing,
+      lines: !programs
+        ? ["Loading progress..."]
+        : !owned
+          ? ["Progress unavailable"]
+          : [
+              ...(owned.activeProgram === "lead_plan" && activePlan
+                ? [`${activePlan.completedDays} of ${activePlan.totalDays} days complete`]
+                : owned.activeProgram === "accelerator" && owned.accelerator?.currentRun
+                  ? [`${owned.accelerator.currentRun.completedDays} of 28 days complete`]
+                  : []),
+              ...(["weight", "waist"] as const).map((kind) => {
+                const entry = owned.latestMeasurements[kind];
+                const label = kind === "weight" ? "Weight" : "Waist";
+                return entry
+                  ? `${label}: ${entry.value} ${entry.unit} · ${new Date(entry.measuredAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`
+                  : `${label}: not recorded`;
+              }),
+            ],
+    },
+    {
+      title: "Your Nutrition",
+      to: "/nutrition",
+      icon: Apple,
+      lines: !nutrition
+        ? ["Loading targets..."]
+        : !nutrition.ok
+          ? ["Nutrition unavailable"]
+          : nutrition.access === "locked"
+            ? ["Not unlocked", "Included with an eligible paid program"]
+            : targets
+              ? [
+                  `${targets.calories.toLocaleString()} calories / day`,
+                  `${targets.proteinGrams} g protein · ${targets.carbohydrateGrams} g carbs · ${targets.fatGrams} g fat`,
+                  "Your saved daily targets",
+                ]
+              : ["Your targets aren't set yet", "Set up your daily calories and macros"],
+    },
+  ] as const;
 
   return (
     <div className="mx-auto w-full max-w-5xl">
@@ -149,44 +150,35 @@ function PlatformHome() {
       </header>
 
       <section className="mt-8 overflow-hidden rounded-lg border border-border bg-card">
-        <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[minmax(0,1fr)_16rem] md:items-center">
+        <div className="p-6 sm:p-8">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
-              Today’s Workout
+              {dailyAssignment.label}
             </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-              {!programs ? "Loading Your Workout..." : dailyAssignment.title}
-            </h2>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight">{dailyAssignment.title}</h2>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              {programs?.ok
-                ? dailyAssignment.description
-                : programs
-                  ? "Your programs couldn't be loaded. Open My Programs to try again."
-                  : "Checking your active program and saved progress."}
+              {dailyAssignment.description}
             </p>
-            <Button asChild size="lg" className="mt-5 w-full sm:w-auto">
-              <Link to={dailyAssignment.to}>
-                {dailyAssignment.button}
-                <ArrowRight aria-hidden="true" className="size-4" />
-              </Link>
-            </Button>
-          </div>
-          <div className="flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted/60 px-5 text-center md:aspect-square">
-            <p className="text-xs font-medium text-muted-foreground">
-              {programs?.ok ? dailyAssignment.media : "Current workout"}
-            </p>
+            {programs ? (
+              <Button asChild size="lg" className="mt-5 w-full sm:w-auto">
+                <Link to={dailyAssignment.to}>
+                  {dailyAssignment.button}
+                  <ArrowRight aria-hidden="true" className="size-4" />
+                </Link>
+              </Button>
+            ) : null}
           </div>
         </div>
       </section>
 
-      <section className="mt-6 grid gap-3 sm:grid-cols-2" aria-label="Your fitness platform">
+      <section className="mt-6 grid gap-3 lg:grid-cols-3" aria-label="Your fitness platform">
         {shortcuts.map((item) => {
           const Icon = item.icon;
           return (
             <Link
               key={item.to}
               to={item.to}
-              className="group rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/35 hover:bg-muted/35"
+              className="group rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/35 hover:bg-muted/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <div className="flex items-start justify-between gap-4">
                 <Icon aria-hidden="true" className="size-5 text-gxj-teal" />
@@ -196,13 +188,24 @@ function PlatformHome() {
                 />
               </div>
               <h2 className="mt-5 text-base font-semibold">{item.title}</h2>
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                {item.description}
-              </p>
+              <div className="mt-3 space-y-2 text-sm leading-relaxed">
+                {item.lines.map((line, index) => (
+                  <p key={index} className={index === 0 ? "font-medium" : "text-muted-foreground"}>
+                    {line}
+                  </p>
+                ))}
+              </div>
             </Link>
           );
         })}
       </section>
+      <Link
+        to="/programs"
+        className="mt-6 inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
+      >
+        <Compass aria-hidden="true" className="size-4" /> Explore Programs{" "}
+        <ArrowRight aria-hidden="true" className="size-4" />
+      </Link>
     </div>
   );
 }

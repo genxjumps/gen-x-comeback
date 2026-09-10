@@ -362,6 +362,10 @@
       "sha256": "f1c02634359dfd9e66e3de0ee501068d09a51f044fbee681a8ef3082382734d2"
     },
     {
+      "path": "src/lib/accelerator/__tests__/home-snapshot.test.ts",
+      "sha256": "649b973ce57ae67706d1e856458ea7f3b479438478004cc79743c7d7efa12507"
+    },
+    {
       "path": "src/lib/accelerator/__tests__/measurement-history-contract.test.ts",
       "sha256": "5b2bb6ffa926b4ce45f83d62084fd3c066fa3de54e49bdefe370de99b31027ab"
     },
@@ -375,7 +379,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "cf1a3a670477c32860c3b26c94c02f7f4dd0e3bb18d30fcb5c0d791401ef823a"
+      "sha256": "7d972002c9f912208388036ae6c003cd6865d3b4159692314955c2d435e21420"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -424,6 +428,10 @@
     {
       "path": "src/lib/accelerator/functions.ts",
       "sha256": "08fe60244a5e9e9bda86770a3dd81c06557bfde6a18ce2486586447b068d45a8"
+    },
+    {
+      "path": "src/lib/accelerator/home-snapshot.ts",
+      "sha256": "a11b808360b17fb5c0b0392ba22a1885aa9073d87d0f41241947aa8053346acf"
     },
     {
       "path": "src/lib/accelerator/measurement-row.ts",
@@ -1203,7 +1211,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "ad50c6fe58dcb21b6815d92cf43fed39e7b0fb3c2c75cb757ba0927b7f058021"
+      "sha256": "07cad9e26bc5b79dbd3a2f5a8b1ab4ed9decc57324f00e627546f2cc7593044b"
     },
     {
       "path": "src/routes/index.tsx",

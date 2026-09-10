@@ -9,13 +9,14 @@ describe("authenticated platform shell source contract", () => {
     const shell = readSource("../../../components/platform-shell.tsx");
     const renderedHome = home.slice(home.indexOf("function PlatformHome"));
 
-    expect(renderedHome.indexOf("Daily Assignment")).toBeLessThan(
+    expect(renderedHome).toContain("{dailyAssignment.title}");
+    expect(renderedHome.indexOf("{dailyAssignment.title}")).toBeLessThan(
       renderedHome.indexOf('aria-label="Your fitness platform"'),
     );
     expect(home).toContain('to: "/my-programs"');
     expect(home).toContain('to: "/progress"');
     expect(home).toContain('to: "/nutrition"');
-    expect(home).toContain('to: "/programs"');
+    expect(home).toContain('to="/programs"');
     expect(shell).toContain('to="/notifications"');
   });
 
@@ -51,11 +52,13 @@ describe("authenticated platform shell source contract", () => {
     const notifications = readSource("../../../routes/notifications.tsx");
 
     expect(home).toContain("getAcceleratorHub");
-    expect(home).toContain("acceleratorHub.progress.currentDay");
-    expect(home).toContain("acceleratorHub.progress.canCompleteCurrent");
-    expect(home).toContain("programs.activeProgram");
-    expect(home).toContain('to: "/accelerator"');
-    expect(home).toContain('to: "/your-plan"');
+    const assignment = readSource("../home-snapshot.ts");
+    expect(home).toContain("homeAssignment(programs, acceleratorHub)");
+    expect(assignment).toContain("acceleratorHub.progress.currentDay");
+    expect(assignment).toContain("acceleratorHub.progress.canCompleteCurrent");
+    expect(assignment).toContain("programs.activeProgram");
+    expect(assignment).toContain('to: "/accelerator"');
+    expect(assignment).toContain('to: "/your-plan"');
     expect(nutrition).toContain("getNutritionProfile");
     expect(nutrition).toContain("saveNutritionProfile");
     expect(nutrition).not.toMatch(/checkout|stripe|sendEmail/);
