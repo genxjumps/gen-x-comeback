@@ -654,6 +654,14 @@
       "sha256": "45dd3b4eae60f58ce65da1705b412e077064e2733118e7100948d693bec726ef"
     },
     {
+      "path": "src/lib/email/__tests__/queue-cycle-isolation.test.ts",
+      "sha256": "49205a81bd7d2c406999838dde987e846f3e629eb2cba2f860bf3bd18cf87621"
+    },
+    {
+      "path": "src/lib/email/__tests__/queue-isolation.test.ts",
+      "sha256": "6282738e5e9c6f2012158afd4f6f58af26d42c3ee07cc4e0c7999bd5186b05ee"
+    },
+    {
       "path": "src/lib/email/__tests__/real-staging-dispatch.test.ts",
       "sha256": "53033e9f0eee2d452c47b2df798bf9103934c5cd33a766767a21aaf21007ec01"
     },
@@ -727,7 +735,7 @@
     },
     {
       "path": "src/lib/email/dispatch-cycle.server.ts",
-      "sha256": "995d53b5817792e78dfd88b839a0a2ae7ca827c200fb7d90ca2bcaeffe100548"
+      "sha256": "ec9982087298eede47d42a48b4425abbccba700ff89716981b434f4000b4a9f2"
     },
     {
       "path": "src/lib/email/dispatch.ts",
@@ -762,16 +770,20 @@
       "sha256": "f85540226d582422119b584eeececdd68c12082e7b8c3567eb6539b3cc31de49"
     },
     {
+      "path": "src/lib/email/health.ts",
+      "sha256": "64abd18e20c35249a835779cceb255483a224efb7bfd0b841b646f06138f73a0"
+    },
+    {
       "path": "src/lib/email/link-exchange-event.ts",
       "sha256": "8fed40ddfad5c5c2426f08b35b96643e10b7bb632df412c3e3a30f85b1db2193"
     },
     {
       "path": "src/lib/email/paid-access-dispatch.server.ts",
-      "sha256": "092b18b8fa05aa043ce1951fddd20091ff14417aa5d8a23a2d2c5fd652b8d9e6"
+      "sha256": "3056cc33539bb1c8ddbdc804d1b9b0dfcf862d25ced8aeb92181a58d0daeb28c"
     },
     {
       "path": "src/lib/email/paid-access-runtime.server.ts",
-      "sha256": "bbe9a28047f0c26e9713279cced34ed4dc82c177086300db6ae6ca3210a5e633"
+      "sha256": "6d7f7b3a3468a202fdebc32484ddd783c05849f6669cfa0eec8d4369de6b1276"
     },
     {
       "path": "src/lib/email/paid-access-store.server.ts",
@@ -806,6 +818,14 @@
       "sha256": "19c0b0aff4fcfad9fe5ca7d6a0ea139bb9f9356a37c82847e4f2de94a9d45121"
     },
     {
+      "path": "src/lib/email/queue-health.server.ts",
+      "sha256": "42e2b9ab460991220882e55fc95046292b36f2586cf2e4b79bc088b15622c6eb"
+    },
+    {
+      "path": "src/lib/email/queue-isolation.ts",
+      "sha256": "3ec5200b4b336ca79878eb16c99e4e301bb3b94d64242c8ae7a74c57b28af542"
+    },
+    {
       "path": "src/lib/email/rate-limit.server.ts",
       "sha256": "50688a4cc3ec8502289e8783f13033837faebf0fe792aef0c84d8324dcc20975"
     },
@@ -835,11 +855,11 @@
     },
     {
       "path": "src/lib/email/runtime.server.ts",
-      "sha256": "1effb18f7cee9c6659e103a99423ae81c187d33f011f86f71a2fd5254da00531"
+      "sha256": "a34abb3d66cebb8b0ae373b660ce2fd0e1065cabccd0c106c0e041faaa0b6eb0"
     },
     {
       "path": "src/lib/email/signup-welcome.server.ts",
-      "sha256": "d37e4f05f54aa0d817da6c646e498333dac3451e847fc3863a3903faa6ce53e3"
+      "sha256": "5a0759fe04f530303f28fb60d0cfeb3d1e39813ac059614fa5e0dee204c02815"
     },
     {
       "path": "src/lib/email/signup-welcome.ts",
@@ -1099,7 +1119,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "263195976dc650791be5f8e11386ea6c2356e3a80359e8df88eb2299b0133d8d"
+      "sha256": "28e4c2ffe42cfd33be8214b541e278ce83c0895894971fc6a557ffeceff00789"
     },
     {
       "path": "src/router.tsx",
@@ -1135,7 +1155,11 @@
     },
     {
       "path": "src/routes/api/public/email/dispatch.ts",
-      "sha256": "aa041c2f3760df25b0e3d8959e23724e3df8bcbc1099399f3bc4dd218c429fa4"
+      "sha256": "f677068138a2f94b1e21e6e278310c774dde559ca6806e346574f5e15ad0dc5c"
+    },
+    {
+      "path": "src/routes/api/public/email/health.ts",
+      "sha256": "149d0fb88eebeecd49ab9a6544fefe783ecb4aafdda0fa15efe0a8b8ad938f28"
     },
     {
       "path": "src/routes/api/public/email/webhook.ts",
