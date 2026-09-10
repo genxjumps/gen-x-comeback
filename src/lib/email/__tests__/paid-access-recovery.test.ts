@@ -164,14 +164,37 @@ describe("paid access email", () => {
     expect(tokens).toHaveLength(0);
   });
 
+  it("sends account recovery with no active ownership but keeps suppression", async () => {
+    for (const suppression of [null, "hard_bounce", "complaint"]) {
+      const { adapter, deps } = harness({
+        active: false,
+        suppression,
+        job: makeJob({ job_type: "paid_recovery", entitlement_id: null }),
+      });
+      const result = await dispatchPaidAccessJobs(deps);
+      expect(result.recovery.outcomes[0]!.outcome).toBe(
+        suppression ? "suppressed" : "provider_accepted",
+      );
+      expect(adapter.requests).toHaveLength(suppression ? 0 : 1);
+    }
+  });
+
+  it("does not treat malformed purchase or legacy recovery jobs as account access", async () => {
+    for (const job of [makeJob({ entitlement_id: null }), makeJob({ job_type: "paid_recovery" })]) {
+      const { adapter, deps } = harness({ active: false, job });
+      await dispatchPaidAccessJobs(deps);
+      expect(adapter.requests).toHaveLength(0);
+    }
+  });
+
   it("renders purchase and recovery messages without marketing content", () => {
     for (const kind of ["purchase", "recovery"] as const) {
       const rendered = renderPaidAccessEmail({
         kind,
         returnUrl: "https://app.genxjumps.com/account/return?token=test",
       });
-      expect(rendered.text).toContain(PAID_ACCESS_CTA);
-      expect(rendered.html).toContain(PAID_ACCESS_CTA);
+      expect(rendered.text).toContain(kind === "purchase" ? PAID_ACCESS_CTA : "Sign In");
+      expect(rendered.html).toContain(kind === "purchase" ? PAID_ACCESS_CTA : "Sign In");
       expect(rendered.text.toLowerCase()).not.toContain("unsubscribe");
       expect(rendered.text.toLowerCase()).not.toContain("weight");
       expect(rendered.text.toLowerCase()).not.toContain("progress");

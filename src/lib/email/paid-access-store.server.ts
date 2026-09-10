@@ -69,7 +69,7 @@ export type PaidAccessStore = {
   suppressionReason(emailNormalized: string): Promise<string | null>;
   upsertToken(input: {
     customerId: string;
-    entitlementId: string;
+    entitlementId: string | null;
     jobId: string;
     tokenHash: string;
     issuedAt: string;

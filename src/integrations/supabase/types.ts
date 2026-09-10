@@ -1163,7 +1163,7 @@ export type Database = {
           delivered_at: string | null;
           delivery_status: Database["public"]["Enums"]["email_delivery_status"];
           eligible_at: string;
-          entitlement_id: string;
+          entitlement_id: string | null;
           first_provider_attempt_at: string | null;
           idempotency_key: string;
           job_id: string;
@@ -1192,7 +1192,7 @@ export type Database = {
           delivered_at?: string | null;
           delivery_status?: Database["public"]["Enums"]["email_delivery_status"];
           eligible_at?: string;
-          entitlement_id: string;
+          entitlement_id: string | null;
           first_provider_attempt_at?: string | null;
           idempotency_key: string;
           job_id?: string;
@@ -1221,7 +1221,7 @@ export type Database = {
           delivered_at?: string | null;
           delivery_status?: Database["public"]["Enums"]["email_delivery_status"];
           eligible_at?: string;
-          entitlement_id?: string;
+          entitlement_id?: string | null;
           first_provider_attempt_at?: string | null;
           idempotency_key?: string;
           job_id?: string;
@@ -1262,7 +1262,7 @@ export type Database = {
         Row: {
           created_at: string;
           customer_id: string;
-          entitlement_id: string;
+          entitlement_id: string | null;
           expires_at: string;
           issued_at: string;
           job_id: string;
@@ -1275,7 +1275,7 @@ export type Database = {
         Insert: {
           created_at?: string;
           customer_id: string;
-          entitlement_id: string;
+          entitlement_id: string | null;
           expires_at: string;
           issued_at?: string;
           job_id: string;
@@ -1288,7 +1288,7 @@ export type Database = {
         Update: {
           created_at?: string;
           customer_id?: string;
-          entitlement_id?: string;
+          entitlement_id?: string | null;
           expires_at?: string;
           issued_at?: string;
           job_id?: string;

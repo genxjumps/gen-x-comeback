@@ -153,7 +153,13 @@ async function sendOne(
   if (guarded) return guarded;
 
   const customer = await deps.store.getCustomer(job.customer_id);
-  if (!customer || !(await deps.store.entitlementIsActive(job.customer_id, job.entitlement_id))) {
+  const accountRecovery = job.job_type === PAID_RECOVERY_JOB_TYPE && job.entitlement_id === null;
+  if (
+    !customer ||
+    (!accountRecovery &&
+      (!job.entitlement_id ||
+        !(await deps.store.entitlementIsActive(job.customer_id, job.entitlement_id))))
+  ) {
     return finish(deps, job, "canceled");
   }
   const suppression = await deps.store.suppressionReason(customer.email_normalized);
@@ -163,7 +169,7 @@ async function sendOne(
   const rawToken = deriveEmailCredential(
     deps.tokenSecret,
     "recovery",
-    job.entitlement_id,
+    job.entitlement_id ?? job.customer_id,
     job.idempotency_key,
   );
   await deps.store.upsertToken({

@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { renderStaticPage } from "@/lib/static-page";
 
 function shell(body: string): Response {
-  return new Response(renderStaticPage("Open My Programs | Gen X Jumps", body), {
+  return new Response(renderStaticPage("Sign In | Gen X Jumps", body), {
     status: 200,
     headers: {
       "content-type": "text/html; charset=utf-8",
@@ -37,11 +37,11 @@ export const Route = createFileRoute("/account/return")({
       GET: async ({ request }) => {
         const token = new URL(request.url).searchParams.get("token") ?? "";
         return shell(
-          `<h1 class="gxj-title">Open Your Gen X Jumps Programs</h1>
-<p class="gxj-copy">Press the button below to securely open the programs you own.</p>
+          `<h1 class="gxj-title">Sign In to Gen X Jumps</h1>
+<p class="gxj-copy">Press the button below to open your account.</p>
 <form method="post" action="/account/return" id="paid-access-return-form" class="gxj-form">
 <input type="hidden" name="token" value="${escapeAttr(token)}" />
-<button type="submit" class="gxj-button">Open My Programs</button>
+<button type="submit" class="gxj-button">Sign In</button>
 </form>`,
         );
       },

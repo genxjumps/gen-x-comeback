@@ -279,6 +279,13 @@
       "sha256": "f44c4a4e09c6ae1919fc9260d677626b3d46d84bbe84dc2224963d0120750e23",
       "statementSha256": "6531ea0f88ec75e44ed049348169013bba100ccf006a994d4a9904e95be6b6ed",
       "version": "20260910110000"
+    },
+    {
+      "file": "20260910170000_account_recovery_without_ownership.sql",
+      "name": "account_recovery_without_ownership",
+      "sha256": "91b3e22b73019ea7e82dd9cca666819ec31ab88c0a50846f6077a94a9845f7a6",
+      "statementSha256": "e52d26d17c4401cebca48b1912e7a1da47990fc9d36fe286cd706d4defbef6d7",
+      "version": "20260910170000"
     }
   ],
   "version": 1

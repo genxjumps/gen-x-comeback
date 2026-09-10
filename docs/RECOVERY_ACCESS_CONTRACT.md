@@ -39,15 +39,18 @@ The email link proves access to the current plan. The device that requested the 
 
 The raw recovery token is validated server-side. A successful exchange creates a new opaque return-session credential for the browser that used the link. Concurrent browser sessions are expected and supported.
 
-For a paid customer, the reusable opaque email credential resolves only to the customer account and
-an active entitlement. Each deliberate exchange creates a fresh one-browser Supabase Auth handoff
-and opens My Programs. The source email credential is not consumed, and existing authenticated
-browser sessions are not revoked. Refund or revocation state is checked again before every exchange.
+For an existing customer account, new recovery credentials establish account identity independently
+of paid ownership. A refunded customer can sign in and inspect purchase/refund history without
+regaining program access. Each deliberate exchange creates a fresh one-browser Supabase Auth handoff
+and opens My Programs. The source email credential isn't consumed, and existing authenticated
+browser sessions aren't revoked. Purchase-access and historical entitlement-bound recovery credentials
+still require active ownership; previously revoked credentials remain revoked. Workout and program
+APIs continue to enforce ownership independently of account authentication.
 
 Paid recovery is transactional account access. It does not depend on 7-Day Plan-email consent or
 marketing consent. A paid-account match takes precedence over a matching free plan so one recovery
-request never sends two access emails. A free-only match retains the established 7-Day recovery and
-consent behavior.
+request never sends two access emails. An address without a customer account retains the established
+7-Day recovery and consent behavior. Account recovery doesn't create a customer or modify consent.
 
 ## Pre-launch acceptance matrix
 
@@ -83,7 +86,9 @@ Automated tests must protect these invariants where deterministic automation is 
 6. Production `/return` must write the session cookie through the framework-supported response path and the protected plan route must read it through the framework-supported request path.
 7. Production `/account/return` must perform no exchange on GET and must create a fresh platform
    session handoff only after deliberate POST.
-8. Paid recovery must reject expired, revoked, mismatched, or inactive-entitlement credentials
-   without revealing which boundary failed.
+8. Account recovery must reject expired, revoked or mismatched credentials without revealing which
+   boundary failed. Entitlement-bound credentials must also reject inactive ownership.
+9. Refunded-only customers can recover account access, read refund history and remain unable to
+   access refunded workouts. See ACCOUNT-IDENTITY-LOGOUT.md for scope and release sequencing.
 
 The cross-device matrix remains a required manual production acceptance pass because browser cookie behavior and deployment adapters are part of the behavior being verified.

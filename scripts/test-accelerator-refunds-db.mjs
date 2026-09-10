@@ -37,6 +37,50 @@ has_table_privilege('sandbox_exec','public.private_refund_reviewers','INSERT') A
       }
     }
     await db.exec(readFileSync("supabase/accelerator-refunds.permissions.sql", "utf8"));
+    await db.exec(readFileSync("supabase/account-recovery.acceptance.sql", "utf8"));
+    const recoveryFunctions = [
+      "enqueue_paid_access_job",
+      "request_customer_access_recovery",
+      "claim_production_paid_access_email_jobs",
+      "begin_production_paid_access_provider_attempt",
+    ];
+    const unsafeRecovery = (
+      await db.query(
+        `SELECT proname FROM pg_proc WHERE pronamespace='public'::regnamespace
+      AND proname=ANY($1) AND (NOT prosecdef OR NOT ('search_path=public'=ANY(proconfig))
+      OR has_function_privilege('anon',oid,'EXECUTE') OR has_function_privilege('authenticated',oid,'EXECUTE'))`,
+        [recoveryFunctions],
+      )
+    ).rows;
+    if (unsafeRecovery.length) throw Error("Unsafe account recovery capability");
+    // Regenerate only the changed column declarations from the replayed catalog.
+    const nullableRecovery = (
+      await db.query(`SELECT table_name,is_nullable FROM information_schema.columns
+      WHERE table_schema='public' AND table_name IN ('paid_access_tokens','paid_access_email_jobs')
+      AND column_name='entitlement_id'`)
+    ).rows;
+    const databaseTypesPath = "src/integrations/supabase/types.ts";
+    const existingTypes = readFileSync(databaseTypesPath, "utf8");
+    let recoveryTypes = existingTypes;
+    for (const column of nullableRecovery) {
+      const start = recoveryTypes.indexOf("      " + column.table_name + ": {");
+      const end = recoveryTypes.indexOf("        Relationships:", start);
+      const section = recoveryTypes
+        .slice(start, end)
+        .replace(
+          /entitlement_id(\??): string(?: \| null)?;/g,
+          (_, optional) =>
+            "entitlement_id" +
+            optional +
+            ": string" +
+            (column.is_nullable === "YES" ? " | null" : "") +
+            ";",
+        );
+      recoveryTypes = recoveryTypes.slice(0, start) + section + recoveryTypes.slice(end);
+    }
+    if (nullableRecovery.length !== 2) throw Error("Missing recovery schema columns");
+    if (process.argv.includes("--types")) writeFileSync(databaseTypesPath, recoveryTypes);
+    else if (recoveryTypes !== existingTypes) throw Error("Recovery types differ from schema");
     const names = [
       "request_accelerator_refund",
       "get_accelerator_refund_purchases",
