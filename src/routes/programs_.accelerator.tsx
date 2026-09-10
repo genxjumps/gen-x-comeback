@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Check } from "lucide-react";
 import { z } from "zod";
 
+import { checkoutPath } from "@/lib/commerce/checkout-path";
 import { Button } from "@/components/ui/button";
 import {
   createGuestAcceleratorCheckout,
@@ -31,9 +32,9 @@ export const Route = createFileRoute("/programs_/accelerator")({
 
 const INCLUDED = [
   "A complete 28-day workout schedule",
-  "Five guided workouts plus active recovery",
+  "Five guided workouts each week, plus active recovery and rest",
   "Weekly coaching and progress support",
-  "Personal calorie, protein, carbohydrate, and fat targets",
+  "Personal calorie and macro targets with an adjustable meal-by-meal breakdown",
   "Permanent access and repeat program runs",
 ];
 
@@ -65,16 +66,11 @@ function AcceleratorProgramDetail() {
   }, [loadAccountAvailability, loadAvailability]);
 
   async function beginCheckout() {
-    if (opening) return;
+    if (opening || (path !== "account" && path !== "guest")) return;
     setOpening(true);
     setError(null);
     try {
-      const accountCheckout =
-        accountAvailability?.ok &&
-        accountAvailability.enabled &&
-        accountAvailability.allowed &&
-        !accountAvailability.owned;
-      const result = accountCheckout ? await openAccountCheckout() : await openCheckout();
+      const result = path === "account" ? await openAccountCheckout() : await openCheckout();
       if (result.ok) {
         window.location.assign(result.checkoutUrl);
         return;
@@ -87,13 +83,9 @@ function AcceleratorProgramDetail() {
     }
   }
 
-  const owned = accountAvailability?.ok && accountAvailability.owned;
-  const accountCheckout =
-    accountAvailability?.ok &&
-    accountAvailability.enabled &&
-    accountAvailability.allowed &&
-    !accountAvailability.owned;
-  const checkoutAvailable = available || accountCheckout;
+  const path = checkoutPath(accountAvailability, available);
+  const owned = path === "owned";
+  const checkoutAvailable = path === "account" || path === "guest";
 
   return (
     <div className="mx-auto w-full max-w-5xl px-5 py-10 sm:py-14">
@@ -106,8 +98,9 @@ function AcceleratorProgramDetail() {
             Know Exactly What To Do For The Next 28 Days
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            A structured next step for Gen X adults who want consistent workouts, simple nutrition
-            targets, and a clear path forward without an endless video library.
+            Keep building strength, fitness, and consistency with guided video workouts you can
+            follow on any device. Your next workout is laid out, and your nutrition tools help you
+            turn daily targets into meals that work.
           </p>
 
           <section className="mt-8 rounded-lg border border-border bg-card p-5 sm:p-6">
@@ -147,6 +140,16 @@ function AcceleratorProgramDetail() {
             This checkout uses Stripe test mode and cannot charge a real card. Buying creates your
             access but does not start Day 1.
           </p>
+          <p className="mt-3 text-sm font-medium">
+            7-day money-back guarantee. Request a refund from Account → Purchases &amp; Billing.
+          </p>
+          {!checkoutAvailable && !owned ? (
+            <p role="status" className="mt-3 text-sm">
+              {path === "loading"
+                ? "Checking your access..."
+                : "Checkout isn't open for this account right now."}
+            </p>
+          ) : null}
           {checkout === "cancelled" ? (
             <p className="mt-3 text-sm font-medium">Checkout was canceled. Nothing was charged.</p>
           ) : null}

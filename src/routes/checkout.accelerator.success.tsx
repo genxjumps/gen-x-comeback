@@ -81,7 +81,7 @@ function AcceleratorCheckoutSuccess() {
             ? "Your Accelerator is now in My Programs. Day 1 has not started."
             : status === "error"
               ? "We could not finish opening your test purchase in this browser. No program was started."
-              : "Stripe confirmed the payment. We’re adding the Accelerator to your account now."
+              : "We’re checking your payment and account access."
         }
       >
         <section className="rounded-lg border border-border bg-card p-6">
@@ -93,7 +93,8 @@ function AcceleratorCheckoutSuccess() {
                 <Check className="size-5" />
               </div>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Start when you are ready. Your access does not expire.
+                Start when you’re ready. Your 7-Day plan stays saved, and your nutrition tools are
+                unlocked.
               </p>
               <Button asChild className="mt-5 w-full sm:w-auto">
                 {entitlementId ? (
@@ -104,6 +105,10 @@ function AcceleratorCheckoutSuccess() {
                   <Link to="/my-programs">Open My Programs</Link>
                 )}
               </Button>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Your Nutrition is available from the main menu. Set your calorie and macro targets,
+                then adjust how they fit across your meals.
+              </p>
             </div>
           ) : (
             <div>

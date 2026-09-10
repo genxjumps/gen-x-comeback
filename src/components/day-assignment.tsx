@@ -252,7 +252,9 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               Nice work. Your progress is saved.
             </p>
             <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
-              <Link to="/your-plan">Continue to My Plan</Link>
+              <Link to="/your-plan">
+                {dayNumber === 7 && priorDone ? "See What’s Next" : "Continue to My Plan"}
+              </Link>
             </Button>
           </div>
         ) : !priorDone && !hasWorkoutMedia ? (

@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/day-assignment.tsx",
-      "sha256": "47a055352099eb14b24d7fa41a755cdf462c355140d5df4040ec0961e4a6c74d"
+      "sha256": "028d1c6032bfc542e6d9a54122a5f12be1a973619cd93f7e0d5f89fc96cd5fd6"
     },
     {
       "path": "src/components/day-one-workout.tsx",
@@ -208,6 +208,10 @@
     {
       "path": "src/components/pwa-install.tsx",
       "sha256": "a58c619a01310e7358472b53038d3eb3c9988188a82a0408e19413bc478b19d9"
+    },
+    {
+      "path": "src/components/seven-day-next-step.tsx",
+      "sha256": "fb523480ab4f82169ea4ecf1a43ac5eb7514e65bb52f7d22d2d6be4f53c9c0cb"
     },
     {
       "path": "src/components/ui/button.tsx",
@@ -546,6 +550,10 @@
       "sha256": "dd5db3b35b7feabba5501b7ecc23f78af7443be2d8e3b61201d65cae84377b97"
     },
     {
+      "path": "src/lib/commerce/__tests__/checkout-path.test.ts",
+      "sha256": "645b61e70b1b1d3506ba906eafa7c76953bf83e79065b2e798189cb9a6e831f3"
+    },
+    {
       "path": "src/lib/commerce/__tests__/refund-functions.test.ts",
       "sha256": "140b2b42643aca5e664e6264f2850c8dad8889443360c9c6ef6cce35e9c53136"
     },
@@ -576,6 +584,10 @@
     {
       "path": "src/lib/commerce/__tests__/stripe-webhook-route.test.ts",
       "sha256": "3eab5c6db70579b745a70cdcc40fd1b7854c1969927206b9cb51c6c919628fc2"
+    },
+    {
+      "path": "src/lib/commerce/checkout-path.ts",
+      "sha256": "4c38ef9797c633681383840f273398b2fb5e9b06f440e145dd07c849cb7abc8e"
     },
     {
       "path": "src/lib/commerce/functions.ts",
@@ -1203,7 +1215,7 @@
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
-      "sha256": "ed30e6f8b371c34edbe5d504987535a63d6c586bf243fa047cf05ec5c8f25f6f"
+      "sha256": "458d5caa15d4bbb2da0e1a688c5d8280051bc3da5c0d4750cc05897a726a6dda"
     },
     {
       "path": "src/routes/email-preferences.ts",
@@ -1271,7 +1283,7 @@
     },
     {
       "path": "src/routes/programs_.accelerator.tsx",
-      "sha256": "3f2d1e5f4e11744182622b7834206e67c201e818e332c2540eb249642c0432aa"
+      "sha256": "73b82bee2dd82c7a6a8d5c0eccde2389715062e861a9bfd87e0f5c32427646ec"
     },
     {
       "path": "src/routes/progress.tsx",
@@ -1307,7 +1319,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "ed142ad1653125c274705ae3ddbab6c3b59fccc75601691c3f6d7f3c1e34fab5"
+      "sha256": "54d94ceb4da9d450eefcfda290e40ee55299094612fb99b4fade0aa5e36e7e44"
     },
     {
       "path": "src/server.ts",
