@@ -39,6 +39,7 @@ import { Route as AssessmentCompleteRouteImport } from './routes/assessment.comp
 import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AccountReturnRouteImport } from './routes/account.return'
+import { Route as AccountPurchasesRouteImport } from './routes/account.purchases'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
 import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs_.accelerator.setup'
 import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs_.accelerator.runs'
@@ -200,6 +201,11 @@ const AccountReturnRoute = AccountReturnRouteImport.update({
   path: '/account/return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountPurchasesRoute = AccountPurchasesRouteImport.update({
+  id: '/account/purchases',
+  path: '/account/purchases',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const YourPlanDayDayRoute = YourPlanDayDayRouteImport.update({
   id: '/your-plan/day/$day',
   path: '/your-plan/day/$day',
@@ -272,6 +278,7 @@ export interface FileRoutesByFullPath {
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/welcome': typeof WelcomeRoute
+  '/account/purchases': typeof AccountPurchasesRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/welcome': typeof WelcomeRoute
+  '/account/purchases': typeof AccountPurchasesRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -357,6 +365,7 @@ export interface FileRoutesById {
   '/return': typeof ReturnRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/welcome': typeof WelcomeRoute
+  '/account/purchases': typeof AccountPurchasesRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/refunds': typeof AdminRefundsRoute
@@ -401,6 +410,7 @@ export interface FileRouteTypes {
     | '/return'
     | '/sitemap.xml'
     | '/welcome'
+    | '/account/purchases'
     | '/account/return'
     | '/admin/customers'
     | '/admin/refunds'
@@ -443,6 +453,7 @@ export interface FileRouteTypes {
     | '/return'
     | '/sitemap.xml'
     | '/welcome'
+    | '/account/purchases'
     | '/account/return'
     | '/admin/customers'
     | '/admin/refunds'
@@ -485,6 +496,7 @@ export interface FileRouteTypes {
     | '/return'
     | '/sitemap.xml'
     | '/welcome'
+    | '/account/purchases'
     | '/account/return'
     | '/admin/customers'
     | '/admin/refunds'
@@ -528,6 +540,7 @@ export interface RootRouteChildren {
   ReturnRoute: typeof ReturnRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WelcomeRoute: typeof WelcomeRoute
+  AccountPurchasesRoute: typeof AccountPurchasesRoute
   AccountReturnRoute: typeof AccountReturnRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminRefundsRoute: typeof AdminRefundsRoute
@@ -766,6 +779,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/purchases': {
+      id: '/account/purchases'
+      path: '/account/purchases'
+      fullPath: '/account/purchases'
+      preLoaderRoute: typeof AccountPurchasesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/your-plan/day/$day': {
       id: '/your-plan/day/$day'
       path: '/your-plan/day/$day'
@@ -856,6 +876,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReturnRoute: ReturnRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   WelcomeRoute: WelcomeRoute,
+  AccountPurchasesRoute: AccountPurchasesRoute,
   AccountReturnRoute: AccountReturnRoute,
   AdminCustomersRoute: AdminCustomersRoute,
   AdminRefundsRoute: AdminRefundsRoute,

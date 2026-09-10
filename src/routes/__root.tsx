@@ -148,6 +148,7 @@ function RootComponent() {
     pathname === "/accelerator" ||
     pathname === "/admin/customers" ||
     pathname === "/admin/refunds" ||
+    pathname === "/account/purchases" ||
     pathname === "/my-programs/accelerator/refund";
 
   if (inPlatform) {
