@@ -75,3 +75,35 @@ visual or authenticated browser verification. Before accepting the deployed chec
 Merge, deployment, controlled email/browser tests, and public launch retain their approval boundaries.
 This checkpoint does not implement contact editing, billing management, all-device logout, account
 deletion, password login, or public intake activation. Those follow-ups remain in issue #97.
+
+## Account navigation checkpoint
+
+Todd separately approved navigation only after the controlled logout/recovery tests. Screen redesign
+is excluded from this checkpoint. The existing Account, recovery, private-plan and email-return
+screens retain their behavior and copy.
+
+- The platform header replaces its Account text link with an account icon beside the existing
+  notification bell. The free-plan/assessment header uses the same account control in its existing
+  account position; it does not add a new notification feature.
+- Verified signed-in access opens a compact disclosure showing the current email, Account and
+  deliberate Log Out. Mixed verified free/platform identities are both identified.
+- Verified signed-out access shows Sign In linking to the existing `/recover` form. Loading or
+  failed identity lookup is never presented as verified signed-out state. Account remains reachable,
+  and logout remains available after an identity error.
+- The menu uses native disclosure keyboard behavior, normal Tab order, Escape with focus return,
+  outside-click dismissal and touch-sized controls. Long emails wrap within the viewport.
+- Logout uses the existing same-browser cleanup orchestration, shows the unsaved-answer disclosure,
+  prevents repeat submission, discards cached state and returns to the existing Account screen.
+  A failed cleanup hides stale identity and keeps an explicit retry in the menu.
+- Contact, billing, preferences and support entries are not exposed until implemented. No new
+  routes, migration, provider configuration, sign-in method or public-intake activation is included.
+
+Existing test evidence is maintained in issue #97: browser two-tab logout, installed-app reopen,
+correct-account recovery and same-account desktop Incognito/phone Private isolation passed their
+controlled cases. Mixed-identity, populated-draft and cleanup-failure live acceptance remain distinct
+from fixture coverage. The later sign-in screen usability checkpoint remains a separate decision.
+
+The platform header stays mounted outside the private-content boundary. Auth sign-out therefore
+cannot hide a partial-logout error or its retry control. The boundary continues to guard page
+content; the header makes no access grants. Notification counts clear and reload when the Auth
+identity changes so a previous account's badge does not survive account switching.

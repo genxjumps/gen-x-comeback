@@ -162,6 +162,10 @@
       "sha256": "bb6f9473b4a2a7584d8f85018db57381235cc3d5f80e64025457b137351652e8"
     },
     {
+      "path": "src/components/account-navigation.tsx",
+      "sha256": "2139e4ff9d5e78972471b673a91712b6c754f5b2f66be8da1f3fdd5362b3297f"
+    },
+    {
       "path": "src/components/account-session-sync.tsx",
       "sha256": "03b599bdc2494568504d0ec73c07f33828c59cf28493b5abc8679ee8af4bdaf7"
     },
@@ -195,7 +199,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "65e694f441c530e0f4d2b5665a4adc15346741585c65f566a512091dac16b1bf"
+      "sha256": "4f4141a4c799aea8d89ac493c362a45d17bf48816fcf5f85764da73baacc2fdd"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -472,6 +476,10 @@
     {
       "path": "src/lib/account/__tests__/logout.test.ts",
       "sha256": "81aec4d413c66130156b73c217c06b0dccaf56a726a3b3e950abf9c5095b9df8"
+    },
+    {
+      "path": "src/lib/account/__tests__/navigation.test.ts",
+      "sha256": "7c54630ad75ceda6d87ab0be0ac1a176eb0cfde01834dc8ac9df267dfbfde482"
     },
     {
       "path": "src/lib/account/browser-session.ts",
@@ -1099,7 +1107,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "1a685d247a46855cc696901bc665722f7ecfbc1911a865df4996c97adfde57b4"
+      "sha256": "166ee705eb8734d7e1a896a3cb0f32d44bf76085637f90cddff356bd95201581"
     },
     {
       "path": "src/routes/accelerator.tsx",
