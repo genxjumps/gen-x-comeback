@@ -19,17 +19,20 @@ function render(identity: AccountIdentityResult | null, error = false, busy = fa
 }
 
 describe("account navigation identity and logout states", () => {
-  it("identifies both verified identities when this browser has different free and platform accounts", () => {
+  it("shows only the primary verified identity and navigation, without session explanations", () => {
     const html = render({
       ok: true,
       accountEmail: "paid@example.com",
       planEmail: "free@example.com",
     });
     expect(html).toContain("paid@example.com");
-    expect(html).toContain("free@example.com");
-    expect(html).toContain("Logging out clears both");
+    expect(html).toContain("Signed in as");
+    expect(html).not.toContain("free@example.com");
+    expect(html).not.toContain("Logging out clears both");
     expect(html).toContain('href="/account"');
-    expect(html).toContain("unsaved assessment answers");
+    expect(html).toContain("Log Out");
+    expect(html).not.toContain("unsaved assessment answers");
+    expect(html).not.toContain("saved plans stay safe");
   });
 
   it("supports verified free-plan-only access", () => {
