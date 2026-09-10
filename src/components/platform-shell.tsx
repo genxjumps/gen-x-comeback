@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { AccountNavigation } from "@/components/account-navigation";
 
+import { supabase } from "@/integrations/supabase/client";
 import { getPlatformNotifications } from "@/lib/notifications/functions";
 
 const primaryNavigation = [
@@ -23,9 +24,23 @@ export function PlatformShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const loadNotifications = useServerFn(getPlatformNotifications);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [authRevision, setAuthRevision] = useState(0);
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
+        setNotificationCount(0);
+        setAuthRevision((value) => value + 1);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     let active = true;
+    setNotificationCount(0);
     void loadNotifications({ data: {} })
       .then((result) => {
         if (active && result.ok) setNotificationCount(result.notifications.length);
@@ -40,7 +55,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
       active = false;
       window.removeEventListener("gxj:notifications-changed", updateCount);
     };
-  }, [loadNotifications, pathname]);
+  }, [loadNotifications, pathname, authRevision]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">

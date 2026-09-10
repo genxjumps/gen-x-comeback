@@ -199,7 +199,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "7d60324efb61047ab1a5f13067766e21d6213aab1402eda0f57406d345739ce9"
+      "sha256": "4f4141a4c799aea8d89ac493c362a45d17bf48816fcf5f85764da73baacc2fdd"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -1107,7 +1107,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "7d6cb6dd0224fc288f0c6859269fedd8aa7a6795a77ef6e137919eb9cfc53080"
+      "sha256": "166ee705eb8734d7e1a896a3cb0f32d44bf76085637f90cddff356bd95201581"
     },
     {
       "path": "src/routes/accelerator.tsx",

@@ -154,11 +154,11 @@ function RootComponent() {
     return (
       <QueryClientProvider client={queryClient}>
         <AccountSessionSync />
-        <PlatformAccessBoundary>
-          <PlatformShell>
+        <PlatformShell>
+          <PlatformAccessBoundary>
             <Outlet />
-          </PlatformShell>
-        </PlatformAccessBoundary>
+          </PlatformAccessBoundary>
+        </PlatformShell>
       </QueryClientProvider>
     );
   }

@@ -102,3 +102,8 @@ Existing test evidence is maintained in issue #97: browser two-tab logout, insta
 correct-account recovery and same-account desktop Incognito/phone Private isolation passed their
 controlled cases. Mixed-identity, populated-draft and cleanup-failure live acceptance remain distinct
 from fixture coverage. The later sign-in screen usability checkpoint remains a separate decision.
+
+The platform header stays mounted outside the private-content boundary. Auth sign-out therefore
+cannot hide a partial-logout error or its retry control. The boundary continues to guard page
+content; the header makes no access grants. Notification counts clear and reload when the Auth
+identity changes so a previous account's badge does not survive account switching.
