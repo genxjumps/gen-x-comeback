@@ -91,7 +91,10 @@ The Stripe webhook endpoint is:
 
 `POST https://app.genxjumps.com/api/public/stripe/webhook`
 
-Subscribe only to `checkout.session.completed` for this card-only, one-time test checkout.
+The existing test subscription uses `checkout.session.completed`. The approved refund
+checkpoint adds refund events only after its dependent migration and Edge deployment
+are separately approved; follow [`V1_1_ACCELERATOR_REFUNDS.md`](V1_1_ACCELERATOR_REFUNDS.md).
+No webhook configuration is changed by merging source.
 
 ## Remaining before launch
 
@@ -105,7 +108,8 @@ Subscribe only to `checkout.session.completed` for this card-only, one-time test
   takes the verified success browser directly to setup without starting Day 1.
 - Keep the authenticated in-app purchase path direct. A signed-in customer sees the Accelerator's
   dedicated responsive compact offer page and does not repeat email verification before Checkout.
-- Add seven-day refund-request handling and correct purchase/entitlement state changes.
+- Apply and verify the approved seven-day manual refund-request implementation and
+  provider reconciliation described in `V1_1_ACCELERATOR_REFUNDS.md`.
 - Keep Explore Programs as a responsive multi-program catalog. The complete Accelerator offer lives
   on its dedicated detail page rather than consuming the catalog hub.
 - Establish the required staging boundary and run the complete paid-customer journey.

@@ -27,7 +27,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "15c539e1715a86fb3ca646c340a4666b6a0e939cdf2f08562bacd18ff2e79c9d"
+      "sha256": "c0271af5ad7fba0a21683fed8d4b53b3250b5a5831ffc1a1ac24ab93ec84e13a"
     },
     {
       "path": "public/apple-touch-icon.png",
@@ -120,6 +120,10 @@
     {
       "path": "scripts/release-preflight.ts",
       "sha256": "1f9f4c648e0050322415d0be49bf1bff1c51b20956576563f4be9573d6d70ddb"
+    },
+    {
+      "path": "scripts/test-accelerator-refunds-db.mjs",
+      "sha256": "b870a03c3abdeb79bd67f04234c0d707cdf7928af453bdfc2cccc4bdf7ebc873"
     },
     {
       "path": "scripts/test-signup-recovery-db.mjs",
@@ -248,6 +252,10 @@
     {
       "path": "src/integrations/supabase/previewAuthStorage.ts",
       "sha256": "48d45443d2c0cfda9c4223bcd5029951715023cb3b4794586376912687ec6745"
+    },
+    {
+      "path": "src/integrations/supabase/refunds.types.ts",
+      "sha256": "1fa072f73f95d371a1b94f08cf0a78d92002dfa7d255bd1f3f120f04f889836e"
     },
     {
       "path": "src/integrations/supabase/signup-recovery.types.ts",
@@ -490,6 +498,18 @@
       "sha256": "dd5db3b35b7feabba5501b7ecc23f78af7443be2d8e3b61201d65cae84377b97"
     },
     {
+      "path": "src/lib/commerce/__tests__/refund-functions.test.ts",
+      "sha256": "140b2b42643aca5e664e6264f2850c8dad8889443360c9c6ef6cce35e9c53136"
+    },
+    {
+      "path": "src/lib/commerce/__tests__/refund-reconciliation.test.ts",
+      "sha256": "a0589d807457cef39b76cc433206d729c067b44f8ecf4b0b5a0d0ee83e3e1de1"
+    },
+    {
+      "path": "src/lib/commerce/__tests__/refund-webhook.test.ts",
+      "sha256": "8ef02dbf55a32585e54999d13864eefc0a906a1c642d2b36e7f5655169352c80"
+    },
+    {
       "path": "src/lib/commerce/__tests__/stripe-checkout.test.ts",
       "sha256": "a94218d6afb9e81b01b518bbcf5a21112c78d46dd78c763ad4490d62e6eee3bb"
     },
@@ -512,6 +532,10 @@
     {
       "path": "src/lib/commerce/functions.ts",
       "sha256": "f9ab6d4b8eef9535c0fe7d9f2934ece911adc0b3f2f8daceefb08c1fbaadb1b2"
+    },
+    {
+      "path": "src/lib/commerce/refund.functions.ts",
+      "sha256": "5be283bb3daf53720d6f4ac7a93cb9a92d75e91803f146728063618e491a1c6f"
     },
     {
       "path": "src/lib/commerce/stripe-checkout.server.ts",
@@ -1039,7 +1063,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "bca20233921a06a117d54c7fab7de344fbf2d260123706d9bb3d59748142089d"
+      "sha256": "b4c0039ee68841aceaeb8523bf558eb7c108f16a33ca7dd4503b37bcb637ecee"
     },
     {
       "path": "src/router.tsx",
@@ -1051,7 +1075,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "7b21d705b63f48517ec104db3762cd304b55c864b487859e381bc18042f44838"
+      "sha256": "38b11da828a3f6baff8f048f50b6eb473e0fe1815f1ed0178c7fcbf6039ea9c4"
     },
     {
       "path": "src/routes/accelerator.tsx",
@@ -1064,6 +1088,10 @@
     {
       "path": "src/routes/admin.customers.tsx",
       "sha256": "f7b7a8926fd7bf038cbc13aa5faa0203b85969e0705c8243f3e887105c188c2a"
+    },
+    {
+      "path": "src/routes/admin.refunds.tsx",
+      "sha256": "2817be798edc1c56593dda0623b6a068419f6df36f1e465e652c4dca048a1c96"
     },
     {
       "path": "src/routes/api/public/email/dispatch.ts",
@@ -1119,7 +1147,11 @@
     },
     {
       "path": "src/routes/my-programs.tsx",
-      "sha256": "a3bf022e29dcbe996ac52b1d5440ea2e898adb557c8a8b659794e15e5533b9bc"
+      "sha256": "f9f8fc4555c93825f074566ce6be2660a5a840df82449799ed7a03e6756630ed"
+    },
+    {
+      "path": "src/routes/my-programs_.accelerator.refund.tsx",
+      "sha256": "a711b732f7ac1571df907e43ea19f1cebbfdf6d058443e9d9aa2463e63f81941"
     },
     {
       "path": "src/routes/my-programs_.accelerator.runs.tsx",
@@ -1206,12 +1238,20 @@
       "sha256": "d2bd5f1442de38871d0ae6692a07e477cdb5edba191ae786cc7d19ec8e879120"
     },
     {
+      "path": "supabase/accelerator-refunds.acceptance.sql",
+      "sha256": "dd9fae9910cbef454a2b1d99e7cf2ad90a64ae612c8734cbb72fd48c74d9641e"
+    },
+    {
       "path": "supabase/config.toml",
       "sha256": "4f6e1de06c10e4b7300badd18eea08b4d70499e177f0c96430b881e5a6f7002b"
     },
     {
       "path": "supabase/functions/accelerator-stripe/index.ts",
-      "sha256": "2037ceb448021008fded74cdca9cf9d62a244985ae2b564d0d10cba898e81b02"
+      "sha256": "ada4acb053c3cc868667a346378fe20f32c00894fcd04b56a7230d31f1c036a2"
+    },
+    {
+      "path": "supabase/functions/accelerator-stripe/refunds.ts",
+      "sha256": "0cdb640b75886abf1519e0710694e62aed9ee68c088f7d778e243200ec27353e"
     },
     {
       "path": "supabase/functions/mailerlite-marketing-sync/index.ts",
@@ -1219,7 +1259,7 @@
     },
     {
       "path": "supabase/migration-lock.json",
-      "sha256": "d1aee8aac71f6f12ba3ace61e66a8cda7772a8233966a2bacfe97917ce3914ca"
+      "sha256": "5a130af528d7a6db2241730417b6c9e4d6f403581c72dac7eccf13a4912c57f5"
     },
     {
       "path": "supabase/migrations/20260730102818_dac1e850-6879-4f24-b504-c6106e595625.sql",
@@ -1372,6 +1412,10 @@
     {
       "path": "supabase/migrations/20260909190000_seven_day_signup_recovery.sql",
       "sha256": "a9a7d6a980875602100a8994deccef406162535976d58804e0f054f34be665e6"
+    },
+    {
+      "path": "supabase/migrations/20260910100000_accelerator_refund_requests.sql",
+      "sha256": "604ce6c148d5e605f9b74621c2c540b3cdda4deb82c68f8cbdbfcd474dabfa8d"
     },
     {
       "path": "supabase/signup-recovery.acceptance.sql",

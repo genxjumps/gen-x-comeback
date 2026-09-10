@@ -265,6 +265,13 @@
       "sha256": "a9a7d6a980875602100a8994deccef406162535976d58804e0f054f34be665e6",
       "statementSha256": "cea88a9c1cf006916cbf4dc5d8780b5133830af77fcebe993d2f8da2c496c752",
       "version": "20260909190000"
+    },
+    {
+      "file": "20260910100000_accelerator_refund_requests.sql",
+      "name": "accelerator_refund_requests",
+      "sha256": "604ce6c148d5e605f9b74621c2c540b3cdda4deb82c68f8cbdbfcd474dabfa8d",
+      "statementSha256": "e29d18ab6905da42104ebe672d16bbb20fa01df5623cd689b84c0b0b29f4b713",
+      "version": "20260910100000"
     }
   ],
   "version": 1

@@ -100,6 +100,9 @@ function MyPrograms() {
       description="Programs you own stay here - not started, active, paused, and completed - without erasing previous runs."
     >
       <div className="space-y-4">
+        <Link to="/my-programs/accelerator/refund" className="inline-block text-sm underline">
+          Accelerator purchase and refund requests
+        </Link>
         {accelerator ? (
           <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
             <div className="flex items-start gap-4">

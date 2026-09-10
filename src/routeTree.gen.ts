@@ -34,11 +34,13 @@ import { Route as PreviewAcceleratorRouteImport } from './routes/preview.acceler
 import { Route as Intake7DayRouteImport } from './routes/intake.7-day'
 import { Route as AssessmentStartRouteImport } from './routes/assessment.start'
 import { Route as AssessmentCompleteRouteImport } from './routes/assessment.complete'
+import { Route as AdminRefundsRouteImport } from './routes/admin.refunds'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AccountReturnRouteImport } from './routes/account.return'
 import { Route as YourPlanDayDayRouteImport } from './routes/your-plan.day.$day'
 import { Route as MyProgramsAcceleratorSetupRouteImport } from './routes/my-programs_.accelerator.setup'
 import { Route as MyProgramsAcceleratorRunsRouteImport } from './routes/my-programs_.accelerator.runs'
+import { Route as MyProgramsAcceleratorRefundRouteImport } from './routes/my-programs_.accelerator.refund'
 import { Route as CheckoutAcceleratorSuccessRouteImport } from './routes/checkout.accelerator.success'
 import { Route as ApiPublicReleaseRouteImport } from './routes/api/public/release'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
@@ -170,6 +172,11 @@ const AssessmentCompleteRoute = AssessmentCompleteRouteImport.update({
   path: '/assessment/complete',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRefundsRoute = AdminRefundsRouteImport.update({
+  id: '/admin/refunds',
+  path: '/admin/refunds',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCustomersRoute = AdminCustomersRouteImport.update({
   id: '/admin/customers',
   path: '/admin/customers',
@@ -195,6 +202,12 @@ const MyProgramsAcceleratorRunsRoute =
   MyProgramsAcceleratorRunsRouteImport.update({
     id: '/my-programs_/accelerator/runs',
     path: '/my-programs/accelerator/runs',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const MyProgramsAcceleratorRefundRoute =
+  MyProgramsAcceleratorRefundRouteImport.update({
+    id: '/my-programs_/accelerator/refund',
+    path: '/my-programs/accelerator/refund',
     getParentRoute: () => rootRouteImport,
   } as any)
 const CheckoutAcceleratorSuccessRoute =
@@ -242,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof WelcomeRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/refunds': typeof AdminRefundsRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
   '/intake/7-day': typeof Intake7DayRoute
@@ -254,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
   '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
+  '/my-programs/accelerator/refund': typeof MyProgramsAcceleratorRefundRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
@@ -279,6 +294,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof WelcomeRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/refunds': typeof AdminRefundsRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
   '/intake/7-day': typeof Intake7DayRoute
@@ -291,6 +307,7 @@ export interface FileRoutesByTo {
   '/your-plan': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
   '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
+  '/my-programs/accelerator/refund': typeof MyProgramsAcceleratorRefundRoute
   '/my-programs/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
@@ -317,6 +334,7 @@ export interface FileRoutesById {
   '/welcome': typeof WelcomeRoute
   '/account/return': typeof AccountReturnRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/refunds': typeof AdminRefundsRoute
   '/assessment/complete': typeof AssessmentCompleteRoute
   '/assessment/start': typeof AssessmentStartRoute
   '/intake/7-day': typeof Intake7DayRoute
@@ -329,6 +347,7 @@ export interface FileRoutesById {
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
   '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
+  '/my-programs_/accelerator/refund': typeof MyProgramsAcceleratorRefundRoute
   '/my-programs_/accelerator/runs': typeof MyProgramsAcceleratorRunsRoute
   '/my-programs_/accelerator/setup': typeof MyProgramsAcceleratorSetupRoute
   '/your-plan/day/$day': typeof YourPlanDayDayRoute
@@ -356,6 +375,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/account/return'
     | '/admin/customers'
+    | '/admin/refunds'
     | '/assessment/complete'
     | '/assessment/start'
     | '/intake/7-day'
@@ -368,6 +388,7 @@ export interface FileRouteTypes {
     | '/your-plan/'
     | '/api/public/release'
     | '/checkout/accelerator/success'
+    | '/my-programs/accelerator/refund'
     | '/my-programs/accelerator/runs'
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
@@ -393,6 +414,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/account/return'
     | '/admin/customers'
+    | '/admin/refunds'
     | '/assessment/complete'
     | '/assessment/start'
     | '/intake/7-day'
@@ -405,6 +427,7 @@ export interface FileRouteTypes {
     | '/your-plan'
     | '/api/public/release'
     | '/checkout/accelerator/success'
+    | '/my-programs/accelerator/refund'
     | '/my-programs/accelerator/runs'
     | '/my-programs/accelerator/setup'
     | '/your-plan/day/$day'
@@ -430,6 +453,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/account/return'
     | '/admin/customers'
+    | '/admin/refunds'
     | '/assessment/complete'
     | '/assessment/start'
     | '/intake/7-day'
@@ -442,6 +466,7 @@ export interface FileRouteTypes {
     | '/your-plan/'
     | '/api/public/release'
     | '/checkout/accelerator/success'
+    | '/my-programs_/accelerator/refund'
     | '/my-programs_/accelerator/runs'
     | '/my-programs_/accelerator/setup'
     | '/your-plan/day/$day'
@@ -468,6 +493,7 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   AccountReturnRoute: typeof AccountReturnRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
+  AdminRefundsRoute: typeof AdminRefundsRoute
   AssessmentCompleteRoute: typeof AssessmentCompleteRoute
   AssessmentStartRoute: typeof AssessmentStartRoute
   Intake7DayRoute: typeof Intake7DayRoute
@@ -480,6 +506,7 @@ export interface RootRouteChildren {
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   ApiPublicReleaseRoute: typeof ApiPublicReleaseRoute
   CheckoutAcceleratorSuccessRoute: typeof CheckoutAcceleratorSuccessRoute
+  MyProgramsAcceleratorRefundRoute: typeof MyProgramsAcceleratorRefundRoute
   MyProgramsAcceleratorRunsRoute: typeof MyProgramsAcceleratorRunsRoute
   MyProgramsAcceleratorSetupRoute: typeof MyProgramsAcceleratorSetupRoute
   YourPlanDayDayRoute: typeof YourPlanDayDayRoute
@@ -665,6 +692,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssessmentCompleteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/refunds': {
+      id: '/admin/refunds'
+      path: '/admin/refunds'
+      fullPath: '/admin/refunds'
+      preLoaderRoute: typeof AdminRefundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/customers': {
       id: '/admin/customers'
       path: '/admin/customers'
@@ -698,6 +732,13 @@ declare module '@tanstack/react-router' {
       path: '/my-programs/accelerator/runs'
       fullPath: '/my-programs/accelerator/runs'
       preLoaderRoute: typeof MyProgramsAcceleratorRunsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-programs_/accelerator/refund': {
+      id: '/my-programs_/accelerator/refund'
+      path: '/my-programs/accelerator/refund'
+      fullPath: '/my-programs/accelerator/refund'
+      preLoaderRoute: typeof MyProgramsAcceleratorRefundRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout/accelerator/success': {
@@ -756,6 +797,7 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   AccountReturnRoute: AccountReturnRoute,
   AdminCustomersRoute: AdminCustomersRoute,
+  AdminRefundsRoute: AdminRefundsRoute,
   AssessmentCompleteRoute: AssessmentCompleteRoute,
   AssessmentStartRoute: AssessmentStartRoute,
   Intake7DayRoute: Intake7DayRoute,
@@ -768,6 +810,7 @@ const rootRouteChildren: RootRouteChildren = {
   YourPlanIndexRoute: YourPlanIndexRoute,
   ApiPublicReleaseRoute: ApiPublicReleaseRoute,
   CheckoutAcceleratorSuccessRoute: CheckoutAcceleratorSuccessRoute,
+  MyProgramsAcceleratorRefundRoute: MyProgramsAcceleratorRefundRoute,
   MyProgramsAcceleratorRunsRoute: MyProgramsAcceleratorRunsRoute,
   MyProgramsAcceleratorSetupRoute: MyProgramsAcceleratorSetupRoute,
   YourPlanDayDayRoute: YourPlanDayDayRoute,
