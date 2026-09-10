@@ -71,24 +71,31 @@ export function PlatformShell({ children }: { children: ReactNode }) {
             })}
           </nav>
 
-          <Link
-            to="/notifications"
-            aria-label={notificationCount > 0 ? "Notifications - unread reminder" : "Notifications"}
-            aria-current={pathname === "/notifications" ? "page" : undefined}
-            className={`relative grid size-10 place-items-center rounded-full border transition-colors ${
-              pathname === "/notifications"
-                ? "border-foreground bg-foreground text-background"
-                : "border-border hover:bg-muted"
-            }`}
-          >
-            <Bell aria-hidden="true" className="size-4" />
-            {notificationCount > 0 ? (
-              <span
-                aria-hidden="true"
-                className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive"
-              />
-            ) : null}
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/account" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
+              Account
+            </Link>
+            <Link
+              to="/notifications"
+              aria-label={
+                notificationCount > 0 ? "Notifications - unread reminder" : "Notifications"
+              }
+              aria-current={pathname === "/notifications" ? "page" : undefined}
+              className={`relative grid size-10 place-items-center rounded-full border transition-colors ${
+                pathname === "/notifications"
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border hover:bg-muted"
+              }`}
+            >
+              <Bell aria-hidden="true" className="size-4" />
+              {notificationCount > 0 ? (
+                <span
+                  aria-hidden="true"
+                  className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive"
+                />
+              ) : null}
+            </Link>
+          </div>
         </div>
       </header>
 

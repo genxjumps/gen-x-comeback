@@ -72,6 +72,15 @@ export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
             We couldn&rsquo;t confirm a signed-in Gen X Jumps account in this browser. Public
             enrollment is still closed during development.
           </p>
+          <a
+            href="/recover"
+            className="mt-5 inline-block rounded-md bg-foreground px-4 py-3 text-sm font-semibold text-background"
+          >
+            Send Me a Sign-In Link
+          </a>
+          <a href="/account" className="mt-3 block text-sm underline">
+            Account and Log Out
+          </a>
         </div>
       </div>
     );

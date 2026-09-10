@@ -162,6 +162,10 @@
       "sha256": "bb6f9473b4a2a7584d8f85018db57381235cc3d5f80e64025457b137351652e8"
     },
     {
+      "path": "src/components/account-session-sync.tsx",
+      "sha256": "03b599bdc2494568504d0ec73c07f33828c59cf28493b5abc8679ee8af4bdaf7"
+    },
+    {
       "path": "src/components/auth-session-bootstrap.tsx",
       "sha256": "0c13e2d1a41536aeec00b87e0408b51459674f066eb26202f6998dad01302fbf"
     },
@@ -183,7 +187,7 @@
     },
     {
       "path": "src/components/platform-access-boundary.tsx",
-      "sha256": "8cfee73112248a1ba874befe2a1a0663db8d0df20a1280f0b66a8ef81b7553cf"
+      "sha256": "adb5b1342088e05c11c0d3e5c2c2e6b67379e71053eca89bf6c3b37cf6771192"
     },
     {
       "path": "src/components/platform-page.tsx",
@@ -191,7 +195,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "c3053a5c845eb805c40e0ebb538e628c3ed495b799bbcacebee1935ba5c21af8"
+      "sha256": "65e694f441c530e0f4d2b5665a4adc15346741585c65f566a512091dac16b1bf"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -450,6 +454,10 @@
       "sha256": "cb43f10fdab05cd2760f111ad316fe102d14e8fa3e6e65865346bed7646f02e5"
     },
     {
+      "path": "src/lib/account/__tests__/browser-session.test.ts",
+      "sha256": "1818c2997c47829940fdca8f0ecc71e9f54289435bf52dc1fd96fd2c578fd7f8"
+    },
+    {
       "path": "src/lib/account/__tests__/customer-account-contract.test.ts",
       "sha256": "ffa1c87fce1ff5985886098a187e9c046e879486a3078025f17721c1b08ab119"
     },
@@ -458,12 +466,28 @@
       "sha256": "62309d4f97decf50532aac197556d89bee06ee72a23385c1f0d52b0c7ee8a041"
     },
     {
+      "path": "src/lib/account/__tests__/identity.test.ts",
+      "sha256": "dcebab5ac254cfb47b7dea56b93851194bf8439d3583408427c0d0300ad66e42"
+    },
+    {
+      "path": "src/lib/account/__tests__/logout.test.ts",
+      "sha256": "81aec4d413c66130156b73c217c06b0dccaf56a726a3b3e950abf9c5095b9df8"
+    },
+    {
+      "path": "src/lib/account/browser-session.ts",
+      "sha256": "8b8b8705bdc0ef83ee5fb42890236cf828b2e3493b5b10cae68a46873dd2a930"
+    },
+    {
       "path": "src/lib/account/customer-account.server.ts",
       "sha256": "835155777e774ff0f6083b9b959598d3c028e30cfc492fd504836768e38b9ea3"
     },
     {
       "path": "src/lib/account/functions.ts",
-      "sha256": "7599cc33699844ba121198385e79b8020d892193cb9facac94eebee675076bae"
+      "sha256": "5c56d084b6fdb57d6eccd2d3b317ef741178ecf43fc62e1bb9d6bb04d7c76951"
+    },
+    {
+      "path": "src/lib/account/logout.server.ts",
+      "sha256": "10ae80fd53d99f1117fa453bdf816f008ba821f72c52e7fc028e60cde3f10b75"
     },
     {
       "path": "src/lib/account/paid-access-exchange.server.ts",
@@ -1063,7 +1087,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "b4c0039ee68841aceaeb8523bf558eb7c108f16a33ca7dd4503b37bcb637ecee"
+      "sha256": "263195976dc650791be5f8e11386ea6c2356e3a80359e8df88eb2299b0133d8d"
     },
     {
       "path": "src/router.tsx",
@@ -1075,11 +1099,15 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "38b11da828a3f6baff8f048f50b6eb473e0fe1815f1ed0178c7fcbf6039ea9c4"
+      "sha256": "1a685d247a46855cc696901bc665722f7ecfbc1911a865df4996c97adfde57b4"
     },
     {
       "path": "src/routes/accelerator.tsx",
       "sha256": "4999483c03444483daa2ac1c40b94484da1f1bef4bb4ab230c9be0d98a2419e5"
+    },
+    {
+      "path": "src/routes/account.index.tsx",
+      "sha256": "b1e28a44ea667f2a41379ffdb4a1388af47def364809c4be0c7fcefe5c0c26d8"
     },
     {
       "path": "src/routes/account.return.ts",
@@ -1144,6 +1172,10 @@
     {
       "path": "src/routes/jump-ropes.tsx",
       "sha256": "79c3cc0dedb8654a45d5ded4866c8b0291cdeb6aecfe01b0d6200d8cacab25b9"
+    },
+    {
+      "path": "src/routes/logout.ts",
+      "sha256": "eae2b07dc529289165857a63383d711ea66d428db7aa9e68ca2aad6e0f84e0be"
     },
     {
       "path": "src/routes/my-programs.tsx",

@@ -19,6 +19,7 @@ import { Route as PlanReadyRouteImport } from './routes/plan-ready'
 import { Route as NutritionRouteImport } from './routes/nutrition'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MyProgramsRouteImport } from './routes/my-programs'
+import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as JumpRopesRouteImport } from './routes/jump-ropes'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as EmailPreferencesRouteImport } from './routes/email-preferences'
@@ -26,6 +27,7 @@ import { Route as AcceleratorRouteImport } from './routes/accelerator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
+import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as Start7DayRouteImport } from './routes/start.7-day'
 import { Route as SignupReturnRouteImport } from './routes/signup.return'
 import { Route as ProgramsAcceleratorRouteImport } from './routes/programs_.accelerator'
@@ -97,6 +99,11 @@ const MyProgramsRoute = MyProgramsRouteImport.update({
   path: '/my-programs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: '/logout',
+  path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const JumpRopesRoute = JumpRopesRouteImport.update({
   id: '/jump-ropes',
   path: '/jump-ropes',
@@ -130,6 +137,11 @@ const YourPlanIndexRoute = YourPlanIndexRouteImport.update({
 const AssessmentIndexRoute = AssessmentIndexRouteImport.update({
   id: '/assessment/',
   path: '/assessment/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const Start7DayRoute = Start7DayRouteImport.update({
@@ -243,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/logout': typeof LogoutRoute
   '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
@@ -264,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
+  '/account/': typeof AccountIndexRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
@@ -282,6 +296,7 @@ export interface FileRoutesByTo {
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/logout': typeof LogoutRoute
   '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
@@ -303,6 +318,7 @@ export interface FileRoutesByTo {
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
+  '/account': typeof AccountIndexRoute
   '/assessment': typeof AssessmentIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
@@ -322,6 +338,7 @@ export interface FileRoutesById {
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
+  '/logout': typeof LogoutRoute
   '/my-programs': typeof MyProgramsRoute
   '/notifications': typeof NotificationsRoute
   '/nutrition': typeof NutritionRoute
@@ -343,6 +360,7 @@ export interface FileRoutesById {
   '/programs_/accelerator': typeof ProgramsAcceleratorRoute
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
+  '/account/': typeof AccountIndexRoute
   '/assessment/': typeof AssessmentIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
@@ -363,6 +381,7 @@ export interface FileRouteTypes {
     | '/email-preferences'
     | '/home'
     | '/jump-ropes'
+    | '/logout'
     | '/my-programs'
     | '/notifications'
     | '/nutrition'
@@ -384,6 +403,7 @@ export interface FileRouteTypes {
     | '/programs/accelerator'
     | '/signup/return'
     | '/start/7-day'
+    | '/account/'
     | '/assessment/'
     | '/your-plan/'
     | '/api/public/release'
@@ -402,6 +422,7 @@ export interface FileRouteTypes {
     | '/email-preferences'
     | '/home'
     | '/jump-ropes'
+    | '/logout'
     | '/my-programs'
     | '/notifications'
     | '/nutrition'
@@ -423,6 +444,7 @@ export interface FileRouteTypes {
     | '/programs/accelerator'
     | '/signup/return'
     | '/start/7-day'
+    | '/account'
     | '/assessment'
     | '/your-plan'
     | '/api/public/release'
@@ -441,6 +463,7 @@ export interface FileRouteTypes {
     | '/email-preferences'
     | '/home'
     | '/jump-ropes'
+    | '/logout'
     | '/my-programs'
     | '/notifications'
     | '/nutrition'
@@ -462,6 +485,7 @@ export interface FileRouteTypes {
     | '/programs_/accelerator'
     | '/signup/return'
     | '/start/7-day'
+    | '/account/'
     | '/assessment/'
     | '/your-plan/'
     | '/api/public/release'
@@ -481,6 +505,7 @@ export interface RootRouteChildren {
   EmailPreferencesRoute: typeof EmailPreferencesRoute
   HomeRoute: typeof HomeRoute
   JumpRopesRoute: typeof JumpRopesRoute
+  LogoutRoute: typeof LogoutRoute
   MyProgramsRoute: typeof MyProgramsRoute
   NotificationsRoute: typeof NotificationsRoute
   NutritionRoute: typeof NutritionRoute
@@ -502,6 +527,7 @@ export interface RootRouteChildren {
   ProgramsAcceleratorRoute: typeof ProgramsAcceleratorRoute
   SignupReturnRoute: typeof SignupReturnRoute
   Start7DayRoute: typeof Start7DayRoute
+  AccountIndexRoute: typeof AccountIndexRoute
   AssessmentIndexRoute: typeof AssessmentIndexRoute
   YourPlanIndexRoute: typeof YourPlanIndexRoute
   ApiPublicReleaseRoute: typeof ApiPublicReleaseRoute
@@ -587,6 +613,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MyProgramsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/logout': {
+      id: '/logout'
+      path: '/logout'
+      fullPath: '/logout'
+      preLoaderRoute: typeof LogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/jump-ropes': {
       id: '/jump-ropes'
       path: '/jump-ropes'
@@ -634,6 +667,13 @@ declare module '@tanstack/react-router' {
       path: '/assessment'
       fullPath: '/assessment/'
       preLoaderRoute: typeof AssessmentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/': {
+      id: '/account/'
+      path: '/account'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/start/7-day': {
@@ -785,6 +825,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailPreferencesRoute: EmailPreferencesRoute,
   HomeRoute: HomeRoute,
   JumpRopesRoute: JumpRopesRoute,
+  LogoutRoute: LogoutRoute,
   MyProgramsRoute: MyProgramsRoute,
   NotificationsRoute: NotificationsRoute,
   NutritionRoute: NutritionRoute,
@@ -806,6 +847,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProgramsAcceleratorRoute: ProgramsAcceleratorRoute,
   SignupReturnRoute: SignupReturnRoute,
   Start7DayRoute: Start7DayRoute,
+  AccountIndexRoute: AccountIndexRoute,
   AssessmentIndexRoute: AssessmentIndexRoute,
   YourPlanIndexRoute: YourPlanIndexRoute,
   ApiPublicReleaseRoute: ApiPublicReleaseRoute,
