@@ -84,3 +84,8 @@ formatting. The release guard stopped application publication. This checkpoint
 reasserts the reviewed GitHub release tree before publishing; test checkout,
 public intake, and live payments remain closed until their explicit gates are
 completed.
+
+The first deployed session request reached the allowed origin but failed closed
+because the app validated Stripe's opaque test client secret as alphanumeric.
+The adapter now accepts Stripe's opaque characters while still requiring the
+`cs_test_..._secret_...` envelope and rejecting live client secrets.
