@@ -1,5 +1,9 @@
 const PRODUCTION_WEBSITE_ORIGIN = "https://genxjumps.com";
 
+export function embeddedCheckoutAttemptLimit(origin: string): number {
+  return origin === PRODUCTION_WEBSITE_ORIGIN ? 20 : 100;
+}
+
 function normalizedHttpsOrigin(value: string): string | null {
   try {
     const url = new URL(value);
