@@ -96,18 +96,30 @@ function AcceleratorCheckoutSuccess() {
                 Start when you’re ready. Your 7-Day plan stays saved, and your nutrition tools are
                 unlocked.
               </p>
-              <Button asChild className="mt-5 w-full sm:w-auto">
+              <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+                <Button asChild className="w-full sm:w-auto">
+                  {entitlementId ? (
+                    <Link
+                      to="/my-programs/accelerator/setup"
+                      search={{ entitlement: entitlementId }}
+                    >
+                      Set Up My Accelerator
+                    </Link>
+                  ) : (
+                    <Link to="/my-programs">Open My Programs</Link>
+                  )}
+                </Button>
                 {entitlementId ? (
-                  <Link to="/my-programs/accelerator/setup" search={{ entitlement: entitlementId }}>
-                    Set Up My Accelerator
-                  </Link>
-                ) : (
-                  <Link to="/my-programs">Open My Programs</Link>
-                )}
-              </Button>
+                  <Button asChild variant="outline" className="w-full sm:w-auto">
+                    <Link to="/my-programs">Open My Programs</Link>
+                  </Button>
+                ) : null}
+              </div>
               <p className="mt-4 text-sm text-muted-foreground">
-                My Nutrition is available from the main menu. Set your calorie and macro targets,
-                then adjust how they fit across your meals.
+                <Link to="/nutrition" className="font-medium text-foreground underline">
+                  Open My Nutrition
+                </Link>{" "}
+                to set your calorie and macro targets, then adjust how they fit across your meals.
               </p>
             </div>
           ) : (
