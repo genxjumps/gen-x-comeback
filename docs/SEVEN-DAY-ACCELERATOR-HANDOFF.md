@@ -75,3 +75,12 @@ The edge function still rejects live keys and live sessions. Deploying the app
 function, adding an exact review origin, enabling a website preview, testing the
 one-account return path, merging, and enabling any public purchase link remain
 separate release approvals.
+
+Todd authorized protected-preview activation on September 11. The exact stable
+Vercel review origin was added to `CHECKOUT_WEBSITE_ORIGINS`, and only the
+reviewed `accelerator-stripe` function was deployed. That cloud operation also
+created an unrelated Lovable source commit affecting `.env` and preview auth
+formatting. The release guard stopped application publication. This checkpoint
+reasserts the reviewed GitHub release tree before publishing; test checkout,
+public intake, and live payments remain closed until their explicit gates are
+completed.
