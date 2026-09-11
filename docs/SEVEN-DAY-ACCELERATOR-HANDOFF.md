@@ -51,3 +51,27 @@ the public landing page. On this success route, the brand link now opens Home.
 The completed state keeps Set Up My Accelerator primary and adds direct Open My
 Programs and Open My Nutrition paths. Stripe confirmation, account handoff,
 ownership, setup, program progress, and public-intake controls are unchanged.
+
+## Website embedded checkout checkpoint
+
+The website checkout can now request an embedded Stripe test Checkout Session
+without sending a price, product, entitlement, or participant identity from the
+browser. `POST /api/public/checkout/accelerator/session` accepts only the exact
+production website origin plus explicitly configured HTTPS review origins,
+rate-limits requests, and invokes the existing Stripe edge function with the
+service role on the server.
+
+The edge function selects and revalidates the existing locked $37 test Price,
+creates an `embedded_page` Checkout Session, and returns a Checkout client
+secret plus the existing one-time guest claim. The app route places that claim
+in the same secure HttpOnly cookie used by the existing confirmation flow and
+returns only the client secret to website JavaScript. Stripe returns payment to
+the existing app success route, where signed server-side confirmation, webhook
+fulfillment, secure access, setup, and nutrition behavior remain unchanged.
+
+This source checkpoint does not open checkout. The website remains closed by
+default and accepts only a Stripe test publishable key when explicitly enabled.
+The edge function still rejects live keys and live sessions. Deploying the app
+function, adding an exact review origin, enabling a website preview, testing the
+one-account return path, merging, and enabling any public purchase link remain
+separate release approvals.

@@ -50,6 +50,7 @@ import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/
 import { Route as ApiPublicEmailWebhookRouteImport } from './routes/api/public/email/webhook'
 import { Route as ApiPublicEmailHealthRouteImport } from './routes/api/public/email/health'
 import { Route as ApiPublicEmailDispatchRouteImport } from './routes/api/public/email/dispatch'
+import { Route as ApiPublicCheckoutAcceleratorSessionRouteImport } from './routes/api/public/checkout/accelerator/session'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -260,6 +261,12 @@ const ApiPublicEmailDispatchRoute = ApiPublicEmailDispatchRouteImport.update({
   path: '/api/public/email/dispatch',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCheckoutAcceleratorSessionRoute =
+  ApiPublicCheckoutAcceleratorSessionRouteImport.update({
+    id: '/api/public/checkout/accelerator/session',
+    path: '/api/public/checkout/accelerator/session',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -303,6 +310,7 @@ export interface FileRoutesByFullPath {
   '/api/public/email/health': typeof ApiPublicEmailHealthRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/checkout/accelerator/session': typeof ApiPublicCheckoutAcceleratorSessionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -346,6 +354,7 @@ export interface FileRoutesByTo {
   '/api/public/email/health': typeof ApiPublicEmailHealthRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/checkout/accelerator/session': typeof ApiPublicCheckoutAcceleratorSessionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -390,6 +399,7 @@ export interface FileRoutesById {
   '/api/public/email/health': typeof ApiPublicEmailHealthRoute
   '/api/public/email/webhook': typeof ApiPublicEmailWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
+  '/api/public/checkout/accelerator/session': typeof ApiPublicCheckoutAcceleratorSessionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -435,6 +445,7 @@ export interface FileRouteTypes {
     | '/api/public/email/health'
     | '/api/public/email/webhook'
     | '/api/public/stripe/webhook'
+    | '/api/public/checkout/accelerator/session'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/api/public/email/health'
     | '/api/public/email/webhook'
     | '/api/public/stripe/webhook'
+    | '/api/public/checkout/accelerator/session'
   id:
     | '__root__'
     | '/'
@@ -521,6 +533,7 @@ export interface FileRouteTypes {
     | '/api/public/email/health'
     | '/api/public/email/webhook'
     | '/api/public/stripe/webhook'
+    | '/api/public/checkout/accelerator/session'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -565,6 +578,7 @@ export interface RootRouteChildren {
   ApiPublicEmailHealthRoute: typeof ApiPublicEmailHealthRoute
   ApiPublicEmailWebhookRoute: typeof ApiPublicEmailWebhookRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
+  ApiPublicCheckoutAcceleratorSessionRoute: typeof ApiPublicCheckoutAcceleratorSessionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -856,6 +870,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicEmailDispatchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/checkout/accelerator/session': {
+      id: '/api/public/checkout/accelerator/session'
+      path: '/api/public/checkout/accelerator/session'
+      fullPath: '/api/public/checkout/accelerator/session'
+      preLoaderRoute: typeof ApiPublicCheckoutAcceleratorSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -901,6 +922,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicEmailHealthRoute: ApiPublicEmailHealthRoute,
   ApiPublicEmailWebhookRoute: ApiPublicEmailWebhookRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
+  ApiPublicCheckoutAcceleratorSessionRoute:
+    ApiPublicCheckoutAcceleratorSessionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

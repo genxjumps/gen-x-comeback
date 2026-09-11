@@ -554,6 +554,10 @@
       "sha256": "645b61e70b1b1d3506ba906eafa7c76953bf83e79065b2e798189cb9a6e831f3"
     },
     {
+      "path": "src/lib/commerce/__tests__/embedded-checkout-origin.test.ts",
+      "sha256": "067457ad93f95f16914f5dda853df197849306f72eacf8937726841bb4f656c9"
+    },
+    {
       "path": "src/lib/commerce/__tests__/refund-functions.test.ts",
       "sha256": "140b2b42643aca5e664e6264f2850c8dad8889443360c9c6ef6cce35e9c53136"
     },
@@ -575,11 +579,11 @@
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge-contract.test.ts",
-      "sha256": "5ba228e598b1df7a96be50a11df4f03636ee7c3521f0e95a1315efe51447a0a8"
+      "sha256": "fa7eb34a034f17f8f35f50f92a301deaa090be8a1f43af39fdd055d6afcd668e"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge.test.ts",
-      "sha256": "1f2581a5e935b8576e55d2052b2f5f7d579a1cdc56d2bb5deb11b1cee797bc3a"
+      "sha256": "08b7b27b03c4397bb7c6ac04449b86347e58b3194aa3804a9948c925eaf30f09"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-webhook-route.test.ts",
@@ -588,6 +592,10 @@
     {
       "path": "src/lib/commerce/checkout-path.ts",
       "sha256": "4c38ef9797c633681383840f273398b2fb5e9b06f440e145dd07c849cb7abc8e"
+    },
+    {
+      "path": "src/lib/commerce/embedded-checkout-origin.ts",
+      "sha256": "520369db9b145dcf72d4596ca4cf2ba04001a2f4e8bb23f3526c43d212ea609a"
     },
     {
       "path": "src/lib/commerce/functions.ts",
@@ -607,7 +615,7 @@
     },
     {
       "path": "src/lib/commerce/stripe-edge.server.ts",
-      "sha256": "7b90fa43fdb2a5dae65fd4c252ee1ccf333fac3315103d4bba00738b62c1f779"
+      "sha256": "22f687b1b96b66c38d78bcf274be42d515fa8b404a1fa615682cdf171552d143"
     },
     {
       "path": "src/lib/day-one-start.server.ts",
@@ -1143,7 +1151,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "f9fef550e0a7a0268ba12b518529f38fe5d0a32c6c78db2c22f99b302c66d258"
+      "sha256": "edc6a08fba7fcca5bacc2e0b1a48a0f92c52b7ca6328098964d5f4c1eaa48eb5"
     },
     {
       "path": "src/router.tsx",
@@ -1180,6 +1188,10 @@
     {
       "path": "src/routes/admin.refunds.tsx",
       "sha256": "2817be798edc1c56593dda0623b6a068419f6df36f1e465e652c4dca048a1c96"
+    },
+    {
+      "path": "src/routes/api/public/checkout/accelerator/session.ts",
+      "sha256": "659781fadff949924a84c54d8875f6ac9a0385a694ce2f8e94c2bc1b6c1bffd4"
     },
     {
       "path": "src/routes/api/public/email/dispatch.ts",
@@ -1351,7 +1363,7 @@
     },
     {
       "path": "supabase/functions/accelerator-stripe/index.ts",
-      "sha256": "ada4acb053c3cc868667a346378fe20f32c00894fcd04b56a7230d31f1c036a2"
+      "sha256": "11e63b5e388d4ef3643b4656263764dc9213cda841f42789eceda05545f0c3aa"
     },
     {
       "path": "supabase/functions/accelerator-stripe/refunds.ts",

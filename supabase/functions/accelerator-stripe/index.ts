@@ -43,6 +43,7 @@ type DiagnosticAction =
   | "guest_availability"
   | "create_checkout"
   | "create_guest_checkout"
+  | "create_embedded_guest_checkout"
   | "confirm_checkout"
   | "confirm_guest_checkout"
   | "webhook";
@@ -408,6 +409,45 @@ async function createGuestCheckout(config: Config): Promise<Response> {
   });
   if (!session.url || session.livemode) throw new Error("invalid_checkout_session");
   return json({ ok: true, checkoutUrl: session.url, claimToken });
+}
+
+async function createEmbeddedGuestCheckout(config: Config): Promise<Response> {
+  if (providerConfigIssue(config)) return json({ ok: false, reason: "unavailable" }, 503);
+  if (!config.guestEnabled) return json({ ok: false, reason: "closed" }, 403);
+
+  const stripe = stripeClient(config);
+  const price = await stripe.prices.retrieve(config.priceId!, { expand: ["product"] });
+  assertPrice(price, config);
+  const claimToken = randomGuestClaim();
+  const claimHash = await sha256(claimToken);
+  const session = await stripe.checkout.sessions.create({
+    ui_mode: "embedded_page",
+    mode: "payment",
+    payment_method_types: ["card"],
+    line_items: [{ price: config.priceId!, quantity: 1 }],
+    customer_creation: "always",
+    metadata: {
+      genx_checkout_kind: "guest",
+      genx_guest_claim_hash: claimHash,
+      genx_product_code: PRODUCT_CODE,
+      genx_program_version: PROGRAM_VERSION,
+    },
+    payment_intent_data: {
+      metadata: {
+        genx_checkout_kind: "guest",
+        genx_product_code: PRODUCT_CODE,
+        genx_program_version: PROGRAM_VERSION,
+      },
+    },
+    return_url: `${new URL(config.appOrigin!).origin}/checkout/accelerator/success?session_id={CHECKOUT_SESSION_ID}`,
+    redirect_on_completion: "always",
+    allow_promotion_codes: false,
+    billing_address_collection: "auto",
+    submit_type: "pay",
+  });
+  if (!session.client_secret || session.livemode || session.ui_mode !== "embedded_page")
+    throw new Error("invalid_checkout_session");
+  return json({ ok: true, clientSecret: session.client_secret, claimToken });
 }
 
 function checkoutPurchaseTime(session: Stripe.Checkout.Session): string {
@@ -796,6 +836,8 @@ Deno.serve(async (request) => {
     if (record.action === "guest_availability") return await guestAvailability(config);
     if (record.action === "create_checkout") return await createCheckout(config, record);
     if (record.action === "create_guest_checkout") return await createGuestCheckout(config);
+    if (record.action === "create_embedded_guest_checkout")
+      return await createEmbeddedGuestCheckout(config);
     if (record.action === "confirm_checkout") return await confirmCheckout(config, record);
     if (record.action === "confirm_guest_checkout")
       return await confirmGuestCheckout(config, record);
@@ -809,6 +851,7 @@ Deno.serve(async (request) => {
         "guest_availability",
         "create_checkout",
         "create_guest_checkout",
+        "create_embedded_guest_checkout",
         "confirm_checkout",
         "confirm_guest_checkout",
         "webhook",

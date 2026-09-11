@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   confirmStripeEdgeCheckout,
   confirmStripeEdgeGuestCheckout,
+  createStripeEdgeEmbeddedGuestCheckout,
   createStripeEdgeCheckout,
   createStripeEdgeGuestCheckout,
   forwardStripeWebhookToEdge,
@@ -109,6 +110,20 @@ describe("Stripe edge runtime adapter", () => {
     expect(await createStripeEdgeGuestCheckout()).toEqual({
       ok: true,
       checkoutUrl: "https://checkout.stripe.com/c/pay/guest",
+      claimToken,
+    });
+  });
+
+  it("returns only a test Embedded Checkout secret and server-side guest claim", async () => {
+    const claimToken = "c".repeat(64);
+    mockEdge({
+      ok: true,
+      clientSecret: "cs_test_embedded_secret_checkoutsecret",
+      claimToken,
+    });
+    expect(await createStripeEdgeEmbeddedGuestCheckout()).toEqual({
+      ok: true,
+      clientSecret: "cs_test_embedded_secret_checkoutsecret",
       claimToken,
     });
   });
