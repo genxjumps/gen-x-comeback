@@ -16,6 +16,7 @@ const SUCCESS_ROUTE = readFileSync(
   join(process.cwd(), "src", "routes", "checkout.accelerator.success.tsx"),
   "utf8",
 );
+const ROOT_ROUTE = readFileSync(join(process.cwd(), "src", "routes", "__root.tsx"), "utf8");
 const PROGRAM_ROUTE = readFileSync(
   join(process.cwd(), "src", "routes", "programs_.accelerator.tsx"),
   "utf8",
@@ -74,7 +75,14 @@ describe("Accelerator Stripe edge contract", () => {
     expect(COMMERCE_FUNCTIONS).not.toContain('path: "/checkout/accelerator/success"');
     expect(SUCCESS_ROUTE).toContain("supabase.auth.verifyOtp");
     expect(SUCCESS_ROUTE).toContain("Set Up My Accelerator");
+    expect(SUCCESS_ROUTE).toContain("Open My Programs");
+    expect(SUCCESS_ROUTE).toContain("Open My Nutrition");
+    expect(SUCCESS_ROUTE).toContain('<Link to="/nutrition"');
     expect(SUCCESS_ROUTE).not.toContain("Start Day 1");
+    expect(ROOT_ROUTE).toContain(
+      'const inCheckoutSuccess = pathname === "/checkout/accelerator/success"',
+    );
+    expect(ROOT_ROUTE).toContain('to={inCheckoutSuccess ? "/home" : "/"}');
     expect(GUEST_HANDOFF_MIGRATION).toContain(
       "CREATE TABLE public.accelerator_guest_checkout_handoffs",
     );

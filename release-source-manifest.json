@@ -575,7 +575,7 @@
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge-contract.test.ts",
-      "sha256": "5f27d935173827ae77c827b34b0224b51449a5b5c8a231f07b4e0ecafe915b7c"
+      "sha256": "5ba228e598b1df7a96be50a11df4f03636ee7c3521f0e95a1315efe51447a0a8"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge.test.ts",
@@ -1155,7 +1155,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "e6f0a034f7afd65949f476432d1f0d996da0f137b920640122aee89adfc62835"
+      "sha256": "ef0fa6151febc5c4f051260a0543f5d7c014ebdf8727d7516a7de2744a8d4114"
     },
     {
       "path": "src/routes/accelerator.tsx",
@@ -1215,7 +1215,7 @@
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
-      "sha256": "db388a1ae3e0e0754b48d05a2d5a6afe866b40a8f8e80cdbf6682fe9e0b5ee84"
+      "sha256": "204a0f1dae2bdabadc8c8badb09b9c460b93e06e89bb84f6e9c416afab9f6df9"
     },
     {
       "path": "src/routes/email-preferences.ts",

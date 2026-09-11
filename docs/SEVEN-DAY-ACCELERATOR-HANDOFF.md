@@ -35,3 +35,19 @@ reported account-specific failure hasn't been reproduced or declared repaired.
 Before the signed-in purchase test, refresh Home in the existing account and
 confirm these cards load. If they still fail, capture the failed request/error
 in that authenticated session before changing account or access logic.
+
+## Post-purchase navigation
+
+The controlled one-account test completed the 7-Day plan, purchased the
+Accelerator in Stripe test mode, preserved all seven free-plan completions,
+created one active entitlement, started the Accelerator only after explicit
+setup, and unlocked account-level nutrition. Home's My Programs and My Progress
+cards also loaded successfully in the previously reported account.
+
+The test exposed one bounded navigation defect: the purchase-success screen is
+outside the protected platform shell while a guest purchase is still being
+confirmed, so its generic brand link returned a newly authenticated buyer to
+the public landing page. On this success route, the brand link now opens Home.
+The completed state keeps Set Up My Accelerator primary and adds direct Open My
+Programs and Open My Nutrition paths. Stripe confirmation, account handoff,
+ownership, setup, program progress, and public-intake controls are unchanged.
