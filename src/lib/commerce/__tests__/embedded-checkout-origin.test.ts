@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { allowedEmbeddedCheckoutOrigin } from "../embedded-checkout-origin";
+import {
+  allowedEmbeddedCheckoutOrigin,
+  embeddedCheckoutAttemptLimit,
+} from "../embedded-checkout-origin";
 
 function request(origin?: string) {
   return new Request("https://app.genxjumps.com/api/public/checkout/accelerator/session", {
@@ -10,6 +13,11 @@ function request(origin?: string) {
 }
 
 describe("embedded checkout website origin", () => {
+  it("keeps the public checkout limit bounded while allowing controlled preview retries", () => {
+    expect(embeddedCheckoutAttemptLimit("https://genxjumps.com")).toBe(20);
+    expect(embeddedCheckoutAttemptLimit("https://approved-preview.vercel.app")).toBe(100);
+  });
+
   it("accepts the production website", () => {
     expect(
       allowedEmbeddedCheckoutOrigin(request("https://genxjumps.com"), { NODE_ENV: "production" }),

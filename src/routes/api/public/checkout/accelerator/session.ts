@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { allowedEmbeddedCheckoutOrigin } from "@/lib/commerce/embedded-checkout-origin";
+import {
+  allowedEmbeddedCheckoutOrigin,
+  embeddedCheckoutAttemptLimit,
+} from "@/lib/commerce/embedded-checkout-origin";
 
 const CLAIM_COOKIE = "gxj_accelerator_checkout_claim";
 const CLAIM_MAX_AGE = 24 * 60 * 60;
@@ -27,7 +30,11 @@ async function handle(request: Request): Promise<Response> {
     return new Response(null, { status: 204, headers: corsHeaders(origin) });
 
   const { callerBucketKey, consumeRateLimit } = await import("@/lib/email/rate-limit.server");
-  const limit = await consumeRateLimit(callerBucketKey("embedded_checkout", request), 3600, 20);
+  const limit = await consumeRateLimit(
+    callerBucketKey("embedded_checkout", request),
+    3600,
+    embeddedCheckoutAttemptLimit(origin),
+  );
   if (!limit.allowed) return response(origin, { ok: false, reason: "closed" }, 429);
 
   const { createStripeEdgeEmbeddedGuestCheckout } =

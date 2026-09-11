@@ -89,3 +89,8 @@ The first deployed session request reached the allowed origin but failed closed
 because the app validated Stripe's opaque test client secret as alphanumeric.
 The adapter now accepts Stripe's opaque characters while still requiring the
 `cs_test_..._secret_...` envelope and rejecting live client secrets.
+
+Protected checkout previews keep the public session throttle intact at 20
+attempts per IP per hour for `genxjumps.com`, while exact configured preview
+origins permit up to 100 attempts per IP per hour so repeated controlled testing
+does not lock the tester out across browsers on the same connection.
