@@ -136,6 +136,7 @@ function RootComponent() {
   const inOnboarding = pathname === "/welcome" || pathname === "/plan-ready";
   const inPlan = pathname === "/your-plan" || pathname.startsWith("/your-plan/");
   const inJumpRopes = pathname === "/jump-ropes";
+  const inCheckoutSuccess = pathname === "/checkout/accelerator/success";
   const inAccount = pathname === "/account" || pathname === "/account/";
   const inPlatform =
     pathname === "/home" ||
@@ -197,7 +198,7 @@ function RootComponent() {
               </span>
             ) : (
               <Link
-                to="/"
+                to={inCheckoutSuccess ? "/home" : "/"}
                 className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]"
               >
                 Gen X Jumps
