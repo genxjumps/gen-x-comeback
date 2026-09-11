@@ -17,6 +17,10 @@ const SUCCESS_ROUTE = readFileSync(
   "utf8",
 );
 const ROOT_ROUTE = readFileSync(join(process.cwd(), "src", "routes", "__root.tsx"), "utf8");
+const EMBEDDED_SESSION_ROUTE = readFileSync(
+  join(process.cwd(), "src", "routes", "api", "public", "checkout", "accelerator", "session.ts"),
+  "utf8",
+);
 const PROGRAM_ROUTE = readFileSync(
   join(process.cwd(), "src", "routes", "programs_.accelerator.tsx"),
   "utf8",
@@ -91,6 +95,20 @@ describe("Accelerator Stripe edge contract", () => {
     );
     expect(EDGE_FUNCTION).toContain('.from("accelerator_guest_checkout_handoffs")');
     expect(EDGE_FUNCTION).toContain('throw new Error("guest_handoff_pending")');
+  });
+
+  it("keeps custom website checkout inside Stripe's embedded test UI", () => {
+    expect(EDGE_FUNCTION).toContain('record.action === "create_embedded_guest_checkout"');
+    expect(EDGE_FUNCTION).toContain('ui_mode: "embedded_page"');
+    expect(EDGE_FUNCTION).toContain('redirect_on_completion: "always"');
+    expect(EDGE_FUNCTION).toContain(
+      "/checkout/accelerator/success?session_id={CHECKOUT_SESSION_ID}",
+    );
+    expect(EMBEDDED_SESSION_ROUTE).toContain('"access-control-allow-origin": origin');
+    expect(EMBEDDED_SESSION_ROUTE).toContain('"access-control-allow-credentials": "true"');
+    expect(EMBEDDED_SESSION_ROUTE).toContain("HttpOnly; Secure; SameSite=Lax");
+    expect(EMBEDDED_SESSION_ROUTE).toContain("clientSecret: result.clientSecret");
+    expect(EMBEDDED_SESSION_ROUTE).not.toContain("STRIPE_SECRET_KEY");
   });
 
   it("keeps the responsive program detail page separate from the catalog", () => {

@@ -80,6 +80,15 @@ const createGuestSchema = z.discriminatedUnion("ok", [
   }),
 ]);
 
+const createEmbeddedGuestSchema = z.discriminatedUnion("ok", [
+  z.object({ ok: z.literal(false), reason: z.enum(["closed", "unavailable"]) }),
+  z.object({
+    ok: z.literal(true),
+    clientSecret: z.string().regex(/^cs_test_[A-Za-z0-9]+_secret_[A-Za-z0-9]+$/),
+    claimToken: z.string().regex(/^[a-f0-9]{64}$/),
+  }),
+]);
+
 const confirmSchema = z.discriminatedUnion("ok", [
   z.object({
     ok: z.literal(false),
@@ -200,6 +209,21 @@ export async function createStripeEdgeGuestCheckout(): Promise<
     const { response, payload } = await invokeEdge({ action: "create_guest_checkout" });
     if (!response.ok && response.status >= 500) throw new Error("stripe_edge_unavailable");
     return createGuestSchema.parse(payload);
+  } catch {
+    return { ok: false, reason: "unavailable" };
+  }
+}
+
+export async function createStripeEdgeEmbeddedGuestCheckout(): Promise<
+  | { ok: false; reason: "closed" | "unavailable" }
+  | { ok: true; clientSecret: string; claimToken: string }
+> {
+  try {
+    const { response, payload } = await invokeEdge({
+      action: "create_embedded_guest_checkout",
+    });
+    if (!response.ok && response.status >= 500) throw new Error("stripe_edge_unavailable");
+    return createEmbeddedGuestSchema.parse(payload);
   } catch {
     return { ok: false, reason: "unavailable" };
   }
