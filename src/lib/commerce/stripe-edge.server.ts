@@ -84,7 +84,7 @@ const createEmbeddedGuestSchema = z.discriminatedUnion("ok", [
   z.object({ ok: z.literal(false), reason: z.enum(["closed", "unavailable"]) }),
   z.object({
     ok: z.literal(true),
-    clientSecret: z.string().regex(/^cs_test_[A-Za-z0-9]+_secret_[A-Za-z0-9]+$/),
+    clientSecret: z.string().regex(/^cs_test_\S+_secret_\S+$/),
     claimToken: z.string().regex(/^[a-f0-9]{64}$/),
   }),
 ]);

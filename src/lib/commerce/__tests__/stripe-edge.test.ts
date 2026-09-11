@@ -116,15 +116,28 @@ describe("Stripe edge runtime adapter", () => {
 
   it("returns only a test Embedded Checkout secret and server-side guest claim", async () => {
     const claimToken = "c".repeat(64);
+    const clientSecret = "cs_test_embedded-opaque_value_secret_checkout-secret_value";
     mockEdge({
       ok: true,
-      clientSecret: "cs_test_embedded_secret_checkoutsecret",
+      clientSecret,
       claimToken,
     });
     expect(await createStripeEdgeEmbeddedGuestCheckout()).toEqual({
       ok: true,
-      clientSecret: "cs_test_embedded_secret_checkoutsecret",
+      clientSecret,
       claimToken,
+    });
+  });
+
+  it("rejects a live Embedded Checkout secret", async () => {
+    mockEdge({
+      ok: true,
+      clientSecret: "cs_live_embedded-opaque_value_secret_checkout-secret_value",
+      claimToken: "c".repeat(64),
+    });
+    expect(await createStripeEdgeEmbeddedGuestCheckout()).toEqual({
+      ok: false,
+      reason: "unavailable",
     });
   });
 
