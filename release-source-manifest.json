@@ -555,7 +555,7 @@
     },
     {
       "path": "src/lib/commerce/__tests__/embedded-checkout-origin.test.ts",
-      "sha256": "067457ad93f95f16914f5dda853df197849306f72eacf8937726841bb4f656c9"
+      "sha256": "653afb3f3509486caa2a6e3d6c2d056c78ede9e3f152bc1d4e4d4bb789f2f8fd"
     },
     {
       "path": "src/lib/commerce/__tests__/refund-functions.test.ts",
@@ -595,7 +595,7 @@
     },
     {
       "path": "src/lib/commerce/embedded-checkout-origin.ts",
-      "sha256": "520369db9b145dcf72d4596ca4cf2ba04001a2f4e8bb23f3526c43d212ea609a"
+      "sha256": "fbb22edb25f9cd66b489e7093458c935694715a799ed2d3a8a87c2e435d27f55"
     },
     {
       "path": "src/lib/commerce/functions.ts",
@@ -1191,7 +1191,7 @@
     },
     {
       "path": "src/routes/api/public/checkout/accelerator/session.ts",
-      "sha256": "659781fadff949924a84c54d8875f6ac9a0385a694ce2f8e94c2bc1b6c1bffd4"
+      "sha256": "ceddc5fab41c81eca67c21eb0acce108aa11dfef247cd5e97011264f6b15bc1f"
     },
     {
       "path": "src/routes/api/public/email/dispatch.ts",
