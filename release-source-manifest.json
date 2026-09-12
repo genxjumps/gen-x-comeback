@@ -163,7 +163,7 @@
     },
     {
       "path": "src/components/account-navigation.tsx",
-      "sha256": "579f82fb7f0f727bdbc11a78502db6dab24e76e9aa0891617f420f85b6a0d972"
+      "sha256": "ed91e3803b23328c5e04b91591dbef7562e816caacc5ff8752f9a2e809879f7a"
     },
     {
       "path": "src/components/account-purchases.tsx",
@@ -195,7 +195,7 @@
     },
     {
       "path": "src/components/platform-access-boundary.tsx",
-      "sha256": "adb5b1342088e05c11c0d3e5c2c2e6b67379e71053eca89bf6c3b37cf6771192"
+      "sha256": "fc1750789e1f08592dbb47fef954037ec87468ea61a694cbf87b62009c9fb23a"
     },
     {
       "path": "src/components/platform-header-actions.tsx",
@@ -316,6 +316,10 @@
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
       "sha256": "56e874a721b8e1367a51354d010a82853e8474e861598e9e0455ec170ca75511"
+    },
+    {
+      "path": "src/lib/__tests__/plan-hub-actions-contract.test.ts",
+      "sha256": "7fdb0f409a25f3b4ccf375870e0a78c9b34a199ebd356460a54fd57f6d4b9851"
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
@@ -503,7 +507,7 @@
     },
     {
       "path": "src/lib/account/__tests__/navigation.test.ts",
-      "sha256": "84cb08813480e465fd105102b1f194bcc8905aacfab551c1d7cb0006e2963c72"
+      "sha256": "7828f4008d81558ed5c7f25c25622da5d4913312d141f6c1cdd6fb975d935aa0"
     },
     {
       "path": "src/lib/account/browser-session.ts",
@@ -711,7 +715,7 @@
     },
     {
       "path": "src/lib/email/__tests__/recovery.test.ts",
-      "sha256": "1722b71658845611d001b44a36f1957c024d47e3878e4abddc2a02f60296aceb"
+      "sha256": "fa951185c59992ebc5851943c76b50927d1af2c2668ae8ca46842399f4495026"
     },
     {
       "path": "src/lib/email/__tests__/return-destination.test.ts",
@@ -1183,7 +1187,7 @@
     },
     {
       "path": "src/routes/account.index.tsx",
-      "sha256": "2124b9993072eb69cf6de9dc68f306ec45f711e92c3aedbea95a61577308a047"
+      "sha256": "80e26dc802fa45d13b709b85a084fee89f83a160634d3310b11e8c6cf05be409"
     },
     {
       "path": "src/routes/account.purchases.tsx",
@@ -1343,7 +1347,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "9fe768a091d9bca4a19eec1942d70ee37aeb12e42fcdeeaeb4837efef9707019"
+      "sha256": "9067299572f31ad79783752647b90ee25731d04ad51954252ecc9ea6ee1298fa"
     },
     {
       "path": "src/server.ts",
