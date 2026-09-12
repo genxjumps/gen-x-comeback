@@ -187,53 +187,6 @@ function PlanHubPage() {
         <div className="h-full bg-gxj-teal" style={{ width: `${pct}%` }} />
       </div>
 
-      {completedCount < TOTAL_ASSIGNMENTS ? (
-        <div className="mt-3">
-          {!confirmUpdate ? (
-            <button
-              type="button"
-              className="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              onClick={() => {
-                setConfirmUpdate(true);
-                setUpdateError(null);
-              }}
-            >
-              Change My Plan
-            </button>
-          ) : (
-            <div className="rounded-lg border border-border bg-card p-4">
-              <p className="text-sm leading-relaxed">
-                Changing your answers will rebuild this plan and reset your progress.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-3">
-                <Button
-                  variant="outline"
-                  disabled={updatingPlan}
-                  onClick={() => void openPlanUpdate()}
-                >
-                  {updatingPlan ? "Opening..." : "Continue"}
-                </Button>
-                <Button
-                  variant="ghost"
-                  disabled={updatingPlan}
-                  onClick={() => {
-                    setConfirmUpdate(false);
-                    setUpdateError(null);
-                  }}
-                >
-                  Keep My Plan
-                </Button>
-              </div>
-              {updateError ? (
-                <p role="alert" className="mt-3 text-sm">
-                  {updateError}
-                </p>
-              ) : null}
-            </div>
-          )}
-        </div>
-      ) : null}
-
       {completedCount === TOTAL_ASSIGNMENTS ? (
         <SevenDayNextStep />
       ) : (
@@ -315,17 +268,57 @@ function PlanHubPage() {
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <Link to="/your-plan" hash="current" className="underline-offset-4 hover:underline">
-          Current
+          Today
         </Link>
         <Link to="/your-plan" hash="schedule" className="underline-offset-4 hover:underline">
           Schedule
         </Link>
         <Link to="/your-plan" hash="guidance" className="underline-offset-4 hover:underline">
-          Guidance
+          Plan Tips
         </Link>
+        {completedCount < TOTAL_ASSIGNMENTS ? (
+          <button
+            type="button"
+            className="underline-offset-4 hover:text-foreground hover:underline"
+            onClick={() => {
+              setConfirmUpdate(true);
+              setUpdateError(null);
+            }}
+          >
+            Change My Answers
+          </button>
+        ) : null}
       </div>
 
-      {/* Current assignment */}
+      {completedCount < TOTAL_ASSIGNMENTS && confirmUpdate ? (
+        <div className="mt-3 rounded-lg border border-border bg-card p-4">
+          <p className="text-sm leading-relaxed">
+            Changing your answers will rebuild this plan and reset your progress.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <Button variant="outline" disabled={updatingPlan} onClick={() => void openPlanUpdate()}>
+              {updatingPlan ? "Opening..." : "Continue"}
+            </Button>
+            <Button
+              variant="ghost"
+              disabled={updatingPlan}
+              onClick={() => {
+                setConfirmUpdate(false);
+                setUpdateError(null);
+              }}
+            >
+              Keep My Plan
+            </Button>
+          </div>
+          {updateError ? (
+            <p role="alert" className="mt-3 text-sm">
+              {updateError}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
+      {/* Current workout */}
       <section
         id="current"
         className={`mt-8 scroll-mt-6 rounded-lg border border-border p-4 ${
@@ -437,9 +430,9 @@ function PlanHubPage() {
         </ul>
       </section>
 
-      {/* Guidance */}
+      {/* Plan tips */}
       <section id="guidance" className="mt-8 scroll-mt-6">
-        <h2 className="text-lg font-semibold tracking-tight">Plan Guidance</h2>
+        <h2 className="text-lg font-semibold tracking-tight">Tips for This Plan</h2>
 
         <div className="mt-3 rounded-lg border border-border bg-card p-4">
           <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
