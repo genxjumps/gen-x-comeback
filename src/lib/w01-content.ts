@@ -15,7 +15,7 @@ export const W01_EXPECT = [
   "Jump rope and bodyweight exercises",
 ];
 
-export const W01_CARDIO_HEADING = "Your Jump Rope Plan";
+export const W01_CARDIO_HEADING = "For the Jump Rope Intervals";
 
 export const W01_EQUIPMENT_NOTES = [
   "Jump rope",

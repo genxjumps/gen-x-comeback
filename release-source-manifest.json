@@ -1155,7 +1155,7 @@
     },
     {
       "path": "src/lib/w01-content.ts",
-      "sha256": "322cfd3550e08666de3a329f8644b94c51ad5b723971c8c3d000f807f9f9a0da"
+      "sha256": "c9aaa0c459e7824faf60e2b29629542b384bd7236e3cdc161b7ebf71fd85dbe1"
     },
     {
       "path": "src/lib/workout-videos.ts",
