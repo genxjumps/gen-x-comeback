@@ -7,14 +7,7 @@ import { readStoredToken } from "@/lib/access-token";
 import { cardioGuidance, type CardioContext } from "@/lib/lead-plan";
 import { completePlanDay, getDayOneBrief } from "@/lib/lead.functions";
 import { WORKOUTS } from "@/lib/plan";
-import {
-  W01_APPROACH,
-  W01_DURATION,
-  W01_EQUIPMENT_NOTES,
-  W01_EXPECT,
-  W01_RUNDOWN,
-  W01_TITLE,
-} from "@/lib/w01-content";
+import { W01_APPROACH, W01_EQUIPMENT_NOTES, W01_EXPECT, W01_TITLE } from "@/lib/w01-content";
 
 /** Protected Day 1 workout. Requires a valid saved-plan access token. */
 export function DayOneWorkout() {
@@ -111,9 +104,6 @@ export function DayOneWorkout() {
       <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {W01_TITLE}
       </h1>
-      <p className="mt-2 text-xs text-muted-foreground">{W01_DURATION}</p>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{W01_RUNDOWN}</p>
-
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           What to Expect

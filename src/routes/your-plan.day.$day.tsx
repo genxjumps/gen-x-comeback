@@ -11,8 +11,8 @@ export const Route = createFileRoute("/your-plan/day/$day")({
         : `Day ${params.day} Workout | Gen X Jumps`;
     const description =
       params.day === "1"
-        ? "Your assigned Day 1 workout: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work, with a cardio option matched to your saved plan."
-        : `Your assigned Day ${params.day} action from your saved 7-day plan, with duration and guidance matched to your saved answers.`;
+        ? "Your Day 1 workout: about 15 minutes of jump rope and bodyweight exercises, with a cardio option matched to your plan."
+        : `Your Day ${params.day} workout from your 7-day plan, with duration and guidance matched to your answers.`;
     return {
       meta: [
         { title },
