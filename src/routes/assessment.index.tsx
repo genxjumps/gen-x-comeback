@@ -302,14 +302,14 @@ function Assessment() {
           ? "Your Starting Point"
           : step === 2
             ? "Jump Rope and Impact"
-            : "Your Workout Schedule and Protein Target"}
+            : "Finish Your Plan"}
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         {step === 1
           ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
           : step === 2
             ? "Your answers will help me adjust the jump rope workouts to your experience and comfort level."
-            : "Your answers will help me build a realistic weekly workout schedule and calculate a practical daily protein target."}
+            : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation."}
       </p>
 
       <div className="mt-6 space-y-4">
@@ -411,7 +411,7 @@ function Assessment() {
             <Question
               heading="Current weight"
               hint={
-                "Optional. I\u2019ll use this only to calculate a more accurate daily protein target. It will not change your workout plan."
+                "Optional. I\u2019ll use your weight to estimate how much protein to eat each day to help maintain muscle while you lose fat. It won\u2019t change your workouts."
               }
               error={wError}
             >
