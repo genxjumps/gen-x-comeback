@@ -5,14 +5,7 @@ import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { cardioGuidance, ropeLevelFromExperience, type CardioContext } from "@/lib/lead-plan";
 import { answersSchema } from "@/lib/lead-schemas";
 import { readAnswers, WORKOUTS } from "@/lib/plan";
-import {
-  W01_APPROACH,
-  W01_DURATION,
-  W01_EQUIPMENT_NOTES,
-  W01_EXPECT,
-  W01_RUNDOWN,
-  W01_TITLE,
-} from "@/lib/w01-content";
+import { W01_APPROACH, W01_EQUIPMENT_NOTES, W01_EXPECT, W01_TITLE } from "@/lib/w01-content";
 
 // Pre-opt-in Day 1 playback. Requires a complete local assessment draft, never a
 // saved-plan access token, and never writes leads, plans, tokens, or progress.
@@ -23,14 +16,14 @@ export const Route = createFileRoute("/preview/w01")({
       {
         name: "description",
         content:
-          "Your Day 1 workout preview: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
+          "Your Day 1 workout preview: about 15 minutes of jump rope and bodyweight exercises.",
       },
       { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "Day 1 - Jump Rope + Full Body | Gen X Jumps" },
       {
         property: "og:description",
         content:
-          "Your Day 1 workout preview: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
+          "Your Day 1 workout preview: about 15 minutes of jump rope and bodyweight exercises.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -102,9 +95,6 @@ function DayOnePreviewPage() {
       <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {W01_TITLE}
       </h1>
-      <p className="mt-2 text-xs text-muted-foreground">{W01_DURATION}</p>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{W01_RUNDOWN}</p>
-
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           What to Expect

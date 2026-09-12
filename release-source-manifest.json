@@ -183,7 +183,7 @@
     },
     {
       "path": "src/components/day-one-workout.tsx",
-      "sha256": "34e2685ec759a3822a591b7a9663595de5058d6de446ae4cd782a679e1ffe355"
+      "sha256": "b02bcaff12cde57b472b38aa55eb5baf84f0af5ccc8a7723b3c3a9102e9f1418"
     },
     {
       "path": "src/components/intake-closed.tsx",
@@ -1119,7 +1119,7 @@
     },
     {
       "path": "src/lib/plan.ts",
-      "sha256": "2f9b9d0bd4b2a375004a6e0fa0f64230724918537b374352aba7767133a5b5d9"
+      "sha256": "2ad29ea1621023a33a3089193e92d0f02a533e57a0b461e08840de7256beec83"
     },
     {
       "path": "src/lib/pwa-install.ts",
@@ -1155,7 +1155,7 @@
     },
     {
       "path": "src/lib/w01-content.ts",
-      "sha256": "8fafb39ce7c480956c912d6ca16af677ecc2824080c4bc5ac57de769d0d5e702"
+      "sha256": "e200831581619da88f57aa6d97409a6b86d697b21119d4dd231c18c3c43691a4"
     },
     {
       "path": "src/lib/workout-videos.ts",
@@ -1303,7 +1303,7 @@
     },
     {
       "path": "src/routes/preview.w01.tsx",
-      "sha256": "c3b4ff7e00ae6b5cc09166b9ed6a5e0dc0b026c5a364cdc83ff6f9699416b2ad"
+      "sha256": "fe7198c4722838c8cec8f947988505fffbe7039ae98492d4b90653f0ea7a060b"
     },
     {
       "path": "src/routes/programs.tsx",
@@ -1343,7 +1343,7 @@
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",
-      "sha256": "00ae1b3865efedfd61aa4b16cffcfd643214aec0eb7c251152fc6c06c37128f5"
+      "sha256": "85f3abf9602768715bd197a081081a0b1c2f1b6322cdc2995c1a7f1515d0b527"
     },
     {
       "path": "src/routes/your-plan.index.tsx",
