@@ -7,6 +7,7 @@ describe("authenticated platform shell source contract", () => {
   it("keeps Daily Assignment first on Home and links every approved platform section", () => {
     const home = readSource("../../../routes/home.tsx");
     const shell = readSource("../../../components/platform-shell.tsx");
+    const actions = readSource("../../../components/platform-header-actions.tsx");
     const renderedHome = home.slice(home.indexOf("function PlatformHome"));
 
     expect(renderedHome).toContain("{dailyAssignment.title}");
@@ -17,7 +18,7 @@ describe("authenticated platform shell source contract", () => {
     expect(home).toContain('to: "/progress"');
     expect(home).toContain('to: "/nutrition"');
     expect(home).toContain('to="/programs"');
-    expect(shell).toContain('to="/notifications"');
+    expect(actions).toContain('to="/notifications"');
   });
 
   it("uses one responsive navigation shell for the private platform routes", () => {
@@ -43,6 +44,19 @@ describe("authenticated platform shell source contract", () => {
     expect(access).toContain("supabase.auth.getSession()");
     expect(access).toContain("supabase.auth.onAuthStateChange");
     expect(access).toContain("enrollment is still closed during development");
+  });
+
+  it("keeps account and notification actions on participant screens that use the compact shell", () => {
+    const root = readSource("../../../routes/__root.tsx");
+    const shell = readSource("../../../components/platform-shell.tsx");
+    const actions = readSource("../../../components/platform-header-actions.tsx");
+
+    expect(shell).toContain("<PlatformHeaderActions />");
+    expect(root).toContain("inPlan || inJumpRopes || inCheckoutSuccess || inAcceleratorOffer");
+    expect(root).toContain("<PlatformHeaderActions />");
+    expect(actions).toContain("<AccountNavigation />");
+    expect(actions).toContain('to="/notifications"');
+    expect(actions).toContain("aria-label={notificationCount > 0");
   });
 
   it("keeps unfinished provider behavior inactive while using real program state", () => {

@@ -198,12 +198,16 @@
       "sha256": "adb5b1342088e05c11c0d3e5c2c2e6b67379e71053eca89bf6c3b37cf6771192"
     },
     {
+      "path": "src/components/platform-header-actions.tsx",
+      "sha256": "6c442d5dfd03aa31456f6fbd2d7297e6dfd8804552ced3f4a4ec3bbc8fe6226c"
+    },
+    {
       "path": "src/components/platform-page.tsx",
       "sha256": "81758297f4b91b43f1849a99232ccb520c63f2a25d367441c308f074bae20240"
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "616a7494ef588a7a14cd678120a60ba998987bf26e798ef20c899dcdffa9fc89"
+      "sha256": "3b63ec0e0bb4d4fb4ada8695a20762170a127848bdeb5e9e9f37b9f44edfd0e8"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -383,7 +387,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "7d972002c9f912208388036ae6c003cd6865d3b4159692314955c2d435e21420"
+      "sha256": "c4a820dba3c42706662d4ea7d6bf92b726ae8c8898a0b460634032e16a41b70f"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -1163,7 +1167,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "ef0fa6151febc5c4f051260a0543f5d7c014ebdf8727d7516a7de2744a8d4114"
+      "sha256": "8e3f3fa3e0910d18d5d500580fa9895ca8e9c3836602cd81633e679041597813"
     },
     {
       "path": "src/routes/accelerator.tsx",
