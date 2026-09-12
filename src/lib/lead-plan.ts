@@ -156,7 +156,7 @@ export function cardioGuidance(c: CardioContext): string {
     return "Do ghost jumps during each 20-second interval - small hops while turning your hands as if you're holding a rope.";
   }
   if (c.ropeLevel === "beginner") {
-    return "Start each 20-second interval with your rope. If you spend more time resetting than jumping, put the rope down and finish with ghost jumps.";
+    return "If you trip, reset and jump back in. Don’t get discouraged. Don’t give up.";
   }
   if (c.ropeLevel === "short_bursts") {
     return "If you trip, reset and jump back in. Don’t get discouraged. Don’t give up.";
