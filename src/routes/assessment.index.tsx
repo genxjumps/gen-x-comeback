@@ -57,9 +57,9 @@ const q1Options = [
 ];
 
 const q2Options = [
-  { label: "I\u2019m coming back after a long break", value: Q2_VALUES[0] },
-  { label: "I\u2019ve been active, but inconsistent", value: Q2_VALUES[1] },
-  { label: "I\u2019m already active and need a clear plan", value: Q2_VALUES[2] },
+  { label: "Not at all", value: Q2_VALUES[0] },
+  { label: "1-2 times per week", value: Q2_VALUES[1] },
+  { label: "3 or more times per week", value: Q2_VALUES[2] },
 ];
 
 // Legacy Q3_VALUES[1] ("no_rope") is accepted in saved drafts but never rendered.
@@ -306,7 +306,7 @@ function Assessment() {
       </h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         {step === 1
-          ? "Your answers will help me choose the best starting level for your personalized 7-day fitness plan."
+          ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
           : step === 2
             ? "Your answers will help me choose the right jump rope guidance and impact level for your personalized 7-day fitness plan."
             : "Your answers will help me build a realistic weekly workout schedule and calculate a practical daily protein target."}
@@ -327,7 +327,7 @@ function Assessment() {
               />
             </Question>
             <Question
-              heading="Which statement best describes where you are with exercise right now?"
+              heading="Over the past few months, how often have you usually exercised?"
               error={showErrors && !answers.q2 ? "Select one option to continue." : null}
             >
               <SingleSelect
@@ -457,8 +457,7 @@ function Assessment() {
       </div>
 
       <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-        Your answers are saved in this browser while you complete the assessment. After you submit
-        your name and email, your plan and progress are saved so you can return to them.
+        Your answers are saved as you go.
       </p>
     </div>
   );
