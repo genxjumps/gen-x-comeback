@@ -1,7 +1,7 @@
 // Shared W01 (Day 1) presentation copy so the protected Day 1 page and the
 // pre-opt-in preview render identical content.
 
-export const W01_TITLE = "Full Body Flush & Fire";
+export const W01_TITLE = "Jump Rope + Full Body";
 
 export const W01_DURATION = "About 15 minutes";
 

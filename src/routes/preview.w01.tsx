@@ -19,14 +19,14 @@ import {
 export const Route = createFileRoute("/preview/w01")({
   head: () => ({
     meta: [
-      { title: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
+      { title: "Day 1 - Jump Rope + Full Body | Gen X Jumps" },
       {
         name: "description",
         content:
           "Your Day 1 workout preview: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
       },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
+      { property: "og:title", content: "Day 1 - Jump Rope + Full Body | Gen X Jumps" },
       {
         property: "og:description",
         content:
