@@ -29,6 +29,13 @@ describe("Home Screen install experience", () => {
     expect(planRoute).toContain("<InstallNudge");
   });
 
+  it("uses plain, concise Home Screen copy on the plan-ready page", () => {
+    expect(component).toContain("Add to My Home Screen");
+    expect(component).toContain("No app store required.");
+    expect(component).not.toContain("Works like an app");
+    expect(readyRoute).not.toContain("Your personalized 7-day plan is saved and ready");
+  });
+
   it("registers the PWA shell and captures native install events", () => {
     expect(rootRoute).toContain("<PwaInstallCapture />");
     expect(component).toContain('navigator.serviceWorker.register("/sw.js")');

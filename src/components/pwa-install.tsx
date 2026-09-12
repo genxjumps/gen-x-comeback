@@ -115,24 +115,18 @@ export function InstallExperience({
   track: TrackInstall;
 }) {
   const [platform] = useState<InstallPlatform>(() => installPlatform());
-  const [promptAvailable, setPromptAvailable] = useState(
-    () => typeof window !== "undefined" && Boolean(window.__gxjInstallPrompt),
-  );
   const [showInstructions, setShowInstructions] = useState(false);
   const [installed, setInstalled] = useState(() => isStandaloneDisplay());
   const [working, setWorking] = useState(false);
 
   useEffect(() => {
-    const available = () => setPromptAvailable(true);
     const completed = () => {
       setInstalled(true);
       track("installed_display_detected", platform);
     };
-    window.addEventListener("gxj:install-available", available);
     window.addEventListener("gxj:app-installed", completed);
     track(isStandaloneDisplay() ? "installed_display_detected" : "install_prompt_shown", platform);
     return () => {
-      window.removeEventListener("gxj:install-available", available);
       window.removeEventListener("gxj:app-installed", completed);
     };
   }, [platform, track]);
@@ -151,7 +145,6 @@ export function InstallExperience({
         );
         if (choice.outcome === "dismissed") markInstallDismissed();
         window.__gxjInstallPrompt = undefined;
-        setPromptAvailable(false);
       } catch {
         setShowInstructions(true);
         track("install_instructions_shown", platform);
@@ -195,7 +188,8 @@ export function InstallExperience({
         </>
       ) : null}
       <p className={`${compact ? "mt-2" : ""} text-sm leading-relaxed text-muted-foreground`}>
-        Open your plan, workouts, nutrition targets, and progress without searching for a link.
+        Add Gen X Jumps to your Home Screen for quick access to your workouts, nutrition targets,
+        and progress.
       </p>
       <Button
         type="button"
@@ -205,15 +199,9 @@ export function InstallExperience({
         onClick={() => void install()}
       >
         <Download aria-hidden="true" className="size-4" />
-        {working
-          ? "Opening Install..."
-          : promptAvailable
-            ? "Install Gen X Jumps"
-            : "Add Gen X Jumps to My Home Screen"}
+        {working ? "Opening..." : "Add to My Home Screen"}
       </Button>
-      <p className="mt-3 text-xs text-muted-foreground">
-        Works like an app. No app store required.
-      </p>
+      <p className="mt-3 text-xs text-muted-foreground">No app store required.</p>
       {showInstructions ? <ManualSteps platform={platform} /> : null}
       {onContinue ? (
         <button
