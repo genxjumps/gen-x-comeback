@@ -991,7 +991,7 @@
     },
     {
       "path": "src/lib/lead-plan.ts",
-      "sha256": "4b8d67e19a9ea65e079bd909c5b06fd8085ffea43a6ae4f4012bbcd10c9d3987"
+      "sha256": "5dc799d9e71c4b489d23ca79e5be35192ab9c01ced125655bc52d46a920fb924"
     },
     {
       "path": "src/lib/lead-schemas.ts",
@@ -1155,7 +1155,7 @@
     },
     {
       "path": "src/lib/w01-content.ts",
-      "sha256": "c9aaa0c459e7824faf60e2b29629542b384bd7236e3cdc161b7ebf71fd85dbe1"
+      "sha256": "322cfd3550e08666de3a329f8644b94c51ad5b723971c8c3d000f807f9f9a0da"
     },
     {
       "path": "src/lib/workout-videos.ts",
