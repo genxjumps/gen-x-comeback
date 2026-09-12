@@ -1235,7 +1235,7 @@
     },
     {
       "path": "src/routes/assessment.start.tsx",
-      "sha256": "8ed928d748c9fa26cd08f08122b7c3e618738ad61f91961f8b8cc7fed0ad89b4"
+      "sha256": "f54ccdb3ad1ba547d4bda7da9a76a4ede2ba7972dcf39d4c339efe215723ce5e"
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",

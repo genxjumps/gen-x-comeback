@@ -111,15 +111,16 @@ function BeforeYouStart() {
     <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
       <h1 className="gxj-display-title text-2xl tracking-tight sm:text-3xl">Before You Start</h1>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        This plan is for adults ranging from deconditioned to fit who can exercise independently.
+        You don&rsquo;t need to be in great shape. You just need to be able to exercise safely on
+        your own.
       </p>
 
       <div className="mt-6">
         <Card className="border-border">
           <CardContent className="p-4 sm:p-5">
             <h2 className="text-sm font-medium leading-snug">
-              Can you safely exercise on your own, including standing, walking, getting down to and
-              up from the floor, and performing simple bodyweight movements?
+              Can you safely jump rope, get down to and up from the floor, and do basic bodyweight
+              exercises like push-ups, squats, and lunges on your own?
             </h2>
             <div className="mt-3">
               <RadioGroup value={answer} onValueChange={onAnswerChange} className="gap-2">
