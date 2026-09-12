@@ -371,7 +371,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/home-snapshot.test.ts",
-      "sha256": "ea6a882fe6038844b96c5ee54073546bdf1874fc0e39bf48fe6f3021ceef737f"
+      "sha256": "d84f12905576fba72c9e82f0b1b224a4954ab4cfec1f186cd4574bf922ea370a"
     },
     {
       "path": "src/lib/accelerator/__tests__/measurement-history-contract.test.ts",
@@ -387,7 +387,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "447295eb7f316b5ee3ca101d04019c52cefc558984051cca3b744bbe10b9d27f"
+      "sha256": "3106fa3bd6e31f8339bc324116cabf45c476b17bdff5d6fabeb5a5a1054aa8b5"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -439,7 +439,7 @@
     },
     {
       "path": "src/lib/accelerator/home-snapshot.ts",
-      "sha256": "c1f391a1d688ed69797a4a9b69cd46717c64b0adfef925b777b6cadb08bc193b"
+      "sha256": "8d006a492aeece9f620722c1c716ddc37e34ed579b719a25c06b5cb0338ff1ef"
     },
     {
       "path": "src/lib/accelerator/measurement-row.ts",
@@ -1247,7 +1247,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "85f4cf8d056d8bc3b4cf7bd7753de29e11caf286c94364edc113e13785f43085"
+      "sha256": "e9a3c58754f20d4ece0d030ecaf44b10a036068aa92bf96fbd011d3021865570"
     },
     {
       "path": "src/routes/index.tsx",

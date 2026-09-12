@@ -50,7 +50,7 @@ Launch requirements include:
 - Immediate access after a verified purchase plus a backup access email.
 - Individual program ownership with future membership compatibility.
 - One primary active structured program at a time.
-- A focused daily assignment experience.
+- A focused daily workout experience.
 - Saved program runs, completion history, optional measurements, and resume behavior.
 - A simple private progress view for Todd.
 
@@ -77,9 +77,9 @@ Purchase grants ownership but does not start Day 1. A new purchase appears in My
 ## Locked program sequence
 
 The program contains four completion-based weeks. A missed day does not move the participant
-forward, skip an assignment, or expire access.
+forward, skip a workout day, or expire access.
 
-| Program day | Assignment        | Advancement rule                                  |
+| Program day | Activity          | Advancement rule                                  |
 | ----------- | ----------------- | ------------------------------------------------- |
 | 1           | Workout A         | Complete the assigned day                         |
 | 2           | Workout B         | Complete the assigned day                         |
@@ -95,7 +95,7 @@ workouts.
 
 The approved training formats and focus are:
 
-| Assignment        | Format            | Focus                                        |
+| Activity          | Format            | Focus                                        |
 | ----------------- | ----------------- | -------------------------------------------- |
 | Workout A         | Classic Intervals | Push + Legs                                  |
 | Workout B         | EMOM              | Conditioning + Core                          |
@@ -131,8 +131,8 @@ Home also provides clear access to:
 - **Nutrition**
 - The in-app notification bell or inbox
 
-Future membership, community, live, and challenge content may appear on Home without displacing the
-Daily Assignment or turning Home into a crowded feed.
+Future membership, community, live, and challenge content may appear on Home without displacing
+**Today’s Workout** or turning Home into a crowded feed.
 
 ### Programs
 
@@ -304,18 +304,18 @@ The orientation contains a Todd welcome video and an equivalent written explanat
 may watch, read, or use both.
 
 Weight and waist are independently optional. Skipping either or both does not block Day 1. Starting
-the program creates a new program run and sends the customer directly to the Day 1 assignment.
+the program creates a new program run and sends the customer directly to the Day 1 workout.
 
-## Daily assignment
+## Daily workout
 
-The focused daily assignment includes:
+The focused daily workout includes:
 
 - Program day.
 - Program week.
 - Current progress.
-- Workout, recovery, or rest assignment.
+- Workout, recovery, or rest day.
 - Daily focus.
-- Video when the assignment has one.
+- Video when the day has one.
 - Short practical instructions.
 - Verified runtime.
 - Verified equipment.
@@ -357,28 +357,28 @@ must define reliable customer-local day handling without changing this product r
 
 If the customer misses a day:
 
-- Daily Assignment continues to show the same incomplete program day.
-- The app does not stack two assignments.
-- The app does not skip the assignment.
+- Today’s Workout continues to show the same incomplete program day.
+- The app does not stack two workout days.
+- The app does not skip the workout day.
 - The app does not label the customer behind.
 - The remaining program days move with the customer.
 
-The Daily Assignment card may adapt its message based on time since the last completed day:
+The Today’s Workout card may adapt its message based on time since the last completed day:
 
 - For the first one or two missed days, use straightforward supportive language.
 - After several days, supportive humor may be introduced.
 - Humor must never shame, scold, or guilt the customer.
 
-The normal Daily Assignment card remains the resume path. A separate redundant resume button is not
+The normal Today’s Workout card remains the resume path. A separate redundant resume button is not
 required.
 
 ## Recovery days, rest days, and extra workouts
 
-Active recovery and rest are real program assignments. The customer reviews the day's instruction
+Active recovery and rest are real program days. The customer reviews the day's instruction
 and uses the same **Complete Day** action to advance.
 
 If a customer independently chooses to do another workout on a recovery or rest day, that workout
-does not replace the structured assignment and does not independently advance the program.
+does not replace the structured program day and does not independently advance the program.
 
 ## One active program and paused runs
 
@@ -513,7 +513,7 @@ recovery. Production activation remains a separate controlled checkpoint.
 
 Your Nutrition is separate from the Accelerator experience. It may be unlocked by ownership of the
 Accelerator or another qualifying paid program, but it lives in the platform's **Your Nutrition**
-section. It is not mixed into daily assignments, weekly coaching, completion, or Accelerator
+section. It is not mixed into daily workouts, weekly coaching, completion, or Accelerator
 reminders, and nutrition actions never block program progress.
 
 Protein First teaches:
@@ -567,7 +567,7 @@ analysis without crowding the first admin view.
 
 Default customer screens prioritize:
 
-- Today's assignment.
+- Today’s workout.
 - The current program run.
 - Current progress.
 - Latest measurements.

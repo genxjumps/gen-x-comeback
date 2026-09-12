@@ -12,7 +12,7 @@ describe("authenticated platform shell source contract", () => {
 
     expect(renderedHome).toContain("{dailyAssignment.title}");
     expect(renderedHome.indexOf("{dailyAssignment.title}")).toBeLessThan(
-      renderedHome.indexOf('aria-label="Your fitness platform"'),
+      renderedHome.indexOf('aria-label="Programs, progress, and nutrition"'),
     );
     expect(home).toContain('to: "/my-programs"');
     expect(home).toContain('to: "/progress"');
@@ -23,6 +23,11 @@ describe("authenticated platform shell source contract", () => {
     expect(shell).not.toContain('{ label: "Explore"');
     expect(shell).toContain("grid-cols-4");
     expect(actions).toContain('to="/notifications"');
+    expect(home).toMatch(/<h1[^>]*>\s*Today\s*<\/h1>/);
+    expect(home).toContain('["Browse available programs"]');
+    expect(home).toContain('["No measurements yet"]');
+    expect(home).toContain('["Set up your daily targets"]');
+    expect(home).not.toMatch(/Programs unavailable|Progress unavailable|Nutrition unavailable/);
   });
 
   it("uses one responsive navigation shell for the private platform routes", () => {

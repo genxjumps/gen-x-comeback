@@ -14,7 +14,10 @@ export const Route = createFileRoute("/home")({
   head: () => ({
     meta: [
       { title: "Home | Gen X Jumps" },
-      { name: "description", content: "Your Gen X Jumps program home." },
+      {
+        name: "description",
+        content: "See today’s workout, your programs, progress, and nutrition.",
+      },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -63,24 +66,14 @@ function PlatformHome() {
   const dailyAssignment = homeAssignment(programs, acceleratorHub);
 
   const owned = programs?.ok ? programs : null;
-  const activePlan = owned?.leadPlans.find((plan) => plan.status === "active");
-  const programRows = owned
-    ? [
-        ...(owned.accelerator
-          ? [
-              {
-                name: "28-Day Fat Loss Accelerator",
-                status: owned.accelerator.status.replace("_", " "),
-                progress: `${owned.accelerator.currentRun?.completedDays ?? 0} of 28 days complete`,
-              },
-            ]
-          : []),
-        ...owned.leadPlans.map((plan) => ({
-          name: "7-Day Comeback Plan",
-          status: plan.status,
-          progress: `${plan.completedDays} of ${plan.totalDays} days complete`,
-        })),
-      ]
+  const programCount = owned ? Number(Boolean(owned.accelerator)) + owned.leadPlans.length : 0;
+  const measurementLines = owned
+    ? (["weight", "waist"] as const).flatMap((kind) => {
+        const entry = owned.latestMeasurements[kind];
+        if (!entry) return [];
+        const label = kind === "weight" ? "Weight" : "Waist";
+        return [`${label}: ${entry.value} ${entry.unit}`];
+      })
     : [];
   const targets =
     nutrition?.ok && nutrition.access === "eligible" ? nutrition.profile?.targets : null;
@@ -90,75 +83,66 @@ function PlatformHome() {
       to: "/my-programs",
       icon: Dumbbell,
       lines: !programs
-        ? ["Loading programs..."]
+        ? ["Loading..."]
         : !owned
-          ? ["Programs unavailable"]
-          : programRows.length
-            ? programRows.flatMap((row) => [row.name, `${row.status} · ${row.progress}`])
-            : ["No programs yet"],
+          ? ["Open to try again"]
+          : programCount
+            ? [`${programCount} ${programCount === 1 ? "program" : "programs"}`]
+            : ["Browse available programs"],
     },
     {
       title: "Progress",
       to: "/progress",
       icon: ChartNoAxesColumnIncreasing,
       lines: !programs
-        ? ["Loading progress..."]
+        ? ["Loading..."]
         : !owned
-          ? ["Progress unavailable"]
-          : [
-              ...(owned.activeProgram === "lead_plan" && activePlan
-                ? [`${activePlan.completedDays} of ${activePlan.totalDays} days complete`]
-                : owned.activeProgram === "accelerator" && owned.accelerator?.currentRun
-                  ? [`${owned.accelerator.currentRun.completedDays} of 28 days complete`]
-                  : []),
-              ...(["weight", "waist"] as const).map((kind) => {
-                const entry = owned.latestMeasurements[kind];
-                const label = kind === "weight" ? "Weight" : "Waist";
-                return entry
-                  ? `${label}: ${entry.value} ${entry.unit} · ${new Date(entry.measuredAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`
-                  : `${label}: not recorded`;
-              }),
-            ],
+          ? ["Open to try again"]
+          : measurementLines.length
+            ? measurementLines
+            : ["No measurements yet"],
     },
     {
       title: "Nutrition",
       to: "/nutrition",
       icon: Apple,
       lines: !nutrition
-        ? ["Loading targets..."]
+        ? ["Loading..."]
         : !nutrition.ok
-          ? ["Nutrition unavailable"]
+          ? ["Open to try again"]
           : nutrition.access === "locked"
-            ? ["Not unlocked", "Included with an eligible paid program"]
+            ? ["Not unlocked"]
             : targets
               ? [
-                  `${targets.calories.toLocaleString()} calories / day`,
-                  `${targets.proteinGrams} g protein · ${targets.carbohydrateGrams} g carbs · ${targets.fatGrams} g fat`,
-                  "Your saved daily targets",
+                  `${targets.calories.toLocaleString()} calories per day`,
+                  `${targets.proteinGrams} g protein - ${targets.carbohydrateGrams} g carbs - ${targets.fatGrams} g fat`,
                 ]
-              : ["Your targets aren't set yet", "Set up your daily calories and macros"],
+              : ["Set up your daily targets"],
     },
   ] as const;
 
   return (
     <div className="mx-auto w-full max-w-5xl">
       <header>
-        <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">Home</p>
-        <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight sm:text-4xl">
-          Know What To Do Today
+        <h1 className="gxj-display-title text-3xl leading-tight tracking-tight sm:text-4xl">
+          Today
         </h1>
       </header>
 
       <section className="mt-8 overflow-hidden rounded-lg border border-border bg-card">
         <div className="p-6 sm:p-8">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
-              {dailyAssignment.label}
-            </p>
+            {dailyAssignment.label ? (
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
+                {dailyAssignment.label}
+              </p>
+            ) : null}
             <h2 className="mt-2 text-2xl font-semibold tracking-tight">{dailyAssignment.title}</h2>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-              {dailyAssignment.description}
-            </p>
+            {dailyAssignment.description ? (
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+                {dailyAssignment.description}
+              </p>
+            ) : null}
             {programs ? (
               <Button asChild size="lg" className="mt-5 w-full sm:w-auto">
                 <Link to={dailyAssignment.to}>
@@ -171,7 +155,10 @@ function PlatformHome() {
         </div>
       </section>
 
-      <section className="mt-6 grid gap-3 lg:grid-cols-3" aria-label="Your fitness platform">
+      <section
+        className="mt-6 grid gap-3 lg:grid-cols-3"
+        aria-label="Programs, progress, and nutrition"
+      >
         {shortcuts.map((item) => {
           const Icon = item.icon;
           return (

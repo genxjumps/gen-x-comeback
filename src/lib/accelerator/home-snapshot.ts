@@ -22,11 +22,11 @@ export function homeAssignment(
   acceleratorHub: AcceleratorHubData | null,
 ): DailyAssignmentCard {
   let dailyAssignment: DailyAssignmentCard = {
-    title: programs ? "Your programs couldn’t be loaded" : "Loading your day...",
-    description: programs ? "Open Programs to try again." : "",
+    title: programs ? "Find your next workout in Programs" : "Loading...",
+    description: "",
     to: "/my-programs",
     button: "Open Programs",
-    label: "Your Next Step",
+    label: programs ? "Your Next Step" : "",
   };
 
   if (programs?.ok) {
@@ -48,39 +48,39 @@ export function homeAssignment(
     dailyAssignment = paused
       ? {
           label: "Ready When You Are",
-          title: `${paused.name} is paused`,
-          description: `${paused.completed} of ${paused.total} days complete. Your progress is saved.`,
+          title: `Resume ${paused.name}`,
+          description: `You’ve completed ${paused.completed} of ${paused.total} days.`,
           to: "/my-programs",
-          button: "Resume a Program",
+          button: "Open Programs",
         }
       : programs.accelerator?.status === "not_started"
         ? {
             label: "Your Next Step",
-            title: "Your Accelerator is ready",
-            description: "28 days. Start Day 1 when you're ready.",
+            title: "Start the 28-Day Fat Loss Accelerator",
+            description: "Set it up, then begin Day 1.",
             to: "/my-programs",
-            button: "Start My Program",
+            button: "Set Up My Accelerator",
           }
         : programs.accelerator || programs.leadPlans.length
           ? {
-              label: "Your Next Step",
-              title: "Your completed programs are saved",
-              description: "Review your results or choose what comes next.",
+              label: "What’s Next",
+              title: "Choose what’s next",
+              description: "Review a completed program or start another.",
               to: "/my-programs",
               button: "View Programs",
             }
           : {
               label: "Your Next Step",
-              title: "Find your first program",
-              description: "No programs are linked to your account yet.",
+              title: "Choose your first program",
+              description: "",
               to: "/my-programs",
               button: "View Programs",
             };
     if (programs.activeProgram)
       dailyAssignment = {
         label: "Your Current Program",
-        title: "Open your current program",
-        description: "Workout details are unavailable here. Open your program to continue.",
+        title: "Continue your current program",
+        description: "",
         to: "/my-programs",
         button: "Open Programs",
       };
@@ -98,17 +98,25 @@ export function homeAssignment(
       const assignment = acceleratorHub.snapshot.assignments[day.assignment];
       const waiting = !acceleratorHub.progress.canCompleteCurrent;
       dailyAssignment = {
-        title: `Day ${day.day}: ${assignment.label}`,
+        title: waiting ? "You’re done for today" : `Day ${day.day}: ${assignment.label}`,
         description: waiting
-          ? `You completed today's work. Day ${day.day} opens ${friendlyDate(acceleratorHub.progress.availableOn)}.`
-          : `Week ${day.week} · ${acceleratorHub.completedDays.length} of 28 days complete`,
+          ? `Day ${day.day} - ${assignment.label} - opens ${friendlyDate(acceleratorHub.progress.availableOn)}.`
+          : `Week ${day.week} - ${acceleratorHub.completedDays.length} of 28 days complete`,
         to: "/accelerator",
-        button: waiting ? "View Next Workout" : "Open Today’s Workout",
+        button: waiting
+          ? "Preview Next Day"
+          : day.kind === "active_recovery"
+            ? "Open Today’s Recovery"
+            : day.kind === "rest"
+              ? "Open Rest Day"
+              : "Open Today’s Workout",
         label: waiting
-          ? "Next Workout"
-          : day.kind === "rest"
+          ? "Today Complete"
+          : day.kind === "active_recovery"
             ? "Today’s Recovery"
-            : "Today’s Workout",
+            : day.kind === "rest"
+              ? "Today’s Rest Day"
+              : "Today’s Workout",
       };
     }
   } else if (
@@ -117,10 +125,10 @@ export function homeAssignment(
     acceleratorHub?.progress.programCompleted
   ) {
     dailyAssignment = {
-      title: "28-Day Accelerator Complete",
-      description: "Your completed run and results remain saved in Programs and Progress.",
+      title: "You completed the 28-Day Accelerator",
+      description: "See your final progress and choose what’s next.",
       to: "/accelerator",
-      button: "Open Completed Program",
+      button: "View My Results",
       label: "Program Complete",
     };
   } else if (programs?.ok && programs.activeProgram === "lead_plan") {
@@ -129,7 +137,7 @@ export function homeAssignment(
       const nextDay = Math.min(plan.completedDays + 1, plan.totalDays);
       dailyAssignment = {
         title: `Day ${nextDay}: 7-Day Comeback Plan`,
-        description: `${plan.completedDays} of ${plan.totalDays} days complete. Your progress is saved.`,
+        description: `${plan.completedDays} of ${plan.totalDays} days complete`,
         to: "/your-plan",
         button: "Open My Plan",
         label: "Your Next Day",
