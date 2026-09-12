@@ -126,9 +126,8 @@ function LeadWelcome() {
           {result.firstName}, Let&rsquo;s Build Your Comeback Plan
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
-          We saved your access. Answer a few quick questions about your fitness, schedule,
-          equipment, and any limitations. Then we&rsquo;ll build your personalized 7-day plan
-          immediately.
+          Answer a few quick questions about your fitness, schedule, equipment, and any limitations.
+          Then we&rsquo;ll build your personalized 7-day plan immediately.
         </p>
 
         <ol className="mt-7 grid gap-2 sm:grid-cols-3" aria-label="Plan setup progress">
@@ -170,10 +169,6 @@ function LeadWelcome() {
           </Button>
           <p className="mt-3 text-xs text-muted-foreground">
             About 2 minutes. No password required.
-          </p>
-          <p className="mt-2 max-w-xl text-xs leading-relaxed text-muted-foreground">
-            Once your plan is ready, we&rsquo;ll help you add Gen X Jumps to your Home Screen so
-            your workouts are always one tap away.
           </p>
         </div>
       </section>
