@@ -161,7 +161,7 @@ export function cardioGuidance(c: CardioContext): string {
   if (c.ropeLevel === "short_bursts") {
     return "Use the rope while your rhythm is clean, then finish the interval with ghost jumps as needed. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
   }
-  return "Use the rope normally for every cardio interval and scale your pace as needed. Slow the turns down before you break your rhythm.";
+  return "Jump rope for each 20-second interval. Choose a pace you can maintain throughout the workout.";
 }
 
 /** Display-safe shape of one stored plan day. */
