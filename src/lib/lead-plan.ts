@@ -150,18 +150,18 @@ export function ropeLevelFromExperience(q3: string): CardioContext["ropeLevel"] 
 /** Day 1 cardio instruction. Lower-impact guidance overrides all rope guidance. */
 export function cardioGuidance(c: CardioContext): string {
   if (c.impactLimited) {
-    return "During every jump rope interval, march in place or use step-touches instead of jumping. Keep one foot on the floor the entire time and drive the pace with your arms and your breathing.";
+    return "March in place or do step-touches during each 20-second interval. Keep one foot on the floor.";
   }
   if (!c.ownsRope) {
-    return "Use ghost jumps for every cardio interval. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+    return "Do ghost jumps during each 20-second interval - small hops while turning your hands as if you're holding a rope.";
   }
   if (c.ropeLevel === "beginner") {
-    return "Try the rope at the start of each interval. When resetting the rope takes over more than the jumping does, put it down and finish the interval with ghost jumps. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+    return "Start each 20-second interval with your rope. If you spend more time resetting than jumping, put the rope down and finish with ghost jumps.";
   }
   if (c.ropeLevel === "short_bursts") {
-    return "Use the rope while your rhythm is clean, then finish the interval with ghost jumps as needed. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+    return "Jump rope for each 20-second interval. If you lose your rhythm, finish the interval with ghost jumps.";
   }
-  return "Jump rope for each 20-second interval. Choose a pace you can maintain throughout the workout.";
+  return "Jump rope for each 20-second interval at a pace you can repeat for every round.";
 }
 
 /** Display-safe shape of one stored plan day. */
