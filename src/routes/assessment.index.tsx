@@ -65,9 +65,9 @@ const q2Options = [
 // Legacy Q3_VALUES[1] ("no_rope") is accepted in saved drafts but never rendered.
 const q3Options = [
   { label: "I\u2019ve never jumped rope", value: Q3_VALUES[0] },
-  { label: "I\u2019m new to jumping rope", value: Q3_VALUES[2] },
-  { label: "I can jump for short periods", value: Q3_VALUES[3] },
-  { label: "I\u2019m comfortable jumping rope", value: Q3_VALUES[4] },
+  { label: "I can only do a few jumps before stopping", value: Q3_VALUES[2] },
+  { label: "I can complete up to 10 rounds of 30-60 seconds", value: Q3_VALUES[3] },
+  { label: "I can complete more than 10 rounds of 30-60 seconds", value: Q3_VALUES[4] },
 ];
 
 const q4Options = [
@@ -308,7 +308,7 @@ function Assessment() {
         {step === 1
           ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
           : step === 2
-            ? "Your answers will help me choose the right jump rope guidance and impact level for your personalized 7-day fitness plan."
+            ? "Your answers will help me adjust the jump rope workouts to your experience and comfort level."
             : "Your answers will help me build a realistic weekly workout schedule and calculate a practical daily protein target."}
       </p>
 
