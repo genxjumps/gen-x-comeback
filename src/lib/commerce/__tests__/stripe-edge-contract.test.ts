@@ -79,8 +79,8 @@ describe("Accelerator Stripe edge contract", () => {
     expect(COMMERCE_FUNCTIONS).not.toContain('path: "/checkout/accelerator/success"');
     expect(SUCCESS_ROUTE).toContain("supabase.auth.verifyOtp");
     expect(SUCCESS_ROUTE).toContain("Set Up My Accelerator");
-    expect(SUCCESS_ROUTE).toContain("Open My Programs");
-    expect(SUCCESS_ROUTE).toContain("Open My Nutrition");
+    expect(SUCCESS_ROUTE).toContain("Open Programs");
+    expect(SUCCESS_ROUTE).toContain("Open Nutrition");
     expect(SUCCESS_ROUTE).toContain('<Link to="/nutrition"');
     expect(SUCCESS_ROUTE).not.toContain("Start Day 1");
     expect(ROOT_ROUTE).toContain(

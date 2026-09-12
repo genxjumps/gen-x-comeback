@@ -375,7 +375,7 @@ function PlanHubPage() {
 
         <div className="mt-3 rounded-lg border border-border bg-card p-4">
           <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-            Your Daily Protein Target
+            Protein Target For This 7-Day Plan
           </h3>
           {hub.protein.grams !== null ? (
             <>

@@ -14,9 +14,10 @@ import {
   type SaveNutritionProfileResult,
   type SavedWeightPrefill,
 } from "@/lib/nutrition/types";
+import { buildNutritionTargetReview } from "@/lib/nutrition/target-review";
 
 type StoreError = { message: string } | null;
-type NutritionProfileRow = {
+export type NutritionProfileRow = {
   formula_version: string;
   input_payload: unknown;
   maintenance_calories: number;
@@ -35,7 +36,7 @@ type NutritionStoreQuery = {
     options: { onConflict: string },
   ): PromiseLike<NutritionWriteResult>;
 };
-type NutritionStoreClient = {
+export type NutritionStoreClient = {
   from(table: "customer_nutrition_profiles"): NutritionStoreQuery;
 };
 
@@ -101,11 +102,19 @@ export const getNutritionProfile = createServerFn({ method: "POST" })
     ]);
     if (profileResult.error) throw new Error(profileResult.error.message);
 
+    const profile = profileResult.data?.[0] ? storedProfile(profileResult.data[0]) : null;
     return {
       ok: true,
       access: "eligible",
-      profile: profileResult.data?.[0] ? storedProfile(profileResult.data[0]) : null,
+      profile,
       savedWeight,
+      targetReview: profile
+        ? buildNutritionTargetReview({
+            intake: profile.intake,
+            targets: profile.targets,
+            savedWeight,
+          })
+        : null,
     };
   });
 

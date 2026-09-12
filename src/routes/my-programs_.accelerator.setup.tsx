@@ -104,9 +104,9 @@ function AcceleratorSetup() {
         await navigate({ to: "/accelerator" });
         return;
       }
-      setError("The program couldn’t be started. Reload My Programs and try again.");
+      setError("The program couldn’t be started. Reload Programs and try again.");
     } catch {
-      setError("The program couldn’t be started. Reload My Programs and try again.");
+      setError("The program couldn’t be started. Reload Programs and try again.");
     } finally {
       setSaving(false);
     }

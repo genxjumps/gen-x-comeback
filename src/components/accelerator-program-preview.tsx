@@ -235,7 +235,7 @@ export function AcceleratorProgramPreview({ initialCompleted = 0 }: { initialCom
                   <ArrowRight aria-hidden="true" className="size-4" />
                 </Button>
                 <Button type="button" variant="outline">
-                  Explore Other Programs
+                  View Available Programs
                 </Button>
               </div>
             </section>

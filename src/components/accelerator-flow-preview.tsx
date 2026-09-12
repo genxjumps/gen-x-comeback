@@ -10,7 +10,7 @@ type PreviewScreen = "home" | "programs" | "setup" | "daily" | "progress" | "com
 
 const SCREENS: Array<{ id: PreviewScreen; label: string }> = [
   { id: "home", label: "Home" },
-  { id: "programs", label: "My Programs" },
+  { id: "programs", label: "Programs" },
   { id: "setup", label: "Setup" },
   { id: "daily", label: "Today’s Workout" },
   { id: "progress", label: "Progress" },
@@ -62,10 +62,9 @@ function HomePreview({ openDaily }: { openDaily: () => void }) {
       </section>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {[
-          ["My Programs", "Owned programs and previous runs"],
-          ["My Progress", "Latest measurements and history"],
-          ["My Nutrition", "Guidance and targets"],
-          ["Explore Programs", "Find the next structured program"],
+          ["Programs", "Owned and available programs"],
+          ["Progress", "Latest measurements and history"],
+          ["Nutrition", "Guidance and targets"],
         ].map(([title, description]) => (
           <section key={title} className="rounded-lg border border-border bg-card p-5">
             <h2 className="font-semibold">{title}</h2>
@@ -80,7 +79,7 @@ function HomePreview({ openDaily }: { openDaily: () => void }) {
 function ProgramsPreview({ openSetup }: { openSetup: () => void }) {
   return (
     <PreviewPage
-      kicker="My Programs"
+      kicker="Programs"
       title="Your Programs, In One Place"
       description="Programs stay here without erasing completed work or previous runs."
     >
@@ -156,7 +155,7 @@ function ProgressPreview() {
   const [details, setDetails] = useState(false);
   return (
     <PreviewPage
-      kicker="My Progress"
+      kicker="Progress"
       title="See The Work Adding Up"
       description="The everyday view stays simple. Detailed history is available only when you ask for it."
     >

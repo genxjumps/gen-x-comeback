@@ -13,8 +13,12 @@ import type {
   PlatformComebackReminder,
   PlatformNotification,
   PlatformNotificationsResult,
+  NutritionTargetReviewNotification,
   ProgramReminderPreferenceResult,
 } from "@/lib/notifications/types";
+import { nutritionIntakeSchema, nutritionTargetsSchema } from "@/lib/nutrition/schemas";
+import { buildNutritionTargetReview } from "@/lib/nutrition/target-review";
+import type { NutritionStoreClient } from "@/lib/nutrition/functions";
 
 async function programRemindersEnabled(customerId: string): Promise<boolean> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -43,11 +47,66 @@ function isPlatformNotification(value: PlatformNotification | null): value is Pl
   return value !== null;
 }
 
+async function loadNutritionTargetReviewNotification(
+  customerId: string,
+): Promise<NutritionTargetReviewNotification | null> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const nutritionStore = supabaseAdmin as unknown as NutritionStoreClient;
+  const [profileResult, weightResult] = await Promise.all([
+    nutritionStore
+      .from("customer_nutrition_profiles")
+      .select("input_payload, target_payload")
+      .eq("customer_id", customerId)
+      .limit(1),
+    supabaseAdmin
+      .from("customer_measurements")
+      .select("value, unit")
+      .eq("customer_id", customerId)
+      .eq("measurement_kind", "weight")
+      .eq("status", "active")
+      .order("measured_at", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(1),
+  ]);
+  if (profileResult.error) throw new Error(profileResult.error.message);
+  if (weightResult.error) throw new Error(weightResult.error.message);
+
+  const profile = profileResult.data?.[0];
+  const weight = weightResult.data?.[0];
+  const intake = nutritionIntakeSchema.safeParse(profile?.input_payload);
+  const targets = nutritionTargetsSchema.safeParse(profile?.target_payload);
+  if (!intake.success || !targets.success || !weight || !["lb", "kg"].includes(weight.unit)) {
+    return null;
+  }
+
+  const review = buildNutritionTargetReview({
+    intake: intake.data,
+    targets: targets.data,
+    savedWeight: { value: Number(weight.value), unit: weight.unit as "lb" | "kg" },
+  });
+  if (!review) return null;
+
+  return {
+    code: "nutrition_target_review",
+    title: "Your targets may need an update",
+    message:
+      "Your latest weight could change your daily targets. Review the new numbers before saving anything.",
+    target: "/nutrition",
+  };
+}
+
 async function loadPlatformNotificationState() {
   const { currentAuthorizationHeader, resolveCustomerAccount } =
     await import("@/lib/account/customer-account.server");
   const account = await resolveCustomerAccount(await currentAuthorizationHeader());
-  if (!account.ok) return { authorized: false as const, customerId: null, reminder: null };
+  if (!account.ok)
+    return {
+      authorized: false as const,
+      customerId: null,
+      reminder: null,
+      comeback: null,
+      nutritionReview: null,
+    };
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const remindersEnabled = await programRemindersEnabled(account.account.id);
@@ -57,8 +116,11 @@ async function loadPlatformNotificationState() {
       customerId: account.account.id,
       reminder: null,
       comeback: null,
+      nutritionReview: null,
     };
   }
+
+  const nutritionReview = await loadNutritionTargetReviewNotification(account.account.id);
 
   const { data: activeRows, error: activeError } = await supabaseAdmin
     .from("customer_active_programs")
@@ -73,6 +135,7 @@ async function loadPlatformNotificationState() {
       customerId: account.account.id,
       reminder: null,
       comeback: null,
+      nutritionReview,
     };
   }
 
@@ -115,6 +178,7 @@ async function loadPlatformNotificationState() {
       comeback: reminder
         ? ({ ...reminder, target: "/your-plan" } satisfies PlatformComebackReminder)
         : null,
+      nutritionReview,
     };
   }
 
@@ -124,6 +188,7 @@ async function loadPlatformNotificationState() {
       customerId: account.account.id,
       reminder: null,
       comeback: null,
+      nutritionReview,
     };
   }
 
@@ -142,6 +207,7 @@ async function loadPlatformNotificationState() {
       customerId: account.account.id,
       reminder: null,
       comeback: null,
+      nutritionReview,
     };
   }
 
@@ -178,6 +244,7 @@ async function loadPlatformNotificationState() {
       comeback: comeback
         ? ({ ...comeback, target: "/accelerator" } satisfies PlatformComebackReminder)
         : null,
+      nutritionReview,
     };
   }
 
@@ -226,6 +293,7 @@ async function loadPlatformNotificationState() {
     comeback: comeback
       ? ({ ...comeback, target: "/accelerator" } satisfies PlatformComebackReminder)
       : null,
+    nutritionReview,
   };
 }
 
@@ -236,7 +304,9 @@ export const getPlatformNotifications = createServerFn({ method: "POST" })
     if (!state.authorized) return { ok: false };
     return {
       ok: true,
-      notifications: [state.comeback, state.reminder].filter(isPlatformNotification),
+      notifications: [state.nutritionReview, state.comeback, state.reminder].filter(
+        isPlatformNotification,
+      ),
     };
   });
 

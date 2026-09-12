@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 const readSource = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("authenticated platform shell source contract", () => {
-  it("keeps Daily Assignment first on Home and links every approved platform section", () => {
+  it("keeps today’s workout first on Home and links every approved platform section", () => {
     const home = readSource("../../../routes/home.tsx");
     const shell = readSource("../../../components/platform-shell.tsx");
     const actions = readSource("../../../components/platform-header-actions.tsx");
@@ -17,7 +17,11 @@ describe("authenticated platform shell source contract", () => {
     expect(home).toContain('to: "/my-programs"');
     expect(home).toContain('to: "/progress"');
     expect(home).toContain('to: "/nutrition"');
-    expect(home).toContain('to="/programs"');
+    expect(shell).toContain('{ label: "Programs", to: "/my-programs"');
+    expect(shell).toContain('{ label: "Progress", to: "/progress"');
+    expect(shell).toContain('{ label: "Nutrition", to: "/nutrition"');
+    expect(shell).not.toContain('{ label: "Explore"');
+    expect(shell).toContain("grid-cols-4");
     expect(actions).toContain('to="/notifications"');
   });
 
@@ -76,7 +80,8 @@ describe("authenticated platform shell source contract", () => {
     expect(nutrition).toContain("getNutritionProfile");
     expect(nutrition).toContain("saveNutritionProfile");
     expect(nutrition).not.toMatch(/checkout|stripe|sendEmail/);
-    expect(programs).toContain("without opening checkout");
+    expect(programs).toContain('to: "/my-programs"');
+    expect(programs).toContain('hash: "available"');
     expect(notifications).toContain("getPlatformNotifications");
     expect(notifications).toContain("dismissMeasurementReminder");
     expect(notifications).toContain('to="/progress"');

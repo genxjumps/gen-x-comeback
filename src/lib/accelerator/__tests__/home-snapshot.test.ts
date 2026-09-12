@@ -14,7 +14,7 @@ const empty: Extract<MyProgramsResult, { ok: true }> = {
 describe("homepage next step", () => {
   it("keeps an unavailable account distinct from an account without programs", () => {
     expect(homeAssignment({ ok: false }, null).title).toContain("couldn’t be loaded");
-    expect(homeAssignment(empty, null).to).toBe("/programs");
+    expect(homeAssignment(empty, null).to).toBe("/my-programs");
   });
   it("shows saved paused progress instead of an empty workout", () => {
     const card = homeAssignment(
@@ -29,7 +29,7 @@ describe("homepage next step", () => {
     expect(card.to).toBe("/my-programs");
   });
   it("does not offer a refunded account an owned program", () => {
-    expect(homeAssignment(empty, null).button).toBe("Explore Programs");
+    expect(homeAssignment(empty, null).button).toBe("View Programs");
   });
   it("offers setup for an owned program that has not started", () => {
     const card = homeAssignment(
@@ -56,7 +56,7 @@ describe("homepage next step", () => {
       null,
     );
     expect(card.title).toContain("completed");
-    expect(card.button).toBe("View My Programs");
+    expect(card.button).toBe("View Programs");
   });
   it("does not invent a workout when an active program's detail request fails", () => {
     const card = homeAssignment({ ...empty, activeProgram: "accelerator" }, null);

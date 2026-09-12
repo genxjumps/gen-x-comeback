@@ -24,6 +24,7 @@ import {
 } from "@/lib/nutrition/calculator";
 import { getNutritionProfile, saveNutritionProfile } from "@/lib/nutrition/functions";
 import { nutritionIntakeSchema } from "@/lib/nutrition/schemas";
+import { buildNutritionTargetReview } from "@/lib/nutrition/target-review";
 import type {
   BiggestMeal,
   FitnessGoal,
@@ -33,6 +34,7 @@ import type {
   NutritionIntake,
   NutritionProfile,
   NutritionProfileResult,
+  NutritionTargetReview,
   TrainingType,
   WeightDirection,
 } from "@/lib/nutrition/types";
@@ -40,10 +42,7 @@ import { MEAL_OCCASIONS } from "@/lib/nutrition/types";
 
 export const Route = createFileRoute("/nutrition")({
   head: () => ({
-    meta: [
-      { title: "My Nutrition | Gen X Jumps" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+    meta: [{ title: "Nutrition | Gen X Jumps" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: Nutrition,
 });
@@ -247,8 +246,8 @@ function NutritionWelcome({ onStart }: { onStart: () => void }) {
     <div className="space-y-4">
       <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
         <p className="text-sm leading-relaxed">
-          My Nutrition gives you starting calorie and macro targets, then shows how those numbers
-          fit across the way you actually eat. It does not require food logging.
+          Nutrition gives you starting calorie and macro targets, then shows how those numbers fit
+          across the way you actually eat. It does not require food logging.
         </p>
         <ul className="mt-4 space-y-2 text-sm font-medium">
           <li>Calories still matter.</li>
@@ -579,19 +578,23 @@ function SetupForm({
 
 function NutritionResults({
   profile,
+  targetReview,
   saving,
   message,
   mealPercentages,
   onEdit,
+  onReviewTargets,
   onSliderChange,
   onReset,
   onSaveSplit,
 }: {
   profile: NutritionProfile;
+  targetReview: NutritionTargetReview | null;
   saving: boolean;
   message: string | null;
   mealPercentages: MealPercentages;
   onEdit: () => void;
+  onReviewTargets: () => void;
   onSliderChange: (occasion: MealOccasion, percentage: number) => void;
   onReset: () => void;
   onSaveSplit: () => void;
@@ -609,6 +612,38 @@ function NutritionResults({
 
   return (
     <div className="space-y-5">
+      {targetReview ? (
+        <section className="rounded-lg border border-gxj-teal/40 bg-gxj-mint p-5 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+            Target Review
+          </p>
+          <h2 className="mt-2 text-xl font-semibold">Your targets may need an update</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Your latest weight is {targetReview.measuredWeight.value}{" "}
+            {targetReview.measuredWeight.unit}. Review how it affects your daily targets before
+            saving anything.
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div>
+              <p className="text-xs text-muted-foreground">Calories</p>
+              <p className="font-semibold">
+                {targetReview.currentTargets.calories.toLocaleString()} to{" "}
+                {targetReview.proposedTargets.calories.toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Protein</p>
+              <p className="font-semibold">
+                {targetReview.currentTargets.proteinGrams} g to{" "}
+                {targetReview.proposedTargets.proteinGrams} g
+              </p>
+            </div>
+          </div>
+          <Button type="button" className="mt-5" onClick={onReviewTargets}>
+            Review Updated Targets
+          </Button>
+        </section>
+      ) : null}
       <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
@@ -664,7 +699,7 @@ function NutritionResults({
               to="/progress"
               className="font-medium text-foreground underline underline-offset-4"
             >
-              My Progress
+              Progress
             </Link>
             .
           </p>
@@ -891,6 +926,7 @@ function Nutrition() {
   const saveNutrition = useServerFn(saveNutritionProfile);
   const [result, setResult] = useState<NutritionProfileResult | null>(null);
   const [profile, setProfile] = useState<NutritionProfile | null>(null);
+  const [targetReview, setTargetReview] = useState<NutritionTargetReview | null>(null);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [mealPercentages, setMealPercentages] = useState<MealPercentages>({});
   const [editing, setEditing] = useState(false);
@@ -909,6 +945,7 @@ function Nutrition() {
         if (loaded.ok && loaded.access === "eligible") {
           if (loaded.profile) {
             setProfile(loaded.profile);
+            setTargetReview(loaded.targetReview);
             setForm(profileToForm(loaded.profile));
             setMealPercentages(loaded.profile.mealPercentages);
           } else if (loaded.savedWeight) {
@@ -963,9 +1000,17 @@ function Nutrition() {
         return;
       }
       setProfile(saved.profile);
+      setTargetReview(
+        buildNutritionTargetReview({
+          intake: saved.profile.intake,
+          targets: saved.profile.targets,
+          savedWeight: result?.ok && result.access === "eligible" ? result.savedWeight : null,
+        }),
+      );
       setForm(profileToForm(saved.profile));
       setMealPercentages(saved.profile.mealPercentages);
       setEditing(false);
+      window.dispatchEvent(new CustomEvent("gxj:notifications-changed"));
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       setError("Your targets could not be saved. Try again.");
@@ -1003,12 +1048,14 @@ function Nutrition() {
   if (result.access === "locked") {
     return (
       <PlatformPage
-        kicker="My Nutrition"
+        kicker="Nutrition"
         title="Available With An Eligible Paid Program"
         description="The free 7-Day Comeback Plan does not unlock the nutrition tool. Your workouts and saved progress are unaffected."
       >
         <Button asChild>
-          <Link to="/programs">Explore Programs</Link>
+          <Link to="/my-programs" hash="available">
+            View Programs
+          </Link>
         </Button>
       </PlatformPage>
     );
@@ -1016,7 +1063,7 @@ function Nutrition() {
 
   return (
     <PlatformPage
-      kicker="My Nutrition"
+      kicker="Nutrition"
       title="Calories Matter. Protein First. Meals Stay Simple."
       description="Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
     >
@@ -1051,10 +1098,21 @@ function Nutrition() {
       ) : (
         <NutritionResults
           profile={profile}
+          targetReview={targetReview}
           saving={saving}
           message={message}
           mealPercentages={mealPercentages}
           onEdit={() => {
+            setEditing(true);
+            setError(null);
+            setStopped(false);
+          }}
+          onReviewTargets={() => {
+            const next = profileToForm(profile);
+            next.currentWeight = String(
+              Math.round((targetReview?.currentWeight ?? profile.intake.currentWeight) * 10) / 10,
+            );
+            setForm(next);
             setEditing(true);
             setError(null);
             setStopped(false);

@@ -121,30 +121,32 @@ The weekly coaching focus is:
 
 Home is an action-first dashboard, not a content library.
 
-When a structured program is active, **Daily Assignment** is the first and largest card. Selecting
-it opens the focused assignment for the current program day.
+When a structured program is active, **Today’s Workout** is the first and largest card. Selecting
+it opens the focused workout, recovery or rest action for the current program day.
 
 Home also provides clear access to:
 
-- **My Programs**
-- **Your Progress**
-- **Your Nutrition**
-- **Explore Programs**
+- **Programs**
+- **Progress**
+- **Nutrition**
 - The in-app notification bell or inbox
 
 Future membership, community, live, and challenge content may appear on Home without displacing the
 Daily Assignment or turning Home into a crowded feed.
 
-### My Programs
+### Programs
 
-My Programs shows programs in these customer-facing states:
+Programs shows owned programs in these customer-facing states:
 
 - Not Started
 - Active
 - Paused
 - Completed
 
-The completed free 7-Day Comeback Plan also appears in My Programs and remains available to open.
+The completed free 7-Day Comeback Plan also appears in Programs and remains available to open.
+
+Available programs appear in this same destination. Explore is not a separate permanent navigation
+item.
 
 Opening a structured program shows:
 

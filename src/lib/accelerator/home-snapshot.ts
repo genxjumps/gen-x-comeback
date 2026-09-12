@@ -23,9 +23,9 @@ export function homeAssignment(
 ): DailyAssignmentCard {
   let dailyAssignment: DailyAssignmentCard = {
     title: programs ? "Your programs couldn’t be loaded" : "Loading your day...",
-    description: programs ? "Open My Programs to try again." : "",
+    description: programs ? "Open Programs to try again." : "",
     to: "/my-programs",
-    button: "Open My Programs",
+    button: "Open Programs",
     label: "Your Next Step",
   };
 
@@ -67,14 +67,14 @@ export function homeAssignment(
               title: "Your completed programs are saved",
               description: "Review your results or choose what comes next.",
               to: "/my-programs",
-              button: "View My Programs",
+              button: "View Programs",
             }
           : {
               label: "Your Next Step",
               title: "Find your first program",
               description: "No programs are linked to your account yet.",
-              to: "/programs",
-              button: "Explore Programs",
+              to: "/my-programs",
+              button: "View Programs",
             };
     if (programs.activeProgram)
       dailyAssignment = {
@@ -82,7 +82,7 @@ export function homeAssignment(
         title: "Open your current program",
         description: "Workout details are unavailable here. Open your program to continue.",
         to: "/my-programs",
-        button: "Open My Programs",
+        button: "Open Programs",
       };
   }
 
@@ -118,7 +118,7 @@ export function homeAssignment(
   ) {
     dailyAssignment = {
       title: "28-Day Accelerator Complete",
-      description: "Your completed run and results remain saved in My Programs and My Progress.",
+      description: "Your completed run and results remain saved in Programs and Progress.",
       to: "/accelerator",
       button: "Open Completed Program",
       label: "Program Complete",

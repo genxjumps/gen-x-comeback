@@ -36,6 +36,7 @@ export function PlatformHeaderActions() {
     const updateCount = (event: Event) => {
       const detail = (event as CustomEvent<{ count?: number }>).detail;
       if (typeof detail?.count === "number") setNotificationCount(detail.count);
+      else setAuthRevision((value) => value + 1);
     };
     window.addEventListener("gxj:notifications-changed", updateCount);
     return () => {

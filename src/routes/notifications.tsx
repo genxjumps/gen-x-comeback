@@ -11,7 +11,8 @@ import {
   getPlatformNotifications,
   setProgramReminderPreference,
 } from "@/lib/notifications/functions";
-import type { PlatformNotification, PlatformComebackReminder } from "@/lib/notifications/types";
+import type { PlatformNotification } from "@/lib/notifications/types";
+import type { MeasurementReminder } from "@/lib/notifications/measurement-reminder";
 
 export const Route = createFileRoute("/notifications")({
   head: () => ({
@@ -55,7 +56,7 @@ function Notifications() {
     };
   }, [loadNotifications, loadPreference]);
 
-  async function dismiss(notification: Exclude<PlatformNotification, PlatformComebackReminder>) {
+  async function dismiss(notification: MeasurementReminder) {
     setDismissing(true);
     setError(null);
     try {
@@ -193,6 +194,10 @@ function Notifications() {
                       {dismissing ? "Dismissing..." : "Dismiss for This Week"}
                     </Button>
                   </>
+                ) : notification.code === "nutrition_target_review" ? (
+                  <Button asChild size="sm">
+                    <Link to="/nutrition">Review Targets</Link>
+                  </Button>
                 ) : (
                   <Button asChild size="sm">
                     <Link to={notification.target}>Open Today&rsquo;s Workout</Link>

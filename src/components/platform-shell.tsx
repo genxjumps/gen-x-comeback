@@ -1,19 +1,25 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Apple, ChartNoAxesColumnIncreasing, Compass, Dumbbell, Home } from "lucide-react";
+import { Apple, ChartNoAxesColumnIncreasing, Dumbbell, Home } from "lucide-react";
 import { type ReactNode } from "react";
 
 import { PlatformHeaderActions } from "@/components/platform-header-actions";
 
 const primaryNavigation = [
   { label: "Home", to: "/home", icon: Home },
-  { label: "My Programs", to: "/my-programs", icon: Dumbbell },
-  { label: "My Progress", to: "/progress", icon: ChartNoAxesColumnIncreasing },
-  { label: "My Nutrition", to: "/nutrition", icon: Apple },
-  { label: "Explore", to: "/programs", icon: Compass },
+  { label: "Programs", to: "/my-programs", icon: Dumbbell },
+  { label: "Progress", to: "/progress", icon: ChartNoAxesColumnIncreasing },
+  { label: "Nutrition", to: "/nutrition", icon: Apple },
 ] as const;
 
 function isActivePath(pathname: string, to: string): boolean {
-  return pathname === to || (to === "/my-programs" && pathname === "/accelerator");
+  if (to !== "/my-programs") return pathname === to;
+  return (
+    pathname === "/accelerator" ||
+    pathname === "/my-programs" ||
+    pathname.startsWith("/my-programs/") ||
+    pathname === "/programs" ||
+    pathname.startsWith("/programs/")
+  );
 }
 
 export function PlatformShell({ children }: { children: ReactNode }) {
@@ -62,7 +68,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
         className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/98 pb-[env(safe-area-inset-bottom)] lg:hidden"
         aria-label="Main navigation"
       >
-        <div className="mx-auto grid max-w-2xl grid-cols-5">
+        <div className="mx-auto grid max-w-2xl grid-cols-4">
           {primaryNavigation.map((item) => {
             const active = isActivePath(pathname, item.to);
             const Icon = item.icon;

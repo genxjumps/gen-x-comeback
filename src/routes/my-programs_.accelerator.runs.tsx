@@ -58,7 +58,7 @@ function PreviousRuns() {
   const runs = result.ok ? (result.accelerator?.previousRuns ?? []) : [];
   return (
     <PlatformPage
-      kicker="My Programs"
+      kicker="Programs"
       title="Previous Accelerator Runs"
       description="Every completed or replaced run keeps its original version, dates, and progress."
     >
@@ -126,7 +126,7 @@ function PreviousRuns() {
         ) : null}
       </div>
       <Button asChild variant="outline" className="mt-6">
-        <Link to="/my-programs">Back to My Programs</Link>
+        <Link to="/my-programs">Back to Programs</Link>
       </Button>
     </PlatformPage>
   );

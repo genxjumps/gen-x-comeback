@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ArrowRight, Apple, ChartNoAxesColumnIncreasing, Compass, Dumbbell } from "lucide-react";
+import { ArrowRight, Apple, ChartNoAxesColumnIncreasing, Dumbbell } from "lucide-react";
 
 import { homeAssignment } from "@/lib/accelerator/home-snapshot";
 import { Button } from "@/components/ui/button";
@@ -86,7 +86,7 @@ function PlatformHome() {
     nutrition?.ok && nutrition.access === "eligible" ? nutrition.profile?.targets : null;
   const shortcuts = [
     {
-      title: "My Programs",
+      title: "Programs",
       to: "/my-programs",
       icon: Dumbbell,
       lines: !programs
@@ -98,7 +98,7 @@ function PlatformHome() {
             : ["No programs yet"],
     },
     {
-      title: "My Progress",
+      title: "Progress",
       to: "/progress",
       icon: ChartNoAxesColumnIncreasing,
       lines: !programs
@@ -121,7 +121,7 @@ function PlatformHome() {
             ],
     },
     {
-      title: "My Nutrition",
+      title: "Nutrition",
       to: "/nutrition",
       icon: Apple,
       lines: !nutrition
@@ -199,13 +199,6 @@ function PlatformHome() {
           );
         })}
       </section>
-      <Link
-        to="/programs"
-        className="mt-6 inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
-      >
-        <Compass aria-hidden="true" className="size-4" /> Explore Programs{" "}
-        <ArrowRight aria-hidden="true" className="size-4" />
-      </Link>
     </div>
   );
 }

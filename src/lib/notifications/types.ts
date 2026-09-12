@@ -5,7 +5,17 @@ export type PlatformComebackReminder = ComebackReminder & {
   target: "/accelerator" | "/your-plan";
 };
 
-export type PlatformNotification = MeasurementReminder | PlatformComebackReminder;
+export type NutritionTargetReviewNotification = {
+  code: "nutrition_target_review";
+  title: string;
+  message: string;
+  target: "/nutrition";
+};
+
+export type PlatformNotification =
+  | MeasurementReminder
+  | PlatformComebackReminder
+  | NutritionTargetReviewNotification;
 
 export type PlatformNotificationsResult =
   | { ok: true; notifications: PlatformNotification[] }
