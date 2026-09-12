@@ -83,8 +83,8 @@ function PlanReady() {
           {plan.firstName}, Keep Your Comeback One Tap Away
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
-          Your personalized seven-day plan is saved and ready. Add Gen X Jumps to your Home Screen
-          so it&rsquo;s easy to come back for every workout.
+          Your personalized 7-day plan is saved and ready. Add Gen X Jumps to your Home Screen so
+          it&rsquo;s easy to come back for every workout.
         </p>
         <div className="mt-7">
           <InstallExperience

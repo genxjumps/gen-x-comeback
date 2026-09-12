@@ -183,7 +183,7 @@
     },
     {
       "path": "src/components/day-one-workout.tsx",
-      "sha256": "8c167d19018dc985275671675e7a6f45e259a6b2e7027336fa1e4f0b6abbd630"
+      "sha256": "34e2685ec759a3822a591b7a9663595de5058d6de446ae4cd782a679e1ffe355"
     },
     {
       "path": "src/components/intake-closed.tsx",
@@ -191,7 +191,7 @@
     },
     {
       "path": "src/components/plan-access.tsx",
-      "sha256": "027d7636d05b4b414f68ad61baa75675b4de3ea611cc6391b27bae1e845ae5d7"
+      "sha256": "2bf593e99a6cab51bf9263bdf1a325061f1d3d45deae47522ebf97ba6a19583b"
     },
     {
       "path": "src/components/platform-access-boundary.tsx",
@@ -307,7 +307,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
-      "sha256": "ba730a92d51abdfa27a12a0cb3526b563412b135c341864092ee63b24e00057c"
+      "sha256": "27c30f68c83be8bdd67b9087e6cabb5760df853dae4531ec66940186b9519350"
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
@@ -1251,7 +1251,7 @@
     },
     {
       "path": "src/routes/index.tsx",
-      "sha256": "1552510a980bb712caf21369bbb313414e7e97568c4b7bf18e310df17d87fa58"
+      "sha256": "839a2533ade98e6710adf8eb0e2f74c2141fbe9fa7c8afcb38ff6767c8b1d755"
     },
     {
       "path": "src/routes/intake.7-day.ts",
@@ -1291,7 +1291,7 @@
     },
     {
       "path": "src/routes/plan-ready.tsx",
-      "sha256": "268f14aefedb8cf334d9e91539601aec214dd53e3b0e5d7721ae93a932d811d4"
+      "sha256": "5e38ebbafb63fb0fec862fd6d603d38ee301d28a2608f19eefb24b383cdc6715"
     },
     {
       "path": "src/routes/preview.accelerator.tsx",
@@ -1299,7 +1299,7 @@
     },
     {
       "path": "src/routes/preview.w01.tsx",
-      "sha256": "3f94ad7c0bfcd5ddd2a6a27dc04c78cbae67e4f5818640838ce7e38e5d7bd92d"
+      "sha256": "fed4797518e97903f47f12cf8bdb0e721bc050c8f25b967375bf9d84d79b6027"
     },
     {
       "path": "src/routes/programs.tsx",
@@ -1335,7 +1335,7 @@
     },
     {
       "path": "src/routes/welcome.tsx",
-      "sha256": "933be5e598f2d09a788852981d13e2eebc87dedbe8c880c29837c85d78f0166a"
+      "sha256": "45d5dd6fc4b775db26aa11fdb043cebf3e3100ef6f3a48412676a4caf2a34500"
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",

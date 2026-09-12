@@ -127,7 +127,7 @@ function LeadWelcome() {
         </h1>
         <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
           We saved your access. Answer a few quick questions about your fitness, schedule,
-          equipment, and limitations. Then we&rsquo;ll build your personalized seven-day plan
+          equipment, and any limitations. Then we&rsquo;ll build your personalized 7-day plan
           immediately.
         </p>
 
@@ -166,7 +166,7 @@ function LeadWelcome() {
 
         <div className="mt-7">
           <Button asChild size="lg" className="w-full sm:w-auto">
-            <Link to={destination}>Build My 7-Day Plan</Link>
+            <Link to={destination}>Create My 7-Day Plan</Link>
           </Button>
           <p className="mt-3 text-xs text-muted-foreground">
             About 2 minutes. No password required.

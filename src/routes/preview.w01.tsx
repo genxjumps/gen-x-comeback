@@ -79,7 +79,7 @@ function DayOnePreviewPage() {
         </p>
         <div className="mt-6 grid gap-3 sm:flex">
           <Button asChild className="w-full sm:w-auto">
-            <Link to="/assessment/start">Build My 7-Day Plan</Link>
+            <Link to="/assessment/start">Create My 7-Day Plan</Link>
           </Button>
           <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link to="/assessment">Continue My Assessment</Link>
