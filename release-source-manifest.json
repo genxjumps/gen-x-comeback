@@ -1155,7 +1155,7 @@
     },
     {
       "path": "src/lib/w01-content.ts",
-      "sha256": "c9aaa0c459e7824faf60e2b29629542b384bd7236e3cdc161b7ebf71fd85dbe1"
+      "sha256": "a635b469e7eb284abbab033f17023581e4d79546d15cac24b8f596545407852f"
     },
     {
       "path": "src/lib/workout-videos.ts",
@@ -1231,7 +1231,7 @@
     },
     {
       "path": "src/routes/assessment.complete.tsx",
-      "sha256": "41989ee0f399cb594a711df466a0294628b6efdaa22024838b5ec9f1bf3a5a43"
+      "sha256": "e3e34bec44de6060102be1bf3c99f2ee89777e3ffee7009884dd5207f8ef5092"
     },
     {
       "path": "src/routes/assessment.index.tsx",
@@ -1347,7 +1347,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "602d596b6e87c52c562a370de622514dbde25c4cf06f87437823f3b2cc401447"
+      "sha256": "b793e782bb27d22f3cf25b177c112bf06fe55afd4620be91b823bed2d6b908e8"
     },
     {
       "path": "src/server.ts",

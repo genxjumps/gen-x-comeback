@@ -296,9 +296,8 @@ function ResultsPage() {
           How to Approach the Workouts
         </h2>
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-          These workouts are supposed to challenge you. Work hard. Rest when needed. Do fewer reps
-          or use a smaller range of motion when necessary. Skip a movement you cannot perform
-          safely. Stop if you feel pain rather than normal exercise discomfort.
+          Work hard, but go at your own pace. Rest when needed. Do fewer reps or use a smaller range
+          of motion if necessary. Skip anything you can’t do safely, and stop if you feel pain.
         </p>
       </section>
 
