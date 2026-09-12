@@ -18,9 +18,9 @@ export const W01_EXPECT = [
 export const W01_CARDIO_HEADING = "For the Jump Rope Intervals";
 
 export const W01_EQUIPMENT_NOTES = [
-  "No dumbbells required",
-  "Jump rope optional because ghost jumps or lower-impact cardio can replace it",
-  "Mat or cushioned surface recommended for floor work",
+  "Jump rope",
+  "Your body",
+  "Mat or cushioned surface - optional but recommended",
 ];
 
 export const W01_APPROACH =
