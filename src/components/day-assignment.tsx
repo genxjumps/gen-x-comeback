@@ -18,7 +18,7 @@ import {
   type PlanDayView,
 } from "@/lib/lead-plan";
 import { completePlanDay, getDayBrief } from "@/lib/lead.functions";
-import { W01_APPROACH } from "@/lib/w01-content";
+import { W01_APPROACH, W01_CARDIO_HEADING } from "@/lib/w01-content";
 
 type Brief = {
   cardio: CardioContext;
@@ -34,7 +34,7 @@ const LABEL = "text-xs font-medium uppercase tracking-[0.15em] text-muted-foregr
 function CardioSection({ cardio }: { cardio: CardioContext }) {
   return (
     <section className={SECTION}>
-      <h2 className={LABEL}>Your Cardio Option</h2>
+      <h2 className={LABEL}>{W01_CARDIO_HEADING}</h2>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cardioGuidance(cardio)}</p>
     </section>
   );
