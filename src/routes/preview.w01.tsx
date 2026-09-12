@@ -149,10 +149,11 @@ function DayOnePreviewPage() {
 
       <section className="mt-8 rounded-lg border border-border bg-card p-4">
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Progress tracking is saved after you unlock your full plan.
+          Unlock the rest of your personalized 7-day plan and keep moving toward losing fat,
+          rebuilding your fitness, and proving you’re not done yet.
         </p>
         <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
-          <Link to="/assessment/complete">Unlock and Save My Full Plan</Link>
+          <Link to="/assessment/complete">Unlock My Full 7-Day Plan</Link>
         </Button>
       </section>
     </div>
