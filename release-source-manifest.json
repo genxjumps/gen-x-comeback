@@ -319,7 +319,7 @@
     },
     {
       "path": "src/lib/__tests__/plan-hub-actions-contract.test.ts",
-      "sha256": "7fdb0f409a25f3b4ccf375870e0a78c9b34a199ebd356460a54fd57f6d4b9851"
+      "sha256": "19002694c8c24bd5b2f43cdc0b830390f6d2c8217ccf45c9a6794fc66c19be01"
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
@@ -1347,7 +1347,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "9067299572f31ad79783752647b90ee25731d04ad51954252ecc9ea6ee1298fa"
+      "sha256": "602d596b6e87c52c562a370de622514dbde25c4cf06f87437823f3b2cc401447"
     },
     {
       "path": "src/server.ts",
