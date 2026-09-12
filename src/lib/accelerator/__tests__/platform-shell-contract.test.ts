@@ -4,20 +4,30 @@ import { describe, expect, it } from "vitest";
 const readSource = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 describe("authenticated platform shell source contract", () => {
-  it("keeps Daily Assignment first on Home and links every approved platform section", () => {
+  it("keeps today’s workout first on Home and links every approved platform section", () => {
     const home = readSource("../../../routes/home.tsx");
     const shell = readSource("../../../components/platform-shell.tsx");
+    const actions = readSource("../../../components/platform-header-actions.tsx");
     const renderedHome = home.slice(home.indexOf("function PlatformHome"));
 
     expect(renderedHome).toContain("{dailyAssignment.title}");
     expect(renderedHome.indexOf("{dailyAssignment.title}")).toBeLessThan(
-      renderedHome.indexOf('aria-label="Your fitness platform"'),
+      renderedHome.indexOf('aria-label="Programs, progress, and nutrition"'),
     );
     expect(home).toContain('to: "/my-programs"');
     expect(home).toContain('to: "/progress"');
     expect(home).toContain('to: "/nutrition"');
-    expect(home).toContain('to="/programs"');
-    expect(shell).toContain('to="/notifications"');
+    expect(shell).toContain('{ label: "Programs", to: "/my-programs"');
+    expect(shell).toContain('{ label: "Progress", to: "/progress"');
+    expect(shell).toContain('{ label: "Nutrition", to: "/nutrition"');
+    expect(shell).not.toContain('{ label: "Explore"');
+    expect(shell).toContain("grid-cols-4");
+    expect(actions).toContain('to="/notifications"');
+    expect(home).toMatch(/<h1[^>]*>\s*Today\s*<\/h1>/);
+    expect(home).toContain('["Browse available programs"]');
+    expect(home).toContain('["No measurements yet"]');
+    expect(home).toContain('["Set up your daily targets"]');
+    expect(home).not.toMatch(/Programs unavailable|Progress unavailable|Nutrition unavailable/);
   });
 
   it("uses one responsive navigation shell for the private platform routes", () => {
@@ -45,6 +55,19 @@ describe("authenticated platform shell source contract", () => {
     expect(access).toContain("enrollment is still closed during development");
   });
 
+  it("keeps account and notification actions on participant screens that use the compact shell", () => {
+    const root = readSource("../../../routes/__root.tsx");
+    const shell = readSource("../../../components/platform-shell.tsx");
+    const actions = readSource("../../../components/platform-header-actions.tsx");
+
+    expect(shell).toContain("<PlatformHeaderActions />");
+    expect(root).toContain("inPlan || inJumpRopes || inCheckoutSuccess || inAcceleratorOffer");
+    expect(root).toContain("<PlatformHeaderActions />");
+    expect(actions).toContain("<AccountNavigation />");
+    expect(actions).toContain('to="/notifications"');
+    expect(actions).toContain("aria-label={notificationCount > 0");
+  });
+
   it("keeps unfinished provider behavior inactive while using real program state", () => {
     const home = readSource("../../../routes/home.tsx");
     const nutrition = readSource("../../../routes/nutrition.tsx");
@@ -62,7 +85,8 @@ describe("authenticated platform shell source contract", () => {
     expect(nutrition).toContain("getNutritionProfile");
     expect(nutrition).toContain("saveNutritionProfile");
     expect(nutrition).not.toMatch(/checkout|stripe|sendEmail/);
-    expect(programs).toContain("without opening checkout");
+    expect(programs).toContain('to: "/my-programs"');
+    expect(programs).toContain('hash: "available"');
     expect(notifications).toContain("getPlatformNotifications");
     expect(notifications).toContain("dismissMeasurementReminder");
     expect(notifications).toContain('to="/progress"');

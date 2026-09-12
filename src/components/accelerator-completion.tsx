@@ -220,10 +220,12 @@ export function AcceleratorCompletion({
           </Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/programs">Explore Other Programs</Link>
+          <Link to="/my-programs" hash="available">
+            View Available Programs
+          </Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/progress">View My Progress</Link>
+          <Link to="/progress">View Progress</Link>
         </Button>
         {canUndo ? (
           <Button type="button" variant="outline" disabled={savingUndo} onClick={onUndo}>

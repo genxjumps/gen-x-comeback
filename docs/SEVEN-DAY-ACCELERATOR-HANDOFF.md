@@ -19,9 +19,8 @@ Local tests cover account/guest routing, owner suppression, disabled controls, a
 
 ## Member labels and pre-test follow-up
 
-Member navigation, destination labels, Home cards, and destination buttons use
-**My Programs**, **My Progress**, **My Nutrition**, and **My Account** consistently
-on desktop and mobile. Conversational guidance keeps second-person language
+Member navigation and Home cards use **Programs**, **Progress**, and **Nutrition** consistently on
+desktop and mobile. Account and Notifications remain persistent header actions. Conversational guidance keeps second-person language
 (e.g. "Your next step" and "Your programs couldn't be loaded"). Descriptive
 headlines aren't destination labels. Routes, ownership, and checkout behavior
 aren't changed by this copy pass.

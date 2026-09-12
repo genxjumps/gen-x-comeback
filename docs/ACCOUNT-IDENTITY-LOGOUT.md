@@ -112,6 +112,12 @@ cannot hide a partial-logout error or its retry control. The boundary continues 
 content; the header makes no access grants. Notification counts clear and reload when the Auth
 identity changes so a previous account's badge does not survive account switching.
 
+The platform shell and compact participant header share one authenticated header-actions
+component. Account and notification controls therefore remain together on platform pages, the
+7-Day plan and day pages, the in-app 28-Day offer, purchase success and the jump-rope support page.
+Public entry, assessment and recovery behavior is unchanged, and the shared controls do not alter
+route authorization.
+
 After reviewing the deployed menu, Todd explicitly approved this tidy navigation-only presentation.
 Loading, busy and actual error/retry messages remain functional exceptions. No Account screen,
 identity resolution, session revocation, draft cleanup or consent behavior changes with this copy

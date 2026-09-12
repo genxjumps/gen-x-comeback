@@ -30,10 +30,10 @@ export function daysWaitingFromAvailableOn(
 export function missedDayMessage(daysWaiting: number): string | null {
   if (daysWaiting <= 0) return null;
   if (daysWaiting === 1) {
-    return "Life happens. You haven't lost your place, and today's assignment is ready when you are.";
+    return "Life happens. You haven't lost your place, and today's workout is ready when you are.";
   }
   if (daysWaiting === 2) {
-    return "No catching up and no doubled workout. Pick up with this assignment when you're ready.";
+    return "No catching up and no doubled workout. Pick up with this workout when you're ready.";
   }
-  return "Your jump rope didn't file a missing-person report. Your next assignment is still right here.";
+  return "Your jump rope didn't file a missing-person report. Your next workout is still right here.";
 }

@@ -78,7 +78,7 @@ function AcceleratorCheckoutSuccess() {
         title={status === "complete" ? "You Own It" : "Confirming Your Purchase"}
         description={
           status === "complete"
-            ? "Your Accelerator is now in My Programs. Day 1 has not started."
+            ? "Your Accelerator is now in Programs. Day 1 has not started."
             : status === "error"
               ? "We could not finish opening your test purchase in this browser. No program was started."
               : "We’re checking your payment and account access."
@@ -106,18 +106,18 @@ function AcceleratorCheckoutSuccess() {
                       Set Up My Accelerator
                     </Link>
                   ) : (
-                    <Link to="/my-programs">Open My Programs</Link>
+                    <Link to="/my-programs">Open Programs</Link>
                   )}
                 </Button>
                 {entitlementId ? (
                   <Button asChild variant="outline" className="w-full sm:w-auto">
-                    <Link to="/my-programs">Open My Programs</Link>
+                    <Link to="/my-programs">Open Programs</Link>
                   </Button>
                 ) : null}
               </div>
               <p className="mt-4 text-sm text-muted-foreground">
                 <Link to="/nutrition" className="font-medium text-foreground underline">
-                  Open My Nutrition
+                  Open Nutrition
                 </Link>{" "}
                 to set your calorie and macro targets, then adjust how they fit across your meals.
               </p>

@@ -42,7 +42,8 @@ describe("customer progress and Day 28 completion contract", () => {
   it("offers a real repeat path and other-program recommendations", () => {
     expect(completion).toContain("Start Another Run");
     expect(completion).toContain('to="/my-programs/accelerator/setup"');
-    expect(completion).toContain("Explore Other Programs");
-    expect(completion).toContain('to="/programs"');
+    expect(completion).toContain("View Available Programs");
+    expect(completion).toContain('to="/my-programs"');
+    expect(completion).toContain('hash="available"');
   });
 });

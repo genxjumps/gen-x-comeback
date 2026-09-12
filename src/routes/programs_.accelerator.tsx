@@ -124,7 +124,7 @@ function AcceleratorProgramDetail() {
           <p className="mt-1 text-sm text-muted-foreground">One payment. Access does not expire.</p>
           {owned ? (
             <Button asChild className="mt-5 w-full">
-              <Link to="/my-programs">Open My Programs</Link>
+              <Link to="/my-programs">Open Programs</Link>
             </Button>
           ) : (
             <Button

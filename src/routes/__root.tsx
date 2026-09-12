@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { PlatformAccessBoundary } from "@/components/platform-access-boundary";
 import { PlatformShell } from "@/components/platform-shell";
 import { AccountNavigation } from "@/components/account-navigation";
+import { PlatformHeaderActions } from "@/components/platform-header-actions";
 import { AccountSessionSync } from "@/components/account-session-sync";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -137,7 +138,10 @@ function RootComponent() {
   const inPlan = pathname === "/your-plan" || pathname.startsWith("/your-plan/");
   const inJumpRopes = pathname === "/jump-ropes";
   const inCheckoutSuccess = pathname === "/checkout/accelerator/success";
+  const inAcceleratorOffer = pathname === "/programs/accelerator";
   const inAccount = pathname === "/account" || pathname === "/account/";
+  const useParticipantHeaderActions =
+    inPlan || inJumpRopes || inCheckoutSuccess || inAcceleratorOffer;
   const inPlatform =
     pathname === "/home" ||
     pathname === "/my-programs" ||
@@ -205,7 +209,7 @@ function RootComponent() {
               </Link>
             )}
             <div className="ml-auto shrink-0">
-              <AccountNavigation />
+              {useParticipantHeaderActions ? <PlatformHeaderActions /> : <AccountNavigation />}
             </div>
           </div>
         </header>

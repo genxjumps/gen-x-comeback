@@ -76,6 +76,13 @@ export type NutritionProfile = {
 
 export type SavedWeightPrefill = { value: number; unit: "lb" | "kg" } | null;
 
+export type NutritionTargetReview = {
+  measuredWeight: NonNullable<SavedWeightPrefill>;
+  currentWeight: number;
+  currentTargets: NutritionTargets;
+  proposedTargets: NutritionTargets;
+};
+
 export type NutritionProfileResult =
   | { ok: false }
   | { ok: true; access: "locked" }
@@ -84,6 +91,7 @@ export type NutritionProfileResult =
       access: "eligible";
       profile: NutritionProfile | null;
       savedWeight: SavedWeightPrefill;
+      targetReview: NutritionTargetReview | null;
     };
 
 export type SaveNutritionProfileResult =

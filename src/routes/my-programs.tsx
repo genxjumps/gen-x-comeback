@@ -10,10 +10,7 @@ import type { MyProgramsResult } from "@/lib/accelerator/types";
 
 export const Route = createFileRoute("/my-programs")({
   head: () => ({
-    meta: [
-      { title: "My Programs | Gen X Jumps" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+    meta: [{ title: "Programs | Gen X Jumps" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: MyPrograms,
 });
@@ -65,10 +62,10 @@ function MyPrograms() {
         setResult(refreshed);
         setConfirmResume(false);
       } else {
-        setActionError("That change couldn’t be saved. Reload My Programs and try again.");
+        setActionError("That change couldn’t be saved. Reload Programs and try again.");
       }
     } catch {
-      setActionError("That change couldn’t be saved. Reload My Programs and try again.");
+      setActionError("That change couldn’t be saved. Reload Programs and try again.");
     } finally {
       setActing(false);
     }
@@ -81,13 +78,13 @@ function MyPrograms() {
     try {
       const response = await activateSevenDay({ data: { leadPlanId } });
       if (!response.ok) {
-        setActionError("That program couldn’t be activated. Reload My Programs and try again.");
+        setActionError("That program couldn’t be activated. Reload Programs and try again.");
         return;
       }
       setConfirmLeadPlanId(null);
       await navigate({ to: "/your-plan" });
     } catch {
-      setActionError("That program couldn’t be activated. Reload My Programs and try again.");
+      setActionError("That program couldn’t be activated. Reload Programs and try again.");
     } finally {
       setActing(false);
     }
@@ -95,7 +92,7 @@ function MyPrograms() {
 
   return (
     <PlatformPage
-      kicker="My Programs"
+      kicker="Programs"
       title="Your Programs, In One Place"
       description="Programs you own stay here - not started, active, paused, and completed - without erasing previous runs."
     >
@@ -278,6 +275,30 @@ function MyPrograms() {
             No programs are linked to this account yet.
           </p>
         ) : null}
+
+        <section id="available" className="scroll-mt-24 pt-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+            Available Programs
+          </p>
+          {accelerator ? (
+            <p className="mt-3 rounded-lg border border-dashed border-border p-5 text-sm text-muted-foreground">
+              You own every program currently available. New programs will appear here.
+            </p>
+          ) : (
+            <div className="mt-3 rounded-lg border border-border bg-card p-5 sm:p-6">
+              <h2 className="text-lg font-semibold">28-Day Fat Loss Accelerator</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                Keep building strength, fitness, and consistency with four weeks of guided workouts
+                and unlocked nutrition tools.
+              </p>
+              <Button asChild className="mt-4 w-full sm:w-auto">
+                <Link to="/programs/accelerator">
+                  View Program <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+            </div>
+          )}
+        </section>
       </div>
     </PlatformPage>
   );

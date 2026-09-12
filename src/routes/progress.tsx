@@ -25,10 +25,7 @@ import type {
 
 export const Route = createFileRoute("/progress")({
   head: () => ({
-    meta: [
-      { title: "My Progress | Gen X Jumps" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+    meta: [{ title: "Progress | Gen X Jumps" }, { name: "robots", content: "noindex, nofollow" }],
   }),
   component: Progress,
 });
@@ -266,7 +263,7 @@ function Progress() {
           progress: `${activeLeadPlan.completedDays} of ${activeLeadPlan.totalDays} days`,
         }
       : programs?.ok && programs.activeProgram === "other_program"
-        ? { name: "Another Gen X Jumps program", progress: "Open My Programs for details" }
+        ? { name: "Another Gen X Jumps program", progress: "Open Programs for details" }
         : accelerator?.currentRun
           ? {
               name: "28-Day Fat Loss Accelerator",
@@ -368,7 +365,7 @@ function Progress() {
 
   return (
     <PlatformPage
-      kicker="My Progress"
+      kicker="Progress"
       title="See The Work Adding Up"
       description="Your current program and latest optional measurements stay simple here. Open the details only when you want the full history."
     >
@@ -462,7 +459,7 @@ function Progress() {
           </Button>
         ) : null}
         <Button asChild variant="outline">
-          <Link to="/my-programs">My Programs</Link>
+          <Link to="/my-programs">Programs</Link>
         </Button>
       </div>
     </PlatformPage>

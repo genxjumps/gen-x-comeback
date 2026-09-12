@@ -396,11 +396,11 @@ export function AcceleratorProgram() {
             <section className="rounded-lg border border-border bg-card p-6">
               <h2 className="text-xl font-semibold">This run is paused</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                Your progress is safe. Resume it from My Programs when you want this to become your
+                Your progress is safe. Resume it from Programs when you want this to become your
                 active structured program again.
               </p>
               <Button asChild className="mt-5">
-                <Link to="/my-programs">Open My Programs</Link>
+                <Link to="/my-programs">Open Programs</Link>
               </Button>
             </section>
           ) : selectedDay && selectedDetails && selectedContent ? (
