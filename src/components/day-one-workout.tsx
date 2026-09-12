@@ -91,7 +91,7 @@ export function DayOneWorkout() {
             <Link to="/your-plan">Go to My Plan</Link>
           </Button>
           <Button asChild variant="outline" className="w-full sm:w-auto">
-            <Link to="/assessment/start">Build My 7-Day Plan</Link>
+            <Link to="/assessment/start">Create My 7-Day Plan</Link>
           </Button>
         </div>
       </div>

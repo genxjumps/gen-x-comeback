@@ -9,7 +9,7 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 1. The website hero submits first name, email, explicit consent, and attribution fields to `POST /intake/7-day`.
 2. The app validates the website origin, rate-limits the request, stores a 24-hour intake handoff, queues the welcome email, and sets an HTTP-only handoff cookie. Existing plans follow the approved recovery contract below.
 3. The participant lands on `/welcome` and sees three scannable states: Access saved, Quick setup, Plan ready.
-4. `Build My 7-Day Plan` starts the assessment. The participant is told it takes about two minutes and requires no password.
+4. `Create My 7-Day Plan` starts the assessment. The participant is told it takes about two minutes and requires no password.
 5. Assessment completion claims the intake and creates the plan without another identity form.
 6. `/plan-ready` immediately offers device-appropriate Home Screen installation. Choosing `Not Now - View My Plan` always opens the plan.
 7. A dismissed install prompt can reappear as a compact plan-page nudge after 24 hours.

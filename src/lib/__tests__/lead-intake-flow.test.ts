@@ -183,7 +183,7 @@ describe("website lead intake handoff", () => {
     expect(welcomeRoute).toContain("Access saved");
     expect(welcomeRoute).toContain("Quick setup");
     expect(welcomeRoute).toContain("Plan ready");
-    expect(welcomeRoute).toContain("Build My 7-Day Plan");
+    expect(welcomeRoute).toContain("Create My 7-Day Plan");
     expect(welcomeRoute).toContain("About 2 minutes. No password required.");
   });
 
