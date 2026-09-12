@@ -74,7 +74,7 @@ function PlanReady() {
   if (status === "denied" || !plan) return <AccessDenied />;
 
   return (
-    <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8 sm:py-12">
+    <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl items-start justify-items-center px-5 pb-8 pt-8 sm:pb-12 sm:pt-12">
       <section className="w-full">
         <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
           Your Plan Is Ready
@@ -82,11 +82,7 @@ function PlanReady() {
         <h1 className="gxj-display-title mt-4 text-3xl leading-[1.05] tracking-tight sm:text-4xl">
           {plan.firstName}, Keep Your Comeback One Tap Away
         </h1>
-        <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
-          Your personalized 7-day plan is saved and ready. Add Gen X Jumps to your Home Screen so
-          it&rsquo;s easy to come back for every workout.
-        </p>
-        <div className="mt-7">
+        <div className="mt-6">
           <InstallExperience
             track={track}
             onContinue={() => navigate({ to: "/your-plan", replace: true })}
