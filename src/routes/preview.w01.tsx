@@ -106,14 +106,6 @@ function DayOnePreviewPage() {
         </ul>
       </section>
 
-      <WorkoutMediaCard
-        dayNumber={1}
-        code="W01"
-        title={W01_TITLE}
-        coverTitle={WORKOUTS.W01.title}
-        state={{ type: "ready" }}
-      />
-
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           Your Cardio Option
@@ -140,6 +132,14 @@ function DayOnePreviewPage() {
           ))}
         </ul>
       </section>
+
+      <WorkoutMediaCard
+        dayNumber={1}
+        code="W01"
+        title={W01_TITLE}
+        coverTitle={WORKOUTS.W01.title}
+        state={{ type: "ready" }}
+      />
 
       <section className="mt-8 rounded-lg border border-border bg-card p-4">
         <p className="text-sm leading-relaxed text-muted-foreground">

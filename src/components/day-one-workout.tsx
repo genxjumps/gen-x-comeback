@@ -115,14 +115,6 @@ export function DayOneWorkout() {
         </ul>
       </section>
 
-      <WorkoutMediaCard
-        dayNumber={1}
-        code="W01"
-        title={W01_TITLE}
-        coverTitle={WORKOUTS.W01.title}
-        state={completed ? { type: "completed" } : { type: "ready" }}
-      />
-
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           Your Cardio Option
@@ -149,6 +141,14 @@ export function DayOneWorkout() {
           ))}
         </ul>
       </section>
+
+      <WorkoutMediaCard
+        dayNumber={1}
+        code="W01"
+        title={W01_TITLE}
+        coverTitle={WORKOUTS.W01.title}
+        state={completed ? { type: "completed" } : { type: "ready" }}
+      />
 
       <section className="mt-8">
         {completed ? (
