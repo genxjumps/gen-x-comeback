@@ -120,7 +120,7 @@ function LeadWelcome() {
     <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8 sm:py-12">
       <section className="w-full">
         <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
-          You&rsquo;re In
+          Congratulations
         </p>
         <h1 className="gxj-display-title mt-4 text-3xl leading-[1.05] tracking-tight sm:text-4xl">
           {result.firstName}, Let&rsquo;s Build Your Comeback Plan
