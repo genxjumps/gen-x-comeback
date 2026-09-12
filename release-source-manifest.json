@@ -743,7 +743,7 @@
     },
     {
       "path": "src/lib/email/__tests__/start-day-1-dispatch.test.ts",
-      "sha256": "d82a6a445ecf485033d396a85efc6a15c6e9f8bca3d898f1a94e1cca3f0f582c"
+      "sha256": "41c966702cc6b3e19e30b062cc5f5f3d95eb9bdcf360d0c4ebb693495c2330cb"
     },
     {
       "path": "src/lib/email/__tests__/start-day-1-job-creation.test.ts",
@@ -755,7 +755,7 @@
     },
     {
       "path": "src/lib/email/__tests__/start-day-1-template.test.ts",
-      "sha256": "86a0b8d1f8e20b10db4a802451e6501354582828bbe359d0db86c986e77ca427"
+      "sha256": "c8d1e2d2532cb7c42148a4a7501974a6207d01e936045204e360ef5457e759d6"
     },
     {
       "path": "src/lib/email/adapters.server.ts",
@@ -935,7 +935,7 @@
     },
     {
       "path": "src/lib/email/start-day-1-template.ts",
-      "sha256": "c931598e158300e5905f28de82b910da32e7a2f992564ed04323c3fd15b1cc53"
+      "sha256": "b4fd2de713479be0114b2d7070e4a0af3d1f716daac3388ba8b940756af3bf2f"
     },
     {
       "path": "src/lib/email/store.server.ts",
@@ -1155,7 +1155,7 @@
     },
     {
       "path": "src/lib/w01-content.ts",
-      "sha256": "d8a9945e5fcc8baac035bb4ffae2565daeb4c2be91caaf1c77195f20b806c85a"
+      "sha256": "8fafb39ce7c480956c912d6ca16af677ecc2824080c4bc5ac57de769d0d5e702"
     },
     {
       "path": "src/lib/workout-videos.ts",
@@ -1303,7 +1303,7 @@
     },
     {
       "path": "src/routes/preview.w01.tsx",
-      "sha256": "fed4797518e97903f47f12cf8bdb0e721bc050c8f25b967375bf9d84d79b6027"
+      "sha256": "c3b4ff7e00ae6b5cc09166b9ed6a5e0dc0b026c5a364cdc83ff6f9699416b2ad"
     },
     {
       "path": "src/routes/programs.tsx",
@@ -1343,7 +1343,7 @@
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",
-      "sha256": "a67e83d2f81a7761e282998874e1b7c62085edfafbd03617521e0854376b2fb1"
+      "sha256": "00ae1b3865efedfd61aa4b16cffcfd643214aec0eb7c251152fc6c06c37128f5"
     },
     {
       "path": "src/routes/your-plan.index.tsx",
