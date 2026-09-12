@@ -183,7 +183,7 @@
     },
     {
       "path": "src/components/day-one-workout.tsx",
-      "sha256": "b02bcaff12cde57b472b38aa55eb5baf84f0af5ccc8a7723b3c3a9102e9f1418"
+      "sha256": "ad2eb9143e74f9bd120af577612741950e675844baf1a000592980406572409c"
     },
     {
       "path": "src/components/intake-closed.tsx",
@@ -1303,7 +1303,7 @@
     },
     {
       "path": "src/routes/preview.w01.tsx",
-      "sha256": "fe7198c4722838c8cec8f947988505fffbe7039ae98492d4b90653f0ea7a060b"
+      "sha256": "3ddeddf8c51b721ad99940db570340f9c3cb46f4986c4f28296194a46cb2edbe"
     },
     {
       "path": "src/routes/programs.tsx",
