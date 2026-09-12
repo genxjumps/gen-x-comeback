@@ -78,7 +78,7 @@ function Account() {
         <div className="mt-6">
           <p>You’re not signed in. Use a secure email link to open your account.</p>
           <Button asChild className="mt-5">
-            <a href="/recover">Send Me a Sign-In Link</a>
+            <a href="/recover">Get a Magic Access Link</a>
           </Button>
         </div>
       ) : null}

@@ -800,11 +800,15 @@ describe("recovery entry points", () => {
     expect(block).not.toContain("/assessment");
   });
 
-  it("the saved plan page offers exactly the documented Resend My Plan Link action", async () => {
-    const source = await import("node:fs").then((fs) =>
+  it("the account menu offers the whole-app Magic Access Link action", async () => {
+    const accountNavigation = await import("node:fs").then((fs) =>
+      fs.readFileSync("src/components/account-navigation.tsx", "utf8"),
+    );
+    const planHub = await import("node:fs").then((fs) =>
       fs.readFileSync("src/routes/your-plan.index.tsx", "utf8"),
     );
-    expect(source).toContain("Resend My Plan Link");
-    expect(source).toContain('href="/recover"');
+    expect(accountNavigation).toContain("Get a Magic Access Link");
+    expect(accountNavigation).toContain('href="/recover"');
+    expect(planHub).not.toContain('href="/recover"');
   });
 });

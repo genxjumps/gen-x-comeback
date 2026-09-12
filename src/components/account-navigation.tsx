@@ -184,6 +184,12 @@ export function AccountNavigationContent({
         >
           My Account
         </a>
+        <a
+          href="/recover"
+          className="flex min-h-11 items-center rounded-md px-2 text-sm font-medium hover:bg-muted"
+        >
+          Get a Magic Access Link
+        </a>
         {identity !== null || error || busy ? (
           <button
             type="button"

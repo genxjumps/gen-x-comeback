@@ -90,7 +90,7 @@ and opening public intake remain separate approvals.
 - Plan save, calendar configuration, intake completion, controlled Plan Ready scope,
   and Plan Ready outbox creation succeed or roll back together. Retry returns the
   original saved result. Distinct submissions for an existing email never replace it.
-- The legacy Update My Plan action also requires a deliberate confirmation before
+- The Change My Plan action also requires a deliberate confirmation before
   applying changed answers. Completed plans use the separate restart action.
 - Welcome is requested transactional access, independent of marketing and proactive
   Plan-email consent. Existing consent flags remain distinct; opening a welcome

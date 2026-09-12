@@ -30,6 +30,8 @@ describe("account navigation identity and logout states", () => {
     expect(html).not.toContain("free@example.com");
     expect(html).not.toContain("Logging out clears both");
     expect(html).toContain('href="/account"');
+    expect(html).toContain('href="/recover"');
+    expect(html).toContain("Get a Magic Access Link");
     expect(html).toContain("Log Out");
     expect(html).not.toContain("unsaved assessment answers");
     expect(html).not.toContain("saved plans stay safe");

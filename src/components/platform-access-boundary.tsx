@@ -76,7 +76,7 @@ export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
             href="/recover"
             className="mt-5 inline-block rounded-md bg-foreground px-4 py-3 text-sm font-semibold text-background"
           >
-            Send Me a Sign-In Link
+            Get a Magic Access Link
           </a>
           <a href="/account" className="mt-3 block text-sm underline">
             Account and Log Out

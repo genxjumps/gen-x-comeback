@@ -78,6 +78,9 @@ function PlanHubPage() {
   const [restarting, setRestarting] = useState(false);
   const [startingDayOne, setStartingDayOne] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
+  const [confirmUpdate, setConfirmUpdate] = useState(false);
+  const [updatingPlan, setUpdatingPlan] = useState(false);
+  const [updateError, setUpdateError] = useState<string | null>(null);
 
   const trackInstall = useCallback(
     (eventName: InstallEventName, platform: InstallPlatform) => {
@@ -146,6 +149,24 @@ function PlanHubPage() {
     }
   }
 
+  async function openPlanUpdate() {
+    if (updatingPlan) return;
+    setUpdatingPlan(true);
+    setUpdateError(null);
+    try {
+      if ((await beginUpdate({ data: { token: readStoredToken() } })).ok) {
+        window.localStorage.removeItem("gxj_assessment_draft_v1");
+        await navigate({ to: "/assessment/start" });
+      } else {
+        setUpdateError("We couldn't open setup. Try again.");
+      }
+    } catch {
+      setUpdateError("We couldn't open setup. Try again.");
+    } finally {
+      setUpdatingPlan(false);
+    }
+  }
+
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">Your Plan</p>
@@ -165,6 +186,53 @@ function PlanHubPage() {
       >
         <div className="h-full bg-gxj-teal" style={{ width: `${pct}%` }} />
       </div>
+
+      {completedCount < TOTAL_ASSIGNMENTS ? (
+        <div className="mt-3">
+          {!confirmUpdate ? (
+            <button
+              type="button"
+              className="text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              onClick={() => {
+                setConfirmUpdate(true);
+                setUpdateError(null);
+              }}
+            >
+              Change My Plan
+            </button>
+          ) : (
+            <div className="rounded-lg border border-border bg-card p-4">
+              <p className="text-sm leading-relaxed">
+                Changing your answers will rebuild this plan and reset your progress.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <Button
+                  variant="outline"
+                  disabled={updatingPlan}
+                  onClick={() => void openPlanUpdate()}
+                >
+                  {updatingPlan ? "Opening..." : "Continue"}
+                </Button>
+                <Button
+                  variant="ghost"
+                  disabled={updatingPlan}
+                  onClick={() => {
+                    setConfirmUpdate(false);
+                    setUpdateError(null);
+                  }}
+                >
+                  Keep My Plan
+                </Button>
+              </div>
+              {updateError ? (
+                <p role="alert" className="mt-3 text-sm">
+                  {updateError}
+                </p>
+              ) : null}
+            </div>
+          )}
+        </div>
+      ) : null}
 
       {completedCount === TOTAL_ASSIGNMENTS ? (
         <SevenDayNextStep />
@@ -414,37 +482,6 @@ function PlanHubPage() {
             These workouts are supposed to challenge you. Work hard. Rest when needed. Do fewer reps
             or use a smaller range of motion when necessary. Skip a movement you cannot perform
             safely. Stop if you feel pain rather than normal exercise discomfort.
-          </p>
-        </div>
-
-        <div className="mt-4">
-          {completedCount < TOTAL_ASSIGNMENTS ? (
-            <>
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto"
-                onClick={async () => {
-                  try {
-                    if ((await beginUpdate({ data: { token: readStoredToken() } })).ok) {
-                      window.localStorage.removeItem("gxj_assessment_draft_v1");
-                      navigate({ to: "/assessment/start" });
-                    }
-                  } catch {
-                    setStartError("We couldn't open setup. Try again.");
-                  }
-                }}
-              >
-                Update My Plan
-              </Button>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                Changing your answers rebuilds this plan and resets its progress after you confirm.
-              </p>
-            </>
-          ) : null}
-          <p className="mt-3 text-sm leading-relaxed">
-            <a href="/recover" className="underline underline-offset-4">
-              Resend My Plan Link
-            </a>
           </p>
         </div>
       </section>
