@@ -72,6 +72,15 @@ describe("7-Day Plan calendar access", () => {
     expect(dayOne).toContain("{!completed ? (");
   });
 
+  it("explains easy-movement days as recovery without fitness jargon", () => {
+    const assignment = source("../../components/day-assignment.tsx");
+    expect(assignment).toContain("Take an easy walk, or choose another form of light movement");
+    expect(assignment).toContain("helping your body recover so you’re ready for the next workout");
+    expect(assignment).toContain("You don’t need to push");
+    expect(assignment).not.toContain("conversational pace");
+    expect(assignment).not.toContain("Easy movement is your assigned action");
+  });
+
   it("provides one numbered cover for every plan day while keeping workout names dynamic", () => {
     const media = source("../../components/workout-media-card.tsx");
     for (let day = 1; day <= 7; day += 1) {

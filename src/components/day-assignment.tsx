@@ -188,8 +188,9 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
       ) : null}
       {kind === "walk" ? (
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Easy movement is your assigned action for Day {dayNumber}. Walk at a conversational pace,
-          or use any easy movement you enjoy. It counts toward your 7-day plan.
+          Take an easy walk, or choose another form of light movement you enjoy. Today is about
+          helping your body recover so you’re ready for the next workout. You don’t need to push
+          hard - just keep moving.
         </p>
       ) : null}
       {kind === "recovery" ? (
