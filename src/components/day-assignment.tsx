@@ -192,9 +192,9 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
       ) : null}
       {kind === "recovery" ? (
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Recovery is your assigned action for Day {dayNumber}. Keep the day easy: sleep, hydrate,
-          eat to your protein target, and move gently if you feel like it. You can mark this day
-          complete without doing any workout.
+          Today is about helping your body recover so you’re ready for the next workout. Rest,
+          hydrate, eat to your protein target, and keep any movement light. The optional recovery
+          session is there if it feels good, but you don’t need to work out today.
         </p>
       ) : null}
       {kind === "rest" ? (
@@ -221,14 +221,11 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
         <>
           <section className="mt-6 rounded-lg border border-dashed border-border p-4">
             <h2 className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              Optional Active Recovery
+              If You Want to Move
             </h2>
-            <p className="mt-1 text-sm font-medium">{optional.title}</p>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              {optional.description}
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              About {optional.minutes} minutes &middot; optional, not required to complete this day
+              Choose this {optional.minutes}-minute active recovery session for easy movement and
+              gentle mobility. It’s optional and isn’t required to complete the day.
             </p>
           </section>
           <WorkoutMediaCard
@@ -237,8 +234,6 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
             title={optional.title}
             state={mediaState}
           />
-          <CardioSection cardio={brief.cardio} />
-          <ApproachSection />
         </>
       ) : null}
 
