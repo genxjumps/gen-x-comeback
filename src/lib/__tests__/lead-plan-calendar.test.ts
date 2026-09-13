@@ -104,6 +104,7 @@ describe("7-Day Plan calendar access", () => {
     expect(assignment).toContain("you don’t need to work out today");
     expect(assignment).toContain("If You Want to Move");
     expect(assignment).not.toContain("Recovery is your assigned action");
+    expect(assignment).not.toContain("Rest is your assigned action");
     expect(recoveryMarkup).not.toContain("<CardioSection");
     expect(recoveryMarkup).not.toContain("<ApproachSection");
   });

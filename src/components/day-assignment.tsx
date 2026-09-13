@@ -199,8 +199,9 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
       ) : null}
       {kind === "rest" ? (
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Rest is your assigned action for Day {dayNumber}. Taking the day off is the work here, and
-          it counts toward completing your 7-day plan.
+          Your body needs time to recover from the week’s workouts. Take the day off so you finish
+          the plan rested and ready for what comes next. It still counts toward completing your
+          7-day plan.
         </p>
       ) : null}
 
