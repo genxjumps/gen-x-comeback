@@ -183,9 +183,6 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
       </h1>
       {duration ? <p className="mt-2 text-xs text-muted-foreground">{duration}</p> : null}
 
-      {kind === "workout" && day?.description ? (
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{day.description}</p>
-      ) : null}
       {kind === "walk" ? (
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           Take an easy walk, or choose another form of light movement you enjoy. Today is about
@@ -209,14 +206,14 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
 
       {kind === "workout" && day?.code ? (
         <>
+          <CardioSection cardio={brief.cardio} />
+          <ApproachSection />
           <WorkoutMediaCard
             dayNumber={dayNumber}
             code={day.code}
             title={title}
             state={mediaState}
           />
-          <CardioSection cardio={brief.cardio} />
-          <ApproachSection />
         </>
       ) : null}
 
