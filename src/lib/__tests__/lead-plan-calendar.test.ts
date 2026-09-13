@@ -94,6 +94,20 @@ describe("7-Day Plan calendar access", () => {
     expect(assignment).not.toContain("Easy movement is your assigned action");
   });
 
+  it("keeps the recovery day easy and removes workout-only guidance", () => {
+    const assignment = source("../../components/day-assignment.tsx");
+    const recoveryBranch = assignment.indexOf('kind === "recovery" && optional');
+    const recoveryEnd = assignment.indexOf('<section className="mt-8">', recoveryBranch);
+    const recoveryMarkup = assignment.slice(recoveryBranch, recoveryEnd);
+
+    expect(assignment).toContain("helping your body recover so you’re ready for the next workout");
+    expect(assignment).toContain("you don’t need to work out today");
+    expect(assignment).toContain("If You Want to Move");
+    expect(assignment).not.toContain("Recovery is your assigned action");
+    expect(recoveryMarkup).not.toContain("<CardioSection");
+    expect(recoveryMarkup).not.toContain("<ApproachSection");
+  });
+
   it("provides one numbered cover for every plan day while keeping workout names dynamic", () => {
     const media = source("../../components/workout-media-card.tsx");
     for (let day = 1; day <= 7; day += 1) {
