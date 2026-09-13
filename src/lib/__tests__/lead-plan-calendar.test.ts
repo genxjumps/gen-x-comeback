@@ -72,6 +72,19 @@ describe("7-Day Plan calendar access", () => {
     expect(dayOne).toContain("{!completed ? (");
   });
 
+  it("keeps workout intros brief and places preparation guidance before the video", () => {
+    const assignment = source("../../components/day-assignment.tsx");
+    const workoutBranch = assignment.indexOf('kind === "workout" && day?.code');
+    const cardio = assignment.indexOf("<CardioSection", workoutBranch);
+    const approach = assignment.indexOf("<ApproachSection", workoutBranch);
+    const media = assignment.indexOf("<WorkoutMediaCard", workoutBranch);
+
+    expect(assignment).not.toContain("{day.description}");
+    expect(cardio).toBeGreaterThan(workoutBranch);
+    expect(approach).toBeGreaterThan(cardio);
+    expect(media).toBeGreaterThan(approach);
+  });
+
   it("explains easy-movement days as recovery without fitness jargon", () => {
     const assignment = source("../../components/day-assignment.tsx");
     expect(assignment).toContain("Take an easy walk, or choose another form of light movement");

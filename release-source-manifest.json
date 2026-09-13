@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/day-assignment.tsx",
-      "sha256": "6b6d028be02ace54ab33d76f84d7fd8893b8df8e64d586e00bf303ae784d6890"
+      "sha256": "0066797a1717517c33e25f88ca625db52a9ddc4791e040819297f8dec254ebee"
     },
     {
       "path": "src/components/day-one-workout.tsx",
@@ -311,7 +311,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
-      "sha256": "f5e2a3d5d9bbf32e510ffcbbd50656c1fe1e53ed577cc5b85e8f0f95f6e96610"
+      "sha256": "62d2d322a86fdb777a447e1d6c4e4caf9b4a774f5c769889723e3429875ddddb"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
