@@ -121,7 +121,7 @@ export function AcceleratorProgramPreview({ initialCompleted = 0 }: { initialCom
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               {currentDay
-                ? "Do the assigned day, mark it complete, and the next day unlocks. Missed time never skips your place."
+                ? "Complete today’s workout, mark it complete, and the next day unlocks. A missed workout is never skipped."
                 : "All 28 days are complete. Review your optional final results or choose what comes next."}
             </p>
           </div>
@@ -231,7 +231,7 @@ export function AcceleratorProgramPreview({ initialCompleted = 0 }: { initialCom
               </div>
               <div className="mt-6 flex flex-wrap gap-2">
                 <Button type="button">
-                  Start Another Run
+                  Start the Accelerator Again
                   <ArrowRight aria-hidden="true" className="size-4" />
                 </Button>
                 <Button type="button" variant="outline">

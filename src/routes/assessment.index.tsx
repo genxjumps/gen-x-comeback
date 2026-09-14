@@ -309,7 +309,7 @@ function Assessment() {
           ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
           : step === 2
             ? "Your answers will help me adjust the jump rope workouts to your experience and comfort level."
-            : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation."}
+            : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation for maintaining lean muscle mass while losing body fat."}
       </p>
 
       <div className="mt-6 space-y-4">

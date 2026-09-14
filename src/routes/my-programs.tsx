@@ -94,7 +94,7 @@ function MyPrograms() {
     <PlatformPage
       kicker="Programs"
       title="Your Programs, In One Place"
-      description="Programs you own stay here - not started, active, paused, and completed - without erasing previous runs."
+      description="Programs you own stay here - not started, active, paused, and completed - without erasing previous progress."
     >
       <div className="space-y-4">
         {accelerator ? (
@@ -116,7 +116,7 @@ function MyPrograms() {
                 <h2 className="mt-1 text-lg font-semibold">28-Day Fat Loss Accelerator</h2>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {accelerator.currentRun
-                    ? `Run ${accelerator.currentRun.runNumber} - ${accelerator.currentRun.completedDays} of 28 days complete`
+                    ? `${accelerator.currentRun.completedDays} of 28 days complete`
                     : "Owned for life. Start when you’re ready."}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -137,7 +137,7 @@ function MyPrograms() {
                         {accelerator.status === "not_started"
                           ? "Set Up My Accelerator"
                           : accelerator.status === "completed"
-                            ? "Start Another Run"
+                            ? "Start the Accelerator Again"
                             : "Continue Program"}
                         <ArrowRight className="size-4" />
                       </Link>
@@ -165,13 +165,13 @@ function MyPrograms() {
                   ) : null}
                   {accelerator.previousRuns.length ? (
                     <Button asChild type="button" variant="outline">
-                      <Link to="/my-programs/accelerator/runs">View Previous Runs</Link>
+                      <Link to="/my-programs/accelerator/runs">Accelerator History</Link>
                     </Button>
                   ) : null}
                 </div>
                 {confirmResume ? (
                   <div className="mt-4 rounded-md border border-border bg-muted/50 p-4">
-                    <p className="text-sm font-semibold">Resume this Accelerator run?</p>
+                    <p className="text-sm font-semibold">Resume your Accelerator?</p>
                     <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                       If another structured program is active, it will be paused. Neither program
                       loses progress.

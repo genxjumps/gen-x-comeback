@@ -246,8 +246,8 @@ function NutritionWelcome({ onStart }: { onStart: () => void }) {
     <div className="space-y-4">
       <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
         <p className="text-sm leading-relaxed">
-          Nutrition gives you starting calorie and macro targets, then shows how those numbers fit
-          across the way you actually eat. It does not require food logging.
+          The Nutrition tool gives you starting calorie and macro targets, then shows how those
+          numbers fit across the way you actually eat. It does not require food logging.
         </p>
         <ul className="mt-4 space-y-2 text-sm font-medium">
           <li>Calories still matter.</li>

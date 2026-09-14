@@ -24,4 +24,4 @@ export const W01_EQUIPMENT_NOTES = [
 ];
 
 export const W01_APPROACH =
-  "Work hard, but go at your own pace. Rest when needed. Do fewer reps or use a smaller range of motion if necessary. Skip anything you can’t do safely, and stop if you feel pain.";
+  "Work hard, but go at your own pace. Rest when needed. Do fewer reps or use a smaller range of motion if necessary. Skip anything you can’t do safely, but try to push yourself so you continue to improve. Stop if you feel pain.";

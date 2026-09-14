@@ -215,7 +215,7 @@ export function AcceleratorCompletion({
       <div className="mt-6 flex flex-wrap gap-2">
         <Button asChild>
           <Link to="/my-programs/accelerator/setup" search={{ entitlement: hub.entitlementId }}>
-            Start Another Run
+            Start the Accelerator Again
             <ArrowRight aria-hidden="true" className="size-4" />
           </Link>
         </Button>

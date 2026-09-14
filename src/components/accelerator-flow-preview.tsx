@@ -81,7 +81,7 @@ function ProgramsPreview({ openSetup }: { openSetup: () => void }) {
     <PreviewPage
       kicker="Programs"
       title="Your Programs, In One Place"
-      description="Programs stay here without erasing completed work or previous runs."
+      description="Programs stay here without erasing completed work or previous progress."
     >
       <section className="rounded-lg border border-border bg-card p-6">
         <div className="flex items-start gap-4">

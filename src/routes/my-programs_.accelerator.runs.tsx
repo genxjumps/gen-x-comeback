@@ -10,7 +10,7 @@ import type { CustomerMeasurement, MyProgramsResult } from "@/lib/accelerator/ty
 export const Route = createFileRoute("/my-programs_/accelerator/runs")({
   head: () => ({
     meta: [
-      { title: "Previous Accelerator Runs | Gen X Jumps" },
+      { title: "Accelerator History | Gen X Jumps" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -54,20 +54,21 @@ function PreviousRuns() {
     };
   }, [loadPrograms]);
 
-  if (!result) return <p className="text-sm text-muted-foreground">Loading previous runs...</p>;
+  if (!result)
+    return <p className="text-sm text-muted-foreground">Loading Accelerator history...</p>;
   const runs = result.ok ? (result.accelerator?.previousRuns ?? []) : [];
   return (
     <PlatformPage
       kicker="Programs"
-      title="Previous Accelerator Runs"
-      description="Every completed or replaced run keeps its original version, dates, and progress."
+      title="Accelerator History"
+      description="Every completed or replaced 28-day program keeps its original version, dates, and progress."
     >
       <div className="space-y-3">
         {runs.map((run) => (
           <section key={run.enrollmentId} className="rounded-lg border border-border bg-card p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="font-semibold">Run {run.runNumber}</h2>
+                <h2 className="font-semibold">28-Day Accelerator</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {run.completedDays} of 28 days - {run.status}
                 </p>
@@ -121,7 +122,7 @@ function PreviousRuns() {
         ))}
         {!runs.length ? (
           <p className="rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">
-            No previous runs yet.
+            No Accelerator history yet.
           </p>
         ) : null}
       </div>

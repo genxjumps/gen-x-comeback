@@ -334,8 +334,8 @@ export function AcceleratorProgram() {
           {pageTitle}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {hub.firstName}, you&rsquo;ve completed {completedCount} of 28 days. Missed time never
-          skips your place.
+          {hub.firstName}, you&rsquo;ve completed {completedCount} of 28 days. A missed workout is
+          never skipped.
         </p>
         <div
           className="mt-4 h-2.5 overflow-hidden rounded-[2px] bg-muted"
@@ -394,7 +394,7 @@ export function AcceleratorProgram() {
             </section>
           ) : hub.runStatus === "paused" ? (
             <section className="rounded-lg border border-border bg-card p-6">
-              <h2 className="text-xl font-semibold">This run is paused</h2>
+              <h2 className="text-xl font-semibold">Your Accelerator is paused</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Your progress is safe. Resume it from Programs when you want this to become your
                 active structured program again.

@@ -156,7 +156,7 @@ Opening a structured program shows:
 - Completed days.
 - The current actionable day.
 - Locked future days.
-- A separate **View Previous Runs** path when history exists.
+- A separate **Accelerator History** path when history exists.
 
 Locked future days may show enough basic information to help the customer plan, including the day
 title, workout type, expected runtime, and equipment. Full instructions and video remain locked
@@ -206,7 +206,7 @@ owns. The primary action changes with state:
 - Does not own the Accelerator: **Get the 28-Day Accelerator**.
 - Owns it but has not started: **Set Up My Accelerator**.
 - Has an active or paused run: **Continue My Accelerator**.
-- Has completed it with no unfinished run: **Start Another Run**.
+- Has completed it with no unfinished program: **Start the Accelerator Again**.
 
 Buying a program grants ownership but does not automatically replace or start the current active
 program.
@@ -398,7 +398,7 @@ the active program never resets or overwrites either run.
 - Previous runs are never reset or overwritten.
 - A new run uses the latest available program version.
 - Old runs preserve the version and content snapshot originally used.
-- Previous runs remain behind **View Previous Runs** by default.
+- Previous program history remains behind **Accelerator History** by default.
 
 When starting another run, ask whether to use the customer's current measurements as the new
 starting point. The customer may confirm, change, or skip them.

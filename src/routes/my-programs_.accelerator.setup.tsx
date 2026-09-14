@@ -139,7 +139,7 @@ function AcceleratorSetup() {
         {repeatRun && (currentWeight || currentWaist) ? (
           <div className="mt-3 rounded-md border border-border bg-muted/50 p-4">
             <p className="text-sm font-semibold">
-              Use your current measurements as the starting point for this run?
+              Use your current measurements as the starting point for your next 28 days?
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {[
