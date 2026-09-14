@@ -9,13 +9,6 @@ import { IntakeClosed } from "@/components/intake-closed";
 import { firstUnfinishedAssessmentStep } from "@/lib/signup-draft";
 import { useNewPlanIntakeAccess } from "@/lib/use-new-plan-intake-access";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   ASSESSMENT_STORAGE_KEY,
   EQUIPMENT_VALUES,
   Q1_VALUES,
@@ -132,22 +125,28 @@ function SingleSelect({
   onChange,
   options,
   name,
+  stacked = false,
 }: {
   value: string;
   onChange: (v: string) => void;
   options: { label: string; value: string }[];
   name: string;
+  stacked?: boolean;
 }) {
   return (
-    <RadioGroup value={value} onValueChange={onChange} className="gap-2">
+    <RadioGroup
+      value={value}
+      onValueChange={onChange}
+      className={`gxj-assessment-options ${stacked ? "gxj-assessment-options--stacked" : ""}`}
+    >
       {options.map((o) => (
         <Label
           key={o.value}
           htmlFor={`${name}-${o.value}`}
-          className="gxj-choice gxj-assessment-choice flex min-h-14 cursor-pointer items-center gap-3 rounded-none border-2 border-foreground/35 bg-background px-4 py-3 text-base font-semibold leading-snug"
+          className="gxj-choice gxj-assessment-choice cursor-pointer text-base font-bold leading-snug"
         >
-          <RadioGroupItem id={`${name}-${o.value}`} value={o.value} className="size-5 border-2" />
-          <span>{o.label}</span>
+          <RadioGroupItem id={`${name}-${o.value}`} value={o.value} className="sr-only" />
+          <span className="gxj-assessment-choice-label">{o.label}</span>
         </Label>
       ))}
     </RadioGroup>
@@ -356,6 +355,7 @@ function Assessment() {
                 value={answers.q3}
                 onChange={(v) => set("q3", v)}
                 options={q3Options}
+                stacked
               />
             </Question>
             <Question
@@ -385,20 +385,20 @@ function Assessment() {
                   : null
               }
             >
-              <div className="grid gap-2">
+              <div className="gxj-assessment-options">
                 {equipmentOptions.map((o) => (
                   <Label
                     key={o.value}
                     htmlFor={`equipment-${o.value}`}
-                    className="gxj-choice gxj-assessment-choice flex min-h-14 cursor-pointer items-center gap-3 rounded-none border-2 border-foreground/35 bg-background px-4 py-3 text-base font-semibold leading-snug"
+                    className="gxj-choice gxj-assessment-choice cursor-pointer text-base font-bold leading-snug"
                   >
                     <Checkbox
                       id={`equipment-${o.value}`}
                       checked={answers.equipment.includes(o.value)}
                       onCheckedChange={(c) => toggleEquipment(o.value, c === true)}
-                      className="size-5 rounded-none border-2"
+                      className="sr-only"
                     />
-                    <span>{o.label}</span>
+                    <span className="gxj-assessment-choice-label">{o.label}</span>
                   </Label>
                 ))}
               </div>
@@ -421,7 +421,7 @@ function Assessment() {
               }
               error={wError}
             >
-              <div className="flex gap-2">
+              <div className="gxj-assessment-weight">
                 <Input
                   id="weight"
                   inputMode="decimal"
@@ -430,20 +430,21 @@ function Assessment() {
                   aria-label="Current weight"
                   value={answers.weight}
                   onChange={(e) => set("weight", e.target.value)}
-                  className="h-12 flex-1 rounded-none border-2 border-foreground/45 bg-background px-4 text-base font-semibold md:text-base"
+                  className="h-14 min-w-0 flex-1 rounded-none border-0 bg-transparent px-4 text-lg font-bold shadow-none focus-visible:ring-0 md:text-lg"
                 />
-                <Select value={answers.unit} onValueChange={(v) => set("unit", v as "lb" | "kg")}>
-                  <SelectTrigger
-                    className="h-12 w-24 rounded-none border-2 border-foreground/45 bg-background text-base font-bold"
-                    aria-label="Weight unit"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="lb">lb</SelectItem>
-                    <SelectItem value="kg">kg</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="gxj-assessment-unit" role="group" aria-label="Weight unit">
+                  {(["lb", "kg"] as const).map((unit) => (
+                    <button
+                      key={unit}
+                      type="button"
+                      aria-pressed={answers.unit === unit}
+                      className="gxj-assessment-unit-button"
+                      onClick={() => set("unit", unit)}
+                    >
+                      {unit}
+                    </button>
+                  ))}
+                </div>
               </div>
             </Question>
           </>
