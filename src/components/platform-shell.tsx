@@ -31,10 +31,9 @@ export function PlatformShell({ children }: { children: ReactNode }) {
         <div className="mx-auto flex h-[4.5rem] w-full max-w-6xl items-center justify-between px-5 sm:px-8">
           <Link
             to="/home"
-            className="group flex shrink-0 items-center gap-2 border border-foreground/25 px-2.5 py-2 text-xs font-black uppercase leading-none tracking-[0.14em] transition-colors hover:border-foreground/45 hover:bg-foreground/[0.04]"
+            className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]"
           >
-            <span>Gen X</span>
-            <span className="text-gxj-orange">Jumps</span>
+            Gen X Jumps
           </Link>
 
           <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Main navigation">

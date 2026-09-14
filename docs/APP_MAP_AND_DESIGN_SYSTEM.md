@@ -209,6 +209,22 @@ Green and mint are not primary interface colors. Selected controls, progress, an
 use the cream, black, and orange system. Functional colors remain available only when a state truly
 needs a separate success, warning, or error meaning.
 
+### Whole-app enforcement
+
+- The existing Gen X Jumps wordmark treatment stays unchanged until a separate logo decision is
+  approved.
+- Cream, black, warm neutral, and orange are shared app tokens. Legacy teal and mint references
+  resolve to this palette so old screens can't reintroduce green.
+- Barlow is the shared interface typeface and Anton is the shared display typeface.
+- Primary and secondary buttons come from the shared button component. Routes don't invent their
+  own border weight or shadow treatment.
+- Pages use one shared header, content width, texture, and section-divider system.
+- Ordinary navigation and summary content sits directly on the page with soft dividers. A bordered
+  container is reserved for something that needs containment, such as a form control, status,
+  warning, video, or interactive tool.
+- These rules apply to focused setup, the participant app, the 7-Day plan, workouts, Programs,
+  Progress, Nutrition, Account, Notifications, recovery, and empty or error states.
+
 ## Representative screens for the first visual pass
 
 ### Home
