@@ -153,7 +153,7 @@ function HomeReview({ variant }: { variant: string }) {
                 Jump + Strength
               </h1>
               <p className="mt-3 text-sm font-semibold text-background/80 sm:text-base">
-                Day 3 of 7 · 15 minutes · Rope + mat
+                Day 3 of 7 · 15 minutes · Jump rope + body weight
               </p>
             </div>
             <div className="order-1 aspect-[3/1] overflow-hidden bg-background sm:order-2 sm:aspect-auto">
