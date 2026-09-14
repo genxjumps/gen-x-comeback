@@ -391,7 +391,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "25aa61bbe7f9892dce4776149429b073d38d8953d797943b2ea82fabd0d42b2e"
+      "sha256": "d1ebe7fd9ac771f50446395d99542c3412850f1f12aa262b9b645197b202f470"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -1251,7 +1251,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "0b752bd5072efb68dd46cdb5d480d6eee34af4d73a62c1748402a1b075083320"
+      "sha256": "555f648966c297adbe47dd7a3900abc4b788c1c8f2bc99032a439a44ae8144fd"
     },
     {
       "path": "src/routes/index.tsx",

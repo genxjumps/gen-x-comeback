@@ -28,6 +28,7 @@ describe("authenticated platform shell source contract", () => {
     expect(home).toContain('["No measurements yet"]');
     expect(home).toContain('["Set up your daily targets"]');
     expect(home).not.toMatch(/Programs unavailable|Progress unavailable|Nutrition unavailable/);
+    expect(home).not.toContain('className="gxj-page ');
   });
 
   it("uses one responsive navigation shell for the private platform routes", () => {
