@@ -451,7 +451,7 @@ function Assessment() {
         ) : null}
       </div>
 
-      <div className="mt-7 flex items-stretch gap-3 border-t-2 border-foreground pt-5">
+      <div className="mt-7 flex items-stretch gap-3 border-t border-foreground/20 pt-5">
         {step > 1 ? (
           <Button
             type="button"
