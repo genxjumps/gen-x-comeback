@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -115,18 +114,16 @@ function Question({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="gxj-assessment-card rounded-none border-2 border-foreground bg-card">
-      <CardContent className="p-4 sm:p-6">
-        <h2 className="text-base font-bold leading-snug sm:text-lg">{heading}</h2>
-        {hint ? (
-          <p className="mt-1.5 text-sm font-medium leading-relaxed text-muted-foreground">{hint}</p>
-        ) : null}
-        <div className="mt-4">{children}</div>
-        <div aria-live="polite" role="status">
-          {error ? <p className="mt-3 text-sm font-bold text-foreground">{error}</p> : null}
-        </div>
-      </CardContent>
-    </Card>
+    <section className="gxj-assessment-section py-6 sm:py-8">
+      <h2 className="text-lg font-black leading-snug sm:text-xl">{heading}</h2>
+      {hint ? (
+        <p className="mt-1.5 text-sm font-semibold leading-relaxed text-muted-foreground">{hint}</p>
+      ) : null}
+      <div className="mt-4">{children}</div>
+      <div aria-live="polite" role="status">
+        {error ? <p className="mt-3 text-sm font-bold text-foreground">{error}</p> : null}
+      </div>
+    </section>
   );
 }
 
@@ -286,34 +283,31 @@ function Assessment() {
   }
 
   return (
-    <div className="gxj-assessment mx-auto w-full max-w-3xl px-4 pb-10 pt-5 sm:px-6 sm:pb-14 sm:pt-8">
-      <section
-        className="gxj-assessment-hero"
-        style={{ backgroundImage: `url('/workout-covers/day-0${step}.webp')` }}
-      >
-        <div className="gxj-assessment-hero-copy">
+    <div className="gxj-assessment mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="gxj-assessment-page-header flex min-h-[18rem] items-center py-8 sm:min-h-[22rem]">
+        <div className="w-[88%] max-w-2xl">
           <div className="flex items-center gap-3">
             <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
               Step {step} of 3
             </p>
-            <div className="flex flex-1 gap-1.5" aria-hidden="true">
+            <div className="flex max-w-56 flex-1 gap-1.5" aria-hidden="true">
               {[1, 2, 3].map((s) => (
                 <span
                   key={s}
-                  className={`h-2 flex-1 border border-foreground/35 ${s <= step ? "bg-gxj-orange" : "bg-background/60"}`}
+                  className={`h-2 flex-1 border border-foreground/35 ${s <= step ? "bg-gxj-orange" : "bg-background/70"}`}
                 />
               ))}
             </div>
           </div>
 
-          <h1 className="gxj-display-title mt-5 text-4xl uppercase leading-[0.98] tracking-wide sm:text-5xl">
+          <h1 className="gxj-display-title mt-5 text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
             {step === 1
               ? "Your Starting Point"
               : step === 2
                 ? "Jump Rope and Impact"
                 : "Finish Your Plan"}
           </h1>
-          <p className="mt-3 text-base font-semibold leading-relaxed text-foreground/75 sm:text-lg">
+          <p className="mt-4 max-w-lg text-base font-bold leading-relaxed text-foreground/80 sm:text-lg">
             {step === 1
               ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
               : step === 2
@@ -321,9 +315,9 @@ function Assessment() {
                 : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation for maintaining lean muscle mass while losing body fat."}
           </p>
         </div>
-      </section>
+      </header>
 
-      <div className="mt-7 space-y-5">
+      <div className="gxj-assessment-form mx-auto max-w-3xl">
         {step === 1 ? (
           <>
             <Question

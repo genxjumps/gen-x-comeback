@@ -210,6 +210,8 @@
 
 .gxj-assessment {
   position: relative;
+  isolation: isolate;
+  background-color: var(--color-background);
 }
 
 .gxj-assessment .gxj-kicker {
@@ -217,51 +219,73 @@
   color: var(--color-background);
 }
 
-.gxj-assessment-hero {
-  position: relative;
-  display: flex;
-  min-height: 23rem;
-  align-items: center;
-  overflow: hidden;
-  border: 3px solid var(--color-foreground);
-  background-color: var(--color-background);
-  background-position: center;
-  background-size: cover;
-  box-shadow: 7px 7px 0 var(--color-foreground);
-}
-
-.gxj-assessment-hero-copy {
-  position: relative;
-  width: min(80%, 34rem);
-  margin: 1rem;
-  border: 3px solid var(--color-foreground);
-  background-color: oklch(0.97928 0.006952 88.642 / 93%);
-  padding: 1.1rem;
-  box-shadow: 5px 5px 0 var(--color-gxj-orange);
-  backdrop-filter: blur(1px);
-}
-
-.gxj-assessment-card {
-  position: relative;
-  overflow: hidden;
-  border-top-width: 0.35rem;
-  border-top-color: var(--color-gxj-orange);
-  box-shadow: 4px 4px 0 oklch(0.19 0 0 / 16%);
-}
-
-.gxj-assessment-card::after {
+.gxj-assessment::before {
   position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  width: 6rem;
-  height: 4rem;
-  background-image: radial-gradient(circle, var(--color-foreground) 0 1px, transparent 1.25px);
-  background-size: 0.4rem 0.4rem;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    radial-gradient(circle at 8% 5%, var(--color-foreground) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 91% 24%, var(--color-foreground) 0 0.8px, transparent 1.2px),
+    repeating-linear-gradient(
+      14deg,
+      transparent 0,
+      transparent 2.8rem,
+      oklch(0.19 0 0 / 8%) 2.85rem,
+      transparent 2.95rem
+    );
+  background-position:
+    0 0,
+    0 0,
+    0 0;
+  background-size:
+    0.55rem 0.55rem,
+    0.8rem 0.8rem,
+    auto;
   content: "";
-  -webkit-mask-image: linear-gradient(to bottom left, black, transparent 75%);
-  mask-image: linear-gradient(to bottom left, black, transparent 75%);
-  opacity: 0.14;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0,
+    transparent 25%,
+    transparent 76%,
+    black 100%
+  );
+  mask-image: linear-gradient(to bottom, black 0, transparent 25%, transparent 76%, black 100%);
+  opacity: 0.16;
   pointer-events: none;
+}
+
+.gxj-assessment::after {
+  position: absolute;
+  top: -4rem;
+  right: -7rem;
+  z-index: -1;
+  width: 17rem;
+  height: 30rem;
+  background-color: var(--color-gxj-orange);
+  background-image: repeating-linear-gradient(
+    105deg,
+    transparent 0,
+    transparent 1.2rem,
+    oklch(0.19 0 0 / 13%) 1.25rem,
+    transparent 1.35rem
+  );
+  clip-path: polygon(38% 0, 100% 0, 77% 100%, 0 100%);
+  content: "";
+  pointer-events: none;
+}
+
+.gxj-assessment-page-header {
+  position: relative;
+  z-index: 1;
+}
+
+.gxj-assessment-form {
+  position: relative;
+  z-index: 1;
+}
+
+.gxj-assessment-section {
+  border-top: 4px solid var(--color-foreground);
 }
 
 .gxj-assessment-choice {
@@ -303,13 +327,15 @@
 }
 
 @media (min-width: 640px) {
-  .gxj-assessment-hero {
-    min-height: 25rem;
+  .gxj-assessment-form {
+    padding-inline: 1.25rem;
   }
+}
 
-  .gxj-assessment-hero-copy {
-    width: 62%;
-    margin: 1.75rem;
-    padding: 1.5rem;
+@media (max-width: 639px) {
+  .gxj-assessment::after {
+    right: -10rem;
+    width: 16rem;
+    height: 24rem;
   }
 }
