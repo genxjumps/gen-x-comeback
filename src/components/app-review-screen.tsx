@@ -139,24 +139,25 @@ function HomeReview({ variant }: { variant: string }) {
   if (variant === "seven-day") {
     return (
       <div className="mx-auto min-h-full w-full max-w-5xl pb-10 pt-4 sm:pb-14 sm:pt-6">
+        <p className="gxj-display-title mb-4 text-2xl uppercase tracking-wide sm:text-3xl">Home</p>
         <a
           href="/review/workout-ready"
           aria-label="Start Day 3 workout - Jump and Strength"
           className="group block overflow-hidden rounded-lg border-2 border-foreground bg-foreground text-background shadow-[5px_5px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
         >
           <div className="grid sm:grid-cols-[1.05fr_0.95fr]">
-            <div className="order-2 flex min-h-64 flex-col justify-center px-5 py-7 sm:order-1 sm:min-h-80 sm:px-8 sm:py-9">
+            <div className="order-2 flex min-h-40 flex-col justify-center px-5 py-6 sm:order-1 sm:min-h-56 sm:px-8 sm:py-7">
               <p className="w-fit rounded-[2px] bg-background px-2 py-1 text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                Today - Day 3
+                Today&rsquo;s Workout
               </p>
-              <h1 className="gxj-display-title mt-5 text-5xl uppercase leading-[0.94] tracking-wide sm:text-6xl lg:text-7xl">
+              <h1 className="gxj-display-title mt-4 text-4xl uppercase leading-[0.94] tracking-wide sm:text-5xl lg:text-6xl">
                 Jump + Strength
               </h1>
-              <p className="mt-4 text-base font-semibold text-background/80 sm:text-lg">
-                15 minutes · Jump rope + dumbbells
+              <p className="mt-3 text-sm font-semibold text-background/80 sm:text-base">
+                Day 3 of 7 · 15 minutes · Rope + mat
               </p>
             </div>
-            <div className="order-1 aspect-[16/9] overflow-hidden bg-background sm:order-2 sm:aspect-auto">
+            <div className="order-1 aspect-[16/7] overflow-hidden bg-background sm:order-2 sm:aspect-auto">
               <img
                 src="/workout-covers/day-03.webp"
                 alt=""
@@ -164,22 +165,22 @@ function HomeReview({ variant }: { variant: string }) {
               />
             </div>
           </div>
-          <div className="flex min-h-24 items-center justify-between gap-5 bg-gxj-orange px-5 py-5 text-white sm:px-8">
+          <div className="flex min-h-20 items-center justify-between gap-5 bg-gxj-orange px-5 py-4 text-white sm:px-8">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/75">
                 Your comeback continues here
               </p>
-              <p className="gxj-display-title mt-1 text-3xl uppercase leading-none sm:text-4xl">
+              <p className="gxj-display-title mt-1 text-3xl uppercase leading-none">
                 Start Workout
               </p>
             </div>
-            <span className="grid size-14 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
-              <Play aria-hidden="true" className="size-6 fill-current" />
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
+              <Play aria-hidden="true" className="size-5 fill-current" />
             </span>
           </div>
         </a>
 
-        <div className="mx-auto mt-8 max-w-3xl divide-y divide-foreground/15 py-2">
+        <div className="mx-auto mt-6 max-w-3xl divide-y divide-foreground/15 py-2">
           {rows.map(({ title, line, icon: Icon }) => (
             <div
               key={title}
