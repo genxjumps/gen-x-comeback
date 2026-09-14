@@ -217,14 +217,28 @@
   color: var(--color-background);
 }
 
-.gxj-assessment::before {
-  display: block;
-  width: 5rem;
-  height: 0.35rem;
-  margin-bottom: 1.25rem;
-  background-color: var(--color-gxj-orange);
-  box-shadow: 5.35rem 0 0 var(--color-foreground);
-  content: "";
+.gxj-assessment-hero {
+  position: relative;
+  display: flex;
+  min-height: 23rem;
+  align-items: center;
+  overflow: hidden;
+  border: 3px solid var(--color-foreground);
+  background-color: var(--color-background);
+  background-position: center;
+  background-size: cover;
+  box-shadow: 7px 7px 0 var(--color-foreground);
+}
+
+.gxj-assessment-hero-copy {
+  position: relative;
+  width: min(80%, 34rem);
+  margin: 1rem;
+  border: 3px solid var(--color-foreground);
+  background-color: oklch(0.97928 0.006952 88.642 / 93%);
+  padding: 1.1rem;
+  box-shadow: 5px 5px 0 var(--color-gxj-orange);
+  backdrop-filter: blur(1px);
 }
 
 .gxj-assessment-card {
@@ -286,4 +300,16 @@
 .gxj-assessment-primary:active {
   box-shadow: 2px 2px 0 var(--color-foreground);
   transform: translate(2px, 2px);
+}
+
+@media (min-width: 640px) {
+  .gxj-assessment-hero {
+    min-height: 25rem;
+  }
+
+  .gxj-assessment-hero-copy {
+    width: 62%;
+    margin: 1.75rem;
+    padding: 1.5rem;
+  }
 }
