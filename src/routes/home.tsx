@@ -122,8 +122,8 @@ function PlatformHome() {
   ] as const;
 
   return (
-    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl pb-10 sm:pb-14">
-      <header className="gxj-page-header py-7 sm:py-10">
+    <div className="mx-auto min-h-full w-full max-w-5xl pb-10 sm:pb-14">
+      <header className="gxj-page-header pb-6 pt-4 sm:pb-8 sm:pt-6">
         <div className="w-full max-w-2xl">
           {dailyAssignment.label ? (
             <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">

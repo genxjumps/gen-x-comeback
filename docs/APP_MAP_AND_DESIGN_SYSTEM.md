@@ -231,8 +231,8 @@ needs a separate success, warning, or error meaning.
 
 ### Home
 
-Use Home to establish the app shell, global navigation, page spacing, Today's priority card, and
-secondary summary cards.
+Use Home to establish the app shell, global navigation, and page spacing. Today's workout and the
+secondary summary links sit directly on the shared page background without a surrounding card.
 
 ### Assessment Step 3
 
