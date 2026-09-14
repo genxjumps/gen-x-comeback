@@ -203,7 +203,7 @@
     },
     {
       "path": "src/components/platform-page.tsx",
-      "sha256": "81758297f4b91b43f1849a99232ccb520c63f2a25d367441c308f074bae20240"
+      "sha256": "5d3077b4229c014291fa0286eea06390b9627e0496ff7ae0d1bafacadbee2cd7"
     },
     {
       "path": "src/components/platform-shell.tsx",
@@ -1235,7 +1235,7 @@
     },
     {
       "path": "src/routes/assessment.index.tsx",
-      "sha256": "9507347d97ab96c82f4363e3058000132259fa153bf2d504682843c4138e3607"
+      "sha256": "994668b60ec726759f00f30130624251f38fc5220d3056644581f8e7c11db382"
     },
     {
       "path": "src/routes/assessment.start.tsx",
@@ -1251,7 +1251,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "9b28d9ef43bfd8276dc2ab4b9217f76a6923957c180eff48d10da4ed2252e223"
+      "sha256": "6abec61ff650f9ce547ef5c59c7d209154ae67309642be5354e5f7b8012cbd27"
     },
     {
       "path": "src/routes/index.tsx",
@@ -1359,7 +1359,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "fcd4831c6dacb5fde0dbd8fba36e89ac5025213fcce9b82c5a164830dc951770"
+      "sha256": "79463d6c1884037b3ba4b5f7fd66a1f7e51b9e4b3e7545709140795541444212"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",
