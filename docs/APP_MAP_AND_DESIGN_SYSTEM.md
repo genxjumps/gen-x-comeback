@@ -219,6 +219,8 @@ needs a separate success, warning, or error meaning.
 - Primary and secondary buttons come from the shared button component. Routes don't invent their
   own border weight or shadow treatment.
 - Pages use one shared header, content width, texture, and section-divider system.
+- The shared participant shell doesn't add top spacing. Each shared page header owns that spacing so
+  screens don't accidentally stack two large blank areas above their content.
 - Ordinary navigation and summary content sits directly on the page with soft dividers. A bordered
   container is reserved for something that needs containment, such as a form control, status,
   warning, video, or interactive tool.

@@ -23,7 +23,7 @@ describe("authenticated platform shell source contract", () => {
     expect(shell).not.toContain('{ label: "Explore"');
     expect(shell).toContain("grid-cols-4");
     expect(actions).toContain('to="/notifications"');
-    expect(home).toMatch(/<h1[^>]*>\s*Today\s*<\/h1>/);
+    expect(home).toMatch(/<h1[^>]*>\s*\{dailyAssignment\.title\}\s*<\/h1>/);
     expect(home).toContain('["Browse available programs"]');
     expect(home).toContain('["No measurements yet"]');
     expect(home).toContain('["Set up your daily targets"]');
