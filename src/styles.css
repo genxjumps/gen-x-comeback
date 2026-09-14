@@ -284,10 +284,10 @@
   min-height: 4.5rem;
   place-items: center;
   padding: 0.9rem 2.5rem 0.9rem 1rem;
-  border: 2px solid color-mix(in oklch, var(--color-foreground) 65%, transparent);
+  border: 2px solid color-mix(in oklch, var(--color-foreground) 32%, transparent);
   border-radius: 0.75rem;
   background: color-mix(in oklch, var(--color-background) 92%, white);
-  box-shadow: 3px 3px 0 color-mix(in oklch, var(--color-foreground) 22%, transparent);
+  box-shadow: 2px 2px 0 color-mix(in oklch, var(--color-foreground) 10%, transparent);
   text-align: center;
   transition:
     background-color 150ms ease,
@@ -297,14 +297,14 @@
 }
 
 .gxj-assessment-choice:hover {
-  border-color: var(--color-foreground);
+  border-color: color-mix(in oklch, var(--color-foreground) 55%, transparent);
   transform: translateY(-1px);
 }
 
 .gxj-assessment-choice:has([data-state="checked"]) {
-  border-color: var(--color-foreground);
-  background-color: var(--color-gxj-orange);
-  box-shadow: 3px 3px 0 var(--color-foreground);
+  border-color: color-mix(in oklch, var(--color-gxj-orange) 72%, var(--color-foreground));
+  background-color: color-mix(in oklch, var(--color-gxj-orange) 26%, var(--color-background));
+  box-shadow: 2px 2px 0 color-mix(in oklch, var(--color-gxj-orange) 30%, transparent);
   transform: translate(-1px, -1px);
 }
 
@@ -326,7 +326,7 @@
 }
 
 .gxj-assessment-choice:focus-within {
-  outline: 3px solid var(--color-gxj-orange);
+  outline: 2px solid color-mix(in oklch, var(--color-gxj-orange) 70%, transparent);
   outline-offset: 2px;
 }
 
@@ -339,14 +339,14 @@
   display: flex;
   min-height: 3.75rem;
   overflow: hidden;
-  border: 2px solid var(--color-foreground);
+  border: 2px solid color-mix(in oklch, var(--color-foreground) 32%, transparent);
   border-radius: 0.75rem;
   background: color-mix(in oklch, var(--color-background) 92%, white);
-  box-shadow: 3px 3px 0 color-mix(in oklch, var(--color-foreground) 22%, transparent);
+  box-shadow: 2px 2px 0 color-mix(in oklch, var(--color-foreground) 10%, transparent);
 }
 
 .gxj-assessment-weight:focus-within {
-  outline: 3px solid var(--color-gxj-orange);
+  outline: 2px solid color-mix(in oklch, var(--color-gxj-orange) 70%, transparent);
   outline-offset: 2px;
 }
 
@@ -355,7 +355,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.35rem;
-  border-left: 2px solid var(--color-foreground);
+  border-left: 2px solid color-mix(in oklch, var(--color-foreground) 24%, transparent);
   background: color-mix(in oklch, var(--color-foreground) 6%, transparent);
 }
 
