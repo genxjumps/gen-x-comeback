@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "f3f61772d1aec55d92b6c9020980a6ba47eaafe1f9daf1a72bde1188bc49c285"
+      "sha256": "25e2b1044e888942ba270e27eb5bf93db366168ad8ac372ad20731ee25de782c"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
