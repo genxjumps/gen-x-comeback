@@ -107,7 +107,7 @@ function Question({
   children: React.ReactNode;
 }) {
   return (
-    <section className="gxj-assessment-section py-6 sm:py-8">
+    <section className="gxj-page-section py-6 sm:py-8">
       <h2 className="text-lg font-semibold leading-snug sm:text-xl">{heading}</h2>
       {hint ? (
         <p className="mt-1.5 text-sm font-normal leading-relaxed text-muted-foreground">{hint}</p>
@@ -143,7 +143,7 @@ function SingleSelect({
         <Label
           key={o.value}
           htmlFor={`${name}-${o.value}`}
-          className="gxj-choice gxj-assessment-choice cursor-pointer text-base font-semibold leading-snug"
+          className="gxj-choice gxj-option-card cursor-pointer text-base font-semibold leading-snug"
         >
           <RadioGroupItem id={`${name}-${o.value}`} value={o.value} className="sr-only" />
           <span className="gxj-assessment-choice-label">{o.label}</span>
@@ -282,8 +282,8 @@ function Assessment() {
   }
 
   return (
-    <div className="gxj-assessment mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
-      <header className="gxj-assessment-page-header py-7 sm:py-10">
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="gxj-page-header py-7 sm:py-10">
         <div className="w-full max-w-2xl">
           <div className="flex items-center gap-3">
             <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
@@ -317,7 +317,7 @@ function Assessment() {
         </div>
       </header>
 
-      <div className="gxj-assessment-form mx-auto max-w-3xl">
+      <div className="gxj-page-body mx-auto max-w-3xl">
         {step === 1 ? (
           <>
             <Question
@@ -391,7 +391,7 @@ function Assessment() {
                   <Label
                     key={o.value}
                     htmlFor={`equipment-${o.value}`}
-                    className="gxj-choice gxj-assessment-choice cursor-pointer text-base font-semibold leading-snug"
+                    className="gxj-choice gxj-option-card cursor-pointer text-base font-semibold leading-snug"
                   >
                     <Checkbox
                       id={`equipment-${o.value}`}
@@ -473,7 +473,7 @@ function Assessment() {
         )}
         <Button
           type="button"
-          className="gxj-assessment-primary min-h-13 flex-1 rounded-none border border-foreground/35 bg-gxj-orange px-4 text-base text-foreground hover:bg-gxj-orange/85"
+          className="gxj-primary-action min-h-13 flex-1 rounded-none border border-foreground/35 bg-gxj-orange px-4 text-base text-foreground hover:bg-gxj-orange/85"
           onClick={onContinue}
         >
           {step === 3 ? "Get My 7-Day Fitness Plan" : "Continue"}

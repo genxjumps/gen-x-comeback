@@ -122,78 +122,84 @@ function PlatformHome() {
   ] as const;
 
   return (
-    <div className="mx-auto w-full max-w-5xl">
-      <header className="border-b-2 border-foreground/20 pb-4">
-        <h1 className="gxj-display-title text-4xl uppercase leading-none tracking-[0.01em] sm:text-5xl">
-          Today
-        </h1>
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl pb-10 sm:pb-14">
+      <header className="gxj-page-header py-7 sm:py-10">
+        <div className="w-full max-w-2xl">
+          <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">Gen X Jumps</p>
+          <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
+            Today
+          </h1>
+        </div>
       </header>
 
-      <section className="relative border-b-2 border-foreground/20 py-7 sm:py-10">
-        <div className="max-w-3xl">
-          {dailyAssignment.label ? (
-            <p className="inline-block rounded-sm bg-foreground px-2.5 py-1.5 text-xs font-black uppercase leading-none tracking-[0.13em] text-background">
-              {dailyAssignment.label}
-            </p>
-          ) : null}
-          <h2 className="gxj-display-title mt-4 max-w-2xl text-3xl uppercase leading-tight tracking-[0.01em] sm:text-5xl">
-            {dailyAssignment.title}
-          </h2>
-          {dailyAssignment.description ? (
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-foreground/70">
-              {dailyAssignment.description}
-            </p>
-          ) : null}
-          {programs ? (
-            <Button
-              asChild
-              size="lg"
-              className="gxj-assessment-primary mt-6 min-h-12 w-full rounded-lg border border-foreground/35 bg-gxj-orange px-6 text-foreground hover:bg-gxj-orange/90 sm:w-auto"
-            >
-              <Link to={dailyAssignment.to}>
-                {dailyAssignment.button}
-                <ArrowRight aria-hidden="true" className="size-4" />
-              </Link>
-            </Button>
-          ) : null}
-        </div>
-      </section>
+      <div className="gxj-page-body mx-auto max-w-3xl">
+        <section className="gxj-page-section py-6 sm:py-8">
+          <div className="max-w-2xl">
+            {dailyAssignment.label ? (
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-foreground/60">
+                {dailyAssignment.label}
+              </p>
+            ) : null}
+            <h2 className="gxj-display-title mt-3 text-3xl uppercase leading-tight tracking-wide sm:text-4xl">
+              {dailyAssignment.title}
+            </h2>
+            {dailyAssignment.description ? (
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-foreground/70">
+                {dailyAssignment.description}
+              </p>
+            ) : null}
+            {programs ? (
+              <Button
+                asChild
+                size="lg"
+                className="gxj-primary-action mt-6 min-h-12 w-full rounded-lg border border-foreground/35 bg-gxj-orange px-6 text-foreground hover:bg-gxj-orange/90 sm:w-auto"
+              >
+                <Link to={dailyAssignment.to}>
+                  {dailyAssignment.button}
+                  <ArrowRight aria-hidden="true" className="size-4" />
+                </Link>
+              </Button>
+            ) : null}
+          </div>
+        </section>
 
-      <section
-        className="grid divide-y divide-foreground/15 border-b border-foreground/20 lg:grid-cols-3 lg:divide-x lg:divide-y-0"
-        aria-label="Programs, progress, and nutrition"
-      >
-        {shortcuts.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="group px-1 py-6 transition-colors hover:bg-foreground/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-inset lg:px-6 lg:first:pl-1 lg:last:pr-1"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <span className="grid size-9 place-items-center rounded-full bg-gxj-orange/15 text-foreground">
-                  <Icon aria-hidden="true" className="size-5" strokeWidth={2.5} />
-                </span>
-                <ArrowRight
-                  aria-hidden="true"
-                  className="size-5 text-foreground transition-transform group-hover:translate-x-1"
-                />
-              </div>
-              <h2 className="gxj-display-title mt-4 text-2xl uppercase tracking-[0.02em]">
-                {item.title}
-              </h2>
-              <div className="mt-3 space-y-2 text-base leading-relaxed">
-                {item.lines.map((line, index) => (
-                  <p key={index} className={index === 0 ? "font-medium" : "text-muted-foreground"}>
-                    {line}
-                  </p>
-                ))}
-              </div>
-            </Link>
-          );
-        })}
-      </section>
+        <section
+          className="gxj-page-section grid gap-3 py-6 sm:grid-cols-2 sm:py-8 lg:grid-cols-3"
+          aria-label="Programs, progress, and nutrition"
+        >
+          {shortcuts.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="gxj-option-card group flex min-h-40 flex-col p-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <Icon aria-hidden="true" className="size-5" strokeWidth={2.25} />
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="size-5 transition-transform group-hover:translate-x-1"
+                  />
+                </div>
+                <h2 className="gxj-display-title mt-5 text-2xl uppercase tracking-wide">
+                  {item.title}
+                </h2>
+                <div className="mt-2 space-y-1 text-sm leading-relaxed">
+                  {item.lines.map((line, index) => (
+                    <p
+                      key={index}
+                      className={index === 0 ? "font-medium" : "text-muted-foreground"}
+                    >
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              </Link>
+            );
+          })}
+        </section>
+      </div>
     </div>
   );
 }

@@ -251,18 +251,18 @@
   background-color: var(--color-gxj-mint);
 }
 
-.gxj-assessment {
+.gxj-page {
   position: relative;
   isolation: isolate;
   background-color: var(--color-background);
 }
 
-.gxj-assessment .gxj-kicker {
+.gxj-page .gxj-kicker {
   background-color: var(--color-foreground);
   color: var(--color-background);
 }
 
-.gxj-assessment::before {
+.gxj-page::before {
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -297,17 +297,17 @@
   pointer-events: none;
 }
 
-.gxj-assessment-page-header {
+.gxj-page-header {
   position: relative;
   z-index: 1;
 }
 
-.gxj-assessment-form {
+.gxj-page-body {
   position: relative;
   z-index: 1;
 }
 
-.gxj-assessment-section {
+.gxj-page-section {
   border-top: 2px solid color-mix(in oklch, var(--color-foreground) 24%, transparent);
 }
 
@@ -321,7 +321,7 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-.gxj-assessment-choice {
+.gxj-option-card {
   position: relative;
   display: grid;
   min-height: 4.5rem;
@@ -339,19 +339,19 @@
     transform 150ms ease;
 }
 
-.gxj-assessment-choice:hover {
+.gxj-option-card:hover {
   border-color: color-mix(in oklch, var(--color-foreground) 55%, transparent);
   transform: translateY(-1px);
 }
 
-.gxj-assessment-choice:has([data-state="checked"]) {
+.gxj-option-card:has([data-state="checked"]) {
   border-color: color-mix(in oklch, var(--color-gxj-orange) 72%, var(--color-foreground));
   background-color: color-mix(in oklch, var(--color-gxj-orange) 26%, var(--color-background));
   box-shadow: 2px 2px 0 color-mix(in oklch, var(--color-gxj-orange) 30%, transparent);
   transform: translate(-1px, -1px);
 }
 
-.gxj-assessment-choice:has([data-state="checked"])::after {
+.gxj-option-card:has([data-state="checked"])::after {
   position: absolute;
   top: 0.65rem;
   right: 0.65rem;
@@ -368,7 +368,7 @@
   line-height: 1;
 }
 
-.gxj-assessment-choice:has(:focus-visible) {
+.gxj-option-card:has(:focus-visible) {
   outline: 2px solid color-mix(in oklch, var(--color-gxj-orange) 70%, transparent);
   outline-offset: 2px;
 }
@@ -416,17 +416,17 @@
   color: var(--color-background);
 }
 
-.gxj-assessment-primary {
+.gxj-primary-action {
   box-shadow: 2px 2px 0 color-mix(in oklch, var(--color-foreground) 16%, transparent);
 }
 
-.gxj-assessment-primary:active {
+.gxj-primary-action:active {
   box-shadow: 1px 1px 0 color-mix(in oklch, var(--color-foreground) 12%, transparent);
   transform: translate(1px, 1px);
 }
 
 @media (min-width: 640px) {
-  .gxj-assessment-form {
+  .gxj-page-body {
     padding-inline: 1.25rem;
   }
 
