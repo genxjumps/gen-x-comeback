@@ -115,13 +115,15 @@ function Question({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="border-border">
-      <CardContent className="p-4 sm:p-5">
-        <h2 className="text-sm font-medium leading-snug">{heading}</h2>
-        {hint ? <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{hint}</p> : null}
-        <div className="mt-3">{children}</div>
+    <Card className="gxj-assessment-card rounded-none border-2 border-foreground bg-card">
+      <CardContent className="p-4 sm:p-6">
+        <h2 className="text-base font-bold leading-snug sm:text-lg">{heading}</h2>
+        {hint ? (
+          <p className="mt-1.5 text-sm font-medium leading-relaxed text-muted-foreground">{hint}</p>
+        ) : null}
+        <div className="mt-4">{children}</div>
         <div aria-live="polite" role="status">
-          {error ? <p className="mt-2 text-xs font-medium text-foreground">{error}</p> : null}
+          {error ? <p className="mt-3 text-sm font-bold text-foreground">{error}</p> : null}
         </div>
       </CardContent>
     </Card>
@@ -145,9 +147,9 @@ function SingleSelect({
         <Label
           key={o.value}
           htmlFor={`${name}-${o.value}`}
-          className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
+          className="gxj-choice gxj-assessment-choice flex min-h-14 cursor-pointer items-center gap-3 rounded-none border-2 border-foreground/35 bg-background px-4 py-3 text-base font-semibold leading-snug"
         >
-          <RadioGroupItem id={`${name}-${o.value}`} value={o.value} />
+          <RadioGroupItem id={`${name}-${o.value}`} value={o.value} className="size-5 border-2" />
           <span>{o.label}</span>
         </Label>
       ))}
@@ -284,27 +286,29 @@ function Assessment() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-      <p className="gxj-kicker text-xs font-semibold uppercase tracking-[0.16em]">
-        Step {step} of 3
-      </p>
-      <div className="mt-3 flex gap-1.5" aria-hidden="true">
-        {[1, 2, 3].map((s) => (
-          <span
-            key={s}
-            className={`h-1 flex-1 rounded-[2px] ${s <= step ? "bg-gxj-teal" : "bg-muted"}`}
-          />
-        ))}
+    <div className="gxj-assessment mx-auto w-full max-w-3xl px-4 pb-10 pt-5 sm:px-6 sm:pb-14 sm:pt-8">
+      <div className="flex items-center gap-3">
+        <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
+          Step {step} of 3
+        </p>
+        <div className="flex flex-1 gap-1.5" aria-hidden="true">
+          {[1, 2, 3].map((s) => (
+            <span
+              key={s}
+              className={`h-2 flex-1 border border-foreground/20 ${s <= step ? "bg-gxj-orange" : "bg-muted"}`}
+            />
+          ))}
+        </div>
       </div>
 
-      <h1 className="gxj-display-title mt-5 text-2xl tracking-tight sm:text-3xl">
+      <h1 className="gxj-display-title mt-5 text-4xl uppercase leading-[0.98] tracking-wide sm:text-5xl">
         {step === 1
           ? "Your Starting Point"
           : step === 2
             ? "Jump Rope and Impact"
             : "Finish Your Plan"}
       </h1>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+      <p className="mt-3 max-w-2xl text-base font-medium leading-relaxed text-muted-foreground sm:text-lg">
         {step === 1
           ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
           : step === 2
@@ -312,7 +316,7 @@ function Assessment() {
             : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation for maintaining lean muscle mass while losing body fat."}
       </p>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-7 space-y-5">
         {step === 1 ? (
           <>
             <Question
@@ -385,12 +389,13 @@ function Assessment() {
                   <Label
                     key={o.value}
                     htmlFor={`equipment-${o.value}`}
-                    className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
+                    className="gxj-choice gxj-assessment-choice flex min-h-14 cursor-pointer items-center gap-3 rounded-none border-2 border-foreground/35 bg-background px-4 py-3 text-base font-semibold leading-snug"
                   >
                     <Checkbox
                       id={`equipment-${o.value}`}
                       checked={answers.equipment.includes(o.value)}
                       onCheckedChange={(c) => toggleEquipment(o.value, c === true)}
+                      className="size-5 rounded-none border-2"
                     />
                     <span>{o.label}</span>
                   </Label>
@@ -424,10 +429,13 @@ function Assessment() {
                   aria-label="Current weight"
                   value={answers.weight}
                   onChange={(e) => set("weight", e.target.value)}
-                  className="flex-1"
+                  className="h-12 flex-1 rounded-none border-2 border-foreground/45 bg-background px-4 text-base font-semibold md:text-base"
                 />
                 <Select value={answers.unit} onValueChange={(v) => set("unit", v as "lb" | "kg")}>
-                  <SelectTrigger className="w-24" aria-label="Weight unit">
+                  <SelectTrigger
+                    className="h-12 w-24 rounded-none border-2 border-foreground/45 bg-background text-base font-bold"
+                    aria-label="Weight unit"
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -441,22 +449,35 @@ function Assessment() {
         ) : null}
       </div>
 
-      <div className="mt-6 flex items-center gap-3">
+      <div className="mt-7 flex items-stretch gap-3 border-t-2 border-foreground pt-5">
         {step > 1 ? (
-          <Button type="button" variant="outline" onClick={onBack}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onBack}
+            className="min-h-13 rounded-none border-2 px-5 text-base"
+          >
             Back
           </Button>
         ) : (
-          <Button asChild variant="outline">
+          <Button
+            asChild
+            variant="outline"
+            className="min-h-13 rounded-none border-2 px-5 text-base"
+          >
             <Link to="/">Back</Link>
           </Button>
         )}
-        <Button type="button" className="flex-1" onClick={onContinue}>
+        <Button
+          type="button"
+          className="gxj-assessment-primary min-h-13 flex-1 rounded-none border-2 border-foreground bg-gxj-orange px-4 text-base text-foreground hover:bg-gxj-orange/85"
+          onClick={onContinue}
+        >
           {step === 3 ? "Get My 7-Day Fitness Plan" : "Continue"}
         </Button>
       </div>
 
-      <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
+      <p className="mt-4 text-center text-sm font-medium leading-relaxed text-muted-foreground">
         Your answers are saved as you go.
       </p>
     </div>
