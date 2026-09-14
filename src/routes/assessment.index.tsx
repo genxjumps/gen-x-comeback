@@ -458,24 +458,16 @@ function Assessment() {
             type="button"
             variant="outline"
             onClick={onBack}
-            className="min-h-13 rounded-none border-2 px-5 text-base"
+            className="min-h-13 px-5 text-base"
           >
             Back
           </Button>
         ) : (
-          <Button
-            asChild
-            variant="outline"
-            className="min-h-13 rounded-none border-2 px-5 text-base"
-          >
+          <Button asChild variant="outline" className="min-h-13 px-5 text-base">
             <Link to="/">Back</Link>
           </Button>
         )}
-        <Button
-          type="button"
-          className="gxj-primary-action min-h-13 flex-1 rounded-none border border-foreground/35 bg-gxj-orange px-4 text-base text-foreground hover:bg-gxj-orange/85"
-          onClick={onContinue}
-        >
+        <Button type="button" className="min-h-13 flex-1 px-4 text-base" onClick={onContinue}>
           {step === 3 ? "Get My 7-Day Fitness Plan" : "Continue"}
         </Button>
       </div>

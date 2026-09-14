@@ -104,8 +104,9 @@
   --sidebar-accent-foreground: oklch(0.24 0 0);
   --sidebar-border: oklch(0.9 0 0);
   --sidebar-ring: oklch(0.6 0 0);
-  --gxj-teal: oklch(0.368619 0.069427 227.945);
-  --gxj-mint: oklch(0.930779 0.041868 144.14);
+  /* Legacy names now resolve to the shared orange and warm-neutral app palette. */
+  --gxj-teal: oklch(0.63 0.2 42);
+  --gxj-mint: oklch(0.95 0.025 75);
   --gxj-orange: oklch(0.63 0.2 42);
 }
 
@@ -234,7 +235,7 @@
   display: block;
   width: fit-content;
   border-radius: 2px;
-  background-color: var(--color-gxj-teal);
+  background-color: var(--color-foreground);
   color: oklch(1 0 0);
   padding: 0.35rem 0.5rem 0.3rem;
   line-height: 1.15;
@@ -414,15 +415,6 @@
 .gxj-assessment-unit-button[aria-pressed="true"] {
   background: var(--color-foreground);
   color: var(--color-background);
-}
-
-.gxj-primary-action {
-  box-shadow: 2px 2px 0 color-mix(in oklch, var(--color-foreground) 16%, transparent);
-}
-
-.gxj-primary-action:active {
-  box-shadow: 1px 1px 0 color-mix(in oklch, var(--color-foreground) 12%, transparent);
-  transform: translate(1px, 1px);
 }
 
 @media (min-width: 640px) {

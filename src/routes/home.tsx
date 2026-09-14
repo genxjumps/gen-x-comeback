@@ -149,11 +149,7 @@ function PlatformHome() {
               </p>
             ) : null}
             {programs ? (
-              <Button
-                asChild
-                size="lg"
-                className="gxj-primary-action mt-6 min-h-12 w-full rounded-lg border border-foreground/35 bg-gxj-orange px-6 text-foreground hover:bg-gxj-orange/90 sm:w-auto"
-              >
+              <Button asChild size="lg" className="mt-6 min-h-12 w-full px-6 sm:w-auto">
                 <Link to={dailyAssignment.to}>
                   {dailyAssignment.button}
                   <ArrowRight aria-hidden="true" className="size-4" />
@@ -164,7 +160,7 @@ function PlatformHome() {
         </section>
 
         <section
-          className="gxj-page-section grid gap-3 py-6 sm:grid-cols-2 sm:py-8 lg:grid-cols-3"
+          className="gxj-page-section divide-y divide-foreground/15 py-2"
           aria-label="Programs, progress, and nutrition"
         >
           {shortcuts.map((item) => {
@@ -173,28 +169,28 @@ function PlatformHome() {
               <Link
                 key={item.to}
                 to={item.to}
-                className="gxj-option-card group flex min-h-40 flex-col p-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2"
+                className="group grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-4 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <Icon aria-hidden="true" className="size-5" strokeWidth={2.25} />
-                  <ArrowRight
-                    aria-hidden="true"
-                    className="size-5 transition-transform group-hover:translate-x-1"
-                  />
+                <Icon aria-hidden="true" className="size-5" strokeWidth={2.25} />
+                <div>
+                  <h2 className="gxj-display-title text-2xl uppercase tracking-wide">
+                    {item.title}
+                  </h2>
+                  <div className="mt-1 space-y-1 text-sm leading-relaxed">
+                    {item.lines.map((line, index) => (
+                      <p
+                        key={index}
+                        className={index === 0 ? "font-medium" : "text-muted-foreground"}
+                      >
+                        {line}
+                      </p>
+                    ))}
+                  </div>
                 </div>
-                <h2 className="gxj-display-title mt-5 text-2xl uppercase tracking-wide">
-                  {item.title}
-                </h2>
-                <div className="mt-2 space-y-1 text-sm leading-relaxed">
-                  {item.lines.map((line, index) => (
-                    <p
-                      key={index}
-                      className={index === 0 ? "font-medium" : "text-muted-foreground"}
-                    >
-                      {line}
-                    </p>
-                  ))}
-                </div>
+                <ArrowRight
+                  aria-hidden="true"
+                  className="size-5 transition-transform group-hover:translate-x-1"
+                />
               </Link>
             );
           })}

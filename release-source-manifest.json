@@ -207,7 +207,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "5b2fb0d37d6ea4e2d34e0a95362a409555cc617ccddcc80ca9d6592517f3d868"
+      "sha256": "1af41cd3187da7aff78438c519d289cb8c76f14ff5edbb759633f4fc394fbc77"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -219,7 +219,7 @@
     },
     {
       "path": "src/components/ui/button.tsx",
-      "sha256": "187c53f5129f8cb8351e3305853c07b92ea6c98a6bebeb3574810475740437ce"
+      "sha256": "8964c82fbafd4f6727ba47ee100a81013c15f4ba30ffe96de864d24c359c05e5"
     },
     {
       "path": "src/components/ui/card.tsx",
@@ -1235,7 +1235,7 @@
     },
     {
       "path": "src/routes/assessment.index.tsx",
-      "sha256": "994668b60ec726759f00f30130624251f38fc5220d3056644581f8e7c11db382"
+      "sha256": "9e178e6dc444e2a7ec3299e680968efff650f1b126dc04b4dbcbeb1d7e802121"
     },
     {
       "path": "src/routes/assessment.start.tsx",
@@ -1251,7 +1251,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "6abec61ff650f9ce547ef5c59c7d209154ae67309642be5354e5f7b8012cbd27"
+      "sha256": "e734f6864587cc477b3083023af27e6ecabcb23f5fe2cdea0c8c75377a128487"
     },
     {
       "path": "src/routes/index.tsx",
@@ -1359,7 +1359,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "79463d6c1884037b3ba4b5f7fd66a1f7e51b9e4b3e7545709140795541444212"
+      "sha256": "4714b9af31d30be3a381b7a8115ebd32ccacc3158f69202eed8b2ddba2ed1469"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",
