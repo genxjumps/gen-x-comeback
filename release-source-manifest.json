@@ -1359,7 +1359,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "59f0b0ae01e71184f2788e8fd6337824b13fc6858f63ae45f99b308f8c94aece"
+      "sha256": "513a9d795582e9be1d85c2dabab3f0a813aaa540ed4a6df54ec58d1452a90623"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",
