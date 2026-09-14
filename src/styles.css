@@ -380,12 +380,12 @@
 }
 
 .gxj-assessment-primary {
-  box-shadow: 4px 4px 0 var(--color-foreground);
+  box-shadow: 2px 2px 0 color-mix(in oklch, var(--color-foreground) 16%, transparent);
 }
 
 .gxj-assessment-primary:active {
-  box-shadow: 2px 2px 0 var(--color-foreground);
-  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 color-mix(in oklch, var(--color-foreground) 12%, transparent);
+  transform: translate(1px, 1px);
 }
 
 @media (min-width: 640px) {

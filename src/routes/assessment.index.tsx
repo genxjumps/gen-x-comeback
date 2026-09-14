@@ -472,7 +472,7 @@ function Assessment() {
         )}
         <Button
           type="button"
-          className="gxj-assessment-primary min-h-13 flex-1 rounded-none border-2 border-foreground bg-gxj-orange px-4 text-base text-foreground hover:bg-gxj-orange/85"
+          className="gxj-assessment-primary min-h-13 flex-1 rounded-none border border-foreground/35 bg-gxj-orange px-4 text-base text-foreground hover:bg-gxj-orange/85"
           onClick={onContinue}
         >
           {step === 3 ? "Get My 7-Day Fitness Plan" : "Continue"}
