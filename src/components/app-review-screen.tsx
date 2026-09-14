@@ -139,7 +139,9 @@ function HomeReview({ variant }: { variant: string }) {
   if (variant === "seven-day") {
     return (
       <div className="mx-auto min-h-full w-full max-w-5xl pb-10 pt-4 sm:pb-14 sm:pt-6">
-        <p className="gxj-display-title mb-4 text-2xl uppercase tracking-wide sm:text-3xl">Home</p>
+        <p className="gxj-display-title mb-4 text-2xl uppercase tracking-wide sm:text-3xl">
+          Today&rsquo;s Workout
+        </p>
         <a
           href="/review/workout-ready"
           aria-label="Start Day 3 workout - Jump and Strength"
@@ -147,10 +149,7 @@ function HomeReview({ variant }: { variant: string }) {
         >
           <div className="grid sm:grid-cols-[1.35fr_0.65fr]">
             <div className="order-2 flex min-h-40 flex-col justify-center px-5 py-6 sm:order-1 sm:min-h-56 sm:px-8 sm:py-7">
-              <p className="w-fit rounded-[2px] bg-background px-2 py-1 text-xs font-bold uppercase tracking-[0.16em] text-foreground">
-                Today&rsquo;s Workout
-              </p>
-              <h1 className="gxj-display-title mt-4 text-4xl uppercase leading-[0.94] tracking-wide sm:text-5xl lg:text-6xl">
+              <h1 className="gxj-display-title text-4xl uppercase leading-[0.94] tracking-wide sm:text-5xl lg:text-6xl">
                 Jump + Strength
               </h1>
               <p className="mt-3 text-sm font-semibold text-background/80 sm:text-base">
@@ -166,14 +165,7 @@ function HomeReview({ variant }: { variant: string }) {
             </div>
           </div>
           <div className="flex min-h-20 items-center justify-between gap-5 bg-gxj-orange px-5 py-4 text-white sm:px-8">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/75">
-                Your comeback continues here
-              </p>
-              <p className="gxj-display-title mt-1 text-3xl uppercase leading-none">
-                Start Workout
-              </p>
-            </div>
+            <p className="gxj-display-title text-3xl uppercase leading-none">Start Workout</p>
             <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
               <Play aria-hidden="true" className="size-5 fill-current" />
             </span>
