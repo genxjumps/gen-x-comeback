@@ -140,6 +140,7 @@ function RootComponent() {
   const inCheckoutSuccess = pathname === "/checkout/accelerator/success";
   const inAcceleratorOffer = pathname === "/programs/accelerator";
   const inAccount = pathname === "/account" || pathname === "/account/";
+  const inReview = pathname === "/review" || pathname.startsWith("/review/");
   const useParticipantHeaderActions = inCheckoutSuccess || inAcceleratorOffer;
   const inParticipantPlan = inPlan || inJumpRopes;
   const inPlatform =
@@ -156,6 +157,14 @@ function RootComponent() {
     pathname === "/admin/refunds" ||
     pathname === "/account/purchases" ||
     pathname === "/my-programs/accelerator/refund";
+
+  if (inReview) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    );
+  }
 
   if (inPlatform || inAccount || inParticipantPlan) {
     return (

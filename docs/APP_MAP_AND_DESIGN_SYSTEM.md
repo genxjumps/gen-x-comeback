@@ -90,7 +90,15 @@ These don't belong in the customer information architecture or visual navigation
 - `/admin/refunds`
 - `/preview/w01`
 - `/preview/accelerator`
+- `/review`
+- `/review/:screen`
 - API, email-return, signup-return, and release endpoints
+
+`/review` is the design and copy review index. Each child URL renders a fixed, fake-data customer
+state without authentication, server reads, browser storage, or account mutations. The review
+screens reuse the app's shared background, typography, button, spacing, divider, workout-media,
+and navigation treatments so app-wide decisions can be evaluated together. They are hidden from
+customer navigation and marked `noindex`.
 
 ## Shell decision
 

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ReviewRouteImport } from './routes/review'
 import { Route as ReturnRouteImport } from './routes/return'
 import { Route as RecoverRouteImport } from './routes/recover'
 import { Route as ProgressRouteImport } from './routes/progress'
@@ -26,10 +27,12 @@ import { Route as EmailPreferencesRouteImport } from './routes/email-preferences
 import { Route as AcceleratorRouteImport } from './routes/accelerator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
+import { Route as ReviewIndexRouteImport } from './routes/review.index'
 import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
 import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as Start7DayRouteImport } from './routes/start.7-day'
 import { Route as SignupReturnRouteImport } from './routes/signup.return'
+import { Route as ReviewScreenRouteImport } from './routes/review.$screen'
 import { Route as ProgramsAcceleratorRouteImport } from './routes/programs_.accelerator'
 import { Route as PreviewW01RouteImport } from './routes/preview.w01'
 import { Route as PreviewAcceleratorRouteImport } from './routes/preview.accelerator'
@@ -60,6 +63,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewRoute = ReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReturnRoute = ReturnRouteImport.update({
@@ -137,6 +145,11 @@ const YourPlanIndexRoute = YourPlanIndexRouteImport.update({
   path: '/your-plan/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewIndexRoute = ReviewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ReviewRoute,
+} as any)
 const AssessmentIndexRoute = AssessmentIndexRouteImport.update({
   id: '/assessment/',
   path: '/assessment/',
@@ -156,6 +169,11 @@ const SignupReturnRoute = SignupReturnRouteImport.update({
   id: '/signup/return',
   path: '/signup/return',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewScreenRoute = ReviewScreenRouteImport.update({
+  id: '/$screen',
+  path: '/$screen',
+  getParentRoute: () => ReviewRoute,
 } as any)
 const ProgramsAcceleratorRoute = ProgramsAcceleratorRouteImport.update({
   id: '/programs_/accelerator',
@@ -283,6 +301,7 @@ export interface FileRoutesByFullPath {
   '/progress': typeof ProgressRoute
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
+  '/review': typeof ReviewRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/welcome': typeof WelcomeRoute
   '/account/purchases': typeof AccountPurchasesRoute
@@ -295,10 +314,12 @@ export interface FileRoutesByFullPath {
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
+  '/review/$screen': typeof ReviewScreenRoute
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/account/': typeof AccountIndexRoute
   '/assessment/': typeof AssessmentIndexRoute
+  '/review/': typeof ReviewIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
   '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
@@ -339,10 +360,12 @@ export interface FileRoutesByTo {
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
+  '/review/$screen': typeof ReviewScreenRoute
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/account': typeof AccountIndexRoute
   '/assessment': typeof AssessmentIndexRoute
+  '/review': typeof ReviewIndexRoute
   '/your-plan': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
   '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
@@ -372,6 +395,7 @@ export interface FileRoutesById {
   '/progress': typeof ProgressRoute
   '/recover': typeof RecoverRoute
   '/return': typeof ReturnRoute
+  '/review': typeof ReviewRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/welcome': typeof WelcomeRoute
   '/account/purchases': typeof AccountPurchasesRoute
@@ -384,10 +408,12 @@ export interface FileRoutesById {
   '/preview/accelerator': typeof PreviewAcceleratorRoute
   '/preview/w01': typeof PreviewW01Route
   '/programs_/accelerator': typeof ProgramsAcceleratorRoute
+  '/review/$screen': typeof ReviewScreenRoute
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/account/': typeof AccountIndexRoute
   '/assessment/': typeof AssessmentIndexRoute
+  '/review/': typeof ReviewIndexRoute
   '/your-plan/': typeof YourPlanIndexRoute
   '/api/public/release': typeof ApiPublicReleaseRoute
   '/checkout/accelerator/success': typeof CheckoutAcceleratorSuccessRoute
@@ -418,6 +444,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/recover'
     | '/return'
+    | '/review'
     | '/sitemap.xml'
     | '/welcome'
     | '/account/purchases'
@@ -430,10 +457,12 @@ export interface FileRouteTypes {
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs/accelerator'
+    | '/review/$screen'
     | '/signup/return'
     | '/start/7-day'
     | '/account/'
     | '/assessment/'
+    | '/review/'
     | '/your-plan/'
     | '/api/public/release'
     | '/checkout/accelerator/success'
@@ -474,10 +503,12 @@ export interface FileRouteTypes {
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs/accelerator'
+    | '/review/$screen'
     | '/signup/return'
     | '/start/7-day'
     | '/account'
     | '/assessment'
+    | '/review'
     | '/your-plan'
     | '/api/public/release'
     | '/checkout/accelerator/success'
@@ -506,6 +537,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/recover'
     | '/return'
+    | '/review'
     | '/sitemap.xml'
     | '/welcome'
     | '/account/purchases'
@@ -518,10 +550,12 @@ export interface FileRouteTypes {
     | '/preview/accelerator'
     | '/preview/w01'
     | '/programs_/accelerator'
+    | '/review/$screen'
     | '/signup/return'
     | '/start/7-day'
     | '/account/'
     | '/assessment/'
+    | '/review/'
     | '/your-plan/'
     | '/api/public/release'
     | '/checkout/accelerator/success'
@@ -551,6 +585,7 @@ export interface RootRouteChildren {
   ProgressRoute: typeof ProgressRoute
   RecoverRoute: typeof RecoverRoute
   ReturnRoute: typeof ReturnRoute
+  ReviewRoute: typeof ReviewRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WelcomeRoute: typeof WelcomeRoute
   AccountPurchasesRoute: typeof AccountPurchasesRoute
@@ -595,6 +630,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/review': {
+      id: '/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof ReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/return': {
@@ -702,6 +744,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof YourPlanIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/review/': {
+      id: '/review/'
+      path: '/'
+      fullPath: '/review/'
+      preLoaderRoute: typeof ReviewIndexRouteImport
+      parentRoute: typeof ReviewRoute
+    }
     '/assessment/': {
       id: '/assessment/'
       path: '/assessment'
@@ -729,6 +778,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/signup/return'
       preLoaderRoute: typeof SignupReturnRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/review/$screen': {
+      id: '/review/$screen'
+      path: '/$screen'
+      fullPath: '/review/$screen'
+      preLoaderRoute: typeof ReviewScreenRouteImport
+      parentRoute: typeof ReviewRoute
     }
     '/programs_/accelerator': {
       id: '/programs_/accelerator'
@@ -880,6 +936,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ReviewRouteChildren {
+  ReviewScreenRoute: typeof ReviewScreenRoute
+  ReviewIndexRoute: typeof ReviewIndexRoute
+}
+
+const ReviewRouteChildren: ReviewRouteChildren = {
+  ReviewScreenRoute: ReviewScreenRoute,
+  ReviewIndexRoute: ReviewIndexRoute,
+}
+
+const ReviewRouteWithChildren =
+  ReviewRoute._addFileChildren(ReviewRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcceleratorRoute: AcceleratorRoute,
@@ -895,6 +964,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProgressRoute: ProgressRoute,
   RecoverRoute: RecoverRoute,
   ReturnRoute: ReturnRoute,
+  ReviewRoute: ReviewRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   WelcomeRoute: WelcomeRoute,
   AccountPurchasesRoute: AccountPurchasesRoute,
