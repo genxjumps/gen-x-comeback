@@ -1235,7 +1235,7 @@
     },
     {
       "path": "src/routes/assessment.index.tsx",
-      "sha256": "c1c339c266cf6fac8e25095d0ca63ab533312754907c53179c2507d82c3f9010"
+      "sha256": "9bdff5afa73ddeccfcbb7ed2655f3d1ee2c9973718fb602227d5c6c284d100ab"
     },
     {
       "path": "src/routes/assessment.start.tsx",
@@ -1359,7 +1359,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "fd843b205fb50cdf6b66e7694f33bf7021cf690f413a05cd74ac9179b80fccf5"
+      "sha256": "d92b1fed38b3422bd8fc04cc9736f9a03eca156141146be681e2d5e04e87a7d0"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",

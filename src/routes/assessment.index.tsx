@@ -287,34 +287,41 @@ function Assessment() {
 
   return (
     <div className="gxj-assessment mx-auto w-full max-w-3xl px-4 pb-10 pt-5 sm:px-6 sm:pb-14 sm:pt-8">
-      <div className="flex items-center gap-3">
-        <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
-          Step {step} of 3
-        </p>
-        <div className="flex flex-1 gap-1.5" aria-hidden="true">
-          {[1, 2, 3].map((s) => (
-            <span
-              key={s}
-              className={`h-2 flex-1 border border-foreground/20 ${s <= step ? "bg-gxj-orange" : "bg-muted"}`}
-            />
-          ))}
-        </div>
-      </div>
+      <section
+        className="gxj-assessment-hero"
+        style={{ backgroundImage: `url('/workout-covers/day-0${step}.webp')` }}
+      >
+        <div className="gxj-assessment-hero-copy">
+          <div className="flex items-center gap-3">
+            <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
+              Step {step} of 3
+            </p>
+            <div className="flex flex-1 gap-1.5" aria-hidden="true">
+              {[1, 2, 3].map((s) => (
+                <span
+                  key={s}
+                  className={`h-2 flex-1 border border-foreground/35 ${s <= step ? "bg-gxj-orange" : "bg-background/60"}`}
+                />
+              ))}
+            </div>
+          </div>
 
-      <h1 className="gxj-display-title mt-5 text-4xl uppercase leading-[0.98] tracking-wide sm:text-5xl">
-        {step === 1
-          ? "Your Starting Point"
-          : step === 2
-            ? "Jump Rope and Impact"
-            : "Finish Your Plan"}
-      </h1>
-      <p className="mt-3 max-w-2xl text-base font-medium leading-relaxed text-muted-foreground sm:text-lg">
-        {step === 1
-          ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
-          : step === 2
-            ? "Your answers will help me adjust the jump rope workouts to your experience and comfort level."
-            : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation for maintaining lean muscle mass while losing body fat."}
-      </p>
+          <h1 className="gxj-display-title mt-5 text-4xl uppercase leading-[0.98] tracking-wide sm:text-5xl">
+            {step === 1
+              ? "Your Starting Point"
+              : step === 2
+                ? "Jump Rope and Impact"
+                : "Finish Your Plan"}
+          </h1>
+          <p className="mt-3 text-base font-semibold leading-relaxed text-foreground/75 sm:text-lg">
+            {step === 1
+              ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
+              : step === 2
+                ? "Your answers will help me adjust the jump rope workouts to your experience and comfort level."
+                : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation for maintaining lean muscle mass while losing body fat."}
+          </p>
+        </div>
+      </section>
 
       <div className="mt-7 space-y-5">
         {step === 1 ? (
