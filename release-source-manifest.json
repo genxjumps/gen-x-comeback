@@ -174,6 +174,10 @@
       "sha256": "03b599bdc2494568504d0ec73c07f33828c59cf28493b5abc8679ee8af4bdaf7"
     },
     {
+      "path": "src/components/app-review-screen.tsx",
+      "sha256": "c0c541948557517361f960d90f6b594cc9d2b2c10b8f4a85e7ffa3fb3169afe6"
+    },
+    {
       "path": "src/components/auth-session-bootstrap.tsx",
       "sha256": "0c13e2d1a41536aeec00b87e0408b51459674f066eb26202f6998dad01302fbf"
     },
@@ -212,6 +216,10 @@
     {
       "path": "src/components/pwa-install.tsx",
       "sha256": "7426f1399f9219564aa8154834164dbfe573a5e4ff8c8fd1d15b48dcd28506a5"
+    },
+    {
+      "path": "src/components/review-shell.tsx",
+      "sha256": "3c00f012b6abb2f96e06f9d63b68973e8172bac693cc61c96fc14d3289f30e49"
     },
     {
       "path": "src/components/seven-day-next-step.tsx",
@@ -284,6 +292,10 @@
     {
       "path": "src/integrations/supabase/types.ts",
       "sha256": "600360891e01b204d0b5f26b44d47f1e28af01bafb9d8443d8aaa7a54f12c230"
+    },
+    {
+      "path": "src/lib/__tests__/app-review.test.ts",
+      "sha256": "83f0710f29038b985c6c4a67c516b1604af6d2724a2b9783c08a0afa9febd5b2"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -556,6 +568,10 @@
     {
       "path": "src/lib/admin/types.ts",
       "sha256": "dd5db3b35b7feabba5501b7ecc23f78af7443be2d8e3b61201d65cae84377b97"
+    },
+    {
+      "path": "src/lib/app-review.ts",
+      "sha256": "5e133741d897a89fee30f30ab477a7a9be239fcbf7e3a64f2707d97f8b18881a"
     },
     {
       "path": "src/lib/commerce/__tests__/checkout-path.test.ts",
@@ -1167,7 +1183,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "edc6a08fba7fcca5bacc2e0b1a48a0f92c52b7ca6328098964d5f4c1eaa48eb5"
+      "sha256": "7b3c0304939bee88a2bac3708dc6ccfb10c8ae727bcf14eecb0024b1bb2639b4"
     },
     {
       "path": "src/router.tsx",
@@ -1179,7 +1195,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "7e2860959b421233852c3bd98e28d27f28dc957b00d34230524a2a084fdb0a7b"
+      "sha256": "0c3622770bfb857c17d6dc82dc868973e88c994c364534f9479f8a902f3590c6"
     },
     {
       "path": "src/routes/accelerator.tsx",
@@ -1324,6 +1340,18 @@
     {
       "path": "src/routes/return.ts",
       "sha256": "dd0d72da6182ac2e84506bd72cf461f5fa6aa71e24d94a7bdf7a816810d2f733"
+    },
+    {
+      "path": "src/routes/review.$screen.tsx",
+      "sha256": "f0191bb4f9dc912887444cc474f3e2f8a9117787c48c2b77196209fb11dfe877"
+    },
+    {
+      "path": "src/routes/review.index.tsx",
+      "sha256": "ce5576797d499eececb5ec9343db645c1e2901a39ad2d35e35aaa42513abb708"
+    },
+    {
+      "path": "src/routes/review.tsx",
+      "sha256": "ded893036960762a75fee84bc4f38e17cb8dd8211173f2bf6937861f199eee8a"
     },
     {
       "path": "src/routes/signup.return.ts",
