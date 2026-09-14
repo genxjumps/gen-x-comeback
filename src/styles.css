@@ -325,7 +325,7 @@
   line-height: 1;
 }
 
-.gxj-assessment-choice:focus-within {
+.gxj-assessment-choice:has(:focus-visible) {
   outline: 2px solid color-mix(in oklch, var(--color-gxj-orange) 70%, transparent);
   outline-offset: 2px;
 }
@@ -345,7 +345,7 @@
   box-shadow: 2px 2px 0 color-mix(in oklch, var(--color-foreground) 10%, transparent);
 }
 
-.gxj-assessment-weight:focus-within {
+.gxj-assessment-weight:has(:focus-visible) {
   outline: 2px solid color-mix(in oklch, var(--color-gxj-orange) 70%, transparent);
   outline-offset: 2px;
 }
