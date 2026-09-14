@@ -60,7 +60,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="gxj-app-surface mx-auto w-full max-w-6xl px-5 py-7 pb-28 sm:px-8 sm:py-10 lg:pb-14">
+      <main className="gxj-app-surface mx-auto w-full max-w-6xl px-5 pb-28 sm:px-8 lg:pb-14">
         {children}
       </main>
 

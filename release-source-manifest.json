@@ -207,7 +207,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "1af41cd3187da7aff78438c519d289cb8c76f14ff5edbb759633f4fc394fbc77"
+      "sha256": "614ef67bcb7a7dbad39d2873a4a7a5dbd59e3996aae302cdb268ccfa241eeaa6"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -391,7 +391,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "3acb7c1e693ddce974687abc367c5a8648735d5c4d42c6ae3bd4df71bf6261d2"
+      "sha256": "25aa61bbe7f9892dce4776149429b073d38d8953d797943b2ea82fabd0d42b2e"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -1251,7 +1251,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "e734f6864587cc477b3083023af27e6ecabcb23f5fe2cdea0c8c75377a128487"
+      "sha256": "0b752bd5072efb68dd46cdb5d480d6eee34af4d73a62c1748402a1b075083320"
     },
     {
       "path": "src/routes/index.tsx",

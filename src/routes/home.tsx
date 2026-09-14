@@ -125,40 +125,31 @@ function PlatformHome() {
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl pb-10 sm:pb-14">
       <header className="gxj-page-header py-7 sm:py-10">
         <div className="w-full max-w-2xl">
-          <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">Gen X Jumps</p>
+          {dailyAssignment.label ? (
+            <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
+              {dailyAssignment.label}
+            </p>
+          ) : null}
           <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
-            Today
+            {dailyAssignment.title}
           </h1>
+          {dailyAssignment.description ? (
+            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
+              {dailyAssignment.description}
+            </p>
+          ) : null}
+          {programs ? (
+            <Button asChild size="lg" className="mt-6 min-h-12 w-full px-6 sm:w-auto">
+              <Link to={dailyAssignment.to}>
+                {dailyAssignment.button}
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </Link>
+            </Button>
+          ) : null}
         </div>
       </header>
 
       <div className="gxj-page-body mx-auto max-w-3xl">
-        <section className="gxj-page-section py-6 sm:py-8">
-          <div className="max-w-2xl">
-            {dailyAssignment.label ? (
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-foreground/60">
-                {dailyAssignment.label}
-              </p>
-            ) : null}
-            <h2 className="gxj-display-title mt-3 text-3xl uppercase leading-tight tracking-wide sm:text-4xl">
-              {dailyAssignment.title}
-            </h2>
-            {dailyAssignment.description ? (
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-foreground/70">
-                {dailyAssignment.description}
-              </p>
-            ) : null}
-            {programs ? (
-              <Button asChild size="lg" className="mt-6 min-h-12 w-full px-6 sm:w-auto">
-                <Link to={dailyAssignment.to}>
-                  {dailyAssignment.button}
-                  <ArrowRight aria-hidden="true" className="size-4" />
-                </Link>
-              </Button>
-            ) : null}
-          </div>
-        </section>
-
         <section
           className="gxj-page-section divide-y divide-foreground/15 py-2"
           aria-label="Programs, progress, and nutrition"
