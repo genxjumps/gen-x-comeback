@@ -195,6 +195,20 @@ The first design pass needs decisions for:
 - Progress bars and completion markers
 - Loading, empty, locked, completed, warning, and error patterns
 
+### Visual foundation
+
+The numbered workout covers establish the app's visual direction:
+
+- Warm cream backgrounds and paper-toned surfaces
+- Black and charcoal for structure, type, borders, and navigation
+- Orange as the main brand accent and action color
+- Oversized condensed display type, hard edges, and strong geometric blocks
+- Light distressed or halftone texture around the edges, never behind important copy or controls
+
+Green and mint are not primary interface colors. Selected controls, progress, and primary actions
+use the cream, black, and orange system. Functional colors remain available only when a state truly
+needs a separate success, warning, or error meaning.
+
 ## Representative screens for the first visual pass
 
 ### Home
