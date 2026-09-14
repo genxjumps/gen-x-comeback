@@ -145,7 +145,7 @@ function HomeReview({ variant }: { variant: string }) {
           aria-label="Start Day 3 workout - Jump and Strength"
           className="group block overflow-hidden rounded-lg border-2 border-foreground bg-foreground text-background shadow-[5px_5px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
         >
-          <div className="grid sm:grid-cols-[1.05fr_0.95fr]">
+          <div className="grid sm:grid-cols-[1.35fr_0.65fr]">
             <div className="order-2 flex min-h-40 flex-col justify-center px-5 py-6 sm:order-1 sm:min-h-56 sm:px-8 sm:py-7">
               <p className="w-fit rounded-[2px] bg-background px-2 py-1 text-xs font-bold uppercase tracking-[0.16em] text-foreground">
                 Today&rsquo;s Workout
@@ -157,11 +157,11 @@ function HomeReview({ variant }: { variant: string }) {
                 Day 3 of 7 · 15 minutes · Rope + mat
               </p>
             </div>
-            <div className="order-1 aspect-[16/7] overflow-hidden bg-background sm:order-2 sm:aspect-auto">
+            <div className="order-1 aspect-[3/1] overflow-hidden bg-background sm:order-2 sm:aspect-auto">
               <img
                 src="/workout-covers/day-03.webp"
                 alt=""
-                className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
+                className="h-full w-full object-cover object-[68%_center] transition-transform duration-300 group-hover:scale-[1.02]"
               />
             </div>
           </div>
