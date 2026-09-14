@@ -57,7 +57,7 @@ describe("customer-facing daily workout contract", () => {
   it("distinguishes paused and customer-local waiting states", () => {
     expect(functions).toContain("customer_time_zone");
     expect(functions).toContain("daysWaitingFromAvailableOn");
-    expect(workout).toContain("This run is paused");
+    expect(workout).toContain("Your Accelerator is paused");
     expect(workout).toContain("friendlyDate(hub.progress.availableOn)");
   });
 });

@@ -297,7 +297,8 @@ function ResultsPage() {
         </h2>
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
           Work hard, but go at your own pace. Rest when needed. Do fewer reps or use a smaller range
-          of motion if necessary. Skip anything you can’t do safely, and stop if you feel pain.
+          of motion if necessary. Skip anything you can’t do safely, but try to push yourself so you
+          continue to improve. Stop if you feel pain.
         </p>
       </section>
 

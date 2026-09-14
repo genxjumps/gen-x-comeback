@@ -94,7 +94,7 @@ describe("My Programs and setup contract", () => {
     expect(programs).toContain("If another structured program is active, it will be paused");
     expect(programs).toContain('to="/my-programs/accelerator/runs"');
     expect(setup).toContain("Starting this program will pause your current structured program");
-    expect(previousRuns).toContain("Previous Accelerator Runs");
+    expect(previousRuns).toContain("Accelerator History");
     expect(previousRuns).toContain("run.programVersion");
   });
 
@@ -104,7 +104,9 @@ describe("My Programs and setup contract", () => {
 
     expect(functions).toContain("latestMeasurementPair");
     expect(functions).toContain("latestMeasurements,");
-    expect(setup).toContain("Use your current measurements as the starting point for this run?");
+    expect(setup).toContain(
+      "Use your current measurements as the starting point for your next 28 days?",
+    );
     expect(setup).toContain("Use Current Measurements");
     expect(setup).toContain("Skip Measurements");
     expect(setup).toContain("You can change or clear either number below before starting");

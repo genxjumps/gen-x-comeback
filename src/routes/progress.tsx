@@ -455,7 +455,7 @@ function Progress() {
       <div className="mt-5 flex flex-wrap gap-2">
         {accelerator?.previousRuns.length ? (
           <Button asChild variant="outline">
-            <Link to="/my-programs/accelerator/runs">View Previous Runs</Link>
+            <Link to="/my-programs/accelerator/runs">Accelerator History</Link>
           </Button>
         ) : null}
         <Button asChild variant="outline">

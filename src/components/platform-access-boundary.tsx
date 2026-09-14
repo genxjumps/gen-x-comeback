@@ -69,8 +69,7 @@ export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
             Open Your Secure Access Link
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            We couldn&rsquo;t confirm a signed-in Gen X Jumps account in this browser. Public
-            enrollment is still closed during development.
+            We couldn&rsquo;t confirm a signed-in Gen X Jumps account in this browser.
           </p>
           <a
             href="/recover"

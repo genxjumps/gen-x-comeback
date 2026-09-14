@@ -90,7 +90,7 @@ function BeforeYouStart() {
   if (ineligible) {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-        <h1 className="gxj-display-title text-2xl tracking-tight sm:text-3xl">Before You Start</h1>
+        <h1 className="gxj-display-title text-2xl tracking-tight sm:text-3xl">I’m Sorry</h1>
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
           This plan is not designed for rehabilitation, chair-based exercise, assisted exercise, or
           people who cannot complete basic exercise independently.

@@ -110,11 +110,13 @@ function CustomerCard({ customer }: { customer: AdminCustomerProgress }) {
           </dd>
         </div>
         <div>
-          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Run</dt>
+          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            Program history
+          </dt>
           <dd className="mt-1 font-semibold">
             {customer.runNumber
-              ? `Run ${customer.runNumber} · ${customer.completedDays} of 28`
-              : "No run yet"}
+              ? `#${customer.runNumber} · ${customer.completedDays} of 28`
+              : "Not started"}
           </dd>
         </div>
       </dl>

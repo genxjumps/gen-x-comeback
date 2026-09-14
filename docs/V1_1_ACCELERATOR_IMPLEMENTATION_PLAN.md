@@ -140,7 +140,8 @@ without opening public enrollment or silently activating customer email:
    in [`V1_1_ACCELERATOR_REFUNDS.md`](V1_1_ACCELERATOR_REFUNDS.md). Source and isolated
    verification do not authorize migration application, provider refunds, or release.
 6. The 7-Day-to-Accelerator bridge: one completion-screen recommendation, matching completion-email
-   destination, and ownership-aware Explore, Set Up, Continue, or Start Another Run actions.
+   destination, and ownership-aware Explore, Set Up, Continue, or Start the Accelerator Again
+   actions.
 7. Sales-page checkout-button connection after the complete paid-customer journey passes in the
    required staging environment.
 

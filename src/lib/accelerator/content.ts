@@ -11,7 +11,7 @@ export const ACCELERATOR_ORIENTATION = {
   writtenExplanation: [
     "For the next four weeks, follow the plan around training, nutrition, and consistency.",
     "The same core workouts repeat each week on purpose so you can improve execution, pace, control, capacity, and consistency instead of starting over with a different workout every day.",
-    "If you miss with the rope, reset and keep moving. If you need more rest, take it. Scale reps or range of motion when needed, and stop if you feel pain rather than normal exercise discomfort.",
+    "If you trip while jumping rope, reset and keep moving. If you need more rest, take it. Scale reps or range of motion when needed, and stop if you feel pain rather than normal exercise discomfort.",
     "The goal is not to destroy yourself every workout. Work hard enough to improve, recover, and come back ready to do it again.",
     "Use the Protein-First nutrition guidance and your progress tracking alongside the training. Start where you are, do the work, and give yourself four weeks to see what changes.",
   ],

@@ -35,7 +35,7 @@ const INCLUDED = [
   "Five guided workouts each week, plus active recovery and rest",
   "Weekly coaching and progress support",
   "Personal calorie and macro targets with an adjustable meal-by-meal breakdown",
-  "Permanent access and repeat program runs",
+  "Permanent access and the option to start the program again",
 ];
 
 function AcceleratorProgramDetail() {
@@ -117,9 +117,6 @@ function AcceleratorProgramDetail() {
         </div>
 
         <aside className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6 lg:sticky lg:top-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
-            Controlled test checkout
-          </p>
           <p className="mt-3 text-3xl font-semibold">$37</p>
           <p className="mt-1 text-sm text-muted-foreground">One payment. Access does not expire.</p>
           {owned ? (
@@ -140,9 +137,7 @@ function AcceleratorProgramDetail() {
             This checkout uses Stripe test mode and cannot charge a real card. Buying creates your
             access but does not start Day 1.
           </p>
-          <p className="mt-3 text-sm font-medium">
-            7-day money-back guarantee. Request a refund from Account → Purchases &amp; Billing.
-          </p>
+          <p className="mt-3 text-sm font-medium">7-day money-back guarantee.</p>
           {!checkoutAvailable && !owned ? (
             <p role="status" className="mt-3 text-sm">
               {path === "loading"

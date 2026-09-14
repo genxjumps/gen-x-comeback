@@ -125,8 +125,8 @@ function AcceleratorCheckoutSuccess() {
           ) : (
             <div>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                Reload this page once. The signed webhook can still finish recording the purchase,
-                and no program has been started automatically.
+                Reload this page once. We may be able to record your purchase. No program has been
+                started automatically.
               </p>
               <Button asChild variant="outline" className="mt-5 w-full sm:w-auto">
                 <Link to="/programs/accelerator">Return to Program</Link>

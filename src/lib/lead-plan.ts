@@ -153,7 +153,7 @@ export function cardioGuidance(c: CardioContext): string {
     return "March in place or do step-touches during each 20-second interval. Keep one foot on the floor.";
   }
   if (!c.ownsRope) {
-    return "Do ghost jumps during each 20-second interval - small hops while turning your hands as if you're holding a rope.";
+    return "Do ghost jumps (small hops while turning your hands as if you’re holding a rope), jumping jacks, or jog in place during each 20-second interval.";
   }
   if (c.ropeLevel === "beginner") {
     return "If you trip, reset and jump back in. Don’t get discouraged. Don’t give up.";

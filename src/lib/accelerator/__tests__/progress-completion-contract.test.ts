@@ -40,7 +40,7 @@ describe("customer progress and Day 28 completion contract", () => {
   });
 
   it("offers a real repeat path and other-program recommendations", () => {
-    expect(completion).toContain("Start Another Run");
+    expect(completion).toContain("Start the Accelerator Again");
     expect(completion).toContain('to="/my-programs/accelerator/setup"');
     expect(completion).toContain("View Available Programs");
     expect(completion).toContain('to="/my-programs"');
