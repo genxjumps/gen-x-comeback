@@ -1,4 +1,8 @@
 @import "@fontsource/anton/400.css";
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/barlow/700.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -20,6 +24,7 @@
  */
 
 @theme inline {
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -148,6 +153,7 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
     font-size: 1rem;
   }
 }
@@ -364,7 +370,7 @@
   height: 2.75rem;
   border-radius: 0.55rem;
   font-size: 1rem;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: lowercase;
 }
 

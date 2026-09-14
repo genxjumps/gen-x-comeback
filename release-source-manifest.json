@@ -11,7 +11,7 @@
     },
     {
       "path": "bun.lock",
-      "sha256": "7ada5479f86ec7f282d519418a849924555daafbbbc6e609c234fb6ab0d7a7d0"
+      "sha256": "4a421a8288e9b9305719b29d8ad4808bd87c15a7f82faa36cdcfd702552ed78d"
     },
     {
       "path": "bunfig.toml",
@@ -27,7 +27,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "c0271af5ad7fba0a21683fed8d4b53b3250b5a5831ffc1a1ac24ab93ec84e13a"
+      "sha256": "bea7cbc2528ce3dae5b119c1d66487a68abdf7506ebdbc60ff75af61fb56d1e5"
     },
     {
       "path": "public/apple-touch-icon.png",
@@ -1235,7 +1235,7 @@
     },
     {
       "path": "src/routes/assessment.index.tsx",
-      "sha256": "9fd2d5df2c1b0c00fd7a476f1f6ff2fa80327b5d7e9a4c4a0e205ed506b689d8"
+      "sha256": "dde589a8542d51f4174b49f4d906dc63f4fb108ba7908fc37fdf13d85ee45976"
     },
     {
       "path": "src/routes/assessment.start.tsx",
@@ -1359,7 +1359,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "7b61b9d869f0ca8de5aeb84c950a25ff77d2b3a6eaa09834507100b6c63637af"
+      "sha256": "6d29bfaa9f1093be87e45f78a5e1809ca7f54b84ff415be3b9369b5a0eba19a6"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",

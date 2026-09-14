@@ -108,9 +108,9 @@ function Question({
 }) {
   return (
     <section className="gxj-assessment-section py-6 sm:py-8">
-      <h2 className="text-lg font-black leading-snug sm:text-xl">{heading}</h2>
+      <h2 className="text-lg font-semibold leading-snug sm:text-xl">{heading}</h2>
       {hint ? (
-        <p className="mt-1.5 text-sm font-semibold leading-relaxed text-muted-foreground">{hint}</p>
+        <p className="mt-1.5 text-sm font-normal leading-relaxed text-muted-foreground">{hint}</p>
       ) : null}
       <div className="mt-4">{children}</div>
       <div aria-live="polite" role="status">
@@ -143,7 +143,7 @@ function SingleSelect({
         <Label
           key={o.value}
           htmlFor={`${name}-${o.value}`}
-          className="gxj-choice gxj-assessment-choice cursor-pointer text-base font-bold leading-snug"
+          className="gxj-choice gxj-assessment-choice cursor-pointer text-base font-semibold leading-snug"
         >
           <RadioGroupItem id={`${name}-${o.value}`} value={o.value} className="sr-only" />
           <span className="gxj-assessment-choice-label">{o.label}</span>
@@ -306,7 +306,7 @@ function Assessment() {
                 ? "Jump Rope and Impact"
                 : "Finish Your Plan"}
           </h1>
-          <p className="mt-4 max-w-lg text-base font-bold leading-relaxed text-foreground/80 sm:text-lg">
+          <p className="mt-4 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
             {step === 1
               ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
               : step === 2
@@ -390,7 +390,7 @@ function Assessment() {
                   <Label
                     key={o.value}
                     htmlFor={`equipment-${o.value}`}
-                    className="gxj-choice gxj-assessment-choice cursor-pointer text-base font-bold leading-snug"
+                    className="gxj-choice gxj-assessment-choice cursor-pointer text-base font-semibold leading-snug"
                   >
                     <Checkbox
                       id={`equipment-${o.value}`}
@@ -430,7 +430,7 @@ function Assessment() {
                   aria-label="Current weight"
                   value={answers.weight}
                   onChange={(e) => set("weight", e.target.value)}
-                  className="h-14 min-w-0 flex-1 rounded-none border-0 bg-transparent px-4 text-lg font-bold shadow-none focus-visible:ring-0 md:text-lg"
+                  className="h-14 min-w-0 flex-1 rounded-none border-0 bg-transparent px-4 text-lg font-semibold shadow-none focus-visible:ring-0 md:text-lg"
                 />
                 <div className="gxj-assessment-unit" role="group" aria-label="Weight unit">
                   {(["lb", "kg"] as const).map((unit) => (
