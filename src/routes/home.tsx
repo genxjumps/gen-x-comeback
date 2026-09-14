@@ -123,51 +123,44 @@ function PlatformHome() {
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <header className="flex items-end gap-4 border-b-4 border-foreground pb-4">
-        <span aria-hidden="true" className="mb-1.5 size-3 shrink-0 bg-gxj-orange" />
+      <header className="border-b-2 border-foreground/20 pb-4">
         <h1 className="gxj-display-title text-4xl uppercase leading-none tracking-[0.01em] sm:text-5xl">
           Today
         </h1>
       </header>
 
-      <section className="relative mt-6 overflow-hidden border-2 border-foreground bg-gxj-teal text-white shadow-[6px_6px_0_var(--color-foreground)]">
-        <div
-          aria-hidden="true"
-          className="gxj-signal-stripes absolute inset-y-0 right-0 hidden w-40 opacity-25 sm:block"
-        />
-        <div className="relative p-6 sm:p-9">
-          <div className="max-w-2xl">
-            {dailyAssignment.label ? (
-              <p className="inline-block bg-gxj-orange px-2.5 py-1.5 text-xs font-black uppercase leading-none tracking-[0.13em] text-foreground">
-                {dailyAssignment.label}
-              </p>
-            ) : null}
-            <h2 className="gxj-display-title mt-4 text-3xl uppercase leading-tight tracking-[0.01em] sm:text-5xl">
-              {dailyAssignment.title}
-            </h2>
-            {dailyAssignment.description ? (
-              <p className="mt-4 max-w-xl text-base font-medium leading-relaxed text-white/80">
-                {dailyAssignment.description}
-              </p>
-            ) : null}
-            {programs ? (
-              <Button
-                asChild
-                size="lg"
-                className="mt-6 min-h-12 w-full rounded-none border-2 border-foreground bg-gxj-orange px-6 text-foreground shadow-[3px_3px_0_var(--color-foreground)] hover:bg-white sm:w-auto"
-              >
-                <Link to={dailyAssignment.to}>
-                  {dailyAssignment.button}
-                  <ArrowRight aria-hidden="true" className="size-4" />
-                </Link>
-              </Button>
-            ) : null}
-          </div>
+      <section className="relative border-b-2 border-foreground/20 py-7 sm:py-10">
+        <div className="max-w-3xl">
+          {dailyAssignment.label ? (
+            <p className="inline-block rounded-sm bg-foreground px-2.5 py-1.5 text-xs font-black uppercase leading-none tracking-[0.13em] text-background">
+              {dailyAssignment.label}
+            </p>
+          ) : null}
+          <h2 className="gxj-display-title mt-4 max-w-2xl text-3xl uppercase leading-tight tracking-[0.01em] sm:text-5xl">
+            {dailyAssignment.title}
+          </h2>
+          {dailyAssignment.description ? (
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-foreground/70">
+              {dailyAssignment.description}
+            </p>
+          ) : null}
+          {programs ? (
+            <Button
+              asChild
+              size="lg"
+              className="gxj-assessment-primary mt-6 min-h-12 w-full rounded-lg border border-foreground/35 bg-gxj-orange px-6 text-foreground hover:bg-gxj-orange/90 sm:w-auto"
+            >
+              <Link to={dailyAssignment.to}>
+                {dailyAssignment.button}
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </Link>
+            </Button>
+          ) : null}
         </div>
       </section>
 
       <section
-        className="mt-8 grid gap-4 lg:grid-cols-3"
+        className="grid divide-y divide-foreground/15 border-b border-foreground/20 lg:grid-cols-3 lg:divide-x lg:divide-y-0"
         aria-label="Programs, progress, and nutrition"
       >
         {shortcuts.map((item) => {
@@ -176,10 +169,10 @@ function PlatformHome() {
             <Link
               key={item.to}
               to={item.to}
-              className="group border-2 border-foreground bg-card p-5 shadow-[4px_4px_0_var(--color-foreground)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
+              className="group px-1 py-6 transition-colors hover:bg-foreground/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-inset lg:px-6 lg:first:pl-1 lg:last:pr-1"
             >
               <div className="flex items-start justify-between gap-4">
-                <span className="grid size-10 place-items-center bg-gxj-mint text-gxj-teal">
+                <span className="grid size-9 place-items-center rounded-full bg-gxj-orange/15 text-foreground">
                   <Icon aria-hidden="true" className="size-5" strokeWidth={2.5} />
                 </span>
                 <ArrowRight
@@ -187,7 +180,7 @@ function PlatformHome() {
                   className="size-5 text-foreground transition-transform group-hover:translate-x-1"
                 />
               </div>
-              <h2 className="gxj-display-title mt-5 text-2xl uppercase tracking-[0.02em]">
+              <h2 className="gxj-display-title mt-4 text-2xl uppercase tracking-[0.02em]">
                 {item.title}
               </h2>
               <div className="mt-3 space-y-2 text-base leading-relaxed">
