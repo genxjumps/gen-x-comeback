@@ -140,8 +140,8 @@ function RootComponent() {
   const inCheckoutSuccess = pathname === "/checkout/accelerator/success";
   const inAcceleratorOffer = pathname === "/programs/accelerator";
   const inAccount = pathname === "/account" || pathname === "/account/";
-  const useParticipantHeaderActions =
-    inPlan || inJumpRopes || inCheckoutSuccess || inAcceleratorOffer;
+  const useParticipantHeaderActions = inCheckoutSuccess || inAcceleratorOffer;
+  const inParticipantPlan = inPlan || inJumpRopes;
   const inPlatform =
     pathname === "/home" ||
     pathname === "/my-programs" ||
@@ -157,12 +157,12 @@ function RootComponent() {
     pathname === "/account/purchases" ||
     pathname === "/my-programs/accelerator/refund";
 
-  if (inPlatform || inAccount) {
+  if (inPlatform || inAccount || inParticipantPlan) {
     return (
       <QueryClientProvider client={queryClient}>
         <AccountSessionSync />
         <PlatformShell>
-          {inAccount ? (
+          {inAccount || inParticipantPlan ? (
             <>
               <AuthSessionBootstrap />
               <Outlet />
@@ -184,19 +184,7 @@ function RootComponent() {
       <div className="flex min-h-screen flex-col bg-background text-foreground">
         <header className="border-b border-border">
           <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-5 py-4">
-            {inPlan || inJumpRopes ? (
-              <>
-                <Link to="/your-plan" className="truncate text-sm font-semibold tracking-tight">
-                  My Plan
-                </Link>
-                <Link
-                  to="/jump-ropes"
-                  className="shrink-0 text-sm text-muted-foreground hover:text-foreground"
-                >
-                  Jump Ropes
-                </Link>
-              </>
-            ) : inAssessment || inOnboarding ? (
+            {inAssessment || inOnboarding ? (
               <span className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]">
                 Gen X Jumps
               </span>

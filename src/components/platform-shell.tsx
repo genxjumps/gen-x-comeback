@@ -27,16 +27,17 @@ export function PlatformShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
+      <header className="gxj-platform-header sticky top-0 z-30 border-b-4 border-gxj-orange bg-foreground text-primary-foreground shadow-[0_4px_0_oklch(0_19_0/12%)]">
+        <div className="mx-auto flex h-[4.5rem] w-full max-w-6xl items-center justify-between px-5 sm:px-8">
           <Link
             to="/home"
-            className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]"
+            className="group flex shrink-0 items-center gap-2 border-2 border-primary-foreground px-2.5 py-2 text-xs font-black uppercase leading-none tracking-[0.14em] transition-colors hover:bg-primary-foreground hover:text-foreground"
           >
-            Gen X Jumps
+            <span>Gen X</span>
+            <span className="text-gxj-orange group-hover:text-gxj-teal">Jumps</span>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
+          <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Main navigation">
             {primaryNavigation.map((item) => {
               const active = isActivePath(pathname, item.to);
               return (
@@ -44,10 +45,10 @@ export function PlatformShell({ children }: { children: ReactNode }) {
                   key={item.to}
                   to={item.to}
                   aria-current={active ? "page" : undefined}
-                  className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`min-h-11 px-4 py-3 text-sm font-bold uppercase tracking-[0.08em] transition-colors ${
                     active
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      ? "bg-gxj-orange text-foreground"
+                      : "text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
                   }`}
                 >
                   {item.label}
@@ -60,12 +61,12 @@ export function PlatformShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-5 py-8 pb-28 sm:px-8 sm:py-12 lg:pb-12">
+      <main className="gxj-app-surface mx-auto w-full max-w-6xl px-5 py-7 pb-28 sm:px-8 sm:py-10 lg:pb-14">
         {children}
       </main>
 
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/98 pb-[env(safe-area-inset-bottom)] lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 border-t-4 border-gxj-orange bg-foreground text-primary-foreground shadow-[0_-4px_18px_oklch(0_0_0/14%)] pb-[env(safe-area-inset-bottom)] lg:hidden"
         aria-label="Main navigation"
       >
         <div className="mx-auto grid max-w-2xl grid-cols-4">
@@ -77,8 +78,10 @@ export function PlatformShell({ children }: { children: ReactNode }) {
                 key={item.to}
                 to={item.to}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[10px] font-medium transition-colors ${
-                  active ? "text-foreground" : "text-muted-foreground"
+                className={`relative flex min-h-[4.25rem] flex-col items-center justify-center gap-1 px-1 text-xs font-bold uppercase tracking-[0.05em] transition-colors ${
+                  active
+                    ? "bg-primary-foreground/8 text-gxj-orange after:absolute after:inset-x-3 after:top-0 after:h-1 after:bg-gxj-orange"
+                    : "text-primary-foreground/60"
                 }`}
               >
                 <Icon aria-hidden="true" className="size-5" strokeWidth={active ? 2.5 : 2} />

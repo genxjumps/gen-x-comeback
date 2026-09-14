@@ -57,13 +57,15 @@ describe("authenticated platform shell source contract", () => {
     );
   });
 
-  it("keeps account and notification actions on participant screens that use the compact shell", () => {
+  it("uses the full app shell for the 7-Day plan and keeps actions on remaining compact screens", () => {
     const root = readSource("../../../routes/__root.tsx");
     const shell = readSource("../../../components/platform-shell.tsx");
     const actions = readSource("../../../components/platform-header-actions.tsx");
 
     expect(shell).toContain("<PlatformHeaderActions />");
-    expect(root).toContain("inPlan || inJumpRopes || inCheckoutSuccess || inAcceleratorOffer");
+    expect(root).toContain("const inParticipantPlan = inPlan || inJumpRopes");
+    expect(root).toContain("inPlatform || inAccount || inParticipantPlan");
+    expect(root).toContain("inCheckoutSuccess || inAcceleratorOffer");
     expect(root).toContain("<PlatformHeaderActions />");
     expect(actions).toContain("<AccountNavigation />");
     expect(actions).toContain('to="/notifications"');

@@ -123,28 +123,39 @@ function PlatformHome() {
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <header>
-        <h1 className="gxj-display-title text-3xl leading-tight tracking-tight sm:text-4xl">
+      <header className="flex items-end gap-4 border-b-4 border-foreground pb-4">
+        <span aria-hidden="true" className="mb-1.5 size-3 shrink-0 bg-gxj-orange" />
+        <h1 className="gxj-display-title text-4xl uppercase leading-none tracking-[0.01em] sm:text-5xl">
           Today
         </h1>
       </header>
 
-      <section className="mt-8 overflow-hidden rounded-lg border border-border bg-card">
-        <div className="p-6 sm:p-8">
-          <div>
+      <section className="relative mt-6 overflow-hidden border-2 border-foreground bg-gxj-teal text-white shadow-[6px_6px_0_var(--color-foreground)]">
+        <div
+          aria-hidden="true"
+          className="gxj-signal-stripes absolute inset-y-0 right-0 hidden w-40 opacity-25 sm:block"
+        />
+        <div className="relative p-6 sm:p-9">
+          <div className="max-w-2xl">
             {dailyAssignment.label ? (
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
+              <p className="inline-block bg-gxj-orange px-2.5 py-1.5 text-xs font-black uppercase leading-none tracking-[0.13em] text-foreground">
                 {dailyAssignment.label}
               </p>
             ) : null}
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">{dailyAssignment.title}</h2>
+            <h2 className="gxj-display-title mt-4 text-3xl uppercase leading-tight tracking-[0.01em] sm:text-5xl">
+              {dailyAssignment.title}
+            </h2>
             {dailyAssignment.description ? (
-              <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-4 max-w-xl text-base font-medium leading-relaxed text-white/80">
                 {dailyAssignment.description}
               </p>
             ) : null}
             {programs ? (
-              <Button asChild size="lg" className="mt-5 w-full sm:w-auto">
+              <Button
+                asChild
+                size="lg"
+                className="mt-6 min-h-12 w-full rounded-none border-2 border-foreground bg-gxj-orange px-6 text-foreground shadow-[3px_3px_0_var(--color-foreground)] hover:bg-white sm:w-auto"
+              >
                 <Link to={dailyAssignment.to}>
                   {dailyAssignment.button}
                   <ArrowRight aria-hidden="true" className="size-4" />
@@ -156,7 +167,7 @@ function PlatformHome() {
       </section>
 
       <section
-        className="mt-6 grid gap-3 lg:grid-cols-3"
+        className="mt-8 grid gap-4 lg:grid-cols-3"
         aria-label="Programs, progress, and nutrition"
       >
         {shortcuts.map((item) => {
@@ -165,17 +176,21 @@ function PlatformHome() {
             <Link
               key={item.to}
               to={item.to}
-              className="group rounded-lg border border-border bg-card p-5 transition-colors hover:border-foreground/35 hover:bg-muted/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="group border-2 border-foreground bg-card p-5 shadow-[4px_4px_0_var(--color-foreground)] transition-transform hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
             >
               <div className="flex items-start justify-between gap-4">
-                <Icon aria-hidden="true" className="size-5 text-gxj-teal" />
+                <span className="grid size-10 place-items-center bg-gxj-mint text-gxj-teal">
+                  <Icon aria-hidden="true" className="size-5" strokeWidth={2.5} />
+                </span>
                 <ArrowRight
                   aria-hidden="true"
-                  className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                  className="size-5 text-foreground transition-transform group-hover:translate-x-1"
                 />
               </div>
-              <h2 className="mt-5 text-base font-semibold">{item.title}</h2>
-              <div className="mt-3 space-y-2 text-sm leading-relaxed">
+              <h2 className="gxj-display-title mt-5 text-2xl uppercase tracking-[0.02em]">
+                {item.title}
+              </h2>
+              <div className="mt-3 space-y-2 text-base leading-relaxed">
                 {item.lines.map((line, index) => (
                   <p key={index} className={index === 0 ? "font-medium" : "text-muted-foreground"}>
                     {line}

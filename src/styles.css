@@ -148,7 +148,37 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-size: 1rem;
   }
+}
+
+.gxj-app-surface {
+  position: relative;
+}
+
+.gxj-platform-header [aria-label="Account menu"],
+.gxj-platform-header a[aria-label^="Notifications"] {
+  border-color: oklch(1 0 0 / 45%);
+  color: var(--color-primary-foreground);
+}
+
+.gxj-platform-header [aria-label="Account menu"]:hover,
+.gxj-platform-header a[aria-label^="Notifications"]:hover {
+  background-color: oklch(1 0 0 / 12%);
+}
+
+.gxj-platform-header details > div {
+  color: var(--color-foreground);
+}
+
+.gxj-signal-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 16px,
+    var(--color-gxj-orange) 16px,
+    var(--color-gxj-orange) 29px
+  );
 }
 
 .gxj-display-title {
