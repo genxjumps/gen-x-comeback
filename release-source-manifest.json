@@ -207,7 +207,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "f059fd155d4d1e399cdd55d933c2db60ef04a69affacd3b6fb584a26d1baf511"
+      "sha256": "0e7ff748c5f945d06216d42ba374d438f36ad705c45c45ed4bc2a0d0fc3b5072"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -391,7 +391,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "1f9b783c0dfbe4089f4e932fa050725d4b7bb88093570cbe0fd7e86dfb4a34ac"
+      "sha256": "3acb7c1e693ddce974687abc367c5a8648735d5c4d42c6ae3bd4df71bf6261d2"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -1179,7 +1179,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "8e3f3fa3e0910d18d5d500580fa9895ca8e9c3836602cd81633e679041597813"
+      "sha256": "7e2860959b421233852c3bd98e28d27f28dc957b00d34230524a2a084fdb0a7b"
     },
     {
       "path": "src/routes/accelerator.tsx",
@@ -1251,7 +1251,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "e9a3c58754f20d4ece0d030ecaf44b10a036068aa92bf96fbd011d3021865570"
+      "sha256": "10a0b52abd9ac963bb7fadafb76f564b359e7f42037434ccb3313ddb02498456"
     },
     {
       "path": "src/routes/index.tsx",
@@ -1359,7 +1359,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "d2bd5f1442de38871d0ae6692a07e477cdb5edba191ae786cc7d19ec8e879120"
+      "sha256": "26e6039eee1ce27ba8c13e8b91b31ce4775f070078de58a8491410ec69bb1cd2"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",
