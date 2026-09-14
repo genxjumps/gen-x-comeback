@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@fontsource/anton": "5.2.7",
+    "@fontsource/barlow": "5.2.7",
     "@radix-ui/react-checkbox": "^1.3.3",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-radio-group": "^1.3.8",
