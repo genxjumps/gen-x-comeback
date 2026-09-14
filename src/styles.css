@@ -271,7 +271,7 @@
 }
 
 .gxj-assessment-section {
-  border-top: 4px solid var(--color-foreground);
+  border-top: 2px solid color-mix(in oklch, var(--color-foreground) 24%, transparent);
 }
 
 .gxj-assessment-options {
