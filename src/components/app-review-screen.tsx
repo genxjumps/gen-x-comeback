@@ -6,7 +6,6 @@ import {
   ChevronRight,
   Dumbbell,
   Mail,
-  Play,
   RotateCcw,
   ShieldCheck,
 } from "lucide-react";
@@ -143,29 +142,40 @@ function HomeReview({ variant }: { variant: string }) {
           <p className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
             Today&rsquo;s Workout
           </p>
-          <div className="mt-4 border-t-2 border-foreground pt-6 sm:pt-7">
-            <p className="inline-flex min-h-8 items-center bg-gxj-orange px-3 py-1 text-sm font-bold uppercase tracking-[0.12em] text-white">
-              Day 3
-            </p>
-            <h1 className="gxj-display-title mt-4 text-4xl uppercase leading-[0.96] tracking-wide sm:text-5xl">
-              Jump + Strength
-            </h1>
-            <p className="mt-3 text-sm font-semibold text-foreground/70 sm:text-base">
-              15 minutes · Jump rope + body weight
-            </p>
-            <a
-              href="/review/workout-ready"
-              aria-label="Start Day 3 workout - Jump and Strength"
-              className="group mt-6 flex min-h-16 w-full items-center justify-between gap-5 bg-gxj-orange px-5 py-4 text-white transition-colors hover:bg-gxj-orange/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 sm:px-6"
-            >
+          <a
+            href="/review/workout-day-3-ready"
+            aria-label="Open today's Day 3 workout - Jump and Strength"
+            className="group mt-4 block overflow-hidden rounded-md border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)] transition-transform hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
+          >
+            <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]">
+              <div className="flex min-h-32 flex-col justify-center px-5 py-5 sm:min-h-40 sm:px-7 sm:py-6">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-background/65 sm:text-sm">
+                  Day 3 of 7
+                </p>
+                <h1 className="gxj-display-title mt-2 text-3xl uppercase leading-[0.96] tracking-wide sm:text-4xl">
+                  Jump + Strength
+                </h1>
+                <p className="mt-2 text-xs font-semibold text-background/75 sm:text-sm">
+                  15 minutes · Jump rope + body weight
+                </p>
+              </div>
+              <div className="overflow-hidden bg-background">
+                <img
+                  src="/workout-covers/day-03.webp"
+                  alt=""
+                  className="h-full w-full object-cover object-[70%_center] transition-transform duration-300 group-hover:scale-[1.02]"
+                />
+              </div>
+            </div>
+            <div className="flex min-h-16 items-center justify-between gap-5 bg-gxj-orange px-5 py-3 text-white sm:px-7">
               <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
-                Start Workout
+                Open Today&rsquo;s Workout
               </span>
               <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
-                <Play aria-hidden="true" className="size-4 fill-current" />
+                <ArrowRight aria-hidden="true" className="size-4" />
               </span>
-            </a>
-          </div>
+            </div>
+          </a>
         </div>
 
         <div className="mx-auto mt-6 max-w-3xl divide-y divide-foreground/15 py-2">
@@ -488,11 +498,13 @@ function WorkoutReview({ variant }: { variant: string }) {
     ? 7
     : variant === "blocked"
       ? 3
-      : variant === "scheduled"
-        ? 4
-        : variant === "completed"
-          ? 2
-          : 1;
+      : variant === "ready-day-3"
+        ? 3
+        : variant === "scheduled"
+          ? 4
+          : variant === "completed"
+            ? 2
+            : 1;
   return (
     <Page
       kicker={`Day ${day} of 7`}
