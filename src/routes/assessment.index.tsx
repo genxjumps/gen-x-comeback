@@ -283,30 +283,31 @@ function Assessment() {
 
   return (
     <div className="gxj-assessment mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
-      <header className="gxj-assessment-page-header flex min-h-[18rem] items-center py-8 sm:min-h-[22rem]">
-        <div className="w-[88%] max-w-2xl">
+      <header className="gxj-assessment-page-header py-7 sm:py-10">
+        <div className="w-full max-w-2xl">
           <div className="flex items-center gap-3">
             <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
               Step {step} of 3
             </p>
-            <div className="flex max-w-56 flex-1 gap-1.5" aria-hidden="true">
-              {[1, 2, 3].map((s) => (
-                <span
-                  key={s}
-                  className={`h-2 flex-1 border border-foreground/35 ${s <= step ? "bg-gxj-orange" : "bg-background/70"}`}
-                />
-              ))}
+            <div
+              className="h-1.5 max-w-64 flex-1 overflow-hidden rounded-full bg-foreground/12"
+              aria-hidden="true"
+            >
+              <span
+                className="block h-full bg-gxj-orange transition-[width] duration-200"
+                style={{ width: `${(step / 3) * 100}%` }}
+              />
             </div>
           </div>
 
-          <h1 className="gxj-display-title mt-5 text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
+          <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
             {step === 1
               ? "Your Starting Point"
               : step === 2
                 ? "Jump Rope and Impact"
                 : "Finish Your Plan"}
           </h1>
-          <p className="mt-4 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
+          <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
             {step === 1
               ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
               : step === 2
