@@ -160,21 +160,58 @@
 
 .gxj-app-surface {
   position: relative;
+  z-index: 1;
 }
 
 .gxj-platform-header [aria-label="Account menu"],
 .gxj-platform-header a[aria-label^="Notifications"] {
-  border-color: oklch(1 0 0 / 45%);
-  color: var(--color-primary-foreground);
+  border-color: color-mix(in oklch, var(--color-foreground) 25%, transparent);
+  color: var(--color-foreground);
 }
 
 .gxj-platform-header [aria-label="Account menu"]:hover,
 .gxj-platform-header a[aria-label^="Notifications"]:hover {
-  background-color: oklch(1 0 0 / 12%);
+  background-color: color-mix(in oklch, var(--color-foreground) 5%, transparent);
 }
 
 .gxj-platform-header details > div {
   color: var(--color-foreground);
+}
+
+.gxj-platform-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.gxj-platform-shell::before {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 8% 5%, var(--color-foreground) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 91% 24%, var(--color-foreground) 0 0.8px, transparent 1.2px),
+    repeating-linear-gradient(
+      14deg,
+      transparent 0,
+      transparent 2.8rem,
+      oklch(0.19 0 0 / 8%) 2.85rem,
+      transparent 2.95rem
+    );
+  background-size:
+    0.55rem 0.55rem,
+    0.8rem 0.8rem,
+    auto;
+  content: "";
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0,
+    transparent 25%,
+    transparent 76%,
+    black 100%
+  );
+  mask-image: linear-gradient(to bottom, black 0, transparent 25%, transparent 76%, black 100%);
+  opacity: 0.16;
+  pointer-events: none;
 }
 
 .gxj-signal-stripes {
