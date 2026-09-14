@@ -139,38 +139,34 @@ function HomeReview({ variant }: { variant: string }) {
   if (variant === "seven-day") {
     return (
       <div className="mx-auto min-h-full w-full max-w-5xl pb-10 pt-4 sm:pb-14 sm:pt-6">
-        <p className="gxj-display-title mb-4 text-2xl uppercase tracking-wide sm:text-3xl">
-          Today&rsquo;s Workout
-        </p>
-        <a
-          href="/review/workout-ready"
-          aria-label="Start Day 3 workout - Jump and Strength"
-          className="group block overflow-hidden rounded-lg border-2 border-foreground bg-foreground text-background shadow-[5px_5px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
-        >
-          <div className="grid sm:grid-cols-[1.35fr_0.65fr]">
-            <div className="order-2 flex min-h-40 flex-col justify-center px-5 py-6 sm:order-1 sm:min-h-56 sm:px-8 sm:py-7">
-              <h1 className="gxj-display-title text-4xl uppercase leading-[0.94] tracking-wide sm:text-5xl lg:text-6xl">
-                Jump + Strength
-              </h1>
-              <p className="mt-3 text-sm font-semibold text-background/80 sm:text-base">
-                Day 3 of 7 · 15 minutes · Jump rope + body weight
-              </p>
-            </div>
-            <div className="order-1 aspect-[3/1] overflow-hidden bg-background sm:order-2 sm:aspect-auto">
-              <img
-                src="/workout-covers/day-03.webp"
-                alt=""
-                className="h-full w-full object-cover object-[68%_center] transition-transform duration-300 group-hover:scale-[1.02]"
-              />
-            </div>
+        <div className="mx-auto max-w-3xl">
+          <p className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+            Today&rsquo;s Workout
+          </p>
+          <div className="mt-4 border-t-2 border-foreground pt-6 sm:pt-7">
+            <p className="inline-flex min-h-8 items-center bg-gxj-orange px-3 py-1 text-sm font-bold uppercase tracking-[0.12em] text-white">
+              Day 3
+            </p>
+            <h1 className="gxj-display-title mt-4 text-4xl uppercase leading-[0.96] tracking-wide sm:text-5xl">
+              Jump + Strength
+            </h1>
+            <p className="mt-3 text-sm font-semibold text-foreground/70 sm:text-base">
+              15 minutes · Jump rope + body weight
+            </p>
+            <a
+              href="/review/workout-ready"
+              aria-label="Start Day 3 workout - Jump and Strength"
+              className="group mt-6 flex min-h-16 w-full items-center justify-between gap-5 bg-gxj-orange px-5 py-4 text-white transition-colors hover:bg-gxj-orange/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4 sm:px-6"
+            >
+              <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
+                Start Workout
+              </span>
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
+                <Play aria-hidden="true" className="size-4 fill-current" />
+              </span>
+            </a>
           </div>
-          <div className="flex min-h-20 items-center justify-between gap-5 bg-gxj-orange px-5 py-4 text-white sm:px-8">
-            <p className="gxj-display-title text-3xl uppercase leading-none">Start Workout</p>
-            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
-              <Play aria-hidden="true" className="size-5 fill-current" />
-            </span>
-          </div>
-        </a>
+        </div>
 
         <div className="mx-auto mt-6 max-w-3xl divide-y divide-foreground/15 py-2">
           {rows.map(({ title, line, icon: Icon }) => (
