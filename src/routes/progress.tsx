@@ -387,8 +387,7 @@ function Progress() {
 
   return (
     <PlatformPage
-      kicker="Progress"
-      title="See The Work Adding Up"
+      title="Your Progress"
       description="Your current program and latest optional measurements stay simple here. Open the details only when you want the full history."
       titleSize="compact"
     >
@@ -398,20 +397,25 @@ function Progress() {
         </h2>
         <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-lg font-bold">{currentProgram.name}</p>
-            <p className="mt-1 text-sm capitalize text-muted-foreground">
+            <p className="text-xs font-bold uppercase tracking-[0.14em]">{currentProgram.name}</p>
+            <p className="gxj-display-title mt-1 text-2xl uppercase tracking-wide sm:text-3xl">
               {currentProgram.progress}
             </p>
           </div>
           {currentProgressPercent !== null ? (
-            <p className="gxj-display-title text-3xl" aria-hidden="true">
+            <p
+              className={`gxj-display-title text-4xl sm:text-5xl ${
+                currentProgram.accent === "aqua" ? "text-gxj-aqua" : "text-gxj-orange"
+              }`}
+              aria-hidden="true"
+            >
               {currentProgressPercent}%
             </p>
           ) : null}
         </div>
         {currentProgressPercent !== null ? (
           <div
-            className="mt-4 h-2.5 overflow-hidden rounded-[2px] bg-foreground/10"
+            className="mt-4 h-3 overflow-hidden bg-foreground/15"
             role="progressbar"
             aria-label={`${currentProgram.name} progress`}
             aria-valuemin={0}
