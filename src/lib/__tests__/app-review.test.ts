@@ -1,6 +1,16 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 import { getReviewScreen, reviewScreens } from "@/lib/app-review";
+
+const reviewSource = readFileSync(
+  new URL("../../components/app-review-screen.tsx", import.meta.url),
+  "utf8",
+);
+const assessmentReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function AssessmentReview"),
+  reviewSource.indexOf("function AssessmentResultReview"),
+);
 
 describe("app review catalog", () => {
   it("uses one stable URL for every review state", () => {
@@ -65,6 +75,26 @@ describe("app review catalog", () => {
     ]);
     expect(workoutPreviews.map((screen) => screen.route)).toEqual(
       Array.from({ length: 7 }, (_, index) => `/your-plan/day/${index + 1}`),
+    );
+  });
+
+  it("mirrors the real 7-Day intake without changing the separate 28-Day setup", () => {
+    expect(assessmentReviewSource).toContain(
+      "How many structured workouts did you complete in the past seven days?",
+    );
+    expect(assessmentReviewSource).toContain("What’s your current jump rope experience?");
+    expect(assessmentReviewSource).toContain(
+      "Which of these do you regularly have access to for your workouts?",
+    );
+    expect(assessmentReviewSource).toContain("Current weight");
+    expect(assessmentReviewSource).not.toContain("Add your current measurements");
+    expect(assessmentReviewSource).not.toContain("Waist");
+
+    const sevenDaySteps = reviewScreens.filter((screen) => screen.kind === "assessment");
+    expect(sevenDaySteps).toHaveLength(3);
+    expect(sevenDaySteps.every((screen) => screen.route === "/assessment")).toBe(true);
+    expect(reviewScreens.some((screen) => screen.route === "/my-programs/accelerator/setup")).toBe(
+      true,
     );
   });
 });

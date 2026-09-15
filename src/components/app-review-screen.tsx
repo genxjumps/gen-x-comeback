@@ -72,6 +72,38 @@ function Choice({ children, selected = false }: { children: ReactNode; selected?
   );
 }
 
+function AssessmentChoice({
+  children,
+  selected = false,
+  multiple = false,
+}: {
+  children: ReactNode;
+  selected?: boolean;
+  multiple?: boolean;
+}) {
+  return (
+    <div
+      className={`relative flex min-h-14 items-center border-2 px-4 py-3 pr-12 text-base font-semibold leading-snug transition-colors ${
+        selected ? "border-gxj-orange bg-gxj-mint" : "border-foreground/25 bg-background"
+      }`}
+    >
+      <span
+        aria-hidden="true"
+        className={`mr-3 grid size-5 shrink-0 place-items-center border-2 ${
+          multiple ? "rounded-[2px]" : "rounded-full"
+        } ${selected ? "border-gxj-orange" : "border-foreground/35"}`}
+      >
+        {selected ? (
+          <span
+            className={`${multiple ? "size-2.5 rounded-[1px]" : "size-2.5 rounded-full"} bg-gxj-orange`}
+          />
+        ) : null}
+      </span>
+      {children}
+    </div>
+  );
+}
+
 function Page({
   kicker,
   title,
@@ -306,62 +338,171 @@ function EligibilityReview() {
 }
 
 function AssessmentReview({ step }: { step: string }) {
-  const content =
+  const stepNumber = Number(step);
+  const title =
     step === "1"
-      ? {
-          title: "Start Where You Are",
-          description: "Tell us what feels realistic today.",
-          question: "How active are you right now?",
-          choices: ["Mostly sitting", "Some walking", "Regular exercise"],
-        }
+      ? "Your Starting Point"
       : step === "2"
-        ? {
-            title: "Protect Your Joints",
-            description: "Choose the impact level that fits your body.",
-            question: "What kind of jumping feels right?",
-            choices: ["No jumping yet", "Low-impact bouncing", "Regular jump rope"],
-          }
-        : {
-            title: "Set Your Starting Point",
-            description: "These numbers help personalize your food targets.",
-            question: "Add your current measurements",
-            choices: [],
-          };
+        ? "Jump Rope and Impact"
+        : "Finish Your Plan";
+  const description =
+    step === "1"
+      ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
+      : step === "2"
+        ? "Your answers will help me adjust the jump rope workouts to your experience and comfort level."
+        : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation for maintaining lean muscle mass while losing body fat.";
+
+  const questions =
+    step === "1"
+      ? [
+          {
+            heading: "How many structured workouts did you complete in the past seven days?",
+            choices: ["None", "1 workout", "2-3 workouts", "4 or more workouts"],
+          },
+          {
+            heading: "Over the past few months, how often have you usually exercised?",
+            choices: ["Not at all", "1-2 times per week", "3 or more times per week"],
+          },
+        ]
+      : [
+          {
+            heading: "What’s your current jump rope experience?",
+            choices: [
+              "I’ve never jumped rope",
+              "I can only do a few jumps before stopping",
+              "I can complete up to 10 rounds of 30-60 seconds",
+              "I can complete more than 10 rounds of 30-60 seconds",
+            ],
+          },
+          {
+            heading: "Do you need to limit jumping or use a lower-impact option during workouts?",
+            choices: ["No", "Yes"],
+          },
+        ];
+
   return (
-    <div className="gxj-page mx-auto w-full max-w-2xl px-5 py-7 sm:py-10">
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-foreground/10">
-        <div className="h-full bg-gxj-orange" style={{ width: `${Number(step) * 33.333}%` }} />
-      </div>
-      <p className="mt-5 text-xs font-bold uppercase tracking-[0.16em]">Step {step} of 3</p>
-      <h1 className="gxj-display-title mt-3 text-5xl uppercase leading-none sm:text-6xl">
-        {content.title}
-      </h1>
-      <p className="mt-3 text-lg text-foreground/75">{content.description}</p>
-      <Section title={content.question}>
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="py-6 sm:py-8">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-3">
+            <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
+              Step {step} of 3
+            </p>
+            <div className="h-1.5 max-w-64 flex-1 overflow-hidden rounded-full bg-foreground/12">
+              <div className="h-full bg-gxj-orange" style={{ width: `${stepNumber * 33.333}%` }} />
+            </div>
+          </div>
+          <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+            {title}
+          </h1>
+          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+            {description}
+          </p>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-3xl">
+        {step !== "3"
+          ? questions.map((question, questionIndex) => (
+              <section
+                key={question.heading}
+                className="border-t-2 border-foreground/20 py-6 sm:py-8"
+              >
+                <h2 className="text-xl font-bold leading-snug sm:text-2xl">{question.heading}</h2>
+                <div
+                  className={`mt-4 grid gap-3 ${
+                    question.choices.every((choice) => choice.length < 28)
+                      ? "sm:grid-cols-2"
+                      : "grid-cols-1"
+                  }`}
+                >
+                  {question.choices.map((choice, choiceIndex) => (
+                    <AssessmentChoice
+                      key={choice}
+                      selected={
+                        step === "2" &&
+                        ((questionIndex === 0 && choiceIndex === 1) ||
+                          (questionIndex === 1 && choiceIndex === 1))
+                      }
+                    >
+                      {choice}
+                    </AssessmentChoice>
+                  ))}
+                </div>
+              </section>
+            ))
+          : null}
+
         {step === "3" ? (
-          <div className="grid gap-5 sm:grid-cols-2">
-            <label className="font-bold">
-              Current weight <Input className="mt-2 min-h-12" value="175" readOnly />
-            </label>
-            <label className="font-bold">
-              Waist <span className="font-normal text-muted-foreground">(optional)</span>
-              <Input className="mt-2 min-h-12" value="34" readOnly />
-            </label>
-          </div>
-        ) : (
-          <div className="grid gap-3">
-            {content.choices.map((choice, index) => (
-              <Choice key={choice} selected={step === "2" && index === 1}>
-                {choice}
-              </Choice>
-            ))}
-          </div>
-        )}
-      </Section>
-      <div className="flex flex-col-reverse gap-3 border-t border-foreground/15 pt-6 sm:flex-row sm:justify-between">
-        <Action outline>Back</Action>
-        <Action>{step === "3" ? "See My Plan" : "Continue"}</Action>
+          <>
+            <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+              <h2 className="text-xl font-bold leading-snug sm:text-2xl">
+                Which of these do you regularly have access to for your workouts?
+              </h2>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                Select all that apply.
+              </p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {[
+                  "Jump rope",
+                  "Dumbbells",
+                  "Exercise or jump rope mat",
+                  "Rubber gym flooring",
+                  "None of these",
+                ].map((choice, index) => (
+                  <AssessmentChoice key={choice} multiple selected={index === 0 || index === 2}>
+                    {choice}
+                  </AssessmentChoice>
+                ))}
+              </div>
+            </section>
+
+            <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+              <h2 className="text-xl font-bold leading-snug sm:text-2xl">
+                How many days per week can you realistically and consistently complete a short
+                workout?
+              </h2>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {["3 days", "4 days", "5 days", "6-7 days"].map((choice, index) => (
+                  <AssessmentChoice key={choice} selected={index === 1}>
+                    {choice}
+                  </AssessmentChoice>
+                ))}
+              </div>
+            </section>
+
+            <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+              <h2 className="text-xl font-bold leading-snug sm:text-2xl">Current weight</h2>
+              <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Optional. I’ll use your weight to estimate how much protein to eat each day to help
+                maintain muscle while you lose fat. It won’t change your workouts.
+              </p>
+              <div className="mt-4 flex min-h-14 max-w-md overflow-hidden border-2 border-foreground/25 bg-background">
+                <Input
+                  aria-label="Current weight"
+                  className="h-14 min-w-0 flex-1 rounded-none border-0 bg-transparent px-4 text-lg font-semibold shadow-none"
+                  placeholder="Optional"
+                  readOnly
+                />
+                <div className="flex items-center gap-1 border-l-2 border-foreground/20 bg-foreground/5 p-1">
+                  <span className="grid size-11 place-items-center bg-foreground font-bold text-background">
+                    lb
+                  </span>
+                  <span className="grid size-11 place-items-center font-bold">kg</span>
+                </div>
+              </div>
+            </section>
+          </>
+        ) : null}
       </div>
+
+      <div className="mx-auto mt-1 flex max-w-3xl flex-col-reverse gap-3 border-t border-foreground/20 pt-5 sm:flex-row sm:justify-between">
+        <Action outline>Back</Action>
+        <Action>{step === "3" ? "Get My 7-Day Fitness Plan" : "Continue"}</Action>
+      </div>
+      <p className="mt-4 text-center text-sm font-medium text-muted-foreground">
+        Your answers are saved as you go.
+      </p>
     </div>
   );
 }
