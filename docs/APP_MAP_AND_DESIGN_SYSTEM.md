@@ -291,8 +291,15 @@ website opt-in and the free 7-Day intake without feeling like a separate experie
 - The progress segments communicate state through both number and text. Do not replace the number
   with a check mark, add decorative icons, or put the entire Welcome message inside a card.
 - Use the shared 56px-high uppercase Anton action treatment for **Create My 7-Day Plan**.
-- The approved design applies to the successful new-participant setup state. Existing loading,
-  missing or expired signup, returning-participant, and saved-plan routing behavior remains intact.
+- **Check Your Email** and **Welcome Back** use one shared email-access presentation: centered
+  content, the compact page-title scale, a centered standalone black envelope with a slightly
+  offset orange echo, and the shared 56px action treatment. The envelope has no surrounding box,
+  circle, or card.
+- The review hub preserves both approved email-access variants. The live route renders only the
+  state produced by its existing signup and recovery logic; the design system does not create a new
+  runtime state or change its wording or action.
+- Existing loading, missing or expired signup, returning-participant, and saved-plan routing
+  behavior remains intact.
 - This is a presentation contract only. It does not alter signup security, consent, saved drafts,
   plan construction, or the separate 28-Day Accelerator setup.
 
