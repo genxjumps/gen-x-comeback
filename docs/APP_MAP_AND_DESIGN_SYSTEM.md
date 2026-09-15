@@ -253,6 +253,15 @@ Use the focused workout page to establish the shared workout hierarchy, media tr
 supporting information, and primary completion action. Additional workout information belongs
 below the media treatment, not in preparation boxes above it.
 
+### Active 7-Day plan review
+
+The active `/your-plan` review screen is the visual bridge between Home and the workout page. It
+uses the compact page-title scale, shows progress without a surrounding card, and repeats the same
+shared workout launch panel used on Home. The seven-day schedule sits directly on the page with
+dividers, clear day numbers, and distinct complete, current, and upcoming states. Plan details
+follow as ordinary page content instead of a stack of cards. This review direction does not change
+the saved plan, assignment order, availability, completion, or update behavior.
+
 ### Approved Home and workout-page visual contract
 
 The September 2026 visual review establishes the following shared pattern for the participant Home

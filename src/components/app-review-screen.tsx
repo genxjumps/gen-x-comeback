@@ -98,6 +98,42 @@ function Page({
   );
 }
 
+function WorkoutLaunchPanel({ day, title, href }: { day: number; title: string; href: string }) {
+  return (
+    <a
+      href={href}
+      aria-label={`Open today's Day ${day} workout - ${title}`}
+      className="group mt-3 block overflow-hidden rounded-md border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)] transition-transform hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
+    >
+      <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]">
+        <div className="flex min-h-32 flex-col justify-center px-5 py-5 sm:min-h-40 sm:px-7 sm:py-6">
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-background/65 sm:text-sm">
+            Day {day} of 7
+          </p>
+          <h3 className="gxj-display-title mt-2 text-3xl uppercase leading-[0.96] tracking-wide sm:text-4xl">
+            {title}
+          </h3>
+        </div>
+        <div className="overflow-hidden bg-background">
+          <img
+            src={`/workout-covers/day-0${day}.webp`}
+            alt=""
+            className="h-full w-full object-cover object-[70%_center] transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        </div>
+      </div>
+      <div className="flex min-h-16 items-center justify-between gap-5 bg-gxj-orange px-5 py-3 text-white sm:px-7">
+        <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
+          Open Today&rsquo;s Workout
+        </span>
+        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
+          <ArrowRight aria-hidden="true" className="size-4" />
+        </span>
+      </div>
+    </a>
+  );
+}
+
 function HomeReview({ variant }: { variant: string }) {
   const daily =
     variant === "accelerator"
@@ -160,37 +196,11 @@ function HomeReview({ variant }: { variant: string }) {
           <p className="gxj-display-title text-3xl uppercase tracking-wide sm:text-4xl">
             Today&rsquo;s Workout
           </p>
-          <a
+          <WorkoutLaunchPanel
+            day={3}
+            title={WORKOUTS.W03.title}
             href="/review/workout-day-3-ready"
-            aria-label="Open today's Day 3 workout - Jump and Strength"
-            className="group mt-4 block overflow-hidden rounded-md border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)] transition-transform hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
-          >
-            <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]">
-              <div className="flex min-h-32 flex-col justify-center px-5 py-5 sm:min-h-40 sm:px-7 sm:py-6">
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-background/65 sm:text-sm">
-                  Day 3 of 7
-                </p>
-                <h1 className="gxj-display-title mt-2 text-3xl uppercase leading-[0.96] tracking-wide sm:text-4xl">
-                  Jump + Strength
-                </h1>
-              </div>
-              <div className="overflow-hidden bg-background">
-                <img
-                  src="/workout-covers/day-03.webp"
-                  alt=""
-                  className="h-full w-full object-cover object-[70%_center] transition-transform duration-300 group-hover:scale-[1.02]"
-                />
-              </div>
-            </div>
-            <div className="flex min-h-16 items-center justify-between gap-5 bg-gxj-orange px-5 py-3 text-white sm:px-7">
-              <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
-                Open Today&rsquo;s Workout
-              </span>
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
-                <ArrowRight aria-hidden="true" className="size-4" />
-              </span>
-            </div>
-          </a>
+          />
         </div>
 
         <section className="mx-auto mt-8 max-w-3xl" aria-labelledby="fitness-hub">
@@ -477,46 +487,138 @@ function PlanReadyReview() {
   );
 }
 
+const PLAN_REVIEW_DAYS = [
+  { day: 1, title: WORKOUTS.W01.title, href: "/review/workout-ready" },
+  { day: 2, title: WORKOUTS.W02.title, href: "/review/workout-day-2-ready" },
+  { day: 3, title: WORKOUTS.W03.title, href: "/review/workout-day-3-ready" },
+  { day: 4, title: WORKOUTS.W04.title, href: "/review/workout-day-4-ready" },
+  { day: 5, title: WORKOUTS.W05.title, href: "/review/workout-day-5-ready" },
+  { day: 6, title: WORKOUTS.W06.title, href: "/review/workout-day-6-ready" },
+  { day: 7, title: WORKOUTS.W07.title, href: "/review/workout-day-7-ready" },
+] as const;
+
 function PlanReview({ complete }: { complete: boolean }) {
+  const completedDays = complete ? 7 : 2;
+
   return (
     <Page
-      kicker={complete ? "Plan Complete" : "Your 7-Day Plan"}
-      title={complete ? "You Finished the Week" : "Your Comeback Week"}
+      kicker={complete ? "Plan Complete" : `${completedDays} of 7 Days Complete`}
+      title={complete ? "Your Week Is Complete" : "Your 7-Day Plan"}
       description={
         complete
           ? "Every day stays here whenever you want to review it."
-          : "Today is Day 3. Keep the next step simple and finish what is in front of you."
+          : "Day 3 is ready. Keep moving through the week one day at a time."
       }
+      titleSize="compact"
+      contentGap="tight"
     >
-      <Section title="Schedule">
-        <div className="divide-y divide-foreground/15">
-          {[
-            "Jump + Strength",
-            "Easy Movement",
-            "Jump + Strength",
-            "Recovery",
-            "Jump + Strength",
-            "Easy Movement",
-            "Full Rest",
-          ].map((x, i) => (
-            <div key={`${x}-${i}`} className="flex min-h-16 items-center gap-4 py-3">
-              <span
-                className={`grid size-8 place-items-center rounded-full ${complete || i < 2 ? "bg-foreground text-background" : i === 2 ? "bg-gxj-orange text-white" : "border border-foreground/25"}`}
+      <div
+        className="h-2 w-full overflow-hidden rounded-[2px] bg-foreground/10"
+        role="progressbar"
+        aria-label="7-Day plan progress"
+        aria-valuemin={0}
+        aria-valuemax={7}
+        aria-valuenow={completedDays}
+      >
+        <div
+          className="h-full bg-gxj-orange"
+          style={{ width: `${Math.round((completedDays / 7) * 100)}%` }}
+        />
+      </div>
+
+      {!complete ? (
+        <section className="mt-8" aria-labelledby="plan-today">
+          <h2
+            id="plan-today"
+            className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
+          >
+            Today&rsquo;s Workout
+          </h2>
+          <WorkoutLaunchPanel
+            day={3}
+            title={WORKOUTS.W03.title}
+            href="/review/workout-day-3-ready"
+          />
+        </section>
+      ) : null}
+
+      <section className="mt-8" aria-labelledby="plan-schedule">
+        <h2
+          id="plan-schedule"
+          className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
+        >
+          Your 7-Day Schedule
+        </h2>
+        <div className="mt-3 divide-y divide-foreground/15 border-t-2 border-foreground">
+          {PLAN_REVIEW_DAYS.map(({ day, title, href }) => {
+            const finished = complete || day <= 2;
+            const current = !complete && day === 3;
+            return (
+              <a
+                href={href}
+                key={day}
+                aria-current={current ? "step" : undefined}
+                className={`group -mx-3 grid min-h-20 grid-cols-[2.75rem_1fr_auto] items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2 ${current ? "bg-gxj-mint" : ""}`}
               >
-                {complete || i < 2 ? <Check className="size-4" /> : i + 1}
-              </span>
-              <div className="flex-1">
-                <p className="font-bold">Day {i + 1}</p>
-                <p className="text-sm text-muted-foreground">{x}</p>
-              </div>
-              <ChevronRight className="size-5" />
-            </div>
-          ))}
+                <span
+                  className={`gxj-display-title grid size-9 place-items-center text-lg leading-none ${finished ? "rounded-full bg-foreground text-background" : current ? "rounded-[2px] bg-gxj-orange text-white" : "text-foreground/45"}`}
+                >
+                  {finished ? <Check className="size-4" aria-hidden="true" /> : `0${day}`}
+                </span>
+                <span>
+                  <span className="block text-xs font-bold uppercase tracking-[0.12em] text-foreground/55">
+                    Day {day}
+                  </span>
+                  <span className="gxj-display-title mt-1 block text-lg uppercase leading-tight tracking-wide sm:text-xl">
+                    {title}
+                  </span>
+                </span>
+                <span className="flex items-center gap-2">
+                  <span
+                    className={`hidden text-xs font-bold uppercase tracking-[0.1em] sm:inline ${current ? "text-gxj-orange" : "text-foreground/50"}`}
+                  >
+                    {finished ? "Complete" : current ? "Today" : "Upcoming"}
+                  </span>
+                  <ChevronRight
+                    className="size-5 transition-transform group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
+                </span>
+              </a>
+            );
+          })}
         </div>
-      </Section>
-      <div className="flex flex-wrap gap-3">
-        <Action>{complete ? "Start Again" : "Open Today's Workout"}</Action>
-        <Action outline>Change My Answers</Action>
+      </section>
+
+      <section className="mt-8 border-t-2 border-foreground pt-6" aria-labelledby="plan-details">
+        <h2
+          id="plan-details"
+          className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
+        >
+          Your Plan Details
+        </h2>
+        <div className="mt-5 grid gap-6 sm:grid-cols-2 sm:gap-8">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground/55">
+              Daily Protein Target
+            </p>
+            <p className="gxj-display-title mt-2 text-4xl uppercase leading-none">175 G</p>
+            <p className="mt-2 text-sm text-foreground/70">Based on the weight you provided.</p>
+          </div>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground/55">
+              Workout Approach
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-foreground/80">
+              Work at your pace, take more rest when needed, and use the easier option whenever you
+              need it.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="mt-8 border-t border-foreground/15 pt-6">
+        <Action outline>{complete ? "Start This Plan Again" : "Change My Answers"}</Action>
       </div>
     </Page>
   );
