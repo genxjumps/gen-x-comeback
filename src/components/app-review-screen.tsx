@@ -725,10 +725,14 @@ function PlanReadyReview() {
       </ol>
 
       <div className="mt-7 max-w-3xl border-t border-foreground/20 pt-5">
-        <Action>
-          <Download aria-hidden="true" className="size-5" />
+        <Button
+          type="button"
+          size="lg"
+          className="gxj-display-title min-h-14 w-full bg-foreground px-6 text-xl uppercase leading-none tracking-wide text-background hover:bg-foreground/90 sm:w-auto"
+        >
+          <Download aria-hidden="true" className="size-5 text-gxj-orange" strokeWidth={2.5} />
           Add to My Home Screen
-        </Action>
+        </Button>
         <p className="mt-3 text-sm font-medium text-muted-foreground">No app store required.</p>
         <button
           type="button"

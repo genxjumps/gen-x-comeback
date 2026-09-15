@@ -150,7 +150,10 @@ describe("app review catalog", () => {
     expect(planReadyReviewSource).toContain('label: "Plan ready", state: "current"');
     expect(planReadyReviewSource).toContain("Todd, Keep Your Comeback One Tap Away");
     expect(planReadyReviewSource).toContain("Add to My Home Screen");
-    expect(planReadyReviewSource).toContain('<Download aria-hidden="true" className="size-5" />');
+    expect(planReadyReviewSource).toContain(
+      '<Download aria-hidden="true" className="size-5 text-gxj-orange" strokeWidth={2.5} />',
+    );
+    expect(planReadyReviewSource).toContain("bg-foreground");
     expect(planReadyReviewSource).toContain("No app store required.");
     expect(planReadyReviewSource).toContain("Not Now - View My Plan");
   });
