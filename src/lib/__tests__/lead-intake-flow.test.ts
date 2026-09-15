@@ -196,6 +196,17 @@ describe("website lead intake handoff", () => {
     expect(welcomeRoute).toContain("gxj-display-title min-h-14");
   });
 
+  it("uses the approved email-access treatment without changing its recovery action", () => {
+    expect(welcomeRoute).toContain("Check Your Email");
+    expect(welcomeRoute).toContain("Request Another Link");
+    expect(welcomeRoute).toContain("relative mx-auto mb-7 h-16 w-20");
+    expect(welcomeRoute).toContain("size-16 translate-x-2 translate-y-2 text-gxj-orange");
+    expect(welcomeRoute).toContain(
+      "mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center",
+    );
+    expect(welcomeRoute).not.toContain("place-items-center border-2 border-foreground");
+  });
+
   it("finishes without a second identity form and sends new participants to plan-ready", () => {
     expect(completionRoute).toContain("saveLeadPlanFromHandoff");
     expect(completionRoute).toContain('navigate({ to: "/plan-ready", replace: true })');
