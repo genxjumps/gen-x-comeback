@@ -1515,7 +1515,7 @@ function NutritionReview({ variant }: { variant: string }) {
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
                 Starting Targets
               </p>
-              <h2 className="mt-2 text-xl font-semibold">
+              <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
                 These are your numbers for the whole day.
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -1539,7 +1539,9 @@ function NutritionReview({ variant }: { variant: string }) {
                 className="min-w-0 pr-4 even:pl-4 sm:px-4 sm:first:pl-0 sm:last:pr-0"
               >
                 <p className="text-xs font-medium text-muted-foreground">{label}</p>
-                <p className="mt-1 text-2xl font-semibold tracking-tight">{value}</p>
+                <p className="gxj-display-title mt-1 text-3xl uppercase tracking-wide sm:text-4xl">
+                  {value}
+                </p>
               </div>
             ))}
           </div>
@@ -1562,7 +1564,7 @@ function NutritionReview({ variant }: { variant: string }) {
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
                 Your Normal Day
               </p>
-              <h2 className="mt-2 text-xl font-semibold">
+              <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
                 See how the numbers work across your day.
               </h2>
             </div>
@@ -1582,7 +1584,9 @@ function NutritionReview({ variant }: { variant: string }) {
             ].map(([meal, percentage, ...targets]) => (
               <div key={meal} className="py-4">
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="font-semibold">{meal}</h3>
+                  <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                    {meal}
+                  </h3>
                   <p className="text-sm font-semibold">{percentage}</p>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
@@ -1599,7 +1603,9 @@ function NutritionReview({ variant }: { variant: string }) {
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
             Build Meals That Work
           </p>
-          <h2 className="mt-2 text-xl font-semibold">Keep the food simple.</h2>
+          <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
+            Keep the food simple.
+          </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Start with protein. Use labels, serving sizes, and standard nutrition information to fit
             the rest of each meal to its numbers. A small rotation is enough: one or two breakfasts,
@@ -1616,7 +1622,7 @@ function NutritionReview({ variant }: { variant: string }) {
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
             My Normal Day
           </p>
-          <h2 className="mt-2 text-xl font-semibold">
+          <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
             I keep the structure and adjust the extras.
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -1626,7 +1632,9 @@ function NutritionReview({ variant }: { variant: string }) {
           </p>
           <div className="mt-5 grid divide-y divide-foreground/15 border-y border-foreground/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
             <div className="py-4 sm:py-0 sm:pr-5">
-              <h3 className="font-semibold">Maintenance</h3>
+              <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                Maintenance
+              </h3>
               <ul className="mt-3 space-y-2 text-sm leading-relaxed">
                 <li>
                   <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 1/2 cup uncooked
@@ -1645,7 +1653,9 @@ function NutritionReview({ variant }: { variant: string }) {
               </ul>
             </div>
             <div className="py-4 sm:py-0 sm:pl-5">
-              <h3 className="font-semibold">When I want to cut body fat</h3>
+              <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                When I want to cut body fat
+              </h3>
               <ul className="mt-3 space-y-2 text-sm leading-relaxed">
                 <li>
                   <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 5 g creatine
@@ -1673,7 +1683,9 @@ function NutritionReview({ variant }: { variant: string }) {
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
             Read The Label
           </p>
-          <h2 className="mt-2 text-xl font-semibold">Check what you drink and what you pour.</h2>
+          <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
+            Check what you drink and what you pour.
+          </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Regular soda, juice, sweetened coffee or tea, calorie-containing flavored drinks,
             dressing, mayo, oils, butter, cheese, ketchup, and barbecue sauce can add up fast. Read
@@ -1687,9 +1699,9 @@ function NutritionReview({ variant }: { variant: string }) {
         </section>
 
         <section className="border-b border-foreground/15 py-6 sm:py-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+          <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
             If You Miss
-          </p>
+          </h2>
           <p className="mt-2 text-base font-semibold leading-relaxed">
             You messed up a meal. Fine. Do not turn one decision into a lost day or a lost weekend.
             Do not punish it by starving tomorrow. Do not wait for Monday. Your next meal is your
@@ -1698,7 +1710,9 @@ function NutritionReview({ variant }: { variant: string }) {
         </section>
 
         <section className="border-b border-foreground/15 py-6 sm:py-8">
-          <h2 className="text-lg font-semibold">If results stall</h2>
+          <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+            If results stall
+          </h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Review labels, portions, drinks, dressings, sauces, serving sizes, calorie-dense foods,
             and consistency before rebuilding the whole diet. This app cannot verify what you ate.
@@ -1712,7 +1726,9 @@ function NutritionReview({ variant }: { variant: string }) {
           className="mt-5 flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 font-semibold transition-colors hover:bg-muted/35"
         >
           <span>
-            Learn the basics
+            <span className="gxj-display-title block text-xl uppercase tracking-wide sm:text-2xl">
+              Learn the basics
+            </span>
             <span className="mt-1 block text-xs font-normal text-muted-foreground">
               Deeper nutrition explanations and examples on Gen X Jumps.
             </span>

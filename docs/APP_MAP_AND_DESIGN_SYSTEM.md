@@ -99,6 +99,12 @@ content needs it: target-review status, compact disclosures and controls, and th
 **Learn the basics** card. This active-state rule does not pre-approve the separate setup, locked,
 review, or unavailable treatments.
 
+Active Nutrition uses the shared app typography hierarchy. Major section headings use uppercase
+Anton at the established section-heading scale, target values use Anton at the shared measurement
+scale, and meal and example subheads use the smaller Anton display scale. Labels, percentages,
+instructions, lists, and supporting copy remain in Barlow. The review route and real page must use
+the same type classes rather than approximating the hierarchy with route-specific bold text.
+
 ### 5. Internal and review-only screens
 
 These don't belong in the customer information architecture or visual navigation:
