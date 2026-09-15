@@ -211,7 +211,7 @@
     },
     {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "614ef67bcb7a7dbad39d2873a4a7a5dbd59e3996aae302cdb268ccfa241eeaa6"
+      "sha256": "1275c86e78099e9455f5a57394048cbe3444c53fb7eaa3c7b0673010baa031d1"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -419,7 +419,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/my-programs-setup-contract.test.ts",
-      "sha256": "12a28ba2e9a7af8d82bc45faa8c29015c06df2fd9b86069d5892972d32855616"
+      "sha256": "2e5d56fe3335316629360793c1eaafe0e9b2a571d3e6ee2d6959a1c926a12451"
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
@@ -1311,7 +1311,7 @@
     },
     {
       "path": "src/routes/my-programs.tsx",
-      "sha256": "281d84945474f8ffd3e652861a8becdb48a49246bd9fb947deab26c4a077dec8"
+      "sha256": "614ba07b443757c05ec216d212f92782601492448f3c8143427424207b051fc0"
     },
     {
       "path": "src/routes/my-programs_.accelerator.refund.tsx",

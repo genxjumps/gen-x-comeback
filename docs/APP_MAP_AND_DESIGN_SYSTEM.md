@@ -401,6 +401,27 @@ other product behavior.
 These Home and workout patterns, plus the active-plan schedule states, are approved. Apply their
 shared components and tokens instead of recreating their presentation inside individual routes.
 
+### Approved My Programs visual contract
+
+The `/my-programs` screen continues the open, divided presentation established by the 7-Day
+schedule while distinguishing the two program families without mixing their accent colors.
+
+- Programs sit directly on the shared cream background. Use strong horizontal dividers instead of
+  surrounding each program with a bordered, filled, or shadowed card.
+- Each program begins with a duration marker. The marker reads **7 DAY** or **28 DAY**, so the
+  adjacent title does not repeat the duration.
+- Use **Comeback Plan** beside the **7 DAY** marker and **Fat Loss Accelerator** beside the **28
+  DAY** marker.
+- The 7-Day marker uses black and cream. The Accelerator marker and the active Programs navigation
+  indicator use aqua with black. Do not place orange and aqua accents inside the same Programs
+  composition.
+- Keep the shared compact status label, Anton program title, Barlow supporting copy, and standard
+  56px action treatment across not-started, active, paused, completed, and available states.
+- Confirmation prompts remain contained because they are consequential interaction states. Empty
+  and informational copy stays directly on the page with dividers.
+- These are presentation rules only. Preserve ownership, purchase, setup, activation, pause,
+  resume, switching, history, completion, error, and navigation behavior.
+
 ## Recommended next action
 
 Continue into Programs, Progress, and Nutrition. Preserve the shared focused-setup and participant
