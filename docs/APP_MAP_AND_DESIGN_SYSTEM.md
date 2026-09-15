@@ -417,6 +417,8 @@ schedule while distinguishing the two program families without mixing their acce
   composition.
 - Keep the shared compact status label, Anton program title, Barlow supporting copy, and standard
   56px action treatment across not-started, active, paused, completed, and available states.
+- Keep the page title on the established compact app-page scale. It must not use the oversized
+  default hero treatment.
 - Confirmation prompts remain contained because they are consequential interaction states. Empty
   and informational copy stays directly on the page with dividers.
 - These are presentation rules only. Preserve ownership, purchase, setup, activation, pause,

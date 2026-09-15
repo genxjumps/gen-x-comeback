@@ -102,6 +102,7 @@ describe("My Programs and setup contract", () => {
     const programs = readSource("../../../routes/my-programs.tsx");
 
     expect(programs).toContain("divide-y-2 divide-foreground border-y-2 border-foreground");
+    expect(programs).toContain('titleSize="compact"');
     expect(programs).toContain("<ProgramLengthMarker days={28} accelerator />");
     expect(programs).toContain("<ProgramLengthMarker days={7} />");
     expect(programs).toContain("Fat Loss Accelerator");

@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "4825fdb4998341f48390ed9776eec8acc7d37aa14eb439a6aacea58aa3e5bd4a"
+      "sha256": "b0eec554c4ad0dbee1eeb73dc3a9105996960cbc5829834ac10dd5e1ac531e67"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -419,7 +419,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/my-programs-setup-contract.test.ts",
-      "sha256": "2e5d56fe3335316629360793c1eaafe0e9b2a571d3e6ee2d6959a1c926a12451"
+      "sha256": "2894aca609137244e244f59141926ac1f58cf5c2709348a5c6191a52a805ce17"
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
@@ -1311,7 +1311,7 @@
     },
     {
       "path": "src/routes/my-programs.tsx",
-      "sha256": "614ba07b443757c05ec216d212f92782601492448f3c8143427424207b051fc0"
+      "sha256": "01cdef7b7faee7044215786ed412e92034ddb50713dedd7415cb9d42465f0802"
     },
     {
       "path": "src/routes/my-programs_.accelerator.refund.tsx",
