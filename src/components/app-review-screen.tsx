@@ -304,34 +304,61 @@ function LandingReview() {
   );
 }
 
-function EligibilityReview() {
+function EligibilityReview({ ineligible = false }: { ineligible?: boolean }) {
+  if (ineligible) {
+    return (
+      <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+        <header className="py-6 sm:py-8">
+          <div className="max-w-2xl">
+            <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+              I’m Sorry
+            </h1>
+            <p className="mt-3 text-base font-medium leading-relaxed text-foreground/75">
+              This plan is not designed for rehabilitation, chair-based exercise, assisted exercise,
+              or people who cannot complete basic exercise independently.
+            </p>
+          </div>
+        </header>
+
+        <div className="mx-auto mt-1 flex max-w-3xl flex-col-reverse gap-3 border-t border-foreground/20 pt-5 sm:flex-row sm:justify-between">
+          <Action outline>Back to start</Action>
+          <Action outline>Change my answer</Action>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-      <Status>Before You Start</Status>
-      <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-none sm:text-6xl">
-        Make Sure This Plan Fits
-      </h1>
-      <p className="mt-4 text-lg leading-relaxed">
-        This plan is for adults who can exercise safely on their own and want a practical place to
-        restart.
-      </p>
-      <Section title="This plan may work for you if">
-        <ul className="space-y-3 font-medium">
-          {[
-            "You can walk without help",
-            "You can get up from a chair",
-            "You can adjust or stop when something hurts",
-          ].map((x) => (
-            <li key={x} className="flex gap-3">
-              <Check className="mt-0.5 size-5 shrink-0" />
-              {x}
-            </li>
-          ))}
-        </ul>
-      </Section>
-      <div className="grid gap-3 sm:grid-cols-2">
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="py-6 sm:py-8">
+        <div className="max-w-2xl">
+          <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+            Before You Start
+          </h1>
+          <p className="mt-3 text-base font-medium leading-relaxed text-foreground/75">
+            You don’t need to be in great shape. You just need to be able to exercise safely on your
+            own.
+          </p>
+        </div>
+      </header>
+
+      <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-xl font-bold leading-snug sm:text-2xl">
+            Can you safely jump rope, get down to and up from the floor, and do basic bodyweight
+            exercises like push-ups, squats, and lunges on your own?
+          </h2>
+          <div className="mt-5 grid gap-3">
+            <AssessmentChoice>Yes</AssessmentChoice>
+            <AssessmentChoice selected>Yes, with minor modifications</AssessmentChoice>
+            <AssessmentChoice>No</AssessmentChoice>
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto mt-1 flex max-w-3xl flex-col-reverse gap-3 border-t border-foreground/20 pt-5 sm:flex-row sm:justify-between">
+        <Action outline>Back</Action>
         <Action>Continue</Action>
-        <Action outline>This Isn't Right for Me</Action>
       </div>
     </div>
   );
@@ -1411,7 +1438,7 @@ function ReviewBody({ screen }: { screen: ReviewScreen }) {
     case "landing":
       return <LandingReview />;
     case "eligibility":
-      return <EligibilityReview />;
+      return <EligibilityReview ineligible={screen.variant === "ineligible"} />;
     case "assessment":
       return <AssessmentReview step={screen.variant} />;
     case "assessment-result":
