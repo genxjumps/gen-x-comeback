@@ -1508,8 +1508,8 @@ function NutritionReview({ variant }: { variant: string }) {
           </div>
         </Section>
       ) : null}
-      <div className="space-y-5">
-        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+      <div>
+        <section className="border-y-2 border-foreground py-6 sm:py-8">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
@@ -1527,14 +1527,17 @@ function NutritionReview({ variant }: { variant: string }) {
             </Button>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="mt-5 grid grid-cols-2 gap-y-5 sm:grid-cols-4 sm:divide-x sm:divide-foreground/15">
             {[
               ["Calories", "2,100"],
               ["Protein", "175 g"],
               ["Carbs", "210 g"],
               ["Fat", "62 g"],
             ].map(([label, value]) => (
-              <div key={label} className="rounded-md border border-border bg-background p-4">
+              <div
+                key={label}
+                className="min-w-0 pr-4 even:pl-4 sm:px-4 sm:first:pl-0 sm:last:pr-0"
+              >
                 <p className="text-xs font-medium text-muted-foreground">{label}</p>
                 <p className="mt-1 text-2xl font-semibold tracking-tight">{value}</p>
               </div>
@@ -1553,7 +1556,7 @@ function NutritionReview({ variant }: { variant: string }) {
           </details>
         </section>
 
-        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+        <section className="border-b border-foreground/15 py-6 sm:py-8">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
@@ -1571,13 +1574,13 @@ function NutritionReview({ variant }: { variant: string }) {
             Adjust the sliders to match how you actually eat. This changes the split, not your daily
             totals.
           </p>
-          <div className="mt-5 space-y-3">
+          <div className="mt-5 divide-y divide-foreground/15 border-y border-foreground/15">
             {[
               ["Breakfast", "25%", "525 cal", "44 g protein", "53 g carbs", "16 g fat"],
               ["Lunch", "25%", "525 cal", "44 g protein", "53 g carbs", "16 g fat"],
               ["Dinner", "50%", "1,050 cal", "87 g protein", "104 g carbs", "30 g fat"],
             ].map(([meal, percentage, ...targets]) => (
-              <div key={meal} className="rounded-md border border-border bg-background p-4">
+              <div key={meal} className="py-4">
                 <div className="flex items-baseline justify-between gap-3">
                   <h3 className="font-semibold">{meal}</h3>
                   <p className="text-sm font-semibold">{percentage}</p>
@@ -1592,7 +1595,7 @@ function NutritionReview({ variant }: { variant: string }) {
           </div>
         </section>
 
-        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+        <section className="border-b border-foreground/15 py-6 sm:py-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
             Build Meals That Work
           </p>
@@ -1609,7 +1612,7 @@ function NutritionReview({ variant }: { variant: string }) {
           </p>
         </section>
 
-        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+        <section className="border-b border-foreground/15 py-6 sm:py-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
             My Normal Day
           </p>
@@ -1621,8 +1624,8 @@ function NutritionReview({ variant }: { variant: string }) {
             I remove or reduce the parts adding extra calories while keeping the protein-centered
             structure and foods I already like.
           </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-md border border-border p-4">
+          <div className="mt-5 grid divide-y divide-foreground/15 border-y border-foreground/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+            <div className="py-4 sm:py-0 sm:pr-5">
               <h3 className="font-semibold">Maintenance</h3>
               <ul className="mt-3 space-y-2 text-sm leading-relaxed">
                 <li>
@@ -1641,7 +1644,7 @@ function NutritionReview({ variant }: { variant: string }) {
                 </li>
               </ul>
             </div>
-            <div className="rounded-md border border-border p-4">
+            <div className="py-4 sm:py-0 sm:pl-5">
               <h3 className="font-semibold">When I want to cut body fat</h3>
               <ul className="mt-3 space-y-2 text-sm leading-relaxed">
                 <li>
@@ -1666,7 +1669,7 @@ function NutritionReview({ variant }: { variant: string }) {
           </p>
         </section>
 
-        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+        <section className="border-b border-foreground/15 py-6 sm:py-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
             Read The Label
           </p>
@@ -1683,7 +1686,7 @@ function NutritionReview({ variant }: { variant: string }) {
           </p>
         </section>
 
-        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+        <section className="border-b border-foreground/15 py-6 sm:py-8">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
             If You Miss
           </p>
@@ -1694,7 +1697,7 @@ function NutritionReview({ variant }: { variant: string }) {
           </p>
         </section>
 
-        <section className="rounded-lg border border-border bg-muted/35 p-5 sm:p-6">
+        <section className="border-b border-foreground/15 py-6 sm:py-8">
           <h2 className="text-lg font-semibold">If results stall</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             Review labels, portions, drinks, dressings, sauces, serving sizes, calorie-dense foods,
@@ -1706,7 +1709,7 @@ function NutritionReview({ variant }: { variant: string }) {
           href="https://genxjumps.com/nutrition/"
           target="_blank"
           rel="noreferrer"
-          className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 font-semibold transition-colors hover:bg-muted/35"
+          className="mt-5 flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 font-semibold transition-colors hover:bg-muted/35"
         >
           <span>
             Learn the basics
