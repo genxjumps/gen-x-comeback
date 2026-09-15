@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "4bebe9a30cca8cbc53004a39da5d7650f48ae1af0ab2ca3cd3a129ab2b3d8d7c"
+      "sha256": "e0c2d7c09aaaf281f62c7218ae0a6c22e151b4cf852ad225fcce4338a0a44155"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -307,7 +307,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "c123b2d047da1991e8c1f457781b515b1cc98458f0496f76e6bb279fcb1ed2a8"
+      "sha256": "1650a777c03e046e11beb46e3efc6a558d87c2addef1e72447dc1d0e7b0b0747"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -1411,7 +1411,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "45ee9f6376620c963778b410d2c67c09ecca19b4ef34070bee329a315a903b3f"
+      "sha256": "4d4a5818a7a45d6477d3c7d28ed65551170b648be5a29f18882f63ce8e410544"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",
