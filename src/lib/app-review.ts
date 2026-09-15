@@ -46,6 +46,16 @@ export const reviewScreens: ReviewScreen[] = [
     variant: "default",
   },
   {
+    slug: "welcome-setup",
+    title: "Welcome",
+    route: "/welcome",
+    state: "New participant handoff",
+    group: "Entry and setup",
+    shell: "focused",
+    kind: "welcome",
+    variant: "setup",
+  },
+  {
     slug: "before-you-start",
     title: "Before You Start",
     route: "/assessment/start",
