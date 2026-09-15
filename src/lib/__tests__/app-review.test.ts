@@ -35,6 +35,9 @@ const nutritionReviewSource = reviewSource.slice(
   reviewSource.indexOf("function NutritionReview"),
   reviewSource.indexOf("function NotificationsReview"),
 );
+const activeNutritionReviewSource = nutritionReviewSource.slice(
+  nutritionReviewSource.lastIndexOf("  return ("),
+);
 const assessmentRouteSource = readFileSync(
   new URL("../../routes/assessment.index.tsx", import.meta.url),
   "utf8",
@@ -257,6 +260,19 @@ describe("app review catalog", () => {
     expect(nutritionRouteSource).toContain(instruction);
     expect(nutritionReviewSource).not.toContain(
       "Use these as a starting point, not a pass-or-fail test.",
+    );
+    expect(activeNutritionReviewSource).toContain('title="Your Nutrition"');
+    expect(activeNutritionReviewSource).toContain('titleSize="compact"');
+    expect(activeNutritionReviewSource).not.toContain('kicker="Your Nutrition"');
+    expect(nutritionRouteSource).toContain('? "Your Nutrition"');
+    expect(nutritionRouteSource).toContain(
+      ': "Calories Matter. Protein First. Meals Stay Simple."',
+    );
+    expect(nutritionRouteSource).toContain(
+      'kicker={profile && !editing ? undefined : "Nutrition"}',
+    );
+    expect(nutritionRouteSource).toContain(
+      'titleSize={profile && !editing ? "compact" : undefined}',
     );
   });
 });

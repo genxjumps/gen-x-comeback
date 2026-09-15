@@ -1480,9 +1480,9 @@ function NutritionReview({ variant }: { variant: string }) {
     );
   return (
     <Page
-      kicker="Your Nutrition"
-      title="Your Daily Targets"
+      title="Your Nutrition"
       description="These are the numbers to follow each day. Hit your calorie and protein targets consistently to lose fat and protect muscle."
+      titleSize="compact"
     >
       {variant === "review" ? (
         <Section>
