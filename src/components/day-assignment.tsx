@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied } from "@/components/plan-access";
 import { WorkoutMediaCard } from "@/components/workout-media-card";
+import { WorkoutScreen } from "@/components/workout-screen";
 import { readStoredToken } from "@/lib/access-token";
 import {
   assignmentType,
@@ -19,6 +20,7 @@ import {
 } from "@/lib/lead-plan";
 import { completePlanDay, getDayBrief } from "@/lib/lead.functions";
 import { W01_APPROACH, W01_CARDIO_HEADING } from "@/lib/w01-content";
+import { sevenDayWorkoutOverview } from "@/lib/workout-presentation";
 
 type Brief = {
   cardio: CardioContext;
@@ -27,27 +29,6 @@ type Brief = {
   day: PlanDayView | null;
   calendar: PlanCalendar;
 };
-
-const SECTION = "mt-4 rounded-lg border border-border bg-card p-4";
-const LABEL = "text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground";
-
-function CardioSection({ cardio }: { cardio: CardioContext }) {
-  return (
-    <section className={SECTION}>
-      <h2 className={LABEL}>{W01_CARDIO_HEADING}</h2>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cardioGuidance(cardio)}</p>
-    </section>
-  );
-}
-
-function ApproachSection() {
-  return (
-    <section className={SECTION}>
-      <h2 className={LABEL}>How to Approach This Workout</h2>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{W01_APPROACH}</p>
-    </section>
-  );
-}
 
 /**
  * Protected assignment page for Days 2 through 7. Everything rendered comes
@@ -166,6 +147,130 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
 
   const previousDay = dayNumber - 1;
 
+  if (kind === "workout" && day?.code) {
+    return (
+      <WorkoutScreen
+        kicker={`Day ${dayNumber} of 7`}
+        title={title}
+        description={`${duration ?? "About 15 minutes"}. Use the easier option any time you need it.`}
+        media={
+          <WorkoutMediaCard
+            dayNumber={dayNumber}
+            dayLabel={`Day ${dayNumber} of 7`}
+            code={day.code}
+            title={title}
+            state={mediaState}
+          />
+        }
+        overview={sevenDayWorkoutOverview(day.code, day.minutes ?? 15)}
+        notes={
+          <>
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-[0.12em]">
+                {W01_CARDIO_HEADING}
+              </h3>
+              <p className="mt-2 text-foreground/80">{cardioGuidance(brief.cardio)}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-[0.12em]">Workout Approach</h3>
+              <p className="mt-2 text-foreground/80">{W01_APPROACH}</p>
+            </div>
+          </>
+        }
+      >
+        <section className="pb-8 pt-1">
+          {completed ? (
+            <div className="rounded-lg border border-border bg-gxj-mint p-4">
+              <p className="text-sm font-semibold">Day {dayNumber} Complete</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                Nice work. Your progress is saved.
+              </p>
+              <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
+                <Link to="/your-plan">
+                  {dayNumber === 7 && priorDone ? "See What’s Next" : "Continue to My Plan"}
+                </Link>
+              </Button>
+            </div>
+          ) : priorDone && (!timing || timing.available) ? (
+            <>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled={marking}
+                onClick={markComplete}
+              >
+                {marking ? "Saving..." : completionLabel(day, dayNumber)}
+              </Button>
+              {markError ? (
+                <p role="alert" className="mt-2 text-xs font-medium leading-relaxed">
+                  {markError}
+                </p>
+              ) : null}
+            </>
+          ) : null}
+        </section>
+      </WorkoutScreen>
+    );
+  }
+
+  if (kind === "recovery" && optional) {
+    return (
+      <WorkoutScreen
+        kicker={`Day ${dayNumber} of 7`}
+        title={optional.title}
+        description={`An optional ${optional.minutes}-minute recovery session. Keep the movement easy.`}
+        media={
+          <WorkoutMediaCard
+            dayNumber={dayNumber}
+            dayLabel={`Day ${dayNumber} of 7`}
+            code={optional.code}
+            title={optional.title}
+            state={mediaState}
+          />
+        }
+        overview={sevenDayWorkoutOverview(optional.code, optional.minutes)}
+        notes={
+          <p className="text-foreground/80">
+            This session is optional. Keep the effort easy and use it only if moving feels good
+            today.
+          </p>
+        }
+      >
+        <section className="pb-8 pt-1">
+          {completed ? (
+            <div className="rounded-lg border border-border bg-gxj-mint p-4">
+              <p className="text-sm font-semibold">Day {dayNumber} Complete</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                Nice work. Your progress is saved.
+              </p>
+              <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
+                <Link to="/your-plan">
+                  {dayNumber === 7 && priorDone ? "See What’s Next" : "Continue to My Plan"}
+                </Link>
+              </Button>
+            </div>
+          ) : priorDone && (!timing || timing.available) ? (
+            <>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled={marking}
+                onClick={markComplete}
+              >
+                {marking ? "Saving..." : completionLabel(day, dayNumber)}
+              </Button>
+              {markError ? (
+                <p role="alert" className="mt-2 text-xs font-medium leading-relaxed">
+                  {markError}
+                </p>
+              ) : null}
+            </>
+          ) : null}
+        </section>
+      </WorkoutScreen>
+    );
+  }
+
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <Link
@@ -203,39 +308,6 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
           the plan rested and ready for what comes next. It still counts toward completing your
           7-day plan.
         </p>
-      ) : null}
-
-      {kind === "workout" && day?.code ? (
-        <>
-          <CardioSection cardio={brief.cardio} />
-          <ApproachSection />
-          <WorkoutMediaCard
-            dayNumber={dayNumber}
-            code={day.code}
-            title={title}
-            state={mediaState}
-          />
-        </>
-      ) : null}
-
-      {kind === "recovery" && optional ? (
-        <>
-          <section className="mt-6 rounded-lg border border-dashed border-border p-4">
-            <h2 className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              If You Want to Move
-            </h2>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              Choose this {optional.minutes}-minute active recovery session for easy movement and
-              gentle mobility. It’s optional and isn’t required to complete the day.
-            </p>
-          </section>
-          <WorkoutMediaCard
-            dayNumber={dayNumber}
-            code={optional.code}
-            title={optional.title}
-            state={mediaState}
-          />
-        </>
       ) : null}
 
       <section className="mt-8">
@@ -289,14 +361,6 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
           </>
         ) : null}
       </section>
-
-      {!completed && (kind === "workout" || (kind === "recovery" && optional)) ? (
-        <div className="mt-6">
-          <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-            <Link to="/your-plan">Back to My Plan</Link>
-          </Button>
-        </div>
-      ) : null}
     </div>
   );
 }

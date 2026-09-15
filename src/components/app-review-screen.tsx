@@ -16,6 +16,7 @@ import { ReviewShell } from "@/components/review-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { WorkoutMediaCard } from "@/components/workout-media-card";
+import { WorkoutOverview, WorkoutNotes } from "@/components/workout-screen";
 import type { ReviewScreen } from "@/lib/app-review";
 
 function Section({ title, children }: { title?: string; children: ReactNode }) {
@@ -519,7 +520,7 @@ function PlanReview({ complete }: { complete: boolean }) {
   );
 }
 
-function WorkoutOverview({ easyMovement = false }: { easyMovement?: boolean }) {
+function ReviewWorkoutOverview({ easyMovement = false }: { easyMovement?: boolean }) {
   const details = easyMovement
     ? [
         ["Duration", "15 Minutes"],
@@ -534,31 +535,7 @@ function WorkoutOverview({ easyMovement = false }: { easyMovement?: boolean }) {
         ["Format", "Intervals + Circuits"],
       ];
 
-  return (
-    <section className="border-t-2 border-foreground pb-7 pt-8" aria-labelledby="workout-overview">
-      <h2
-        id="workout-overview"
-        className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
-      >
-        Workout Overview
-      </h2>
-      <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {details.map(([label, value]) => (
-          <div
-            key={label}
-            className="flex min-h-32 flex-col justify-center border border-foreground/25 p-4"
-          >
-            <dt className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
-              {label}
-            </dt>
-            <dd className="gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl">
-              {value}
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-  );
+  return <WorkoutOverview items={details.map(([label, value]) => ({ label, value }))} />;
 }
 
 function WorkoutReview({ variant }: { variant: string }) {
@@ -614,14 +591,14 @@ function WorkoutReview({ variant }: { variant: string }) {
           }
         />
       )}
-      {!recovery ? <WorkoutOverview easyMovement={day === 2} /> : null}
+      {!recovery ? <ReviewWorkoutOverview easyMovement={day === 2} /> : null}
       {!recovery ? (
-        <Section title="Workout Notes">
+        <WorkoutNotes>
           <p className="leading-relaxed">
             Move at a pace you can control. Take more rest when you need it. Stop if you feel sharp
             pain, dizziness, or anything that doesn't feel right.
           </p>
-        </Section>
+        </WorkoutNotes>
       ) : null}
     </Page>
   );

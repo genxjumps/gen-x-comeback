@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "f56a3dc907f6502ce34e2fab349b34735a2b5125170f12850c2830939c0a4868"
+      "sha256": "ba21c76dc6f10b9916bbb34f998dd4163f7796ea0d16a6b1555c8e5a886a5249"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -183,11 +183,11 @@
     },
     {
       "path": "src/components/day-assignment.tsx",
-      "sha256": "5ff676ed3f6adea681402f771603987660a6b782ede61790c31c232e8f381758"
+      "sha256": "92598df694bfa1840a74a254fb325e83943bd23f90f70de3227c7c319cd30956"
     },
     {
       "path": "src/components/day-one-workout.tsx",
-      "sha256": "90f02ecdf38328e1234577c8a662967f4d84f7f8c00759db4d4022e8974ea70e"
+      "sha256": "e938d351ef28b4e4e723237cc290f69f623e15e6bad40f220692e829504ae54f"
     },
     {
       "path": "src/components/intake-closed.tsx",
@@ -262,6 +262,10 @@
       "sha256": "9d33375fe9e80e33f86dd5d108e014fd78947e57d91e326ab7f266d6923a92ac"
     },
     {
+      "path": "src/components/workout-screen.tsx",
+      "sha256": "96e8d8182520e94af5b948b78ca5f479c907a1238e193f676b824b1aa7b1bf4e"
+    },
+    {
       "path": "src/integrations/supabase/auth-attacher.ts",
       "sha256": "6f3a336700721b5cbf9235fb18b9575cdb5d1f55e4656b2f4a3cadc7ae81b8eb"
     },
@@ -323,7 +327,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
-      "sha256": "2aec60b5f5c8fcbc3a718471585497077164968db13d6f13a7ab2ca8d5f3a264"
+      "sha256": "d84fe018d0c0c24fcf22639c45ee957e723bc1461b129877775283d343dc94e8"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
@@ -364,6 +368,10 @@
     {
       "path": "src/lib/__tests__/signup-response-loss.test.ts",
       "sha256": "21e9926372042297c2c5587db436afc9a67a45995654a4fd8ef05f69ad6489c6"
+    },
+    {
+      "path": "src/lib/__tests__/workout-screen-design.test.ts",
+      "sha256": "25c4426d6ecfaa264426aa3c87cf1e12da05ae3d103d670d3aabdc4c722864e3"
     },
     {
       "path": "src/lib/accelerator/__tests__/access.test.ts",
@@ -1172,6 +1180,10 @@
     {
       "path": "src/lib/w01-content.ts",
       "sha256": "1999e0252f87ddc166310e1fb6b81dc9e51c71e76a6fe702aadbc70c3f6f84d8"
+    },
+    {
+      "path": "src/lib/workout-presentation.ts",
+      "sha256": "9baf5983a9aa30e2c2245b13a57d4341e235880bef538dc76e8203be036338c3"
     },
     {
       "path": "src/lib/workout-videos.ts",
