@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "ced8699843e52f3f0ea5e85f8c3b5c92015500a5702a62fa74f1ce5aab9b0055"
+      "sha256": "d02867850af9f41b9e59345949a12ac23481562bd518c36e152b2aace702da9d"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -267,15 +267,15 @@
     },
     {
       "path": "src/components/workout-launch-panel.tsx",
-      "sha256": "4e1fbeac78b4dc8ba30137928d1a4136f11bb87ccc4e6ab511b0de669f3be186"
+      "sha256": "3f1b59560f200aaf3c842ddacf817f6c5fb0abee374505b293ca2910ad2e4d93"
     },
     {
       "path": "src/components/workout-media-card.tsx",
-      "sha256": "9d33375fe9e80e33f86dd5d108e014fd78947e57d91e326ab7f266d6923a92ac"
+      "sha256": "1bccc40dd3e2432f0d41b12dbdad30a488812f67c2179b83766ff0833cdd9be3"
     },
     {
       "path": "src/components/workout-screen.tsx",
-      "sha256": "96e8d8182520e94af5b948b78ca5f479c907a1238e193f676b824b1aa7b1bf4e"
+      "sha256": "3e7bcc84b33aa358eefc37958333060a5e6563d5bc78659797d6f87f7f3399b2"
     },
     {
       "path": "src/integrations/supabase/auth-attacher.ts",
@@ -311,7 +311,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "b62f01a0913e24c5145a9e4f276099f918d5ccbae3be9380c8390a2867d15648"
+      "sha256": "2d1edbbc8e152f6a98fa5addc0300ad1f85796e6ff346967f3064fc1a91dbaa8"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -371,7 +371,7 @@
     },
     {
       "path": "src/lib/__tests__/seven-day-plan-review-design.test.ts",
-      "sha256": "da4c37eb37101e625540ea35b4776a26e68335b4b3cb7ea99639d81fb9924f1b"
+      "sha256": "1a768d698be0d2b153fd10942e0b6aae2b1d7df4a89b6113236209fd0f7c4baf"
     },
     {
       "path": "src/lib/__tests__/signup-destination.test.ts",
@@ -595,7 +595,7 @@
     },
     {
       "path": "src/lib/app-review.ts",
-      "sha256": "b7d2c2e8e0f4a1e70ad55c5afc2ba2e388b02eea888b31ce0a3bdf4b3ed2a5d8"
+      "sha256": "779544ed67f8223c96c2f41515c9907924744036c7e2e344bb9696b47e23e76d"
     },
     {
       "path": "src/lib/commerce/__tests__/checkout-path.test.ts",

@@ -187,18 +187,19 @@ describe("app review catalog", () => {
     expect(acceleratorReviewSource).toContain('title="Fat Loss Accelerator"');
     expect(acceleratorReviewSource).toContain("8 of 28 Days Complete");
     expect(acceleratorReviewSource).toContain("Workout B - EMOM");
-    expect(acceleratorReviewSource).toContain("Workout Overview");
+    expect(acceleratorReviewSource).toContain("<WorkoutOverview");
     expect(acceleratorReviewSource).toContain("Jump Rope + Bodyweight");
     expect(acceleratorReviewSource).toContain("Your 28-Day Schedule");
     expect(acceleratorReviewSource).toContain("bg-gxj-aqua");
-    expect(acceleratorReviewSource).toContain(
-      "grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]",
-    );
+    expect(acceleratorReviewSource).toContain("<WorkoutLaunchPanel");
+    expect(acceleratorReviewSource).toContain("totalDays={28}");
     expect(acceleratorReviewSource).toContain("Day 9 of 28");
     expect(acceleratorReviewSource).toContain("/workout-covers/accelerator-day-09.webp");
-    expect(acceleratorReviewSource).toContain("object-[70%_center]");
-    expect(acceleratorReviewSource).toContain("Open Today&rsquo;s Workout");
-    expect(acceleratorReviewSource).toContain("<ArrowRight");
+    expect(acceleratorReviewSource).toContain('actionLabel="Open Today’s Workout"');
+    expect(acceleratorReviewSource).toContain('href="/review/accelerator-workout-day-9"');
+    expect(acceleratorReviewSource).toContain('variant === "workout"');
+    expect(acceleratorReviewSource).toContain('accent="aqua"');
+    expect(acceleratorReviewSource).toContain("acceleratorVideoSrc");
     expect(acceleratorReviewSource).not.toContain("gxj-accelerator-workout-art");
     expect(acceleratorReviewSource).not.toContain("radial-gradient(circle_at_center");
     expect(acceleratorReviewSource).not.toContain("Before You Start");

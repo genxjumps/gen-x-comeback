@@ -20,6 +20,7 @@ import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { WorkoutLaunchPanel } from "@/components/workout-launch-panel";
 import { WorkoutOverview, WorkoutNotes } from "@/components/workout-screen";
 import { SevenDayScheduleRow } from "@/components/seven-day-schedule-row";
+import { acceleratorVideoSrc } from "@/lib/accelerator/video";
 import type { ReviewScreen } from "@/lib/app-review";
 import { WORKOUTS } from "@/lib/plan";
 import { sevenDayWorkoutOverview, sevenDayWorkoutRuntime } from "@/lib/workout-presentation";
@@ -1192,6 +1193,42 @@ function AcceleratorReview({ variant }: { variant: string }) {
       </Page>
     );
 
+  if (variant === "workout")
+    return (
+      <Page
+        kicker="Day 9 of 28"
+        title="Workout B - EMOM"
+        description="27:30 total."
+        titleSize="compact"
+        contentGap="tight"
+      >
+        <WorkoutMediaCard
+          dayNumber={9}
+          dayLabel="Day 9 of 28"
+          code="accelerator-workout-b"
+          title="Workout B - EMOM"
+          coverSrc="/workout-covers/accelerator-day-09.webp"
+          videoSrc={acceleratorVideoSrc("a863bce8634666b5766ff277685b6b83")}
+          accent="aqua"
+          state={{ type: "ready" }}
+        />
+        <WorkoutOverview
+          items={[
+            { label: "Duration", value: "27:30" },
+            { label: "Equipment", value: "Jump Rope + Bodyweight" },
+            { label: "Focus", value: "Conditioning + Core" },
+            { label: "Format", value: "EMOM" },
+          ]}
+        />
+        <WorkoutNotes>
+          <p className="leading-relaxed">
+            Complete Workout B. Stay controlled through each minute, scale reps or rest when needed,
+            then complete the day when you are finished.
+          </p>
+        </WorkoutNotes>
+      </Page>
+    );
+
   const weekTwoDays = [
     { day: 8, title: "Workout A - Classic Intervals", state: "completed" },
     { day: 9, title: "Workout B - EMOM", state: "current" },
@@ -1230,59 +1267,15 @@ function AcceleratorReview({ variant }: { variant: string }) {
         <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
           Today&rsquo;s Workout
         </h2>
-        <div className="group mt-3 overflow-hidden rounded-md border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]">
-          <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]">
-            <div className="flex min-h-32 flex-col justify-center px-5 py-5 sm:min-h-40 sm:px-7 sm:py-6">
-              <p className="text-xs font-bold uppercase tracking-[0.14em] text-background/65 sm:text-sm">
-                Day 9 of 28
-              </p>
-              <h3 className="gxj-display-title mt-2 text-3xl uppercase leading-[0.96] tracking-wide sm:text-4xl">
-                Workout B - EMOM
-              </h3>
-            </div>
-            <div className="overflow-hidden bg-background">
-              <img
-                src="/workout-covers/accelerator-day-09.webp"
-                alt=""
-                className="h-full w-full object-cover object-[70%_center] transition-transform duration-300 group-hover:scale-[1.02]"
-              />
-            </div>
-          </div>
-          <button
-            type="button"
-            className="flex min-h-16 w-full items-center justify-between gap-5 bg-gxj-aqua px-5 py-3 text-left text-white sm:px-7"
-          >
-            <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
-              Open Today&rsquo;s Workout
-            </span>
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-gxj-aqua">
-              <ArrowRight aria-hidden="true" className="size-4" />
-            </span>
-          </button>
-        </div>
-      </section>
-
-      <section className="pt-8 sm:pt-10">
-        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-          Workout Overview
-        </h2>
-        <div className="mt-5 grid grid-cols-2 border-l border-t border-foreground/25">
-          {[
-            ["Duration", "27:30"],
-            ["Equipment", "Jump Rope + Bodyweight"],
-            ["Focus", "Conditioning + Core"],
-            ["Format", "EMOM"],
-          ].map(([label, value]) => (
-            <div className="min-h-32 border-b border-r border-foreground/25 p-4 sm:p-5" key={label}>
-              <p className="text-xs font-bold uppercase tracking-[0.14em] text-foreground/60">
-                {label}
-              </p>
-              <p className="gxj-display-title mt-3 text-xl uppercase leading-tight tracking-wide sm:text-2xl">
-                {value}
-              </p>
-            </div>
-          ))}
-        </div>
+        <WorkoutLaunchPanel
+          day={9}
+          totalDays={28}
+          title="Workout B - EMOM"
+          actionLabel="Open Today’s Workout"
+          accent="aqua"
+          coverSrc="/workout-covers/accelerator-day-09.webp"
+          href="/review/accelerator-workout-day-9"
+        />
       </section>
 
       <section className="pt-8 sm:pt-10">

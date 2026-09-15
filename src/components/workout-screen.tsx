@@ -8,18 +8,18 @@ export function WorkoutOverview({ items }: { items: WorkoutOverviewItem[] }) {
     items.length >= 4 ? "sm:grid-cols-4" : items.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2";
 
   return (
-    <section className="border-t-2 border-foreground pb-7 pt-8" aria-labelledby="workout-overview">
+    <section className="pb-7 pt-8" aria-labelledby="workout-overview">
       <h2
         id="workout-overview"
         className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
       >
         Workout Overview
       </h2>
-      <dl className={`mt-4 grid grid-cols-2 gap-3 ${columns}`}>
+      <dl className={`mt-4 grid grid-cols-2 border-l border-t border-foreground/25 ${columns}`}>
         {items.map(({ label, value }) => (
           <div
             key={label}
-            className="flex min-h-32 flex-col justify-center border border-foreground/25 p-4"
+            className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-4"
           >
             <dt className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
               {label}

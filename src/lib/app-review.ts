@@ -459,6 +459,16 @@ export const reviewScreens: ReviewScreen[] = [
     variant: "active",
   },
   {
+    slug: "accelerator-workout-day-9",
+    title: "Day 9 - Workout B - EMOM",
+    route: "/accelerator",
+    state: "Workout ready",
+    group: "Programs",
+    shell: "participant",
+    kind: "accelerator",
+    variant: "workout",
+  },
+  {
     slug: "accelerator-rest",
     title: "28-Day Accelerator",
     route: "/accelerator",
