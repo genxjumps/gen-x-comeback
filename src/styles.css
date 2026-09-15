@@ -69,7 +69,6 @@
   --color-gxj-mint: var(--gxj-mint);
   --color-gxj-orange: var(--gxj-orange);
   --color-gxj-aqua: var(--gxj-aqua);
-  --color-gxj-aqua-soft: var(--gxj-aqua-soft);
 }
 
 :root {
@@ -111,7 +110,6 @@
   --gxj-mint: oklch(0.95 0.025 75);
   --gxj-orange: oklch(0.63 0.2 42);
   --gxj-aqua: oklch(0.76 0.12 198);
-  --gxj-aqua-soft: oklch(0.95 0.035 198);
 }
 
 .dark {
@@ -149,7 +147,6 @@
   --sidebar-ring: oklch(0.55 0 0);
   --gxj-orange: oklch(0.68 0.18 42);
   --gxj-aqua: oklch(0.78 0.11 198);
-  --gxj-aqua-soft: oklch(0.25 0.035 198);
 }
 
 @layer base {
