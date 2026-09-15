@@ -489,8 +489,9 @@ already approved on the 28-Day Accelerator dashboard.
 - Use orange for 7-Day completion and aqua for 28-Day Accelerator completion. Do not use the
   7-Day orange accent for Accelerator progress.
 - Match the Accelerator dashboard meter exactly: the program label is a small uppercase kicker,
-  the completion line uses the shared section-heading scale, the percentage uses the larger display
-  scale, and the aqua or orange bar is the established thicker square-ended treatment.
+  the completion line and percentage use the same shared section-heading scale, and the aqua or
+  orange bar is the established thicker square-ended treatment. A side-by-side percentage never
+  grows larger than the completed-days number it summarizes.
 - Present weight and waist as a simple two-column measurement readout using the established display
   type. Inputs and editing controls keep the boundaries required for interaction, but they do not
   create another outer card layer.

@@ -1249,7 +1249,9 @@ function AcceleratorReview({ variant }: { variant: string }) {
               8 of 28 Days Complete
             </p>
           </div>
-          <p className="gxj-display-title text-4xl text-gxj-aqua sm:text-5xl">29%</p>
+          <p className="gxj-display-title text-2xl uppercase tracking-wide text-gxj-aqua sm:text-3xl">
+            29%
+          </p>
         </div>
         <div
           className="mt-4 h-3 overflow-hidden bg-foreground/15"
@@ -1393,7 +1395,7 @@ function ProgressReview({ variant }: { variant: string }) {
               {variant === "empty" ? "0" : "9"} of 28 Days Complete
             </p>
           </div>
-          <p className="gxj-display-title text-4xl text-gxj-aqua sm:text-5xl">
+          <p className="gxj-display-title text-2xl uppercase tracking-wide text-gxj-aqua sm:text-3xl">
             {variant === "empty" ? "0%" : "32%"}
           </p>
         </div>

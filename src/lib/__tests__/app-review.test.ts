@@ -220,7 +220,10 @@ describe("app review catalog", () => {
     expect(progressReviewSource).toContain('title="Your Progress"');
     expect(progressReviewSource).not.toContain('kicker="Your Progress"');
     expect(progressReviewSource).toContain("bg-gxj-aqua");
-    expect(progressReviewSource).toContain("text-4xl text-gxj-aqua sm:text-5xl");
+    expect(progressReviewSource).toContain(
+      "text-2xl uppercase tracking-wide text-gxj-aqua sm:text-3xl",
+    );
+    expect(progressReviewSource).not.toContain("text-4xl text-gxj-aqua sm:text-5xl");
     expect(progressReviewSource).toContain("h-3 overflow-hidden bg-foreground/15");
     expect(progressReviewSource).not.toContain("bg-gxj-orange");
     expect(progressRouteSource).toContain('titleSize="compact"');
@@ -229,7 +232,10 @@ describe("app review catalog", () => {
     expect(progressRouteSource).toContain("border-y-2 border-foreground");
     expect(progressRouteSource).toContain("Latest Measurements");
     expect(progressRouteSource).toContain('currentProgram.accent === "aqua"');
-    expect(progressRouteSource).toContain("gxj-display-title text-4xl sm:text-5xl");
+    expect(progressRouteSource).toContain(
+      "gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl",
+    );
+    expect(progressRouteSource).not.toContain("gxj-display-title text-4xl sm:text-5xl");
     expect(progressRouteSource).toContain("h-3 overflow-hidden bg-foreground/15");
     expect(progressRouteSource).not.toContain(
       'className="rounded-lg border border-border bg-card p-5"',
