@@ -76,10 +76,10 @@ export function WorkoutMediaCard({
           <div className="relative h-full w-full">
             <img src={cover} alt="" className="h-full w-full object-cover" />
             <div className="absolute inset-y-0 left-0 flex w-[57%] flex-col justify-center px-[5%] text-foreground">
-              <p className="gxj-display-title text-[clamp(0.5rem,1.7vw,0.75rem)] uppercase tracking-[0.18em]">
+              <p className="gxj-display-title text-sm uppercase tracking-[0.18em] sm:text-base">
                 {dayLabel ?? `Day ${dayNumber} / Workout`}
               </p>
-              <h2 className="gxj-display-title mt-[3%] text-[clamp(1.9rem,7vw,3.5rem)] leading-[0.94] uppercase tracking-[-0.02em]">
+              <h2 className="gxj-display-title mt-[3%] text-4xl leading-[0.94] uppercase tracking-[-0.02em] sm:text-5xl">
                 {coverTitleFirstLine}
                 {coverTitleSecondLine ? (
                   <>
