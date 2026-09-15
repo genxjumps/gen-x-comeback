@@ -1230,7 +1230,7 @@ function AcceleratorReview({ variant }: { variant: string }) {
         <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
           Today&rsquo;s Workout
         </h2>
-        <div className="group mt-5 overflow-hidden rounded-md border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]">
+        <div className="group mt-3 overflow-hidden rounded-md border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]">
           <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]">
             <div className="flex min-h-32 flex-col justify-center px-5 py-5 sm:min-h-40 sm:px-7 sm:py-6">
               <p className="text-xs font-bold uppercase tracking-[0.14em] text-background/65 sm:text-sm">
@@ -1242,21 +1242,21 @@ function AcceleratorReview({ variant }: { variant: string }) {
             </div>
             <div
               aria-hidden="true"
-              className="relative flex items-center justify-center overflow-hidden bg-background text-foreground"
+              className="gxj-accelerator-number-art relative flex items-center justify-center overflow-hidden bg-background text-foreground"
             >
-              <span className="gxj-display-title translate-x-1 text-[5.5rem] leading-none tracking-[-0.09em] sm:text-[9rem]">
+              <span className="gxj-display-title relative z-10 translate-x-1 text-[5.5rem] leading-none tracking-[-0.09em] sm:text-[9rem]">
                 09
               </span>
             </div>
           </div>
           <button
             type="button"
-            className="flex min-h-16 w-full items-center justify-between gap-5 bg-gxj-aqua px-5 py-3 text-left text-foreground sm:px-7"
+            className="flex min-h-16 w-full items-center justify-between gap-5 bg-gxj-aqua px-5 py-3 text-left text-white sm:px-7"
           >
             <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
-              Start Workout
+              Open Today&rsquo;s Workout
             </span>
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-background text-gxj-aqua">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-gxj-aqua">
               <ArrowRight aria-hidden="true" className="size-4" />
             </span>
           </button>
