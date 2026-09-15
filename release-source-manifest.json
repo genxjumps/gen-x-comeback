@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "33c14d170a2ca36eae46dc60103e3e8863380b69235cccfe6fd872a7ccf839b0"
+      "sha256": "5a6575769f49f49bf127107bd7d5ac518d021effd4bd69259fa75bb1fb85052e"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -311,7 +311,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "5393eedbccb300abc71b2fe455f54739edb756d509ef706b120e5a23b6dc087e"
+      "sha256": "c81b72f6992093fbd06bd4b1a1c36a59bd05488beac9a36ca5e14a001e5d8b44"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
