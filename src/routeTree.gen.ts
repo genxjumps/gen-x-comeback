@@ -32,6 +32,7 @@ import { Route as AssessmentIndexRouteImport } from './routes/assessment.index'
 import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as Start7DayRouteImport } from './routes/start.7-day'
 import { Route as SignupReturnRouteImport } from './routes/signup.return'
+import { Route as ReviewAcceleratorWorkoutDay9RouteImport } from './routes/review.accelerator-workout-day-9'
 import { Route as ReviewScreenRouteImport } from './routes/review.$screen'
 import { Route as ProgramsAcceleratorRouteImport } from './routes/programs_.accelerator'
 import { Route as PreviewW01RouteImport } from './routes/preview.w01'
@@ -170,6 +171,12 @@ const SignupReturnRoute = SignupReturnRouteImport.update({
   path: '/signup/return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewAcceleratorWorkoutDay9Route =
+  ReviewAcceleratorWorkoutDay9RouteImport.update({
+    id: '/accelerator-workout-day-9',
+    path: '/accelerator-workout-day-9',
+    getParentRoute: () => ReviewRoute,
+  } as any)
 const ReviewScreenRoute = ReviewScreenRouteImport.update({
   id: '/$screen',
   path: '/$screen',
@@ -315,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/preview/w01': typeof PreviewW01Route
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
   '/review/$screen': typeof ReviewScreenRoute
+  '/review/accelerator-workout-day-9': typeof ReviewAcceleratorWorkoutDay9Route
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/account/': typeof AccountIndexRoute
@@ -361,6 +369,7 @@ export interface FileRoutesByTo {
   '/preview/w01': typeof PreviewW01Route
   '/programs/accelerator': typeof ProgramsAcceleratorRoute
   '/review/$screen': typeof ReviewScreenRoute
+  '/review/accelerator-workout-day-9': typeof ReviewAcceleratorWorkoutDay9Route
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/account': typeof AccountIndexRoute
@@ -409,6 +418,7 @@ export interface FileRoutesById {
   '/preview/w01': typeof PreviewW01Route
   '/programs_/accelerator': typeof ProgramsAcceleratorRoute
   '/review/$screen': typeof ReviewScreenRoute
+  '/review/accelerator-workout-day-9': typeof ReviewAcceleratorWorkoutDay9Route
   '/signup/return': typeof SignupReturnRoute
   '/start/7-day': typeof Start7DayRoute
   '/account/': typeof AccountIndexRoute
@@ -458,6 +468,7 @@ export interface FileRouteTypes {
     | '/preview/w01'
     | '/programs/accelerator'
     | '/review/$screen'
+    | '/review/accelerator-workout-day-9'
     | '/signup/return'
     | '/start/7-day'
     | '/account/'
@@ -504,6 +515,7 @@ export interface FileRouteTypes {
     | '/preview/w01'
     | '/programs/accelerator'
     | '/review/$screen'
+    | '/review/accelerator-workout-day-9'
     | '/signup/return'
     | '/start/7-day'
     | '/account'
@@ -551,6 +563,7 @@ export interface FileRouteTypes {
     | '/preview/w01'
     | '/programs_/accelerator'
     | '/review/$screen'
+    | '/review/accelerator-workout-day-9'
     | '/signup/return'
     | '/start/7-day'
     | '/account/'
@@ -779,6 +792,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/review/accelerator-workout-day-9': {
+      id: '/review/accelerator-workout-day-9'
+      path: '/accelerator-workout-day-9'
+      fullPath: '/review/accelerator-workout-day-9'
+      preLoaderRoute: typeof ReviewAcceleratorWorkoutDay9RouteImport
+      parentRoute: typeof ReviewRoute
+    }
     '/review/$screen': {
       id: '/review/$screen'
       path: '/$screen'
@@ -938,11 +958,13 @@ declare module '@tanstack/react-router' {
 
 interface ReviewRouteChildren {
   ReviewScreenRoute: typeof ReviewScreenRoute
+  ReviewAcceleratorWorkoutDay9Route: typeof ReviewAcceleratorWorkoutDay9Route
   ReviewIndexRoute: typeof ReviewIndexRoute
 }
 
 const ReviewRouteChildren: ReviewRouteChildren = {
   ReviewScreenRoute: ReviewScreenRoute,
+  ReviewAcceleratorWorkoutDay9Route: ReviewAcceleratorWorkoutDay9Route,
   ReviewIndexRoute: ReviewIndexRoute,
 }
 
