@@ -193,6 +193,7 @@ describe("app review catalog", () => {
     expect(acceleratorReviewSource).toContain("bg-gxj-aqua");
     expect(acceleratorReviewSource).toContain("gxj-accelerator-workout-art");
     expect(acceleratorReviewSource).toContain("gxj-accelerator-workout-letter");
+    expect(acceleratorReviewSource).toContain("gxj-accelerator-workout-name");
     expect(acceleratorReviewSource).not.toContain("radial-gradient(circle_at_center");
     expect(acceleratorReviewSource).not.toContain("Before You Start");
     expect(acceleratorReviewSource).not.toContain("Dumbbells");

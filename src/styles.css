@@ -237,35 +237,39 @@
   inset: 0;
   z-index: -1;
   background-image:
-    linear-gradient(104deg, transparent 0 62%, var(--color-gxj-aqua) 62.5% 67%, transparent 67.5%),
+    linear-gradient(106deg, transparent 0 57%, var(--color-gxj-aqua) 57.5% 66%, transparent 66.5%),
+    linear-gradient(76deg, transparent 0 72%, oklch(1 0 0 / 28%) 72.5% 74%, transparent 74.5%),
+    linear-gradient(98deg, transparent 0 18%, oklch(1 0 0 / 14%) 18.5% 20%, transparent 20.5%),
     repeating-linear-gradient(
       168deg,
-      transparent 0 13px,
-      oklch(1 0 0 / 9%) 14px 15px,
-      transparent 16px 31px
+      transparent 0 8px,
+      oklch(1 0 0 / 12%) 9px 11px,
+      transparent 12px 27px
     ),
-    radial-gradient(ellipse at 14% 22%, oklch(1 0 0 / 18%) 0 0.7px, transparent 1.8px),
-    radial-gradient(ellipse at 72% 71%, oklch(1 0 0 / 15%) 0 0.9px, transparent 2px);
+    radial-gradient(ellipse at 14% 22%, oklch(1 0 0 / 24%) 0 0.7px, transparent 1.8px),
+    radial-gradient(ellipse at 72% 71%, oklch(1 0 0 / 21%) 0 0.9px, transparent 2px);
   background-size:
+    auto,
+    auto,
     auto,
     auto,
     9px 13px,
     15px 11px;
   content: "";
-  opacity: 0.72;
-  transform: scale(1.04) rotate(-0.4deg);
+  opacity: 0.9;
+  transform: scale(1.08) rotate(-1.2deg);
 }
 
 .gxj-accelerator-workout-art::after {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(91deg, transparent 0 34%, oklch(0 0 0 / 34%) 52%, transparent 76%),
+    linear-gradient(91deg, transparent 0 27%, oklch(0 0 0 / 48%) 48%, transparent 75%),
     repeating-linear-gradient(
       7deg,
-      transparent 0 29px,
-      oklch(1 0 0 / 7%) 30px 31px,
-      transparent 32px 57px
+      transparent 0 19px,
+      oklch(1 0 0 / 11%) 20px 22px,
+      transparent 23px 43px
     );
   content: "";
   mix-blend-mode: screen;
@@ -275,9 +279,20 @@
 
 .gxj-accelerator-workout-letter {
   color: transparent;
-  opacity: 0.5;
-  transform: rotate(-5deg);
-  -webkit-text-stroke: 5px var(--color-gxj-aqua);
+  opacity: 0.72;
+  transform: rotate(8deg) skewX(-8deg);
+  -webkit-text-stroke: 7px var(--color-gxj-aqua);
+}
+
+.gxj-accelerator-workout-day {
+  box-shadow: 5px 5px 0 oklch(1 0 0 / 20%);
+  transform: rotate(-1.5deg);
+}
+
+.gxj-accelerator-workout-name {
+  filter: drop-shadow(5px 5px 0 oklch(1 0 0 / 16%));
+  transform: skewX(-7deg) scaleX(1.08);
+  transform-origin: left center;
 }
 
 .gxj-display-title {

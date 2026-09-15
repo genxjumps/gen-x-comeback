@@ -1235,16 +1235,21 @@ function AcceleratorReview({ variant }: { variant: string }) {
           <div className="gxj-accelerator-workout-art relative flex aspect-video flex-col justify-center overflow-hidden px-6 py-8 sm:px-8">
             <span
               aria-hidden="true"
-              className="gxj-accelerator-workout-letter gxj-display-title absolute -bottom-[18%] -right-[3%] text-[13rem] leading-none sm:text-[18rem]"
+              className="gxj-accelerator-workout-letter gxj-display-title absolute -bottom-[28%] -right-[8%] text-[15rem] leading-none sm:text-[21rem]"
             >
               B
             </span>
-            <div className="relative max-w-[75%]">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-background/65">
+            <div className="relative z-10 max-w-[82%] -rotate-2">
+              <p className="gxj-accelerator-workout-day inline-block bg-gxj-aqua px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-foreground">
                 Day 9 of 28
               </p>
-              <h3 className="gxj-display-title mt-3 text-4xl uppercase leading-none tracking-wide sm:text-6xl">
-                Workout B<span className="mt-2 block text-gxj-aqua">EMOM</span>
+              <h3 className="gxj-display-title mt-4 uppercase leading-none">
+                <span className="block text-2xl tracking-[0.12em] text-background sm:text-3xl">
+                  Workout B
+                </span>
+                <span className="gxj-accelerator-workout-name -ml-1 mt-1 block text-[4.8rem] tracking-[-0.05em] text-gxj-aqua sm:text-[7rem]">
+                  EMOM
+                </span>
               </h3>
             </div>
           </div>
