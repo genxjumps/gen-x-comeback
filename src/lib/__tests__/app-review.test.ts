@@ -129,11 +129,15 @@ describe("app review catalog", () => {
     expect(emailStates.map((screen) => screen.variant)).toEqual(["sent", "returning"]);
     expect(welcomeReviewSource).toContain('returning ? "Welcome Back" : "Check Your Email"');
     expect(welcomeReviewSource).toContain('returning ? "Send Another Link" : "Open My Email"');
-    expect(welcomeReviewSource).toContain("relative mb-7 h-20 w-24");
-    expect(welcomeReviewSource).toContain("translate-x-1 translate-y-1 bg-gxj-orange");
+    expect(welcomeReviewSource).toContain("mx-auto max-w-2xl text-center");
+    expect(welcomeReviewSource).toContain("relative mx-auto mb-7 h-16 w-20");
+    expect(welcomeReviewSource).toContain("size-16 translate-x-2 translate-y-2 text-gxj-orange");
+    expect(welcomeReviewSource).not.toContain("place-items-center border-2 border-foreground");
     expect(welcomeReviewSource).toContain(
       "gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl",
     );
-    expect(welcomeReviewSource).toContain("max-w-3xl border-t border-foreground/20 pt-5");
+    expect(welcomeReviewSource).toContain(
+      "mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center",
+    );
   });
 });

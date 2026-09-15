@@ -652,13 +652,13 @@ function WelcomeReview({ variant }: { variant: string }) {
   return (
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
       <header className="py-6 sm:py-8">
-        <div className="max-w-2xl">
-          <div className="relative mb-7 h-20 w-24" aria-hidden="true">
-            <span className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground" />
-            <span className="absolute inset-0 translate-x-1 translate-y-1 bg-gxj-orange" />
-            <span className="absolute inset-0 grid place-items-center border-2 border-foreground bg-background">
-              <Mail className="size-10" strokeWidth={1.8} />
-            </span>
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="relative mx-auto mb-7 h-16 w-20" aria-hidden="true">
+            <Mail
+              className="absolute inset-0 size-16 translate-x-2 translate-y-2 text-gxj-orange"
+              strokeWidth={2.2}
+            />
+            <Mail className="absolute inset-0 size-16 text-foreground" strokeWidth={2.2} />
           </div>
           <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
             {returning ? "Welcome Back" : "Check Your Email"}
@@ -671,7 +671,7 @@ function WelcomeReview({ variant }: { variant: string }) {
         </div>
       </header>
 
-      <div className="max-w-3xl border-t border-foreground/20 pt-5">
+      <div className="mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center">
         <Action>{returning ? "Send Another Link" : "Open My Email"}</Action>
       </div>
     </div>
