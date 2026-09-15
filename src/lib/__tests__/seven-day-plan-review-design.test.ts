@@ -18,4 +18,16 @@ describe("7-Day plan review design", () => {
     expect(reviewSource).toContain("divide-y divide-foreground/15 border-t-2 border-foreground");
     expect(reviewSource).not.toContain('<Section title="Schedule">');
   });
+
+  it("keeps the day number visible in every schedule state", () => {
+    expect(reviewSource).toContain("{`0${day}`}");
+    expect(reviewSource).not.toContain(
+      'finished ? <Check className="size-4" aria-hidden="true" /> : `0${day}`',
+    );
+    expect(reviewSource).toContain('finished ? "rounded-full bg-foreground text-background"');
+    expect(reviewSource).toContain('current ? "rounded-[2px] bg-gxj-orange text-white"');
+    expect(reviewSource).toContain(
+      'stateLabel = finished ? "Complete" : current ? "Today" : "Upcoming"',
+    );
+  });
 });
