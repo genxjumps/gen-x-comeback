@@ -1063,13 +1063,18 @@ function Nutrition() {
 
   return (
     <PlatformPage
-      kicker="Nutrition"
-      title="Calories Matter. Protein First. Meals Stay Simple."
+      kicker={profile && !editing ? undefined : "Nutrition"}
+      title={
+        profile && !editing
+          ? "Your Nutrition"
+          : "Calories Matter. Protein First. Meals Stay Simple."
+      }
       description={
         profile && !editing
           ? "These are the numbers to follow each day. Hit your calorie and protein targets consistently to lose fat and protect muscle."
           : "Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
       }
+      titleSize={profile && !editing ? "compact" : undefined}
     >
       {!profile || editing ? (
         !profile && !setupStarted ? (
