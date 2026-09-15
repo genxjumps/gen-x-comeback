@@ -196,6 +196,8 @@ describe("app review catalog", () => {
     );
     expect(acceleratorReviewSource).toContain("Day 9 of 28");
     expect(acceleratorReviewSource).toContain(">\n                09\n              </span>");
+    expect(acceleratorReviewSource).toContain("gxj-accelerator-number-art");
+    expect(acceleratorReviewSource).toContain("Open Today&rsquo;s Workout");
     expect(acceleratorReviewSource).toContain("<ArrowRight");
     expect(acceleratorReviewSource).not.toContain("gxj-accelerator-workout-art");
     expect(acceleratorReviewSource).not.toContain("radial-gradient(circle_at_center");

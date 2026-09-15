@@ -228,6 +228,28 @@
   );
 }
 
+.gxj-accelerator-number-art {
+  background-image: url("/workout-covers/day-03.webp");
+  background-position: left center;
+  background-size: auto 100%;
+}
+
+.gxj-accelerator-number-art::before {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklch, var(--color-background) 92%, transparent);
+  content: "";
+}
+
+.gxj-accelerator-number-art::after {
+  position: absolute;
+  inset: -10% -28% -10% auto;
+  width: 46%;
+  background-color: var(--color-gxj-aqua);
+  content: "";
+  transform: rotate(8deg);
+}
+
 .gxj-display-title {
   font-family: "Anton", sans-serif;
   font-weight: 400;
