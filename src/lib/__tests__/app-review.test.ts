@@ -288,10 +288,20 @@ describe("app review catalog", () => {
       expect(source).toContain("border-y-2 border-foreground py-6 sm:py-8");
       expect(source).toContain("border-b border-foreground/15 py-6 sm:py-8");
       expect(source).toContain("divide-y divide-foreground/15 border-y");
+      expect(
+        source.match(/gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl/g)
+          ?.length,
+      ).toBeGreaterThanOrEqual(4);
+      expect(source).toContain("gxj-display-title text-xl uppercase tracking-wide sm:text-2xl");
       expect(source).not.toContain(
         '<section className="rounded-lg border border-border bg-card p-5 sm:p-6">',
       );
       expect(source).not.toContain('className="rounded-md border border-border bg-background p-4"');
+    }
+    for (const source of [activeNutritionReviewSource, nutritionRouteSource]) {
+      expect(source).toContain(
+        "gxj-display-title mt-1 text-3xl uppercase tracking-wide sm:text-4xl",
+      );
     }
     expect(nutritionRouteSource).toContain('? "Your Nutrition"');
     expect(nutritionRouteSource).toContain(
