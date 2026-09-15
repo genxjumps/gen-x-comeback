@@ -995,6 +995,7 @@ function ProgramsReview({ variant }: { variant: string }) {
     <Page
       kicker="My Programs"
       title={error ? "Your Programs Couldn't Be Loaded" : "Your Programs, In One Place"}
+      titleSize="compact"
       description={
         error
           ? "Try again without leaving the app."

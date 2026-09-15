@@ -120,6 +120,7 @@ function MyPrograms() {
       kicker="Programs"
       title="Your Programs, In One Place"
       description="Programs you own stay here - not started, active, paused, and completed - without erasing previous progress."
+      titleSize="compact"
     >
       <div className="space-y-10">
         {accelerator || result.leadPlans.length ? (
