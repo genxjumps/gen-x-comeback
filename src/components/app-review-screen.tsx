@@ -590,7 +590,65 @@ function AssessmentResultReview({ replace }: { replace: boolean }) {
   );
 }
 
-function WelcomeReview({ returning }: { returning: boolean }) {
+function WelcomeReview({ variant }: { variant: string }) {
+  if (variant === "setup") {
+    const steps = [
+      { number: 1, label: "Access saved", state: "complete" },
+      { number: 2, label: "Quick setup", state: "current" },
+      { number: 3, label: "Plan ready", state: "upcoming" },
+    ] as const;
+
+    return (
+      <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+        <header className="py-6 sm:py-8">
+          <div className="max-w-2xl">
+            <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
+              Congratulations
+            </p>
+            <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+              Todd, Let&rsquo;s Build Your Comeback Plan
+            </h1>
+            <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+              Answer a few quick questions about your fitness, schedule, equipment, and any
+              limitations. Then we&rsquo;ll build your personalized 7-day plan immediately.
+            </p>
+          </div>
+        </header>
+
+        <ol className="grid max-w-3xl grid-cols-3 gap-2" aria-label="Plan setup progress">
+          {steps.map((item) => (
+            <li
+              key={item.label}
+              aria-current={item.state === "current" ? "step" : undefined}
+              className={`flex min-h-24 flex-col justify-between gap-4 p-3 sm:min-h-28 sm:p-4 ${
+                item.state === "complete"
+                  ? "bg-foreground text-background"
+                  : item.state === "current"
+                    ? "bg-gxj-orange text-white shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
+                    : "border-2 border-foreground/20 text-foreground/35"
+              }`}
+            >
+              <span className="gxj-display-title text-2xl leading-none tracking-wide sm:text-3xl">
+                {String(item.number).padStart(2, "0")}
+              </span>
+              <span className="text-xs font-bold uppercase leading-tight tracking-[0.08em] sm:text-sm">
+                {item.label}
+              </span>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-7 max-w-3xl border-t border-foreground/20 pt-5">
+          <Action>Create My 7-Day Plan</Action>
+          <p className="mt-3 text-sm font-medium text-muted-foreground">
+            About 2 minutes. No password required.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const returning = variant === "returning";
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-12 text-center sm:py-20">
       <span className="mx-auto grid size-14 place-items-center rounded-full bg-foreground text-background">
@@ -1461,7 +1519,7 @@ function ReviewBody({ screen }: { screen: ReviewScreen }) {
     case "assessment-result":
       return <AssessmentResultReview replace={screen.variant === "replace"} />;
     case "welcome":
-      return <WelcomeReview returning={screen.variant === "returning"} />;
+      return <WelcomeReview variant={screen.variant} />;
     case "plan-ready":
       return <PlanReadyReview />;
     case "home":
