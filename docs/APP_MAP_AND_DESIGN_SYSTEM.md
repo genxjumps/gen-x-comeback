@@ -285,6 +285,9 @@ other product behavior.
   different responsive arrangement.
 - Overview labels and values must stay simple and factual. Do not turn the overview into a list of
   workout movements or invent descriptive workout copy.
+- Duration uses the measured Cloudflare video runtime for each workout: W01 15:05, W02 14:30, W03
+  14:03, W04 14:03, W05 14:00, W06 14:29, and W07 14:09. Do not replace these with a generic
+  15-minute estimate.
 - Supporting workout information follows the media and overview. Do not use **Before You Start**,
   **Before You Press Play**, or **Set Yourself Up to Train Well** as section copy.
 - Ordinary sections remain directly on the page with dividers. Do not add surrounding cards unless

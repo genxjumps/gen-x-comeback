@@ -20,7 +20,7 @@ import {
 } from "@/lib/lead-plan";
 import { completePlanDay, getDayBrief } from "@/lib/lead.functions";
 import { W01_APPROACH, W01_CARDIO_HEADING } from "@/lib/w01-content";
-import { sevenDayWorkoutOverview } from "@/lib/workout-presentation";
+import { sevenDayWorkoutOverview, sevenDayWorkoutRuntime } from "@/lib/workout-presentation";
 
 type Brief = {
   cardio: CardioContext;
@@ -138,9 +138,9 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
 
   const duration =
     kind === "workout"
-      ? day?.minutes
-        ? `About ${day.minutes} minutes`
-        : "About 15 minutes"
+      ? day?.code
+        ? `${sevenDayWorkoutRuntime(day.code, day.minutes ?? 15)} total`
+        : "Workout duration unavailable"
       : kind === "walk"
         ? movementDuration(brief.tier)
         : null;
@@ -152,7 +152,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
       <WorkoutScreen
         kicker={`Day ${dayNumber} of 7`}
         title={title}
-        description={`${duration ?? "About 15 minutes"}. Use the easier option any time you need it.`}
+        description={`${duration ?? "Workout duration unavailable"}. Use the easier option any time you need it.`}
         media={
           <WorkoutMediaCard
             dayNumber={dayNumber}
@@ -218,7 +218,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
       <WorkoutScreen
         kicker={`Day ${dayNumber} of 7`}
         title={optional.title}
-        description={`An optional ${optional.minutes}-minute recovery session. Keep the movement easy.`}
+        description={`${sevenDayWorkoutRuntime(optional.code, optional.minutes)} total. Keep the movement easy.`}
         media={
           <WorkoutMediaCard
             dayNumber={dayNumber}
