@@ -234,7 +234,7 @@ function formToIntake(form: FormState): NutritionIntake | null {
 
 function TargetCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-border bg-background p-4">
+    <div className="min-w-0 pr-4 even:pl-4 sm:px-4 sm:first:pl-0 sm:last:pr-0">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
       <p className="mt-1 text-2xl font-semibold tracking-tight">{value}</p>
     </div>
@@ -611,9 +611,9 @@ function NutritionResults({
   const strengthTraining = ["strength", "both"].includes(profile.intake.training);
 
   return (
-    <div className="space-y-5">
+    <div>
       {targetReview ? (
-        <section className="rounded-lg border border-gxj-teal/40 bg-gxj-mint p-5 sm:p-6">
+        <section className="mb-5 rounded-lg border border-gxj-teal/40 bg-gxj-mint p-5 sm:p-6">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
             Target Review
           </p>
@@ -644,7 +644,7 @@ function NutritionResults({
           </Button>
         </section>
       ) : null}
-      <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+      <section className="border-y-2 border-foreground py-6 sm:py-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
@@ -662,7 +662,7 @@ function NutritionResults({
           </Button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-5 grid grid-cols-2 gap-y-5 sm:grid-cols-4 sm:divide-x sm:divide-foreground/15">
           <TargetCard label="Calories" value={profile.targets.calories.toLocaleString()} />
           <TargetCard label="Protein" value={`${profile.targets.proteinGrams} g`} />
           <TargetCard label="Carbs" value={`${profile.targets.carbohydrateGrams} g`} />
@@ -706,7 +706,7 @@ function NutritionResults({
         ) : null}
       </section>
 
-      <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+      <section className="border-b border-foreground/15 py-6 sm:py-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
@@ -740,12 +740,9 @@ function NutritionResults({
           </p>
         )}
 
-        <div className="mt-5 space-y-3">
+        <div className="mt-5 divide-y divide-foreground/15 border-y border-foreground/15">
           {allocations.map((allocation) => (
-            <div
-              key={allocation.occasion}
-              className="rounded-md border border-border bg-background p-4"
-            >
+            <div key={allocation.occasion} className="py-4">
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="font-semibold">{mealLabels[allocation.occasion]}</h3>
                 <p className="text-sm font-semibold">{allocation.percentage}%</p>
@@ -795,7 +792,7 @@ function NutritionResults({
         ) : null}
       </section>
 
-      <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+      <section className="border-b border-foreground/15 py-6 sm:py-8">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
           Build Meals That Work
         </p>
@@ -812,7 +809,7 @@ function NutritionResults({
         </p>
       </section>
 
-      <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+      <section className="border-b border-foreground/15 py-6 sm:py-8">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
           My Normal Day
         </p>
@@ -822,8 +819,8 @@ function NutritionResults({
           remove or reduce the parts adding extra calories while keeping the protein-centered
           structure and foods I already like.
         </p>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
-          <div className="rounded-md border border-border p-4">
+        <div className="mt-5 grid divide-y divide-foreground/15 border-y border-foreground/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+          <div className="py-4 sm:py-0 sm:pr-5">
             <h3 className="font-semibold">Maintenance</h3>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed">
               <li>
@@ -842,7 +839,7 @@ function NutritionResults({
               </li>
             </ul>
           </div>
-          <div className="rounded-md border border-border p-4">
+          <div className="py-4 sm:py-0 sm:pl-5">
             <h3 className="font-semibold">When I want to cut body fat</h3>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed">
               <li>
@@ -867,7 +864,7 @@ function NutritionResults({
         </p>
       </section>
 
-      <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+      <section className="border-b border-foreground/15 py-6 sm:py-8">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
           Read The Label
         </p>
@@ -884,7 +881,7 @@ function NutritionResults({
         </p>
       </section>
 
-      <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+      <section className="border-b border-foreground/15 py-6 sm:py-8">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
           If You Miss
         </p>
@@ -895,7 +892,7 @@ function NutritionResults({
         </p>
       </section>
 
-      <section className="rounded-lg border border-border bg-muted/35 p-5 sm:p-6">
+      <section className="border-b border-foreground/15 py-6 sm:py-8">
         <h2 className="text-lg font-semibold">If results stall</h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           Review labels, portions, drinks, dressings, sauces, serving sizes, calorie-dense foods,
@@ -907,7 +904,7 @@ function NutritionResults({
         href="https://genxjumps.com/nutrition/"
         target="_blank"
         rel="noreferrer"
-        className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 font-semibold transition-colors hover:bg-muted/35"
+        className="mt-5 flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 font-semibold transition-colors hover:bg-muted/35"
       >
         <span>
           Learn the basics
