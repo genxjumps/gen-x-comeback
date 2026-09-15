@@ -135,6 +135,14 @@ release dependencies, and the remaining controlled live tests.
 
 ## Home Screen behavior
 
+- `/plan-ready` uses the approved focused setup presentation: shared cream background and restrained
+  texture, compact personalized title, and content directly on the page without setup-progress or
+  surrounding-card treatments.
+- The primary install action is a full-width black rail with uppercase Anton text and a white
+  circular field containing the orange download icon. `No app store required.` follows it, and
+  `Not Now - View My Plan` remains the quiet secondary action.
+- Device-specific instructions remain hidden until the participant selects the primary action and
+  the native install prompt is unavailable. The installed confirmation remains a contained status.
 - iPhone and iPad: show Share, Add to Home Screen, Add.
 - Android or compatible desktop browser: use the captured native install prompt when available.
 - Other browsers: show the browser-menu installation path.

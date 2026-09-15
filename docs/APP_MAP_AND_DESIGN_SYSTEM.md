@@ -303,6 +303,28 @@ website opt-in and the free 7-Day intake without feeling like a separate experie
 - This is a presentation contract only. It does not alter signup security, consent, saved drafts,
   plan construction, or the separate 28-Day Accelerator setup.
 
+### Approved Home Screen installation prompt
+
+The `/plan-ready` screen is the final focused setup handoff before the participant enters the saved
+plan. It uses the approved design from the isolated **Home Screen Prompt** review state.
+
+- Keep the existing **Your Plan Is Ready** kicker, personalized **Keep Your Comeback One Tap Away**
+  title, explanation, action copy, and destination behavior unchanged.
+- Use the shared cream background, restrained texture, compact page-title scale, Anton display
+  type, Barlow interface type, content width, and spacing rhythm established by Welcome and the
+  participant screens.
+- Do not repeat the numbered setup progress on this screen. The installation action is the focus,
+  and the content sits directly on the page without a surrounding card.
+- Use one dominant full-width black action rail for **Add to My Home Screen**. The label uses
+  uppercase Anton, and the right edge contains a white circular field with the orange download icon.
+- Keep **No app store required.** immediately below the primary action and preserve **Not Now - View
+  My Plan** as a quiet secondary action that never blocks plan access.
+- Show the existing iPhone, Android, or desktop instructions only after the participant selects the
+  primary action when a native install prompt is unavailable.
+- The installed confirmation may remain contained because it communicates a real status state.
+- This is a presentation contract only. Preserve platform detection, install tracking, the 24-hour
+  reminder delay, standalone routing, and all existing plan navigation behavior.
+
 ### Day 1 workout
 
 Use the focused workout page to establish the shared workout hierarchy, media treatment, overview,
@@ -381,6 +403,6 @@ shared components and tokens instead of recreating their presentation inside ind
 
 ## Recommended next action
 
-Continue from the approved Welcome handoff into the Plan Ready and Home Screen installation state,
-then move into Programs, Progress, and Nutrition. Preserve the shared focused-setup and participant
-shells, section hierarchy, spacing, and state components as each screen family is updated.
+Continue into Programs, Progress, and Nutrition. Preserve the shared focused-setup and participant
+shells, section hierarchy, spacing, typography, and state components as each screen family is
+updated.
