@@ -2,6 +2,10 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { SevenDayNextStep } from "@/components/seven-day-next-step";
+import {
+  SevenDayScheduleRow,
+  type SevenDayScheduleState,
+} from "@/components/seven-day-schedule-row";
 import { Button } from "@/components/ui/button";
 import { AccessDenied } from "@/components/plan-access";
 import { InstallNudge, type InstallEventName } from "@/components/pwa-install";
@@ -49,18 +53,41 @@ export const Route = createFileRoute("/your-plan/")({
   component: PlanHubPage,
 });
 
-const ROW_CLASS = "block px-4 py-2.5 hover:bg-muted/60";
+const ROW_CLASS =
+  "group -mx-3 block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2";
 
-function RowLink({ day, children }: { day: number; children: ReactNode }) {
+function RowLink({
+  day,
+  label,
+  current,
+  children,
+}: {
+  day: number;
+  label: string;
+  current: boolean;
+  children: ReactNode;
+}) {
   if (day === 1) {
     return (
-      <Link to="/your-plan/day/$day" params={{ day: "1" }} className={ROW_CLASS}>
+      <Link
+        to="/your-plan/day/$day"
+        params={{ day: "1" }}
+        aria-label={label}
+        aria-current={current ? "step" : undefined}
+        className={ROW_CLASS}
+      >
         {children}
       </Link>
     );
   }
   return (
-    <Link to="/your-plan/day/$day" params={{ day: String(day) }} className={ROW_CLASS}>
+    <Link
+      to="/your-plan/day/$day"
+      params={{ day: String(day) }}
+      aria-label={label}
+      aria-current={current ? "step" : undefined}
+      className={ROW_CLASS}
+    >
       {children}
     </Link>
   );
@@ -392,12 +419,19 @@ function PlanHubPage() {
 
       {/* Schedule */}
       <section id="schedule" className="mt-8 scroll-mt-6">
-        <h2 className="text-lg font-semibold tracking-tight">Your 7-Day Schedule</h2>
-        <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          Your 7-Day Schedule
+        </h2>
+        <ul className="mt-3 divide-y divide-foreground/15 border-t-2 border-foreground">
           {hub.days.map((d) => {
             const complete = hub.completedDays.includes(d.day);
             const isCurrent = d.day === current;
             const timing = planDayTiming(hub.calendar, d.day);
+            const rowState: SevenDayScheduleState = complete
+              ? "completed"
+              : isCurrent
+                ? "current"
+                : "upcoming";
             const status = complete
               ? "Complete"
               : !isCurrent
@@ -410,20 +444,18 @@ function PlanHubPage() {
                       ? "Next"
                       : "Upcoming";
             return (
-              <li key={d.day} className={isCurrent ? "bg-gxj-mint" : "bg-muted/30"}>
-                <RowLink day={d.day}>
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="text-sm font-semibold">
-                      Day {d.day}: {d.title}
-                    </h3>
-                    <span
-                      className={`shrink-0 text-[10px] uppercase tracking-widest ${
-                        isCurrent ? "font-semibold text-gxj-teal" : "text-muted-foreground"
-                      }`}
-                    >
-                      {status}
-                    </span>
-                  </div>
+              <li key={d.day}>
+                <RowLink
+                  day={d.day}
+                  label={`Day ${d.day}: ${d.title}. ${status}.`}
+                  current={isCurrent}
+                >
+                  <SevenDayScheduleRow
+                    day={d.day}
+                    title={d.title}
+                    state={rowState}
+                    stateLabel={status}
+                  />
                 </RowLink>
               </li>
             );

@@ -253,14 +253,28 @@ Use the focused workout page to establish the shared workout hierarchy, media tr
 supporting information, and primary completion action. Additional workout information belongs
 below the media treatment, not in preparation boxes above it.
 
-### Active 7-Day plan review
+### Active 7-Day plan review and approved schedule system
 
-The active `/your-plan` review screen is the visual bridge between Home and the workout page. It
+The active `/your-plan` review direction is the visual bridge between Home and the workout page. It
 uses the compact page-title scale, shows progress without a surrounding card, and repeats the same
-shared workout launch panel used on Home. The seven-day schedule sits directly on the page with
-dividers, clear day numbers, and distinct complete, current, and upcoming states. Plan details
-follow as ordinary page content instead of a stack of cards. This review direction does not change
-the saved plan, assignment order, availability, completion, or update behavior.
+workout launch treatment used on Home. The seven-day schedule sits directly on the page with
+dividers, clear day numbers, and distinct complete, current, and upcoming states. The approved
+schedule treatment itself is implemented in both the review route and the real participant plan.
+
+The schedule-state treatment is approved and shared by the review screen and production plan:
+
+- Every row keeps one zero-padded day number. Do not replace completed-day numbers with check marks
+  and do not repeat `Day N` beside the number.
+- Completed rows ghost the number, saved title, state label, and arrow together so past work recedes
+  without looking unavailable.
+- The current row uses the orange number block and highlighted row treatment. Its live state label
+  may say Today, Tomorrow, Next, or Upcoming according to the existing calendar behavior.
+- Upcoming rows use solid black numbers and titles with no number container or row fill.
+- The row renders the saved title supplied by the participant's plan. The same component must handle
+  workout, walk or easy movement, recovery, rest, and all approved schedule templates without
+  substituting content or changing progression rules.
+- These are presentation rules only. They do not change the saved plan, assignment order,
+  availability, completion, or update behavior.
 
 ### Approved Home and workout-page visual contract
 
@@ -306,10 +320,11 @@ other product behavior.
 - The review hub exposes one isolated ready-state screen for each locked workout video, W01 through
   W07, so every workout treatment can be checked without an account or saved plan.
 
-Approve these three patterns before applying the system to the remaining screen families.
+These Home and workout patterns, plus the active-plan schedule states, are approved. Apply their
+shared components and tokens instead of recreating their presentation inside individual routes.
 
 ## Recommended next action
 
-Design Home first, but include the participant-app header and mobile bottom navigation in that
-checkpoint. Once that shell is approved, apply it to the 7-Day plan and workout pages before styling
-the rest of their content.
+Continue applying the approved active-plan direction outside the schedule, then move into Programs,
+Progress, and Nutrition. Preserve the shared participant shell, section hierarchy, spacing, and
+state components as each screen family is updated.
