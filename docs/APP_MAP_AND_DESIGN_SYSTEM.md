@@ -250,14 +250,16 @@ focused setup shell appropriate to a form.
 
 - Use the shared cream background, header treatment, compact page-title scale, typography, orange
   action color, content width, and spacing rhythm.
-- Keep the step label and progress bar together above the title. The progress bar is functional
-  orientation, not decoration.
+- Use three numbered progress segments above the title. Completed segments are black, the current
+  segment is orange, and upcoming segments are ghosted. This mirrors the state logic of the 7-Day
+  schedule without turning the tracker into a dominant graphic.
 - Questions and supporting copy sit directly on the page with two-pixel dividers. Choice controls
   and the weight input receive borders because their contents require interaction boundaries.
 - Choices stack in one column on mobile. Short choices may use two columns at wider sizes; long jump
   rope experience choices remain one column for readability.
-- Selected answers use the orange marker and light highlighted background. Primary and secondary
-  actions use the same button treatment established elsewhere in the app.
+- Selected answers use the orange marker, light highlighted background, and a small offset shadow
+  that gives the interaction a subtle lift. Primary and secondary actions use the same button
+  treatment established elsewhere in the app.
 - Standard page actions use uppercase Anton at 20px in a 56px-high button. Major workout-launch
   actions use the same display face at a larger scale, preserving a clear action hierarchy.
 - The eligibility question uses the same direct-on-page question, divider, choice-control, content
