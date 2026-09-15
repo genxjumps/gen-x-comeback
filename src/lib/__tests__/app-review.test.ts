@@ -31,12 +31,20 @@ const progressReviewSource = reviewSource.slice(
   reviewSource.indexOf("function ProgressReview"),
   reviewSource.indexOf("function NutritionReview"),
 );
+const nutritionReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function NutritionReview"),
+  reviewSource.indexOf("function NotificationsReview"),
+);
 const assessmentRouteSource = readFileSync(
   new URL("../../routes/assessment.index.tsx", import.meta.url),
   "utf8",
 );
 const progressRouteSource = readFileSync(
   new URL("../../routes/progress.tsx", import.meta.url),
+  "utf8",
+);
+const nutritionRouteSource = readFileSync(
+  new URL("../../routes/nutrition.tsx", import.meta.url),
   "utf8",
 );
 const stylesSource = readFileSync(new URL("../../styles.css", import.meta.url), "utf8");
@@ -239,6 +247,16 @@ describe("app review catalog", () => {
     expect(progressRouteSource).toContain("h-3 overflow-hidden bg-foreground/15");
     expect(progressRouteSource).not.toContain(
       'className="rounded-lg border border-border bg-card p-5"',
+    );
+  });
+
+  it("uses the approved direct Nutrition target instruction in review and production", () => {
+    const instruction =
+      "These are the numbers to follow each day. Hit your calorie and protein targets consistently to lose fat and protect muscle.";
+    expect(nutritionReviewSource).toContain(instruction);
+    expect(nutritionRouteSource).toContain(instruction);
+    expect(nutritionReviewSource).not.toContain(
+      "Use these as a starting point, not a pass-or-fail test.",
     );
   });
 });
