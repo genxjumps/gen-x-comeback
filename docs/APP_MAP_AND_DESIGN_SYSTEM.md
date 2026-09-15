@@ -276,6 +276,26 @@ focused setup shell appropriate to a form.
   `/my-programs/accelerator/setup` is a separate product flow with separate questions, data, and
   behavior.
 
+### Approved Welcome handoff
+
+The primary setup state at `/welcome` uses the approved focused-setup visual system to bridge the
+website opt-in and the free 7-Day intake without feeling like a separate experience.
+
+- Keep the existing personalized headline, explanation, action copy, time estimate, and all live
+  handoff and destination behavior unchanged.
+- Use the shared cream background, restrained texture, compact page-title scale, Anton display
+  type, Barlow interface type, orange action color, content width, and spacing rhythm.
+- Show three large numbered progress segments in one row: **01 Access saved** is complete in black,
+  **02 Quick setup** is current in orange with the approved small offset shadow, and **03 Plan
+  ready** is upcoming with a ghosted outlined treatment.
+- The progress segments communicate state through both number and text. Do not replace the number
+  with a check mark, add decorative icons, or put the entire Welcome message inside a card.
+- Use the shared 56px-high uppercase Anton action treatment for **Create My 7-Day Plan**.
+- The approved design applies to the successful new-participant setup state. Existing loading,
+  missing or expired signup, returning-participant, and saved-plan routing behavior remains intact.
+- This is a presentation contract only. It does not alter signup security, consent, saved drafts,
+  plan construction, or the separate 28-Day Accelerator setup.
+
 ### Day 1 workout
 
 Use the focused workout page to establish the shared workout hierarchy, media treatment, overview,
@@ -354,6 +374,6 @@ shared components and tokens instead of recreating their presentation inside ind
 
 ## Recommended next action
 
-Continue applying the approved active-plan direction outside the schedule, then move into Programs,
-Progress, and Nutrition. Preserve the shared participant shell, section hierarchy, spacing, and
-state components as each screen family is updated.
+Continue from the approved Welcome handoff into the Plan Ready and Home Screen installation state,
+then move into Programs, Progress, and Nutrition. Preserve the shared focused-setup and participant
+shells, section hierarchy, spacing, and state components as each screen family is updated.

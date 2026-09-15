@@ -186,6 +186,14 @@ describe("website lead intake handoff", () => {
     expect(welcomeRoute).toContain("Congratulations");
     expect(welcomeRoute).toContain("Create My 7-Day Plan");
     expect(welcomeRoute).toContain("About 2 minutes. No password required.");
+    expect(welcomeRoute).toContain('number: 1, label: "Access saved", state: "complete"');
+    expect(welcomeRoute).toContain('number: 2, label: "Quick setup", state: "current"');
+    expect(welcomeRoute).toContain('number: 3, label: "Plan ready", state: "upcoming"');
+    expect(welcomeRoute).toContain("grid max-w-3xl grid-cols-3 gap-2");
+    expect(welcomeRoute).toContain("bg-foreground text-background");
+    expect(welcomeRoute).toContain("bg-gxj-orange text-white shadow-");
+    expect(welcomeRoute).toContain("border-2 border-foreground/20 text-foreground/35");
+    expect(welcomeRoute).toContain("gxj-display-title min-h-14");
   });
 
   it("finishes without a second identity form and sends new participants to plan-ready", () => {
