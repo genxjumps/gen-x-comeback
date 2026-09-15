@@ -264,6 +264,22 @@ describe("app review catalog", () => {
     expect(activeNutritionReviewSource).toContain('title="Your Nutrition"');
     expect(activeNutritionReviewSource).toContain('titleSize="compact"');
     expect(activeNutritionReviewSource).not.toContain('kicker="Your Nutrition"');
+    for (const content of [
+      "Starting Targets",
+      "Update Targets",
+      "Your Normal Day",
+      "Adjust Your Day",
+      "Build Meals That Work",
+      "My Normal Day",
+      "Read The Label",
+      "If You Miss",
+      "If results stall",
+      "Learn the basics",
+    ]) {
+      expect(activeNutritionReviewSource).toContain(content);
+      expect(nutritionRouteSource).toContain(content);
+    }
+    expect(activeNutritionReviewSource).not.toContain('Section title="Build your day"');
     expect(nutritionRouteSource).toContain('? "Your Nutrition"');
     expect(nutritionRouteSource).toContain(
       ': "Calories Matter. Protein First. Meals Stay Simple."',
