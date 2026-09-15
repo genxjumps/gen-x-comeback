@@ -17,6 +17,8 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 The eligibility screen and three assessment steps use the approved focused 7-Day intake design
 recorded in `APP_MAP_AND_DESIGN_SYSTEM.md`. That visual contract applies only to the free 7-Day
 intake. It does not alter or share setup data with the separate 28-Day Accelerator onboarding flow.
+The assessment uses numbered completed, current, and upcoming progress segments plus the approved
+raised selected-answer state.
 
 ## Calendar and progression behavior
 
