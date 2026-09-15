@@ -14,6 +14,10 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 6. `/plan-ready` immediately offers device-appropriate Home Screen installation. Choosing `Not Now - View My Plan` always opens the plan.
 7. A dismissed install prompt can reappear as a compact plan-page nudge after 24 hours.
 
+The three assessment steps use the approved focused 7-Day intake design recorded in
+`APP_MAP_AND_DESIGN_SYSTEM.md`. That visual contract applies only to the free 7-Day intake. It does
+not alter or share setup data with the separate 28-Day Accelerator onboarding flow.
+
 ## Calendar and progression behavior
 
 - The participant's browser time zone is captured when the plan is first saved. The server anchors Day 1 to that local calendar date; Day N is assigned to Day 1 plus N minus one calendar days. Unlocking is never based on an elapsed 24-hour timer.
