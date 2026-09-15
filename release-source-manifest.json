@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "0a7cd4c5f4256fa7d6ce480ee0ce9c94174874c7673ba423313ed25958cc1a68"
+      "sha256": "8a5d6a1effc5bbeed8dd3f953d9ee03649176844ffdad9918219e8347b86334f"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -571,7 +571,7 @@
     },
     {
       "path": "src/lib/app-review.ts",
-      "sha256": "5e133741d897a89fee30f30ab477a7a9be239fcbf7e3a64f2707d97f8b18881a"
+      "sha256": "27c12e6718a57597f5c927a0ef60895884a7a2a6a237d3056a817c22ef604f51"
     },
     {
       "path": "src/lib/commerce/__tests__/checkout-path.test.ts",

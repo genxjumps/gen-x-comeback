@@ -218,6 +218,16 @@ export const reviewScreens: ReviewScreen[] = [
     variant: "ready",
   },
   {
+    slug: "workout-day-3-ready",
+    title: "Workout Day - Day 3",
+    route: "/your-plan/day/3",
+    state: "Ready from Home",
+    group: "7-Day plan",
+    shell: "participant",
+    kind: "workout",
+    variant: "ready-day-3",
+  },
+  {
     slug: "workout-blocked",
     title: "Workout Day",
     route: "/your-plan/day/3",
