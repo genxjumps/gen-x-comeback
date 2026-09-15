@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "513be882077db11eb4e75f788c1431fceba859802b9c64af4baec218a09e2741"
+      "sha256": "ea726a5598012e0e9b20a974fd2244261cd1e30f3cf9d21520b5d65042d4ac83"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -219,7 +219,7 @@
     },
     {
       "path": "src/components/review-shell.tsx",
-      "sha256": "3c00f012b6abb2f96e06f9d63b68973e8172bac693cc61c96fc14d3289f30e49"
+      "sha256": "e039e3dca4fe8529800f13cfc372449ac86ddd3f7742f3879aa60b417fd0dcad"
     },
     {
       "path": "src/components/seven-day-next-step.tsx",
@@ -307,7 +307,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "a78651f37bd432b7e2ba379d11c3908d5672979ee7cbd8dc8ff62d6dcaa238c5"
+      "sha256": "a3e807ac857d3d80986e6f2dbd041bda6e27f8daf83beae193f46a1b0475eedd"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -1411,7 +1411,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "26db7b391e399aed90b4ea9681cfb287fc1a1d05a34e443729c401d37499033e"
+      "sha256": "c5b1131acf39fd6ad6084bfb80ae94305356990b9c3ae97a82b601683590c9ce"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",
