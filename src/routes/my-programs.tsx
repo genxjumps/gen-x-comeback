@@ -116,12 +116,7 @@ function MyPrograms() {
   }
 
   return (
-    <PlatformPage
-      kicker="Programs"
-      title="Your Programs, In One Place"
-      description="Programs you own stay here - not started, active, paused, and completed - without erasing previous progress."
-      titleSize="compact"
-    >
+    <PlatformPage title="Your Programs" titleSize="compact">
       <div className="space-y-10">
         {accelerator || result.leadPlans.length ? (
           <div className="divide-y-2 divide-foreground border-y-2 border-foreground">

@@ -419,6 +419,8 @@ schedule while distinguishing the two program families without mixing their acce
   56px action treatment across not-started, active, paused, completed, and available states.
 - Keep the page title on the established compact app-page scale. It must not use the oversized
   default hero treatment.
+- Use one page heading: **Your Programs**. Do not add a Programs kicker above it or explanatory
+  status copy below it. The navigation and program rows already provide that context.
 - Confirmation prompts remain contained because they are consequential interaction states. Empty
   and informational copy stays directly on the page with dividers.
 - These are presentation rules only. Preserve ownership, purchase, setup, activation, pause,

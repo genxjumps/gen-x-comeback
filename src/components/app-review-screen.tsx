@@ -115,9 +115,9 @@ function Page({
   contentGap,
   children,
 }: {
-  kicker: string;
+  kicker?: string;
   title: string;
-  description: string;
+  description?: string;
   titleSize?: "default" | "compact";
   contentGap?: "default" | "tight";
   children: ReactNode;
@@ -993,14 +993,9 @@ function ProgramsReview({ variant }: { variant: string }) {
         ];
   return (
     <Page
-      kicker="My Programs"
-      title={error ? "Your Programs Couldn't Be Loaded" : "Your Programs, In One Place"}
+      title={error ? "Your Programs Couldn't Be Loaded" : "Your Programs"}
       titleSize="compact"
-      description={
-        error
-          ? "Try again without leaving the app."
-          : "Programs you own stay here - not started, active, paused, and completed."
-      }
+      description={error ? "Try again without leaving the app." : undefined}
     >
       {error ? (
         <div className="py-4">

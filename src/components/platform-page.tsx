@@ -8,9 +8,9 @@ export function PlatformPage({
   contentGap = "default",
   children,
 }: {
-  kicker: string;
+  kicker?: string;
   title: string;
-  description: string;
+  description?: string;
   titleSize?: "default" | "compact";
   contentGap?: "default" | "tight";
   children: ReactNode;
@@ -23,17 +23,21 @@ export function PlatformPage({
         }`}
       >
         <div className="w-full max-w-2xl">
-          <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">{kicker}</p>
+          {kicker ? (
+            <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">{kicker}</p>
+          ) : null}
           <h1
-            className={`gxj-display-title mt-4 uppercase leading-[0.95] tracking-wide ${
-              titleSize === "compact" ? "text-3xl sm:text-4xl" : "text-5xl sm:text-7xl"
-            }`}
+            className={`gxj-display-title uppercase leading-[0.95] tracking-wide ${
+              kicker ? "mt-4" : ""
+            } ${titleSize === "compact" ? "text-3xl sm:text-4xl" : "text-5xl sm:text-7xl"}`}
           >
             {title}
           </h1>
-          <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
-            {description}
-          </p>
+          {description ? (
+            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
+              {description}
+            </p>
+          ) : null}
         </div>
       </header>
       <div className="gxj-page-body mx-auto max-w-3xl">{children}</div>
