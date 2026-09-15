@@ -509,31 +509,44 @@ function PlanReview({ complete }: { complete: boolean }) {
   );
 }
 
-function WorkoutDetails() {
+function WorkoutOverview({ easyMovement = false }: { easyMovement?: boolean }) {
+  const details = easyMovement
+    ? [
+        ["Duration", "15 Minutes"],
+        ["Equipment", "Floor Space"],
+        ["Training", "Recovery + Mobility"],
+        ["Format", "Guided Movement"],
+      ]
+    : [
+        ["Duration", "15 Minutes"],
+        ["Equipment", "Jump Rope + Body Weight"],
+        ["Training", "Conditioning + Strength"],
+        ["Format", "Intervals + Circuits"],
+      ];
+
   return (
-    <section className="border-t-2 border-foreground pb-6 pt-5" aria-labelledby="workout-details">
+    <section className="border-t-2 border-foreground pb-7 pt-5" aria-labelledby="workout-overview">
       <h2
-        id="workout-details"
+        id="workout-overview"
         className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
       >
-        Workout Details
+        Workout Overview
       </h2>
-      <div className="mt-4 grid gap-4 sm:grid-cols-3">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Time</p>
-          <p className="mt-1 font-bold">About 15 minutes</p>
-        </div>
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            Equipment
-          </p>
-          <p className="mt-1 font-bold">Rope and mat</p>
-        </div>
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Effort</p>
-          <p className="mt-1 font-bold">Steady</p>
-        </div>
-      </div>
+      <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {details.map(([label, value]) => (
+          <div
+            key={label}
+            className="flex min-h-32 flex-col justify-center border border-foreground/25 p-4"
+          >
+            <dt className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
+              {label}
+            </dt>
+            <dd className="gxj-display-title mt-3 text-2xl uppercase leading-[0.95] tracking-wide">
+              {value}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </section>
   );
 }
@@ -561,7 +574,6 @@ function WorkoutReview({ variant }: { variant: string }) {
           : "About 15 minutes. Use the easier option any time you need it."
       }
     >
-      {recovery ? <WorkoutDetails /> : null}
       {recovery ? (
         <div className="border-y border-foreground/15 py-8">
           <h2 className="gxj-display-title text-3xl uppercase">Today's Work Is Rest</h2>
@@ -590,9 +602,9 @@ function WorkoutReview({ variant }: { variant: string }) {
           }
         />
       )}
-      {!recovery ? <WorkoutDetails /> : null}
+      {!recovery ? <WorkoutOverview easyMovement={day === 2} /> : null}
       {!recovery ? (
-        <Section title="Workout Approach">
+        <Section title="Workout Notes">
           <p className="leading-relaxed">
             Move at a pace you can control. Take more rest when you need it. Stop if you feel sharp
             pain, dizziness, or anything that doesn't feel right.
