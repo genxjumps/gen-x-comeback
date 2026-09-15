@@ -5,6 +5,8 @@ import { ArrowRight, Check, LockKeyhole, Play, RotateCcw } from "lucide-react";
 
 import { AcceleratorCompletion } from "@/components/accelerator-completion";
 import { Button } from "@/components/ui/button";
+import { WorkoutMediaCard } from "@/components/workout-media-card";
+import { WorkoutNotes, WorkoutOverview } from "@/components/workout-screen";
 import { missedDayMessage } from "@/lib/accelerator/daily-assignment";
 import {
   completeAcceleratorDay,
@@ -55,23 +57,53 @@ function MediaSlot({
   label,
   cloudflareStreamUid,
   access,
+  currentDay,
+  canCompleteCurrent,
+  availableOn,
 }: {
   day: AcceleratorDay;
   label: string;
   cloudflareStreamUid: string | null;
   access: AcceleratorDayAccess;
+  currentDay: number | null;
+  canCompleteCurrent: boolean;
+  availableOn: string | null;
 }) {
   if (day.kind === "rest") {
     return (
-      <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/60 px-6 text-center">
+      <div className="mt-6 flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/60 px-6 text-center">
         <p className="text-sm font-semibold">No workout video today</p>
         <p className="mt-1 text-xs text-muted-foreground">Take the full recovery day.</p>
       </div>
     );
   }
+  const src = acceleratorVideoSrc(cloudflareStreamUid);
+  if (day.kind === "primary_workout" && src) {
+    const state =
+      access === "completed"
+        ? ({ type: "completed" } as const)
+        : access === "locked" && day.day === currentDay && !canCompleteCurrent
+          ? ({ type: "scheduled", availableLabel: friendlyDate(availableOn) } as const)
+          : access === "locked"
+            ? ({ type: "locked" } as const)
+            : ({ type: "ready" } as const);
+    return (
+      <WorkoutMediaCard
+        dayNumber={day.day}
+        dayLabel={`Day ${day.day} of 28`}
+        code={day.assignment}
+        title={label}
+        videoSrc={src}
+        accent="aqua"
+        artworkVariant="accelerator"
+        iframeTitle={`Day ${day.day} - ${label}`}
+        state={state}
+      />
+    );
+  }
   if (access === "locked") {
     return (
-      <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-border bg-muted/60 px-6 text-center">
+      <div className="mt-6 flex aspect-video flex-col items-center justify-center rounded-lg border border-border bg-muted/60 px-6 text-center">
         <LockKeyhole aria-hidden="true" className="size-7 text-muted-foreground" />
         <p className="mt-3 text-sm font-semibold">Video unlocks with this workout</p>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -80,23 +112,8 @@ function MediaSlot({
       </div>
     );
   }
-  const src = acceleratorVideoSrc(cloudflareStreamUid);
-  if (src) {
-    return (
-      <div className="aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-        <iframe
-          src={src}
-          loading="lazy"
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-          allowFullScreen
-          className="h-full w-full border-0"
-          title={`Day ${day.day} - ${label}`}
-        />
-      </div>
-    );
-  }
   return (
-    <div className="flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/60 px-6 text-center">
+    <div className="mt-6 flex aspect-video flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/60 px-6 text-center">
       <p className="text-sm font-semibold">{label}</p>
       <p className="mt-1 text-xs text-muted-foreground">Cloudflare Stream video pending</p>
     </div>
@@ -110,6 +127,10 @@ function friendlyDate(value: string | null): string {
     day: "numeric",
     timeZone: "UTC",
   });
+}
+
+function workoutFormat(label: string): string {
+  return label.split(" - ", 2)[1] ?? label;
 }
 
 export function AcceleratorProgram() {
@@ -222,14 +243,10 @@ export function AcceleratorProgram() {
   const latestWeight = hub.measurementSummary.globalLatest.weight;
   const latestWaist = hub.measurementSummary.globalLatest.waist;
 
-  let pageTitle = "You Finished";
+  let pageTitle = "Fat Loss Accelerator";
   if (hub.progress.programCompleted) pageTitle = "Accelerator Complete";
   else if (justCompletedDay) pageTitle = `Day ${justCompletedDay} Complete`;
   else if (hub.runStatus === "paused") pageTitle = "Your Accelerator Is Paused";
-  else if (actionableDay)
-    pageTitle = `Day ${actionableDay.day}: ${hub.snapshot.assignments[actionableDay.assignment].label}`;
-  else if (nextDay)
-    pageTitle = `Day ${nextDay.day} unlocks ${friendlyDate(hub.progress.availableOn)}`;
 
   async function markCurrentComplete() {
     if (!actionableDay || savingDay) return;
@@ -405,59 +422,47 @@ export function AcceleratorProgram() {
             </section>
           ) : selectedDay && selectedDetails && selectedContent ? (
             <section aria-labelledby="workout-title">
-              <div className="flex flex-wrap items-end justify-between gap-3">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
-                    {selectedDay.access === "completed"
-                      ? "Completed workout"
-                      : selectedDay.day === hub.progress.currentDay
-                        ? hub.progress.canCompleteCurrent
-                          ? "Today's workout"
-                          : "Next workout"
-                        : "Locked preview"}
-                  </p>
-                  <h2 id="workout-title" className="mt-1 text-xl font-semibold tracking-tight">
-                    Day {selectedDay.day}: {selectedDetails.label}
-                  </h2>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Week {selectedDay.week} - {selectedRuntime}
+              <div>
+                <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
+                  Day {selectedDay.day} of 28
+                </p>
+                <h2
+                  id="workout-title"
+                  className="gxj-display-title mt-4 text-3xl uppercase leading-[0.95] tracking-wide sm:text-4xl"
+                >
+                  {selectedDetails.label}
+                </h2>
+                <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
+                  {selectedRuntime} total.
                 </p>
               </div>
 
-              <div className="mt-4">
-                <MediaSlot
-                  day={selectedDay}
-                  label={selectedDetails.label}
-                  cloudflareStreamUid={selectedContent.media?.cloudflareStreamUid ?? null}
-                  access={selectedDay.access}
-                />
-              </div>
+              <MediaSlot
+                day={selectedDay}
+                label={selectedDetails.label}
+                cloudflareStreamUid={selectedContent.media?.cloudflareStreamUid ?? null}
+                access={selectedDay.access}
+                currentDay={hub.progress.currentDay}
+                canCompleteCurrent={hub.progress.canCompleteCurrent}
+                availableOn={hub.progress.availableOn}
+              />
 
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-lg border border-border bg-card p-4">
-                  <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-                    Today's focus
-                  </h3>
-                  <p className="mt-2 text-sm font-semibold">{selectedDetails.focus}</p>
-                </div>
-                <div className="rounded-lg border border-border bg-card p-4">
-                  <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-                    Equipment
-                  </h3>
-                  <p className="mt-2 text-sm font-semibold">{hub.snapshot.equipment.program}</p>
-                </div>
-              </div>
+              <WorkoutOverview
+                items={[
+                  { label: "Duration", value: selectedRuntime },
+                  {
+                    label: "Equipment",
+                    value: selectedDay.kind === "rest" ? "None" : hub.snapshot.equipment.program,
+                  },
+                  { label: "Focus", value: selectedDetails.focus },
+                  { label: "Format", value: workoutFormat(selectedDetails.label) },
+                ]}
+              />
 
-              <div className="mt-3 rounded-lg border border-border bg-card p-4">
-                <h3 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-                  Practical instructions
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {selectedContent.instructions}
-                </p>
+              <WorkoutNotes>
+                <p className="leading-relaxed text-foreground/80">{selectedContent.instructions}</p>
                 {selectedContent.steps?.length ? (
-                  <ol className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+                  <ol className="space-y-3 text-sm leading-relaxed text-foreground/80">
                     {selectedContent.steps.map((step, index) => (
                       <li key={step} className="flex gap-3">
                         <span className="font-semibold text-foreground">{index + 1}.</span>
@@ -466,7 +471,7 @@ export function AcceleratorProgram() {
                     ))}
                   </ol>
                 ) : null}
-              </div>
+              </WorkoutNotes>
 
               {selectedDay.day === hub.progress.currentDay && !hub.progress.canCompleteCurrent ? (
                 <p className="mt-4 rounded-md border border-border bg-muted/50 p-4 text-sm">

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, Check, Play, RotateCw } from "lucide-react";
+import { ArrowRight, CalendarDays, Check, LockKeyhole, Play, RotateCw } from "lucide-react";
 import { missingVideoNotice, workoutVideoPoster, workoutVideoSrc } from "@/lib/workout-videos";
 
 type WorkoutCardState =
   | { type: "blocked"; previousDay: number; availableLabel: string }
+  | { type: "locked" }
   | { type: "scheduled"; availableLabel: string }
   | { type: "ready" }
   | { type: "completed" };
@@ -36,6 +37,8 @@ export function WorkoutMediaCard({
   coverSrc,
   videoSrc,
   accent = "orange",
+  artworkVariant = "seven-day",
+  iframeTitle,
   state,
 }: {
   dayNumber: number;
@@ -46,6 +49,8 @@ export function WorkoutMediaCard({
   coverSrc?: string;
   videoSrc?: string | null;
   accent?: "orange" | "aqua";
+  artworkVariant?: "seven-day" | "accelerator";
+  iframeTitle?: string;
   state: WorkoutCardState;
 }) {
   const [playing, setPlaying] = useState(false);
@@ -70,11 +75,24 @@ export function WorkoutMediaCard({
             allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
             allowFullScreen
             className="h-full w-full border-0"
-            title={`${code} - ${title}`}
+            title={iframeTitle ?? `${code} - ${title}`}
           />
-        ) : cover ? (
+        ) : cover || artworkVariant === "accelerator" ? (
           <div className="relative h-full w-full">
-            <img src={cover} alt="" className="h-full w-full object-cover" />
+            {artworkVariant === "accelerator" ? (
+              <div className="absolute inset-0 overflow-hidden bg-[url('/workout-covers/accelerator-day-09.webp')] bg-cover bg-left">
+                <span aria-hidden="true" className="absolute inset-0 bg-[#f7f1e7]/95" />
+                <span className="gxj-display-title absolute inset-y-[-10%] right-[5%] flex w-[52%] items-center justify-center text-[clamp(9rem,42vw,25rem)] leading-none tracking-[-0.08em] text-foreground">
+                  {String(dayNumber).padStart(2, "0")}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-y-0 right-[-8%] w-[16%] skew-x-[-9deg] bg-gxj-aqua/95"
+                />
+              </div>
+            ) : (
+              <img src={cover ?? undefined} alt="" className="h-full w-full object-cover" />
+            )}
             <div className="absolute inset-y-0 left-0 flex w-[57%] flex-col justify-center px-[5%] text-foreground">
               <p className="gxj-display-title text-sm uppercase tracking-[0.18em] sm:text-base">
                 {dayLabel ?? `Day ${dayNumber} / Workout`}
@@ -112,6 +130,16 @@ export function WorkoutMediaCard({
             Go to Day {state.previousDay}
             <ArrowRight className="size-5" aria-hidden="true" />
           </Link>
+        </div>
+      ) : state.type === "locked" ? (
+        <div className="flex min-h-20 items-center justify-between gap-4 bg-card px-4 py-3 sm:px-5">
+          <div>
+            <StatusTitle>Video Unlocks With This Workout</StatusTitle>
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+              You can preview the instructions below.
+            </p>
+          </div>
+          <LockKeyhole className="size-8 shrink-0" strokeWidth={2.25} aria-hidden="true" />
         </div>
       ) : state.type === "scheduled" ? (
         <div className="flex min-h-20 items-center justify-between gap-4 bg-card px-4 py-3 sm:px-5">
