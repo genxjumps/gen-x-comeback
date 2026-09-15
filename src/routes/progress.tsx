@@ -75,7 +75,7 @@ function MeasurementForm({
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <div className="py-4 first:pt-0 last:pb-0">
       <Label htmlFor={`new-${kind}`}>Add {label}</Label>
       <div className="mt-2 grid grid-cols-[minmax(0,1fr)_5.5rem] gap-2">
         <Input
@@ -261,15 +261,37 @@ function Progress() {
       ? {
           name: "7-Day Comeback Plan",
           progress: `${activeLeadPlan.completedDays} of ${activeLeadPlan.totalDays} days`,
+          completedDays: activeLeadPlan.completedDays,
+          totalDays: activeLeadPlan.totalDays,
+          accent: "orange" as const,
         }
       : programs?.ok && programs.activeProgram === "other_program"
-        ? { name: "Another Gen X Jumps program", progress: "Open Programs for details" }
+        ? {
+            name: "Another Gen X Jumps program",
+            progress: "Open Programs for details",
+            completedDays: null,
+            totalDays: null,
+            accent: "neutral" as const,
+          }
         : accelerator?.currentRun
           ? {
               name: "28-Day Fat Loss Accelerator",
               progress: `${accelerator.currentRun.completedDays} of 28 days - ${accelerator.currentRun.status}`,
+              completedDays: accelerator.currentRun.completedDays,
+              totalDays: 28,
+              accent: "aqua" as const,
             }
-          : { name: "No active program", progress: "Choose a program when you’re ready" };
+          : {
+              name: "No active program",
+              progress: "Choose a program when you’re ready",
+              completedDays: null,
+              totalDays: null,
+              accent: "neutral" as const,
+            };
+  const currentProgressPercent =
+    currentProgram.completedDays !== null && currentProgram.totalDays
+      ? Math.round((currentProgram.completedDays / currentProgram.totalDays) * 100)
+      : null;
 
   function replaceMeasurement(saved: CustomerMeasurement) {
     setHub((current) =>
@@ -368,25 +390,66 @@ function Progress() {
       kicker="Progress"
       title="See The Work Adding Up"
       description="Your current program and latest optional measurements stay simple here. Open the details only when you want the full history."
+      titleSize="compact"
     >
-      <div className="grid gap-3 sm:grid-cols-3">
-        <section className="rounded-lg border border-border bg-card p-5">
-          <p className="text-xs font-medium text-muted-foreground">Current Program</p>
-          <p className="mt-3 text-lg font-semibold">{currentProgram.name}</p>
-          <p className="mt-1 text-xs capitalize text-muted-foreground">{currentProgram.progress}</p>
-        </section>
-        <section className="rounded-lg border border-border bg-card p-5">
-          <p className="text-xs font-medium text-muted-foreground">Latest Weight</p>
-          <p className="mt-3 text-lg font-semibold">{formatMeasurement(latest.weight)}</p>
-        </section>
-        <section className="rounded-lg border border-border bg-card p-5">
-          <p className="text-xs font-medium text-muted-foreground">Latest Waist</p>
-          <p className="mt-3 text-lg font-semibold">{formatMeasurement(latest.waist)}</p>
-        </section>
-      </div>
+      <section className="border-y-2 border-foreground py-6 sm:py-8">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          Current Program
+        </h2>
+        <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-lg font-bold">{currentProgram.name}</p>
+            <p className="mt-1 text-sm capitalize text-muted-foreground">
+              {currentProgram.progress}
+            </p>
+          </div>
+          {currentProgressPercent !== null ? (
+            <p className="gxj-display-title text-3xl" aria-hidden="true">
+              {currentProgressPercent}%
+            </p>
+          ) : null}
+        </div>
+        {currentProgressPercent !== null ? (
+          <div
+            className="mt-4 h-2.5 overflow-hidden rounded-[2px] bg-foreground/10"
+            role="progressbar"
+            aria-label={`${currentProgram.name} progress`}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={currentProgressPercent}
+          >
+            <div
+              className={`h-full ${
+                currentProgram.accent === "aqua" ? "bg-gxj-aqua" : "bg-gxj-orange"
+              }`}
+              style={{ width: `${currentProgressPercent}%` }}
+            />
+          </div>
+        ) : null}
+      </section>
+
+      <section className="border-b border-foreground/15 py-6 sm:py-8">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          Latest Measurements
+        </h2>
+        <dl className="mt-5 grid grid-cols-2 divide-x divide-foreground/15">
+          <div className="pr-5">
+            <dt className="text-sm text-muted-foreground">Latest Weight</dt>
+            <dd className="gxj-display-title mt-1 text-3xl sm:text-4xl">
+              {formatMeasurement(latest.weight)}
+            </dd>
+          </div>
+          <div className="pl-5">
+            <dt className="text-sm text-muted-foreground">Latest Waist</dt>
+            <dd className="gxj-display-title mt-1 text-3xl sm:text-4xl">
+              {formatMeasurement(latest.waist)}
+            </dd>
+          </div>
+        </dl>
+      </section>
 
       {hub ? (
-        <section className="mt-5 rounded-lg border border-border bg-card p-5 sm:p-6">
+        <section className="border-b border-foreground/15 py-6 sm:py-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-xl font-semibold">Measurements</h2>
@@ -410,7 +473,7 @@ function Progress() {
 
           {detailsOpen ? (
             <div className="mt-6">
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid divide-y divide-foreground/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
                 <MeasurementForm
                   kind="weight"
                   unit={summary?.globalLatest.weight?.unit ?? "lb"}

@@ -474,3 +474,22 @@ every saved day and assignment combination.
   unchanged.
 - The shared component changes apply to the real `/accelerator` renderer, not only the isolated Day
   9 review state.
+
+### Approved Progress visual contract
+
+The real `/progress` page and all Progress review states reuse the progress and measurement language
+already approved on the 28-Day Accelerator dashboard.
+
+- Use the compact app-page title scale. Progress does not introduce another headline size.
+- Put the current program, completion bar, latest measurements, detailed measurement controls, and
+  history directly on the shared cream page background. Separate sections with the established
+  strong and light divider rules instead of surrounding them with dashboard cards.
+- Use orange for 7-Day completion and aqua for 28-Day Accelerator completion. Do not use the
+  7-Day orange accent for Accelerator progress.
+- Present weight and waist as a simple two-column measurement readout using the established display
+  type. Inputs and editing controls keep the boundaries required for interaction, but they do not
+  create another outer card layer.
+- Apply the same hierarchy to active, empty, history, and unavailable review states. Empty and error
+  states retain their existing actions and wording.
+- Preserve all loading, program selection, measurement saving, correction, removal, history, and
+  navigation behavior. This is a presentation contract only.

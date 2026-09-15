@@ -27,8 +27,16 @@ const acceleratorReviewSource = reviewSource.slice(
   reviewSource.indexOf("function AcceleratorReview"),
   reviewSource.indexOf("function HistoryReview"),
 );
+const progressReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function ProgressReview"),
+  reviewSource.indexOf("function NutritionReview"),
+);
 const assessmentRouteSource = readFileSync(
   new URL("../../routes/assessment.index.tsx", import.meta.url),
+  "utf8",
+);
+const progressRouteSource = readFileSync(
+  new URL("../../routes/progress.tsx", import.meta.url),
   "utf8",
 );
 const stylesSource = readFileSync(new URL("../../styles.css", import.meta.url), "utf8");
@@ -205,5 +213,18 @@ describe("app review catalog", () => {
     expect(acceleratorReviewSource).not.toContain("Before You Start");
     expect(acceleratorReviewSource).not.toContain("Dumbbells");
     expect(acceleratorReviewSource).not.toContain("gxj-orange");
+  });
+
+  it("uses the approved direct-on-page Progress treatment in review and production", () => {
+    expect(progressReviewSource).toContain('titleSize="compact"');
+    expect(progressReviewSource).toContain("bg-gxj-aqua");
+    expect(progressReviewSource).not.toContain("bg-gxj-orange");
+    expect(progressRouteSource).toContain('titleSize="compact"');
+    expect(progressRouteSource).toContain("border-y-2 border-foreground");
+    expect(progressRouteSource).toContain("Latest Measurements");
+    expect(progressRouteSource).toContain('currentProgram.accent === "aqua"');
+    expect(progressRouteSource).not.toContain(
+      'className="rounded-lg border border-border bg-card p-5"',
+    );
   });
 });
