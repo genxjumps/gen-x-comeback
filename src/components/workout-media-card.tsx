@@ -33,6 +33,9 @@ export function WorkoutMediaCard({
   code,
   title,
   coverTitle = title,
+  coverSrc,
+  videoSrc,
+  accent = "orange",
   state,
 }: {
   dayNumber: number;
@@ -40,12 +43,19 @@ export function WorkoutMediaCard({
   code: string;
   title: string;
   coverTitle?: string;
+  coverSrc?: string;
+  videoSrc?: string | null;
+  accent?: "orange" | "aqua";
   state: WorkoutCardState;
 }) {
   const [playing, setPlaying] = useState(false);
-  const src = workoutVideoSrc(code);
-  const cover = WORKOUT_COVERS[dayNumber] ?? workoutVideoPoster(code);
+  const src = videoSrc === undefined ? workoutVideoSrc(code) : videoSrc;
+  const cover = coverSrc ?? WORKOUT_COVERS[dayNumber] ?? workoutVideoPoster(code);
   const [coverTitleFirstLine, coverTitleSecondLine] = coverTitle.split(" + ", 2);
+  const readyClasses =
+    accent === "aqua"
+      ? "bg-gxj-aqua text-white [&_.workout-media-icon]:text-gxj-aqua"
+      : "bg-gxj-orange text-white [&_.workout-media-icon]:text-gxj-orange";
 
   return (
     <section
@@ -118,13 +128,13 @@ export function WorkoutMediaCard({
           type="button"
           onClick={() => setPlaying(true)}
           disabled={playing}
-          className="flex min-h-16 w-full items-center justify-between gap-5 bg-gxj-orange px-5 py-3 text-left text-white transition-[filter] hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white disabled:cursor-default disabled:hover:brightness-100 sm:px-7"
+          className={`flex min-h-16 w-full items-center justify-between gap-5 px-5 py-3 text-left transition-[filter] hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white disabled:cursor-default disabled:hover:brightness-100 sm:px-7 ${readyClasses}`}
           aria-label={playing ? "Workout video is open" : `Start Day ${dayNumber} workout`}
         >
           <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
             {playing ? "Workout Open" : "Start Workout"}
           </span>
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-gxj-orange">
+          <span className="workout-media-icon flex size-10 shrink-0 items-center justify-center rounded-full bg-white">
             <Play className="size-4 fill-current" aria-hidden="true" />
           </span>
         </button>

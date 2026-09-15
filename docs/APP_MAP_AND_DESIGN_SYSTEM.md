@@ -426,8 +426,33 @@ schedule while distinguishing the two program families without mixing their acce
 - These are presentation rules only. Preserve ownership, purchase, setup, activation, pause,
   resume, switching, history, completion, error, and navigation behavior.
 
+### Approved 28-Day Accelerator dashboard visual contract
+
+The active `/accelerator` dashboard uses the same workout-launch structure already approved for
+the 7-Day experience. The shared structure creates continuity between programs, while the aqua
+accent keeps the Accelerator visually distinct.
+
+- Keep the established compact app-page title scale for **Fat Loss Accelerator** and show progress
+  directly on the page without surrounding it with a card.
+- Introduce the active assignment with **Today's Workout** at the shared section-heading scale.
+- Use the exact approved 7-Day launch-card layout: black workout field, live day label and workout
+  title on the left, distressed numbered artwork on the right, and one full-width action rail
+  below it.
+- The Accelerator version uses aqua anywhere the 7-Day version uses orange. Do not mix orange into
+  the Accelerator launch card.
+- The numbered artwork keeps the same composition, crop, distress, proportions, border, corner
+  radius, and restrained offset shadow as the approved 7-Day artwork. Only the live day number and
+  program accent change.
+- The action reads **Open Today's Workout** and uses the shared white circular arrow treatment.
+- Render the real assigned day number and saved workout title. The approved Day 9 **Workout B -
+  EMOM** state is the visual reference, not hardcoded customer data.
+- Do not add a workout description, movement list, or equipment summary inside the launch card.
+  That information belongs on the focused workout page.
+- Preserve all existing Accelerator assignment, unlock, recovery, completion, pause, and progress
+  behavior. This is a presentation contract only.
+
 ## Recommended next action
 
-Continue into Programs, Progress, and Nutrition. Preserve the shared focused-setup and participant
-shells, section hierarchy, spacing, typography, and state components as each screen family is
-updated.
+Design the focused 28-Day Accelerator workout page that opens from the approved dashboard launch
+card. Carry forward the shared workout-page hierarchy and overview grid while keeping the
+Accelerator aqua identity and all existing workout content and behavior intact.
