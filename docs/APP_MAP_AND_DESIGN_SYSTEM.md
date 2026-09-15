@@ -291,6 +291,8 @@ other product behavior.
   the content genuinely needs containment.
 - Shared spacing and type tokens govern these relationships everywhere. Do not tune the same
   heading-to-card or card-to-section relationship independently on individual workout pages.
+- The review hub exposes one isolated ready-state screen for each locked workout video, W01 through
+  W07, so every workout treatment can be checked without an account or saved plan.
 
 Approve these three patterns before applying the system to the remaining screen families.
 
