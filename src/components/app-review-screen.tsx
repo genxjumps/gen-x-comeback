@@ -541,7 +541,7 @@ function WorkoutOverview({ easyMovement = false }: { easyMovement?: boolean }) {
             <dt className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
               {label}
             </dt>
-            <dd className="gxj-display-title mt-3 text-2xl uppercase leading-[0.95] tracking-wide">
+            <dd className="gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl">
               {value}
             </dd>
           </div>
