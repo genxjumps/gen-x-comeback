@@ -5,17 +5,23 @@ export function PlatformPage({
   title,
   description,
   titleSize = "default",
+  contentGap = "default",
   children,
 }: {
   kicker: string;
   title: string;
   description: string;
   titleSize?: "default" | "compact";
+  contentGap?: "default" | "tight";
   children: ReactNode;
 }) {
   return (
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl pb-10 sm:pb-14">
-      <header className="gxj-page-header py-7 sm:py-10">
+      <header
+        className={`gxj-page-header pt-7 sm:pt-10 ${
+          contentGap === "tight" ? "pb-2 sm:pb-4" : "pb-7 sm:pb-10"
+        }`}
+      >
         <div className="w-full max-w-2xl">
           <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">{kicker}</p>
           <h1
