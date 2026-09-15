@@ -18,6 +18,8 @@ import { Input } from "@/components/ui/input";
 import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { WorkoutOverview, WorkoutNotes } from "@/components/workout-screen";
 import type { ReviewScreen } from "@/lib/app-review";
+import { WORKOUTS } from "@/lib/plan";
+import { sevenDayWorkoutOverview } from "@/lib/workout-presentation";
 
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
@@ -520,50 +522,32 @@ function PlanReview({ complete }: { complete: boolean }) {
   );
 }
 
-function ReviewWorkoutOverview({ easyMovement = false }: { easyMovement?: boolean }) {
-  const details = easyMovement
-    ? [
-        ["Duration", "15 Minutes"],
-        ["Equipment", "Floor Space"],
-        ["Training", "Recovery + Mobility"],
-        ["Format", "Guided Movement"],
-      ]
-    : [
-        ["Duration", "15 Minutes"],
-        ["Equipment", "Jump Rope + Body Weight"],
-        ["Training", "Conditioning + Strength"],
-        ["Format", "Intervals + Circuits"],
-      ];
-
-  return <WorkoutOverview items={details.map(([label, value]) => ({ label, value }))} />;
-}
-
 function WorkoutReview({ variant }: { variant: string }) {
-  const recovery = variant === "recovery";
-  const day = recovery
+  const fullRest = variant === "recovery";
+  const readyWorkoutMatch = /^ready-w0([1-7])$/.exec(variant);
+  const readyWorkoutNumber = readyWorkoutMatch ? Number(readyWorkoutMatch[1]) : null;
+  const day = fullRest
     ? 7
-    : variant === "blocked"
-      ? 3
-      : variant === "ready-day-3"
-        ? 3
-        : variant === "scheduled"
-          ? 4
-          : variant === "completed"
-            ? 2
-            : 1;
+    : (readyWorkoutNumber ??
+      (variant === "blocked" ? 3 : variant === "scheduled" ? 4 : variant === "completed" ? 2 : 1));
+  const code = `W0${day}`;
+  const workout = WORKOUTS[code] ?? WORKOUTS.W01;
+  const activeRecovery = code === "W07";
   return (
     <Page
       kicker={`Day ${day} of 7`}
-      title={recovery ? "Full Rest" : day === 2 ? "Easy Movement" : "Jump + Strength"}
+      title={fullRest ? "Full Rest" : workout.title}
       titleSize="compact"
       contentGap="tight"
       description={
-        recovery
+        fullRest
           ? "Recovery is part of the plan. Take the day off and let your body absorb the work."
-          : "About 15 minutes. Use the easier option any time you need it."
+          : activeRecovery
+            ? "About 15 minutes. Keep the movement easy."
+            : "About 15 minutes. Use the easier option any time you need it."
       }
     >
-      {recovery ? (
+      {fullRest ? (
         <div className="border-y border-foreground/15 py-8">
           <h2 className="gxj-display-title text-3xl uppercase">Today's Work Is Rest</h2>
           <p className="mt-3 max-w-xl leading-relaxed">
@@ -578,8 +562,8 @@ function WorkoutReview({ variant }: { variant: string }) {
         <WorkoutMediaCard
           dayNumber={day}
           dayLabel={`Day ${day} of 7`}
-          code={`w0${day}`}
-          title={day === 2 ? "Easy Movement" : "Jump + Strength"}
+          code={code}
+          title={workout.title}
           state={
             variant === "blocked"
               ? { type: "blocked", previousDay: 2, availableLabel: "Wednesday" }
@@ -591,8 +575,10 @@ function WorkoutReview({ variant }: { variant: string }) {
           }
         />
       )}
-      {!recovery ? <ReviewWorkoutOverview easyMovement={day === 2} /> : null}
-      {!recovery ? (
+      {!fullRest ? (
+        <WorkoutOverview items={sevenDayWorkoutOverview(code, workout.minutes)} />
+      ) : null}
+      {!fullRest ? (
         <WorkoutNotes>
           <p className="leading-relaxed">
             Move at a pace you can control. Take more rest when you need it. Stop if you feel sharp

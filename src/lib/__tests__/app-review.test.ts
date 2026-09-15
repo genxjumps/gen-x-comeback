@@ -48,4 +48,23 @@ describe("app review catalog", () => {
       expect(screen.slug).toMatch(/^[a-z0-9-]+$/);
     }
   });
+
+  it("provides a ready-state review URL for every workout video", () => {
+    const workoutPreviews = reviewScreens.filter(
+      (screen) => screen.kind === "workout" && screen.variant.startsWith("ready-w"),
+    );
+
+    expect(workoutPreviews.map((screen) => screen.variant)).toEqual([
+      "ready-w01",
+      "ready-w02",
+      "ready-w03",
+      "ready-w04",
+      "ready-w05",
+      "ready-w06",
+      "ready-w07",
+    ]);
+    expect(workoutPreviews.map((screen) => screen.route)).toEqual(
+      Array.from({ length: 7 }, (_, index) => `/your-plan/day/${index + 1}`),
+    );
+  });
 });
