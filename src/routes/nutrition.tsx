@@ -1065,7 +1065,11 @@ function Nutrition() {
     <PlatformPage
       kicker="Nutrition"
       title="Calories Matter. Protein First. Meals Stay Simple."
-      description="Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
+      description={
+        profile && !editing
+          ? "These are the numbers to follow each day. Hit your calorie and protein targets consistently to lose fat and protect muscle."
+          : "Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
+      }
     >
       {!profile || editing ? (
         !profile && !setupStarted ? (
