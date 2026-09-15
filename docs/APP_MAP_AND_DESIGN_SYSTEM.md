@@ -92,8 +92,12 @@ The active Nutrition page uses the compact **Your Nutrition** page heading with 
 Daily Targets**, and **Daily Targets** as three labels for the same information. The public active
 Nutrition review route mirrors the full active page, including target editing, the normal-day meal
 split, meal-building guidance, recovery guidance, and the nutrition education link. It must not
-replace the real page with a short summary. This active-state rule does not pre-approve the separate
-setup, locked, review, or unavailable treatments.
+replace the real page with a short summary. Active Nutrition content sits directly on the cream
+page with strong and light dividers. Do not surround its targets, meal split, coaching sections,
+normal-day examples, or recovery guidance with dashboard cards. Keep containment only where the
+content needs it: target-review status, compact disclosures and controls, and the approved secondary
+**Learn the basics** card. This active-state rule does not pre-approve the separate setup, locked,
+review, or unavailable treatments.
 
 ### 5. Internal and review-only screens
 
