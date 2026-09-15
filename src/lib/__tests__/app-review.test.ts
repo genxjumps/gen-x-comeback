@@ -11,6 +11,10 @@ const assessmentReviewSource = reviewSource.slice(
   reviewSource.indexOf("function AssessmentReview"),
   reviewSource.indexOf("function AssessmentResultReview"),
 );
+const welcomeReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function WelcomeReview"),
+  reviewSource.indexOf("function PlanReadyReview"),
+);
 const assessmentRouteSource = readFileSync(
   new URL("../../routes/assessment.index.tsx", import.meta.url),
   "utf8",
@@ -115,5 +119,21 @@ describe("app review catalog", () => {
     );
     expect(stylesSource).toContain("grid-template-columns: minmax(0, 1fr)");
     expect(stylesSource).toContain("background-color: var(--color-gxj-mint)");
+  });
+
+  it("uses one focused email-access design for both Welcome email states", () => {
+    const emailStates = reviewScreens.filter(
+      (screen) => screen.slug === "welcome-email-sent" || screen.slug === "welcome-returning",
+    );
+
+    expect(emailStates.map((screen) => screen.variant)).toEqual(["sent", "returning"]);
+    expect(welcomeReviewSource).toContain('returning ? "Welcome Back" : "Check Your Email"');
+    expect(welcomeReviewSource).toContain('returning ? "Send Another Link" : "Open My Email"');
+    expect(welcomeReviewSource).toContain("relative mb-7 h-20 w-24");
+    expect(welcomeReviewSource).toContain("translate-x-1 translate-y-1 bg-gxj-orange");
+    expect(welcomeReviewSource).toContain(
+      "gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl",
+    );
+    expect(welcomeReviewSource).toContain("max-w-3xl border-t border-foreground/20 pt-5");
   });
 });

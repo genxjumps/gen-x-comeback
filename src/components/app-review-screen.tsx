@@ -650,19 +650,28 @@ function WelcomeReview({ variant }: { variant: string }) {
 
   const returning = variant === "returning";
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-12 text-center sm:py-20">
-      <span className="mx-auto grid size-14 place-items-center rounded-full bg-foreground text-background">
-        <Mail className="size-6" />
-      </span>
-      <h1 className="gxj-display-title mt-6 text-5xl uppercase leading-none sm:text-6xl">
-        {returning ? "Welcome Back" : "Check Your Email"}
-      </h1>
-      <p className="mx-auto mt-4 max-w-lg text-lg leading-relaxed">
-        {returning
-          ? "We found an existing Gen X Jumps account. Use the secure link we sent to get back in."
-          : "Your secure access link is on its way. Open it on the device where you want to use your plan."}
-      </p>
-      <div className="mt-7">
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="py-6 sm:py-8">
+        <div className="max-w-2xl">
+          <div className="relative mb-7 h-20 w-24" aria-hidden="true">
+            <span className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground" />
+            <span className="absolute inset-0 translate-x-1 translate-y-1 bg-gxj-orange" />
+            <span className="absolute inset-0 grid place-items-center border-2 border-foreground bg-background">
+              <Mail className="size-10" strokeWidth={1.8} />
+            </span>
+          </div>
+          <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+            {returning ? "Welcome Back" : "Check Your Email"}
+          </h1>
+          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+            {returning
+              ? "We found an existing Gen X Jumps account. Use the secure link we sent to get back in."
+              : "Your secure access link is on its way. Open it on the device where you want to use your plan."}
+          </p>
+        </div>
+      </header>
+
+      <div className="max-w-3xl border-t border-foreground/20 pt-5">
         <Action>{returning ? "Send Another Link" : "Open My Email"}</Action>
       </div>
     </div>
