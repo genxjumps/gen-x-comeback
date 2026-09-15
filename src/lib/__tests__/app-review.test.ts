@@ -23,6 +23,10 @@ const programsReviewSource = reviewSource.slice(
   reviewSource.indexOf("function ProgramsReview"),
   reviewSource.indexOf("function OfferReview"),
 );
+const acceleratorReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function AcceleratorReview"),
+  reviewSource.indexOf("function HistoryReview"),
+);
 const assessmentRouteSource = readFileSync(
   new URL("../../routes/assessment.index.tsx", import.meta.url),
   "utf8",
@@ -177,5 +181,18 @@ describe("app review catalog", () => {
     expect(programsReviewSource).not.toContain("shadow-[4px_4px_0_var(--color-gxj-aqua)]");
     expect(programsReviewSource).not.toContain("gxj-orange");
     expect(reviewSource).toContain('accent={acceleratorAccent ? "aqua" : "orange"}');
+  });
+
+  it("uses the approved app patterns and real program language on the Accelerator review", () => {
+    expect(acceleratorReviewSource).toContain('title="Fat Loss Accelerator"');
+    expect(acceleratorReviewSource).toContain("8 of 28 Days Complete");
+    expect(acceleratorReviewSource).toContain("Workout B - EMOM");
+    expect(acceleratorReviewSource).toContain("Workout Overview");
+    expect(acceleratorReviewSource).toContain("Jump Rope + Bodyweight");
+    expect(acceleratorReviewSource).toContain("Your 28-Day Schedule");
+    expect(acceleratorReviewSource).toContain("bg-gxj-aqua");
+    expect(acceleratorReviewSource).not.toContain("Before You Start");
+    expect(acceleratorReviewSource).not.toContain("Dumbbells");
+    expect(acceleratorReviewSource).not.toContain("gxj-orange");
   });
 });

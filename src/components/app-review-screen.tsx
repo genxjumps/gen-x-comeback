@@ -7,6 +7,7 @@ import {
   Download,
   Dumbbell,
   Mail,
+  Play,
   RotateCcw,
   ShieldCheck,
 } from "lucide-react";
@@ -1191,31 +1192,147 @@ function AcceleratorReview({ variant }: { variant: string }) {
         <Action>Mark Recovery Complete</Action>
       </Page>
     );
+
+  const weekTwoDays = [
+    { day: 8, title: "Workout A - Classic Intervals", state: "completed" },
+    { day: 9, title: "Workout B - EMOM", state: "current" },
+    { day: 10, title: "Workout C - Lower Body Ladder", state: "upcoming" },
+    { day: 11, title: "Workout D - Intervals", state: "upcoming" },
+    { day: 12, title: "Workout E - Pyramid Challenge", state: "upcoming" },
+    { day: 13, title: "Workout F - Active Recovery", state: "upcoming" },
+    { day: 14, title: "Rest Day", state: "upcoming" },
+  ] as const;
+
   return (
-    <Page
-      kicker="Day 9 of 28"
-      title="Upper Body B"
-      description="Your dumbbell strength workout is ready."
-    >
-      <Section title="Before You Start">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <p>
-            <strong>Time</strong>
-            <br />
-            28 minutes
-          </p>
-          <p>
-            <strong>Equipment</strong>
-            <br />
-            Dumbbells
-          </p>
-          <p>
-            <strong>Effort</strong>
-            <br />7 out of 10
-          </p>
+    <Page title="Fat Loss Accelerator" titleSize="compact" contentGap="tight">
+      <section className="border-y-2 border-foreground py-5 sm:py-6">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.14em]">Week 2</p>
+            <p className="gxj-display-title mt-1 text-2xl uppercase tracking-wide sm:text-3xl">
+              8 of 28 Days Complete
+            </p>
+          </div>
+          <p className="gxj-display-title text-4xl text-gxj-aqua sm:text-5xl">29%</p>
         </div>
-      </Section>
-      <WorkoutMediaCard dayNumber={2} code="a03" title="Upper Body B" state={{ type: "ready" }} />
+        <div
+          className="mt-4 h-3 overflow-hidden bg-foreground/15"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={28}
+          aria-valuenow={8}
+          aria-label="Accelerator progress"
+        >
+          <div className="h-full w-[29%] bg-gxj-aqua" />
+        </div>
+      </section>
+
+      <section className="pt-8 sm:pt-10">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          Today&rsquo;s Workout
+        </h2>
+        <div className="mt-5 overflow-hidden border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]">
+          <div className="relative flex aspect-video flex-col justify-center overflow-hidden px-6 py-8 sm:px-8">
+            <div className="absolute inset-y-0 right-0 w-2/5 bg-[radial-gradient(circle_at_center,color-mix(in_oklch,var(--color-gxj-aqua)_68%,transparent)_0_2px,transparent_2.5px)] bg-[length:12px_12px] opacity-45" />
+            <div className="relative max-w-[75%]">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-background/65">
+                Day 9 of 28
+              </p>
+              <h3 className="gxj-display-title mt-3 text-4xl uppercase leading-none tracking-wide sm:text-6xl">
+                Workout B<span className="mt-2 block text-gxj-aqua">EMOM</span>
+              </h3>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="flex min-h-20 w-full items-center justify-between gap-5 bg-gxj-aqua px-5 py-3 text-left text-foreground sm:px-7"
+          >
+            <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
+              Start Workout
+            </span>
+            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-foreground text-gxj-aqua">
+              <Play aria-hidden="true" className="size-4 fill-current" />
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <section className="pt-8 sm:pt-10">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          Workout Overview
+        </h2>
+        <div className="mt-5 grid grid-cols-2 border-l border-t border-foreground/25">
+          {[
+            ["Duration", "27:30"],
+            ["Equipment", "Jump Rope + Bodyweight"],
+            ["Focus", "Conditioning + Core"],
+            ["Format", "EMOM"],
+          ].map(([label, value]) => (
+            <div className="min-h-32 border-b border-r border-foreground/25 p-4 sm:p-5" key={label}>
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-foreground/60">
+                {label}
+              </p>
+              <p className="gxj-display-title mt-3 text-xl uppercase leading-tight tracking-wide sm:text-2xl">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="pt-8 sm:pt-10">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          Your 28-Day Schedule
+        </h2>
+        <div className="mt-5 grid grid-cols-4 border-y-2 border-foreground">
+          {[1, 2, 3, 4].map((week) => (
+            <button
+              type="button"
+              key={week}
+              className={`min-h-12 border-r border-foreground px-2 text-sm font-bold uppercase last:border-r-0 ${
+                week === 2 ? "bg-gxj-aqua text-foreground" : "bg-background text-foreground"
+              }`}
+            >
+              Week {week}
+            </button>
+          ))}
+        </div>
+        <div className="divide-y divide-foreground/20">
+          {weekTwoDays.map((day) => {
+            const completed = day.state === "completed";
+            const current = day.state === "current";
+            return (
+              <div
+                className={`grid min-h-24 grid-cols-[3.5rem_minmax(0,1fr)_auto] items-center gap-4 py-4 ${
+                  current ? "bg-gxj-aqua/15 px-3" : "px-3"
+                } ${completed ? "text-foreground/40" : "text-foreground"}`}
+                key={day.day}
+              >
+                <span
+                  className={`gxj-display-title grid aspect-square place-items-center text-2xl ${
+                    current
+                      ? "bg-gxj-aqua text-foreground"
+                      : completed
+                        ? "border-2 border-foreground/25"
+                        : "bg-foreground text-background"
+                  }`}
+                >
+                  {String(day.day).padStart(2, "0")}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-[0.14em]">
+                    {completed ? "Complete" : current ? "Today" : `Day ${day.day}`}
+                  </p>
+                  <p className="gxj-display-title mt-1 text-xl uppercase leading-tight tracking-wide sm:text-2xl">
+                    {day.title}
+                  </p>
+                </div>
+                <ChevronRight aria-hidden="true" className="size-5" />
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </Page>
   );
 }
