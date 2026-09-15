@@ -560,10 +560,10 @@ function PlanReview({ complete }: { complete: boolean }) {
                 key={day}
                 aria-label={`Day ${day}: ${title}. ${stateLabel}.`}
                 aria-current={current ? "step" : undefined}
-                className={`group -mx-3 grid min-h-20 grid-cols-[2.75rem_1fr_auto] items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2 ${current ? "bg-gxj-mint" : ""}`}
+                className={`group -mx-3 grid min-h-20 grid-cols-[2.75rem_1fr_auto] items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2 ${current ? "bg-gxj-mint" : finished ? "text-foreground/45" : ""}`}
               >
                 <span
-                  className={`gxj-display-title grid size-9 place-items-center text-lg leading-none ${finished ? "rounded-full bg-foreground text-background" : current ? "rounded-[2px] bg-gxj-orange text-white" : "text-foreground/45"}`}
+                  className={`gxj-display-title grid size-9 place-items-center text-lg leading-none ${current ? "rounded-[2px] bg-gxj-orange text-white" : finished ? "text-foreground/45" : "text-foreground"}`}
                 >
                   {`0${day}`}
                 </span>

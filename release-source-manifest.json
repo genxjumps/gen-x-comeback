@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "aaadb8579d3a0fc658d71cf365d5b948c052ba49081119de0ce16b981c8b2d44"
+      "sha256": "0b4f8cd9c2a79bd40d8e50e68701e8aa401c87da63e313ac2e494269b7325e2e"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -359,7 +359,7 @@
     },
     {
       "path": "src/lib/__tests__/seven-day-plan-review-design.test.ts",
-      "sha256": "640c363703b2c81ef9508aac54ce3320677d9875e689e7a85fc71da5524d7fd7"
+      "sha256": "be80abeb4388c21e1a733d69426b2c5e40d194fabfddd3f12166f5b5d497a297"
     },
     {
       "path": "src/lib/__tests__/signup-destination.test.ts",

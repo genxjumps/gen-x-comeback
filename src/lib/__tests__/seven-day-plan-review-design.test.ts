@@ -24,8 +24,11 @@ describe("7-Day plan review design", () => {
     expect(reviewSource).not.toContain(
       'finished ? <Check className="size-4" aria-hidden="true" /> : `0${day}`',
     );
-    expect(reviewSource).toContain('finished ? "rounded-full bg-foreground text-background"');
     expect(reviewSource).toContain('current ? "rounded-[2px] bg-gxj-orange text-white"');
+    expect(reviewSource).toContain('finished ? "text-foreground/45" : "text-foreground"');
+    expect(reviewSource).toContain(
+      'current ? "bg-gxj-mint" : finished ? "text-foreground/45" : ""',
+    );
     expect(reviewSource).toContain(
       'stateLabel = finished ? "Complete" : current ? "Today" : "Upcoming"',
     );
