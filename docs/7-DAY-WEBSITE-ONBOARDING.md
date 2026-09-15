@@ -20,6 +20,14 @@ intake. It does not alter or share setup data with the separate 28-Day Accelerat
 The assessment uses numbered completed, current, and upcoming progress segments plus the approved
 raised selected-answer state.
 
+The successful new-participant `/welcome` state uses the same focused-setup system and keeps the
+approved personalized copy. Its three numbered segments remain visible in one row: Access saved is
+complete in black, Quick setup is current in orange with the small offset shadow, and Plan ready is
+upcoming in a ghosted outline. The page uses the shared compact title and 56px Anton action button,
+with content directly on the cream textured page rather than inside a surrounding card. This visual
+change does not alter handoff validation, draft binding, assessment destination, recovery handling,
+or saved-plan routing.
+
 ## Calendar and progression behavior
 
 - The participant's browser time zone is captured when the plan is first saved. The server anchors Day 1 to that local calendar date; Day N is assigned to Day 1 plus N minus one calendar days. Unlocking is never based on an elapsed 24-hour timer.
