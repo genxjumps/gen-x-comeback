@@ -34,10 +34,10 @@ export function WorkoutLaunchPanel({
     <>
       <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]">
         <div className="flex min-h-32 flex-col justify-center px-5 py-5 sm:min-h-40 sm:px-7 sm:py-6">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-background/65 sm:text-sm">
+          <p className="text-sm font-bold uppercase tracking-[0.14em] text-background/65 sm:text-base">
             Day {day} of {totalDays}
           </p>
-          <h3 className="gxj-display-title mt-2 text-3xl uppercase leading-[0.96] tracking-wide sm:text-4xl">
+          <h3 className="gxj-display-title mt-2 text-4xl uppercase leading-[0.96] tracking-wide sm:text-5xl">
             {title}
           </h3>
         </div>

@@ -267,11 +267,11 @@
     },
     {
       "path": "src/components/workout-launch-panel.tsx",
-      "sha256": "3f1b59560f200aaf3c842ddacf817f6c5fb0abee374505b293ca2910ad2e4d93"
+      "sha256": "e81633fbefd7dfb8c1a41371a2bffae267f8de81b2ea03bff730edb9c96927fd"
     },
     {
       "path": "src/components/workout-media-card.tsx",
-      "sha256": "1bccc40dd3e2432f0d41b12dbdad30a488812f67c2179b83766ff0833cdd9be3"
+      "sha256": "3d61c76c975e389a562c49d0608b06fa9c01970805a93d295ad74d7d8358f20e"
     },
     {
       "path": "src/components/workout-screen.tsx",
