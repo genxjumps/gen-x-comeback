@@ -4,6 +4,7 @@ import {
   Check,
   ChartNoAxesColumnIncreasing,
   ChevronRight,
+  Download,
   Dumbbell,
   Mail,
   RotateCcw,
@@ -679,28 +680,62 @@ function WelcomeReview({ variant }: { variant: string }) {
 }
 
 function PlanReadyReview() {
+  const steps = [
+    { number: 1, label: "Access saved", state: "complete" },
+    { number: 2, label: "Quick setup", state: "complete" },
+    { number: 3, label: "Plan ready", state: "current" },
+  ] as const;
+
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
-      <Status>Plan Saved</Status>
-      <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-none sm:text-6xl">
-        Keep Your Plan One Tap Away
-      </h1>
-      <p className="mt-4 text-lg leading-relaxed">
-        Add Gen X Jumps to your Home Screen so it's easy to open when you're ready to work out.
-      </p>
-      <Section title="On iPhone or iPad">
-        <ol className="space-y-4">
-          {["Tap the Share button", "Choose Add to Home Screen", "Tap Add"].map((x, i) => (
-            <li className="flex gap-3" key={x}>
-              <span className="gxj-display-title text-2xl">0{i + 1}</span>
-              <span className="pt-1 font-semibold">{x}</span>
-            </li>
-          ))}
-        </ol>
-      </Section>
-      <div className="grid gap-3">
-        <Action>Add to Home Screen</Action>
-        <Action outline>Not Now - View My Plan</Action>
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="py-6 sm:py-8">
+        <div className="max-w-2xl">
+          <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
+            Your Plan Is Ready
+          </p>
+          <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+            Todd, Keep Your Comeback One Tap Away
+          </h1>
+          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+            Add Gen X Jumps to your Home Screen for quick access to your workouts, nutrition
+            targets, and progress.
+          </p>
+        </div>
+      </header>
+
+      <ol className="grid max-w-3xl grid-cols-3 gap-2" aria-label="Plan setup progress">
+        {steps.map((item) => (
+          <li
+            key={item.label}
+            aria-current={item.state === "current" ? "step" : undefined}
+            className={`flex min-h-24 flex-col justify-between gap-4 p-3 sm:min-h-28 sm:p-4 ${
+              item.state === "complete"
+                ? "bg-foreground text-background"
+                : "bg-gxj-orange text-white shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
+            }`}
+          >
+            <span className="gxj-display-title text-2xl leading-none tracking-wide sm:text-3xl">
+              {String(item.number).padStart(2, "0")}
+            </span>
+            <span className="text-xs font-bold uppercase leading-tight tracking-[0.08em] sm:text-sm">
+              {item.label}
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      <div className="mt-7 max-w-3xl border-t border-foreground/20 pt-5">
+        <Action>
+          <Download aria-hidden="true" className="size-5" />
+          Add to My Home Screen
+        </Action>
+        <p className="mt-3 text-sm font-medium text-muted-foreground">No app store required.</p>
+        <button
+          type="button"
+          className="mt-5 block min-h-11 text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          Not Now - View My Plan
+        </button>
       </div>
     </div>
   );

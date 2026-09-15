@@ -15,6 +15,10 @@ const welcomeReviewSource = reviewSource.slice(
   reviewSource.indexOf("function WelcomeReview"),
   reviewSource.indexOf("function PlanReadyReview"),
 );
+const planReadyReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function PlanReadyReview"),
+  reviewSource.indexOf("const PLAN_REVIEW_DAYS"),
+);
 const assessmentRouteSource = readFileSync(
   new URL("../../routes/assessment.index.tsx", import.meta.url),
   "utf8",
@@ -139,5 +143,15 @@ describe("app review catalog", () => {
     expect(welcomeReviewSource).toContain(
       "mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center",
     );
+  });
+
+  it("continues the approved setup design into the Home Screen prompt", () => {
+    expect(planReadyReviewSource).toContain('label: "Access saved", state: "complete"');
+    expect(planReadyReviewSource).toContain('label: "Plan ready", state: "current"');
+    expect(planReadyReviewSource).toContain("Todd, Keep Your Comeback One Tap Away");
+    expect(planReadyReviewSource).toContain("Add to My Home Screen");
+    expect(planReadyReviewSource).toContain('<Download aria-hidden="true" className="size-5" />');
+    expect(planReadyReviewSource).toContain("No app store required.");
+    expect(planReadyReviewSource).toContain("Not Now - View My Plan");
   });
 });
