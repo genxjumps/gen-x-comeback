@@ -145,15 +145,14 @@ describe("app review catalog", () => {
     );
   });
 
-  it("continues the approved setup design into the Home Screen prompt", () => {
-    expect(planReadyReviewSource).toContain('label: "Access saved", state: "complete"');
-    expect(planReadyReviewSource).toContain('label: "Plan ready", state: "current"');
+  it("focuses the Home Screen prompt on the install action", () => {
     expect(planReadyReviewSource).toContain("Todd, Keep Your Comeback One Tap Away");
     expect(planReadyReviewSource).toContain("Add to My Home Screen");
-    expect(planReadyReviewSource).toContain(
-      '<Download aria-hidden="true" className="size-5 text-gxj-orange" strokeWidth={2.5} />',
-    );
-    expect(planReadyReviewSource).toContain("bg-foreground");
+    expect(planReadyReviewSource).toContain("min-h-20 w-full justify-between");
+    expect(planReadyReviewSource).toContain("rounded-full bg-background text-gxj-orange");
+    expect(planReadyReviewSource).toContain("<Download");
+    expect(planReadyReviewSource).not.toContain("Plan setup progress");
+    expect(planReadyReviewSource).not.toContain('label: "Access saved"');
     expect(planReadyReviewSource).toContain("No app store required.");
     expect(planReadyReviewSource).toContain("Not Now - View My Plan");
   });
