@@ -115,7 +115,11 @@ describe("7-Day Plan calendar access", () => {
       expect(media).toContain(`${day}: "/workout-covers/day-0${day}.webp"`);
     }
     expect(media).toContain("coverTitle = title");
-    expect(media).toContain("Day {dayNumber} / Workout");
+    expect(media).toContain("dayLabel?: string");
+    expect(media).toContain("{dayLabel ?? `Day ${dayNumber} / Workout`}");
+
+    const review = source("../../components/app-review-screen.tsx");
+    expect(review).toContain("dayLabel={`Day ${day} of 7`}");
   });
 
   it("defines a forward-only database calendar and service-role access boundary", () => {
