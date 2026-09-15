@@ -98,6 +98,19 @@ describe("My Programs and setup contract", () => {
     expect(previousRuns).toContain("run.programVersion");
   });
 
+  it("uses the approved open program-list presentation without repeating durations", () => {
+    const programs = readSource("../../../routes/my-programs.tsx");
+
+    expect(programs).toContain("divide-y-2 divide-foreground border-y-2 border-foreground");
+    expect(programs).toContain("<ProgramLengthMarker days={28} accelerator />");
+    expect(programs).toContain("<ProgramLengthMarker days={7} />");
+    expect(programs).toContain("Fat Loss Accelerator");
+    expect(programs).toContain("Comeback Plan");
+    expect(programs).not.toContain("28-Day Fat Loss Accelerator");
+    expect(programs).not.toContain("7-Day Comeback Plan");
+    expect(programs).not.toContain("rounded-lg border border-border bg-card");
+  });
+
   it("lets a repeat run reuse, change, or skip current measurements", () => {
     const functions = readSource("../functions.ts");
     const setup = readSource("../../../routes/my-programs_.accelerator.setup.tsx");

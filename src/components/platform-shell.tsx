@@ -24,6 +24,7 @@ function isActivePath(pathname: string, to: string): boolean {
 
 export function PlatformShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const activeAccent = pathname === "/my-programs" ? "after:bg-gxj-aqua" : "after:bg-gxj-orange";
 
   return (
     <div className="gxj-platform-shell min-h-screen bg-background text-foreground">
@@ -46,7 +47,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
                   aria-current={active ? "page" : undefined}
                   className={`relative min-h-11 px-4 py-3 text-sm font-bold uppercase tracking-[0.08em] transition-colors ${
                     active
-                      ? "text-foreground after:absolute after:inset-x-4 after:bottom-1.5 after:h-0.5 after:bg-gxj-orange"
+                      ? `text-foreground after:absolute after:inset-x-4 after:bottom-1.5 after:h-0.5 ${activeAccent}`
                       : "text-foreground/55 hover:bg-foreground/[0.04] hover:text-foreground"
                   }`}
                 >
@@ -79,7 +80,7 @@ export function PlatformShell({ children }: { children: ReactNode }) {
                 aria-current={active ? "page" : undefined}
                 className={`relative flex min-h-[4.25rem] flex-col items-center justify-center gap-1 px-1 text-xs font-bold uppercase tracking-[0.05em] transition-colors ${
                   active
-                    ? "text-foreground after:absolute after:inset-x-3 after:top-0 after:h-0.5 after:bg-gxj-orange"
+                    ? `text-foreground after:absolute after:inset-x-3 after:top-0 after:h-0.5 ${activeAccent}`
                     : "text-foreground/50"
                 }`}
               >
