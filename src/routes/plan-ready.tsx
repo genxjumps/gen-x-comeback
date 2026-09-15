@@ -74,15 +74,15 @@ function PlanReady() {
   if (status === "denied" || !plan) return <AccessDenied />;
 
   return (
-    <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl items-start justify-items-center px-5 pb-8 pt-8 sm:pb-12 sm:pt-12">
-      <section className="w-full">
-        <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <section className="max-w-2xl py-6 sm:py-8">
+        <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
           Your Plan Is Ready
         </p>
-        <h1 className="gxj-display-title mt-4 text-3xl leading-[1.05] tracking-tight sm:text-4xl">
+        <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
           {plan.firstName}, Keep Your Comeback One Tap Away
         </h1>
-        <div className="mt-6">
+        <div className="mt-3">
           <InstallExperience
             track={track}
             onContinue={() => navigate({ to: "/your-plan", replace: true })}

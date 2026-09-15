@@ -176,7 +176,7 @@ export function InstallExperience({
   }
 
   return (
-    <div className={compact ? "" : "rounded-lg border border-border bg-card p-5 sm:p-6"}>
+    <div>
       {compact ? (
         <>
           <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gxj-teal">
@@ -187,26 +187,43 @@ export function InstallExperience({
           </h2>
         </>
       ) : null}
-      <p className={`${compact ? "mt-2" : ""} text-sm leading-relaxed text-muted-foreground`}>
+      <p
+        className={
+          compact
+            ? "mt-2 text-sm leading-relaxed text-muted-foreground"
+            : "max-w-xl text-base font-medium leading-relaxed text-foreground/75"
+        }
+      >
         Add Gen X Jumps to your Home Screen for quick access to your workouts, nutrition targets,
         and progress.
       </p>
       <Button
         type="button"
         size="lg"
-        className="mt-5 w-full sm:w-auto"
+        className={
+          compact
+            ? "mt-5 w-full sm:w-auto"
+            : "gxj-display-title mt-7 min-h-20 w-full justify-between gap-5 bg-foreground px-5 text-left text-2xl uppercase leading-none tracking-wide text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)] hover:bg-foreground/90 sm:px-7 sm:text-3xl"
+        }
         disabled={working}
         onClick={() => void install()}
       >
-        <Download aria-hidden="true" className="size-4" />
-        {working ? "Opening..." : "Add to My Home Screen"}
+        {compact ? <Download aria-hidden="true" className="size-4" /> : null}
+        <span>{working ? "Opening..." : "Add to My Home Screen"}</span>
+        {!compact ? (
+          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-background text-gxj-orange sm:size-12">
+            <Download aria-hidden="true" className="size-5" strokeWidth={2.5} />
+          </span>
+        ) : null}
       </Button>
-      <p className="mt-3 text-xs text-muted-foreground">No app store required.</p>
+      <p className={`${compact ? "text-xs" : "text-sm font-medium"} mt-3 text-muted-foreground`}>
+        No app store required.
+      </p>
       {showInstructions ? <ManualSteps platform={platform} /> : null}
       {onContinue ? (
         <button
           type="button"
-          className="mt-5 block w-full text-center text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline sm:w-auto"
+          className="mt-5 block min-h-11 w-full text-center text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline sm:w-auto"
           onClick={() => {
             markInstallDismissed();
             track("install_not_now", platform);
