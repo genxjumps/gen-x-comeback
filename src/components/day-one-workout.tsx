@@ -9,7 +9,7 @@ import { cardioGuidance, type CardioContext } from "@/lib/lead-plan";
 import { completePlanDay, getDayOneBrief } from "@/lib/lead.functions";
 import { WORKOUTS } from "@/lib/plan";
 import { W01_APPROACH, W01_CARDIO_HEADING, W01_TITLE } from "@/lib/w01-content";
-import { sevenDayWorkoutOverview } from "@/lib/workout-presentation";
+import { sevenDayWorkoutOverview, sevenDayWorkoutRuntime } from "@/lib/workout-presentation";
 
 /** Protected Day 1 workout. Requires a valid saved-plan access token. */
 export function DayOneWorkout() {
@@ -97,7 +97,7 @@ export function DayOneWorkout() {
     <WorkoutScreen
       kicker="Day 1 of 7"
       title={W01_TITLE}
-      description="About 15 minutes. Use the easier option any time you need it."
+      description={`${sevenDayWorkoutRuntime("W01")} total. Use the easier option any time you need it.`}
       media={
         <WorkoutMediaCard
           dayNumber={1}

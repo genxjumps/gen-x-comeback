@@ -19,7 +19,7 @@ import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { WorkoutOverview, WorkoutNotes } from "@/components/workout-screen";
 import type { ReviewScreen } from "@/lib/app-review";
 import { WORKOUTS } from "@/lib/plan";
-import { sevenDayWorkoutOverview } from "@/lib/workout-presentation";
+import { sevenDayWorkoutOverview, sevenDayWorkoutRuntime } from "@/lib/workout-presentation";
 
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
@@ -533,6 +533,7 @@ function WorkoutReview({ variant }: { variant: string }) {
   const code = `W0${day}`;
   const workout = WORKOUTS[code] ?? WORKOUTS.W01;
   const activeRecovery = code === "W07";
+  const runtime = sevenDayWorkoutRuntime(code, workout.minutes);
   return (
     <Page
       kicker={`Day ${day} of 7`}
@@ -543,8 +544,8 @@ function WorkoutReview({ variant }: { variant: string }) {
         fullRest
           ? "Recovery is part of the plan. Take the day off and let your body absorb the work."
           : activeRecovery
-            ? "About 15 minutes. Keep the movement easy."
-            : "About 15 minutes. Use the easier option any time you need it."
+            ? `${runtime} total. Keep the movement easy.`
+            : `${runtime} total. Use the easier option any time you need it.`
       }
     >
       {fullRest ? (

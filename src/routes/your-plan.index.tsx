@@ -24,6 +24,7 @@ import {
   beginPlanUpdate,
 } from "@/lib/lead.functions";
 import type { InstallPlatform } from "@/lib/pwa-install";
+import { sevenDayWorkoutRuntime } from "@/lib/workout-presentation";
 
 export const Route = createFileRoute("/your-plan/")({
   head: () => ({
@@ -336,9 +337,9 @@ function PlanHubPage() {
               Day {currentEntry.day} &middot; {assignmentKind(currentEntry)}
             </p>
             <h3 className="mt-1 text-lg font-semibold tracking-tight">{currentEntry.title}</h3>
-            {currentEntry.minutes ? (
+            {currentEntry.minutes && currentEntry.code ? (
               <p className="mt-1 text-xs text-muted-foreground">
-                About {currentEntry.minutes} minutes
+                {sevenDayWorkoutRuntime(currentEntry.code, currentEntry.minutes)} total
               </p>
             ) : null}
             {currentEntry.description ? (

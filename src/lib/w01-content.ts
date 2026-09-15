@@ -3,7 +3,7 @@
 
 export const W01_TITLE = "Jump Rope + Full Body";
 
-export const W01_DURATION = "About 15 minutes";
+export const W01_DURATION = "15:05 total";
 
 export const W01_IFRAME_SRC =
   "https://customer-cvsfidz4ao4uk9i5.cloudflarestream.com/40ae220635bc55bc66d1f68cb11ab997/iframe?poster=https%3A%2F%2Fcustomer-cvsfidz4ao4uk9i5.cloudflarestream.com%2F40ae220635bc55bc66d1f68cb11ab997%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600";

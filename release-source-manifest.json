@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "6460693fa9eeb398bac242704b7cc3f138e2f46885d9fa79379e67a90e01c656"
+      "sha256": "b4173e98ec79e72eeff7270c9e8cb70809c39395beae64926c285a4cd21c63d7"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -183,11 +183,11 @@
     },
     {
       "path": "src/components/day-assignment.tsx",
-      "sha256": "92598df694bfa1840a74a254fb325e83943bd23f90f70de3227c7c319cd30956"
+      "sha256": "fbcd62b1062bd0b6eeda534bab9e0fb2ad2a241a813b33fbbb025948d530732a"
     },
     {
       "path": "src/components/day-one-workout.tsx",
-      "sha256": "e938d351ef28b4e4e723237cc290f69f623e15e6bad40f220692e829504ae54f"
+      "sha256": "77768384067652f9c38d6cfb16e47941ff0a986315c79d8b247d417953861237"
     },
     {
       "path": "src/components/intake-closed.tsx",
@@ -371,7 +371,7 @@
     },
     {
       "path": "src/lib/__tests__/workout-screen-design.test.ts",
-      "sha256": "25c4426d6ecfaa264426aa3c87cf1e12da05ae3d103d670d3aabdc4c722864e3"
+      "sha256": "0d9178f7544eb9618a03fb113b15a6f6e61dcfcf399c541b6f208a1f9eba8232"
     },
     {
       "path": "src/lib/accelerator/__tests__/access.test.ts",
@@ -1179,11 +1179,11 @@
     },
     {
       "path": "src/lib/w01-content.ts",
-      "sha256": "1999e0252f87ddc166310e1fb6b81dc9e51c71e76a6fe702aadbc70c3f6f84d8"
+      "sha256": "ae426ed2af582376fd9001478a1d9ec6b45b37885094fbfc1dadfd57e8703179"
     },
     {
       "path": "src/lib/workout-presentation.ts",
-      "sha256": "9baf5983a9aa30e2c2245b13a57d4341e235880bef538dc76e8203be036338c3"
+      "sha256": "34332783418416f3d22f0045e821f1d9863a329bbbb18ba30035406e9cd42ada"
     },
     {
       "path": "src/lib/workout-videos.ts",
@@ -1387,7 +1387,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "82b7738bbd90286af5eb0fe9f234815a883b50dc20dbbba0d5d8554e08293889"
+      "sha256": "7b8c4dd4c89030299b99a04a436244b362b52b7aa91769e4916179d0d5ad6809"
     },
     {
       "path": "src/server.ts",
