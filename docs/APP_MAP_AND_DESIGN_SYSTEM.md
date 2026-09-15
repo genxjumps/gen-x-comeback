@@ -88,9 +88,12 @@ muscle.** Do not weaken this with optional or pass-or-fail framing. Setup retain
 setup-specific explanation until targets exist.
 
 The active Nutrition page uses the compact **Your Nutrition** page heading with no kicker above it.
-**Daily Targets** begins the content below the description. Do not stack **Nutrition**, **Your Daily
-Targets**, and **Daily Targets** as three labels for the same information. This active-state rule
-does not pre-approve the separate setup, locked, review, or unavailable treatments.
+**Starting Targets** begins the content below the description. Do not stack **Nutrition**, **Your
+Daily Targets**, and **Daily Targets** as three labels for the same information. The public active
+Nutrition review route mirrors the full active page, including target editing, the normal-day meal
+split, meal-building guidance, recovery guidance, and the nutrition education link. It must not
+replace the real page with a short summary. This active-state rule does not pre-approve the separate
+setup, locked, review, or unavailable treatments.
 
 ### 5. Internal and review-only screens
 

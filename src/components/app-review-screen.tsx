@@ -6,6 +6,8 @@ import {
   ChevronRight,
   Download,
   Dumbbell,
+  ExternalLink,
+  Info,
   Mail,
   RotateCcw,
   ShieldCheck,
@@ -1506,32 +1508,215 @@ function NutritionReview({ variant }: { variant: string }) {
           </div>
         </Section>
       ) : null}
-      <Section title="Daily targets">
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
-          <div>
-            <p className="gxj-display-title text-4xl">2,100</p>
-            <p className="text-sm">calories</p>
+      <div className="space-y-5">
+        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+                Starting Targets
+              </p>
+              <h2 className="mt-2 text-xl font-semibold">
+                These are your numbers for the whole day.
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Every meal counts. All seven days count.
+              </p>
+            </div>
+            <Button type="button" variant="outline">
+              Update Targets
+            </Button>
           </div>
-          <div>
-            <p className="gxj-display-title text-4xl">175g</p>
-            <p className="text-sm">protein</p>
+
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              ["Calories", "2,100"],
+              ["Protein", "175 g"],
+              ["Carbs", "210 g"],
+              ["Fat", "62 g"],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-md border border-border bg-background p-4">
+                <p className="text-xs font-medium text-muted-foreground">{label}</p>
+                <p className="mt-1 text-2xl font-semibold tracking-tight">{value}</p>
+              </div>
+            ))}
           </div>
-          <div>
-            <p className="gxj-display-title text-4xl">210g</p>
-            <p className="text-sm">carbs</p>
+
+          <details className="mt-4 rounded-md border border-border bg-muted/30 p-3">
+            <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold">
+              <Info aria-hidden="true" className="size-4" />
+              What are these?
+            </summary>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Starting estimate, not medical nutrition advice. If you follow a medical diet or have
+              been told to limit protein, work with a registered dietitian.
+            </p>
+          </details>
+        </section>
+
+        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+                Your Normal Day
+              </p>
+              <h2 className="mt-2 text-xl font-semibold">
+                See how the numbers work across your day.
+              </h2>
+            </div>
+            <Button type="button" variant="outline" size="sm">
+              Adjust Your Day
+            </Button>
           </div>
-          <div>
-            <p className="gxj-display-title text-4xl">62g</p>
-            <p className="text-sm">fat</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Adjust the sliders to match how you actually eat. This changes the split, not your daily
+            totals.
+          </p>
+          <div className="mt-5 space-y-3">
+            {[
+              ["Breakfast", "25%", "525 cal", "44 g protein", "53 g carbs", "16 g fat"],
+              ["Lunch", "25%", "525 cal", "44 g protein", "53 g carbs", "16 g fat"],
+              ["Dinner", "50%", "1,050 cal", "87 g protein", "104 g carbs", "30 g fat"],
+            ].map(([meal, percentage, ...targets]) => (
+              <div key={meal} className="rounded-md border border-border bg-background p-4">
+                <div className="flex items-baseline justify-between gap-3">
+                  <h3 className="font-semibold">{meal}</h3>
+                  <p className="text-sm font-semibold">{percentage}</p>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
+                  {targets.map((target) => (
+                    <span key={target}>{target}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      </Section>
-      <Section title="Build your day">
-        <p className="leading-relaxed">
-          Hit your protein target, keep portions honest, and build most meals around foods that help
-          you stay full.
-        </p>
-      </Section>
+        </section>
+
+        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+            Build Meals That Work
+          </p>
+          <h2 className="mt-2 text-xl font-semibold">Keep the food simple.</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Start with protein. Use labels, serving sizes, and standard nutrition information to fit
+            the rest of each meal to its numbers. A small rotation is enough: one or two breakfasts,
+            one or two lunches, up to three dinners, and a few smart snack options.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed">
+            Lean meat, eggs, potatoes, rice, beans, vegetables, fruit, yogurt, and other foods with
+            predictable numbers make this easier. Plenty of filling, enjoyable food fits the plan.
+            You do not have to go hungry.
+          </p>
+        </section>
+
+        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+            My Normal Day
+          </p>
+          <h2 className="mt-2 text-xl font-semibold">
+            I keep the structure and adjust the extras.
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Most of my meals stay the same when I want to lean out. I do not rebuild my whole diet.
+            I remove or reduce the parts adding extra calories while keeping the protein-centered
+            structure and foods I already like.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="rounded-md border border-border p-4">
+              <h3 className="font-semibold">Maintenance</h3>
+              <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+                <li>
+                  <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 1/2 cup uncooked
+                  oatmeal, 5 g creatine
+                </li>
+                <li>
+                  <strong>Lunch:</strong> 1 banana and 25 g protein powder
+                </li>
+                <li>
+                  <strong>Dinner:</strong> 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato,
+                  1/2 can black beans, 1/2 can sweet peas, hot sauce
+                </li>
+                <li>
+                  <strong>Dessert:</strong> 50 g protein powder
+                </li>
+              </ul>
+            </div>
+            <div className="rounded-md border border-border p-4">
+              <h3 className="font-semibold">When I want to cut body fat</h3>
+              <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+                <li>
+                  <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 5 g creatine
+                </li>
+                <li>
+                  <strong>Lunch:</strong> 1 banana and 25 g protein powder
+                </li>
+                <li>
+                  <strong>Dinner:</strong> 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato,
+                  1/2 can black beans, hot sauce
+                </li>
+                <li>
+                  <strong>Dessert:</strong> 50 g protein powder
+                </li>
+              </ul>
+            </div>
+          </div>
+          <p className="mt-4 text-sm leading-relaxed">
+            This is how I use the method. It is not a command for you to eat the same foods I eat.
+            Find foods you like, check the labels and serving sizes, and make them fit your targets.
+          </p>
+        </section>
+
+        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+            Read The Label
+          </p>
+          <h2 className="mt-2 text-xl font-semibold">Check what you drink and what you pour.</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Regular soda, juice, sweetened coffee or tea, calorie-containing flavored drinks,
+            dressing, mayo, oils, butter, cheese, ketchup, and barbecue sauce can add up fast. Read
+            the label. Check the serving size. Measure it when needed.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed">
+            Sugar can appear as cane sugar, high-fructose corn syrup, corn syrup, glucose, dextrose,
+            fructose, honey, molasses, syrup, or fruit-juice concentrate. Turn the package over.
+            Check calories, total carbohydrate, added sugars, fiber, and serving size.
+          </p>
+        </section>
+
+        <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+            If You Miss
+          </p>
+          <p className="mt-2 text-base font-semibold leading-relaxed">
+            You messed up a meal. Fine. Do not turn one decision into a lost day or a lost weekend.
+            Do not punish it by starving tomorrow. Do not wait for Monday. Your next meal is your
+            next chance to get back on target. Make the next choice better and keep going.
+          </p>
+        </section>
+
+        <section className="rounded-lg border border-border bg-muted/35 p-5 sm:p-6">
+          <h2 className="text-lg font-semibold">If results stall</h2>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Review labels, portions, drinks, dressings, sauces, serving sizes, calorie-dense foods,
+            and consistency before rebuilding the whole diet. This app cannot verify what you ate.
+          </p>
+        </section>
+
+        <a
+          href="https://genxjumps.com/nutrition/"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 font-semibold transition-colors hover:bg-muted/35"
+        >
+          <span>
+            Learn the basics
+            <span className="mt-1 block text-xs font-normal text-muted-foreground">
+              Deeper nutrition explanations and examples on Gen X Jumps.
+            </span>
+          </span>
+          <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
+        </a>
+      </div>
     </Page>
   );
 }
