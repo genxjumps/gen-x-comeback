@@ -159,7 +159,7 @@
     },
     {
       "path": "src/components/accelerator-program.tsx",
-      "sha256": "fb9305b8b0613cdf6b1b2fce90f7583ac3d455c085059c535d9951e7c1f5427a"
+      "sha256": "7187b9339a58eddd5409c8b0535869c2fba9dd0bdfa2711cb5621df4267b17c1"
     },
     {
       "path": "src/components/accelerator-video-tracker.tsx",
@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "d02867850af9f41b9e59345949a12ac23481562bd518c36e152b2aace702da9d"
+      "sha256": "474915f9881ac5ea4d44c8e94d583098b75a0c86d0cba877b33e31d2feb90bd1"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -271,7 +271,7 @@
     },
     {
       "path": "src/components/workout-media-card.tsx",
-      "sha256": "3d61c76c975e389a562c49d0608b06fa9c01970805a93d295ad74d7d8358f20e"
+      "sha256": "84f83c2fc575a672a2e675338ed21b1b98e41c17dc2d827d238d405aa22a9eed"
     },
     {
       "path": "src/components/workout-screen.tsx",
@@ -399,7 +399,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/daily-assignment-contract.test.ts",
-      "sha256": "46dcb7830535a9e03130d036e3c72a3f9f25072846947d43e4fa0f236b6eb32a"
+      "sha256": "f226a159f27d5e22e8dc51a376d00e3af8cb1e5f15b7e1fdca19112ce75df976"
     },
     {
       "path": "src/lib/accelerator/__tests__/daily-assignment.test.ts",

@@ -451,8 +451,26 @@ accent keeps the Accelerator visually distinct.
 - Preserve all existing Accelerator assignment, unlock, recovery, completion, pause, and progress
   behavior. This is a presentation contract only.
 
-## Recommended next action
+### Approved 28-Day Accelerator workout-page visual contract
 
-Design the focused 28-Day Accelerator workout page that opens from the approved dashboard launch
-card. Carry forward the shared workout-page hierarchy and overview grid while keeping the
-Accelerator aqua identity and all existing workout content and behavior intact.
+The real Accelerator day renderer uses the same focused workout hierarchy as the 7-Day pages for
+every saved day and assignment combination.
+
+- Repeat the live **Day N of 28** label and saved assignment title above the media treatment using
+  the shared compact workout-page scale.
+- Primary workouts use the shared numbered media card, enlarged day-label and workout-title scale,
+  aqua action rail, and live day number. The same renderer covers Workouts A through E in all four
+  weeks rather than recreating individual day pages.
+- Completed, current, available-later, and locked workouts retain their existing access behavior
+  while using the shared media-card state treatments. Cloudflare playback tracking continues to use
+  the live enrollment and day.
+- **Workout Overview** follows the media treatment and shows only factual saved information:
+  measured runtime, program equipment, saved focus, and the format already present in the saved
+  assignment label.
+- Existing assignment instructions and recovery steps remain unchanged under **Workout Notes**.
+  Do not introduce movement lists or new descriptive workout copy.
+- Active-recovery and rest combinations keep their honest no-video treatment until verified media
+  exists. Their saved instructions, acknowledgement behavior, schedule access, and progression stay
+  unchanged.
+- The shared component changes apply to the real `/accelerator` renderer, not only the isolated Day
+  9 review state.

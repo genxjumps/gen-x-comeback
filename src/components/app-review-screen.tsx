@@ -1207,9 +1207,9 @@ function AcceleratorReview({ variant }: { variant: string }) {
           dayLabel="Day 9 of 28"
           code="accelerator-workout-b"
           title="Workout B - EMOM"
-          coverSrc="/workout-covers/accelerator-day-09.webp"
           videoSrc={acceleratorVideoSrc("a863bce8634666b5766ff277685b6b83")}
           accent="aqua"
+          artworkVariant="accelerator"
           state={{ type: "ready" }}
         />
         <WorkoutOverview

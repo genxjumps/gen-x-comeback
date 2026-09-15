@@ -10,8 +10,11 @@ const videoTracker = readSource("../../../components/accelerator-video-tracker.t
 
 describe("customer-facing daily workout contract", () => {
   it("shows the required workout information without adding a survey or workout log", () => {
-    expect(workout).toContain("Today's focus");
-    expect(workout).toContain("Practical instructions");
+    expect(workout).toContain('{ label: "Focus"');
+    expect(workout).toContain("WorkoutNotes");
+    expect(workout).toContain("WorkoutOverview");
+    expect(workout).toContain("WorkoutMediaCard");
+    expect(workout).toContain('artworkVariant="accelerator"');
     expect(workout).toContain("Equipment");
     expect(workout).toContain("runtimeSeconds");
     expect(workout).toContain("Complete Day");
@@ -49,7 +52,7 @@ describe("customer-facing daily workout contract", () => {
 
   it("reopens completed days and exposes locked days only as previews", () => {
     expect(workout).toContain("Completed - open again");
-    expect(workout).toContain("Locked preview");
+    expect(workout).toContain('type: "locked"');
     expect(workout).toContain("Video unlocks with this workout");
     expect(workout).toContain("openScheduleDay");
   });
