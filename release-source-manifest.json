@@ -259,7 +259,7 @@
     },
     {
       "path": "src/components/workout-media-card.tsx",
-      "sha256": "d15157f5886bcda5e3ccf5e1df994a3b754da11e40d78b4b9c661cba27907136"
+      "sha256": "9d33375fe9e80e33f86dd5d108e014fd78947e57d91e326ab7f266d6923a92ac"
     },
     {
       "path": "src/integrations/supabase/auth-attacher.ts",
