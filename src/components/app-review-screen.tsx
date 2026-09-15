@@ -7,7 +7,6 @@ import {
   Download,
   Dumbbell,
   Mail,
-  Play,
   RotateCcw,
   ShieldCheck,
 } from "lucide-react";
@@ -1231,37 +1230,34 @@ function AcceleratorReview({ variant }: { variant: string }) {
         <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
           Today&rsquo;s Workout
         </h2>
-        <div className="mt-5 overflow-hidden border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]">
-          <div className="gxj-accelerator-workout-art relative flex aspect-video flex-col justify-center overflow-hidden px-6 py-8 sm:px-8">
-            <span
-              aria-hidden="true"
-              className="gxj-accelerator-workout-letter gxj-display-title absolute -bottom-[28%] -right-[8%] text-[15rem] leading-none sm:text-[21rem]"
-            >
-              B
-            </span>
-            <div className="relative z-10 max-w-[82%] -rotate-2">
-              <p className="gxj-accelerator-workout-day inline-block bg-gxj-aqua px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-foreground">
+        <div className="group mt-5 overflow-hidden rounded-md border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]">
+          <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]">
+            <div className="flex min-h-32 flex-col justify-center px-5 py-5 sm:min-h-40 sm:px-7 sm:py-6">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-background/65 sm:text-sm">
                 Day 9 of 28
               </p>
-              <h3 className="gxj-display-title mt-4 uppercase leading-none">
-                <span className="block text-2xl tracking-[0.12em] text-background sm:text-3xl">
-                  Workout B
-                </span>
-                <span className="gxj-accelerator-workout-name -ml-1 mt-1 block text-[4.8rem] tracking-[-0.05em] text-gxj-aqua sm:text-[7rem]">
-                  EMOM
-                </span>
+              <h3 className="gxj-display-title mt-2 text-3xl uppercase leading-[0.96] tracking-wide sm:text-4xl">
+                Workout B - EMOM
               </h3>
+            </div>
+            <div
+              aria-hidden="true"
+              className="relative flex items-center justify-center overflow-hidden bg-background text-foreground"
+            >
+              <span className="gxj-display-title translate-x-1 text-[5.5rem] leading-none tracking-[-0.09em] sm:text-[9rem]">
+                09
+              </span>
             </div>
           </div>
           <button
             type="button"
-            className="flex min-h-20 w-full items-center justify-between gap-5 bg-gxj-aqua px-5 py-3 text-left text-foreground sm:px-7"
+            className="flex min-h-16 w-full items-center justify-between gap-5 bg-gxj-aqua px-5 py-3 text-left text-foreground sm:px-7"
           >
             <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
               Start Workout
             </span>
-            <span className="grid size-11 shrink-0 place-items-center rounded-full bg-foreground text-gxj-aqua">
-              <Play aria-hidden="true" className="size-4 fill-current" />
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-background text-gxj-aqua">
+              <ArrowRight aria-hidden="true" className="size-4" />
             </span>
           </button>
         </div>
