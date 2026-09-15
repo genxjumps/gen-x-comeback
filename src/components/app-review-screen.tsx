@@ -1364,18 +1364,18 @@ function ProgressReview({ variant }: { variant: string }) {
   if (variant === "error")
     return (
       <Page
-        kicker="Your Progress"
-        title="Progress Couldn't Be Loaded"
+        title="Your Progress"
         description="Your saved work hasn't been changed."
         titleSize="compact"
       >
-        <Action>Try Again</Action>
+        <Section title="Progress Couldn't Be Loaded">
+          <Action>Try Again</Action>
+        </Section>
       </Page>
     );
   return (
     <Page
-      kicker="Your Progress"
-      title={variant === "empty" ? "Build Your First Win" : "See the Work Add Up"}
+      title="Your Progress"
       description={
         variant === "empty"
           ? "Complete your first day or add a measurement to begin."
@@ -1384,17 +1384,20 @@ function ProgressReview({ variant }: { variant: string }) {
       titleSize="compact"
     >
       <Section title="Current program">
-        <div className="flex items-end justify-between">
+        <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="gxj-display-title text-5xl">
-              {variant === "empty" ? "0" : "9"}
-              <span className="text-2xl"> / 28</span>
+            <p className="text-xs font-bold uppercase tracking-[0.14em]">
+              28-Day Fat Loss Accelerator
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">days completed</p>
+            <p className="gxj-display-title mt-1 text-2xl uppercase tracking-wide sm:text-3xl">
+              {variant === "empty" ? "0" : "9"} of 28 Days Complete
+            </p>
           </div>
-          <span className="font-bold">{variant === "empty" ? "0%" : "32%"}</span>
+          <p className="gxj-display-title text-4xl text-gxj-aqua sm:text-5xl">
+            {variant === "empty" ? "0%" : "32%"}
+          </p>
         </div>
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-foreground/10">
+        <div className="mt-4 h-3 overflow-hidden bg-foreground/15">
           <div
             className="h-full bg-gxj-aqua"
             style={{ width: variant === "empty" ? "0%" : "32%" }}

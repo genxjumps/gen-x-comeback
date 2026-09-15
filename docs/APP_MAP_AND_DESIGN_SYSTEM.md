@@ -481,11 +481,16 @@ The real `/progress` page and all Progress review states reuse the progress and 
 already approved on the 28-Day Accelerator dashboard.
 
 - Use the compact app-page title scale. Progress does not introduce another headline size.
+- Use one page header: **Your Progress**. Do not place a black kicker above it or use a second
+  motivational headline in its place. Empty and error messages belong in the content below.
 - Put the current program, completion bar, latest measurements, detailed measurement controls, and
   history directly on the shared cream page background. Separate sections with the established
   strong and light divider rules instead of surrounding them with dashboard cards.
 - Use orange for 7-Day completion and aqua for 28-Day Accelerator completion. Do not use the
   7-Day orange accent for Accelerator progress.
+- Match the Accelerator dashboard meter exactly: the program label is a small uppercase kicker,
+  the completion line uses the shared section-heading scale, the percentage uses the larger display
+  scale, and the aqua or orange bar is the established thicker square-ended treatment.
 - Present weight and waist as a simple two-column measurement readout using the established display
   type. Inputs and editing controls keep the boundaries required for interaction, but they do not
   create another outer card layer.
