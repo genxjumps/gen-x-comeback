@@ -83,8 +83,10 @@ function AssessmentChoice({
 }) {
   return (
     <div
-      className={`relative flex min-h-14 items-center border-2 px-4 py-3 pr-12 text-base font-semibold leading-snug transition-colors ${
-        selected ? "border-gxj-orange bg-gxj-mint" : "border-foreground/25 bg-background"
+      className={`relative flex min-h-14 items-center border-2 px-4 py-3 pr-12 text-base font-semibold leading-snug transition-[background-color,border-color,box-shadow,transform] duration-150 ${
+        selected
+          ? "-translate-x-px -translate-y-px border-gxj-orange bg-gxj-mint shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]"
+          : "border-foreground/25 bg-background"
       }`}
     >
       <span
@@ -411,13 +413,28 @@ function AssessmentReview({ step }: { step: string }) {
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
       <header className="py-6 sm:py-8">
         <div className="max-w-2xl">
-          <div className="flex items-center gap-3">
-            <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
-              Step {step} of 3
-            </p>
-            <div className="h-1.5 max-w-64 flex-1 overflow-hidden rounded-full bg-foreground/12">
-              <div className="h-full bg-gxj-orange" style={{ width: `${stepNumber * 33.333}%` }} />
-            </div>
+          <div className="grid max-w-md grid-cols-3 gap-2" aria-label={`Step ${step} of 3`}>
+            {[1, 2, 3].map((segment) => {
+              const state =
+                segment < stepNumber ? "complete" : segment === stepNumber ? "current" : "upcoming";
+              return (
+                <div
+                  key={segment}
+                  aria-current={state === "current" ? "step" : undefined}
+                  className={`flex min-h-11 items-center px-3 ${
+                    state === "complete"
+                      ? "bg-foreground text-background"
+                      : state === "current"
+                        ? "bg-gxj-orange text-white shadow-[2px_2px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
+                        : "border-2 border-foreground/20 text-foreground/35"
+                  }`}
+                >
+                  <span className="gxj-display-title text-xl leading-none tracking-wide">
+                    {String(segment).padStart(2, "0")}
+                  </span>
+                </div>
+              );
+            })}
           </div>
           <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
             {title}
