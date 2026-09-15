@@ -48,11 +48,13 @@ function Brand() {
 export function ReviewShell({
   mode,
   active = "home",
+  accent = "orange",
   unread = false,
   children,
 }: {
   mode: ReviewShellMode;
   active?: "home" | "programs" | "progress" | "nutrition" | "none";
+  accent?: "orange" | "aqua";
   unread?: boolean;
   children: ReactNode;
 }) {
@@ -83,7 +85,9 @@ export function ReviewShell({
                 aria-current={active === item.key ? "page" : undefined}
                 className={`relative min-h-11 px-4 py-3 text-sm font-bold uppercase tracking-[0.08em] ${
                   active === item.key
-                    ? "text-foreground after:absolute after:inset-x-4 after:bottom-1.5 after:h-0.5 after:bg-gxj-orange"
+                    ? `text-foreground after:absolute after:inset-x-4 after:bottom-1.5 after:h-0.5 ${
+                        accent === "aqua" ? "after:bg-gxj-aqua" : "after:bg-gxj-orange"
+                      }`
                     : "text-foreground/55"
                 }`}
               >
@@ -112,7 +116,9 @@ export function ReviewShell({
                 aria-current={selected ? "page" : undefined}
                 className={`relative flex min-h-[4.25rem] flex-col items-center justify-center gap-1 px-1 text-xs font-bold uppercase tracking-[0.05em] ${
                   selected
-                    ? "text-foreground after:absolute after:inset-x-3 after:top-0 after:h-0.5 after:bg-gxj-orange"
+                    ? `text-foreground after:absolute after:inset-x-3 after:top-0 after:h-0.5 ${
+                        accent === "aqua" ? "after:bg-gxj-aqua" : "after:bg-gxj-orange"
+                      }`
                     : "text-foreground/50"
                 }`}
               >

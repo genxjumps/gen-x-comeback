@@ -951,6 +951,7 @@ function ProgramsReview({ variant }: { variant: string }) {
             title: "28-Day Fat Loss Accelerator",
             detail: "Ready when you want more structure",
             action: "Explore the Accelerator",
+            program: "accelerator",
           },
         ]
       : [
@@ -980,12 +981,14 @@ function ProgramsReview({ variant }: { variant: string }) {
                   : variant === "complete"
                     ? "View Program History"
                     : "Open Today's Workout",
+            program: "accelerator",
           },
           {
             status: variant === "complete" ? "COMPLETED" : "ACTIVE",
             title: "7-Day Comeback Plan",
             detail: variant === "complete" ? "Completed September 7, 2026" : "Day 3 of 7",
             action: "Open My Plan",
+            program: "seven-day",
           },
         ];
   return (
@@ -1003,22 +1006,56 @@ function ProgramsReview({ variant }: { variant: string }) {
           <Action>Try Again</Action>
         </div>
       ) : (
-        <div className="divide-y divide-foreground/15">
-          {entries.map((entry) => (
-            <section className="py-7 first:pt-0" key={entry.title}>
-              <Status>{entry.status}</Status>
-              <h2 className="gxj-display-title mt-4 text-3xl uppercase tracking-wide">
-                {entry.title}
-              </h2>
-              <p className="mt-2 text-muted-foreground">{entry.detail}</p>
-              <div className="mt-5">
-                <Action>
-                  {entry.action}
-                  <ArrowRight className="size-4" />
-                </Action>
-              </div>
-            </section>
-          ))}
+        <div className="grid gap-6">
+          {entries.map((entry) => {
+            const accelerator = entry.program === "accelerator";
+            return (
+              <section
+                className={`border-2 border-foreground p-5 sm:p-6 ${
+                  accelerator
+                    ? "bg-gxj-aqua-soft shadow-[4px_4px_0_var(--color-gxj-aqua)]"
+                    : "bg-background"
+                }`}
+                key={entry.title}
+              >
+                <div className="grid grid-cols-[minmax(0,1fr)_4.5rem] items-start gap-4 sm:grid-cols-[minmax(0,1fr)_5.5rem]">
+                  <div>
+                    <p
+                      className={`inline-flex min-h-8 items-center rounded-[2px] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${
+                        accelerator
+                          ? "bg-gxj-aqua text-foreground"
+                          : "bg-foreground text-background"
+                      }`}
+                    >
+                      {entry.status}
+                    </p>
+                    <h2 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+                      {entry.title}
+                    </h2>
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    className={`gxj-display-title grid aspect-square place-items-center text-4xl leading-none sm:text-5xl ${
+                      accelerator
+                        ? "bg-gxj-aqua text-foreground"
+                        : "border-2 border-foreground text-foreground"
+                    }`}
+                  >
+                    {accelerator ? "28" : "07"}
+                  </span>
+                </div>
+                <div className="mt-5 border-t border-foreground/20 pt-4">
+                  <p className="font-medium text-foreground/70">{entry.detail}</p>
+                  <div className="mt-5">
+                    <Action>
+                      {entry.action}
+                      <ArrowRight className="size-4" />
+                    </Action>
+                  </div>
+                </div>
+              </section>
+            );
+          })}
         </div>
       )}
     </Page>
@@ -1597,10 +1634,20 @@ function activeSection(screen: ReviewScreen) {
 }
 
 export function AppReviewScreen({ screen }: { screen: ReviewScreen }) {
+  const acceleratorAccent = [
+    "programs",
+    "offer",
+    "checkout",
+    "accelerator-setup",
+    "accelerator",
+    "history",
+  ].includes(screen.kind);
+
   return (
     <ReviewShell
       mode={screen.shell}
       active={activeSection(screen)}
+      accent={acceleratorAccent ? "aqua" : "orange"}
       unread={screen.kind === "notifications" && screen.variant === "unread"}
     >
       <ReviewBody screen={screen} />

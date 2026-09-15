@@ -19,6 +19,10 @@ const planReadyReviewSource = reviewSource.slice(
   reviewSource.indexOf("function PlanReadyReview"),
   reviewSource.indexOf("const PLAN_REVIEW_DAYS"),
 );
+const programsReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function ProgramsReview"),
+  reviewSource.indexOf("function OfferReview"),
+);
 const assessmentRouteSource = readFileSync(
   new URL("../../routes/assessment.index.tsx", import.meta.url),
   "utf8",
@@ -155,5 +159,13 @@ describe("app review catalog", () => {
     expect(planReadyReviewSource).not.toContain('label: "Access saved"');
     expect(planReadyReviewSource).toContain("No app store required.");
     expect(planReadyReviewSource).toContain("Not Now - View My Plan");
+  });
+
+  it("gives the Accelerator an aqua identity without mixing in the 7-Day orange accent", () => {
+    expect(programsReviewSource).toContain("bg-gxj-aqua-soft");
+    expect(programsReviewSource).toContain("shadow-[4px_4px_0_var(--color-gxj-aqua)]");
+    expect(programsReviewSource).toContain('accelerator ? "28" : "07"');
+    expect(programsReviewSource).not.toContain("gxj-orange");
+    expect(reviewSource).toContain('accent={acceleratorAccent ? "aqua" : "orange"}');
   });
 });
