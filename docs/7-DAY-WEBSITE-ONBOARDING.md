@@ -21,6 +21,13 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 - Participants may read future-day details, guidance, modifications, and equipment notes. A future workout video remains a non-playing poster until both its assigned date has arrived and every earlier day is complete.
 - Video assignments use one branded 16:9 background for each plan day, including the optional Day 7 active-recovery video. The day label and saved workout name are live app text, not baked into the artwork, because one calendar day can contain different workouts across schedule templates.
 - The media card status rail reflects real plan state: `Complete Day N First` links to the prerequisite, `Available [weekday]` remains non-playing, `Start Workout` opens the real player, and `Completed` offers replay. Locked states never mount a playable iframe.
+- The plan schedule always keeps one zero-padded day number per row. Completed rows ghost the
+  number, saved title, label, and arrow; the current row uses the orange marker and highlighted
+  background; upcoming rows use solid black numbers and titles without a number container. Never
+  replace a completed number with a check mark or repeat `Day N` beside the number.
+- Schedule styling is independent of assignment content. The shared row receives the saved title
+  and applies the same three states to workout, movement, recovery, and rest assignments across all
+  four seven-day templates. It does not infer or rewrite workout content.
 - Completion is enforced on the server. A day cannot be marked complete before its local assigned date or before an earlier required day.
 - A completed assignment screen has one primary route back to the plan. Short movement and rest pages do not repeat a second bottom `Back to My Plan` action.
 

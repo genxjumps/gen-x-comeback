@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "0b4f8cd9c2a79bd40d8e50e68701e8aa401c87da63e313ac2e494269b7325e2e"
+      "sha256": "ec5e37fcda568e991736947162edd3a3c8a8686959575b1d9be95bb364cbe4d2"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -226,6 +226,10 @@
       "sha256": "fb523480ab4f82169ea4ecf1a43ac5eb7514e65bb52f7d22d2d6be4f53c9c0cb"
     },
     {
+      "path": "src/components/seven-day-schedule-row.tsx",
+      "sha256": "0fbf117876f9a1ab9d42cbf7d702924df09e335f5c93ab6c536db122392c6a3f"
+    },
+    {
       "path": "src/components/ui/button.tsx",
       "sha256": "8964c82fbafd4f6727ba47ee100a81013c15f4ba30ffe96de864d24c359c05e5"
     },
@@ -256,6 +260,10 @@
     {
       "path": "src/components/ui/separator.tsx",
       "sha256": "bf5838b692e5f74fde7083280b99492dd402bce6966e912e79f5e23f14bc98eb"
+    },
+    {
+      "path": "src/components/workout-launch-panel.tsx",
+      "sha256": "4e1fbeac78b4dc8ba30137928d1a4136f11bb87ccc4e6ab511b0de669f3be186"
     },
     {
       "path": "src/components/workout-media-card.tsx",
@@ -359,7 +367,7 @@
     },
     {
       "path": "src/lib/__tests__/seven-day-plan-review-design.test.ts",
-      "sha256": "be80abeb4388c21e1a733d69426b2c5e40d194fabfddd3f12166f5b5d497a297"
+      "sha256": "da4c37eb37101e625540ea35b4776a26e68335b4b3cb7ea99639d81fb9924f1b"
     },
     {
       "path": "src/lib/__tests__/signup-destination.test.ts",
@@ -1391,7 +1399,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "7b8c4dd4c89030299b99a04a436244b362b52b7aa91769e4916179d0d5ad6809"
+      "sha256": "b8946df5a88db8d8ef23b68b2a80e872ee49498c0819a0468fa302b4670b2597"
     },
     {
       "path": "src/server.ts",

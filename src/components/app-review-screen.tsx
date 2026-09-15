@@ -16,7 +16,9 @@ import { ReviewShell } from "@/components/review-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { WorkoutMediaCard } from "@/components/workout-media-card";
+import { WorkoutLaunchPanel } from "@/components/workout-launch-panel";
 import { WorkoutOverview, WorkoutNotes } from "@/components/workout-screen";
+import { SevenDayScheduleRow } from "@/components/seven-day-schedule-row";
 import type { ReviewScreen } from "@/lib/app-review";
 import { WORKOUTS } from "@/lib/plan";
 import { sevenDayWorkoutOverview, sevenDayWorkoutRuntime } from "@/lib/workout-presentation";
@@ -98,42 +100,6 @@ function Page({
   );
 }
 
-function WorkoutLaunchPanel({ day, title, href }: { day: number; title: string; href: string }) {
-  return (
-    <a
-      href={href}
-      aria-label={`Open today's Day ${day} workout - ${title}`}
-      className="group mt-3 block overflow-hidden rounded-md border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)] transition-transform hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-4"
-    >
-      <div className="grid grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]">
-        <div className="flex min-h-32 flex-col justify-center px-5 py-5 sm:min-h-40 sm:px-7 sm:py-6">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-background/65 sm:text-sm">
-            Day {day} of 7
-          </p>
-          <h3 className="gxj-display-title mt-2 text-3xl uppercase leading-[0.96] tracking-wide sm:text-4xl">
-            {title}
-          </h3>
-        </div>
-        <div className="overflow-hidden bg-background">
-          <img
-            src={`/workout-covers/day-0${day}.webp`}
-            alt=""
-            className="h-full w-full object-cover object-[70%_center] transition-transform duration-300 group-hover:scale-[1.02]"
-          />
-        </div>
-      </div>
-      <div className="flex min-h-16 items-center justify-between gap-5 bg-gxj-orange px-5 py-3 text-white sm:px-7">
-        <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
-          Open Today&rsquo;s Workout
-        </span>
-        <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white text-gxj-orange transition-transform group-hover:translate-x-1">
-          <ArrowRight aria-hidden="true" className="size-4" />
-        </span>
-      </div>
-    </a>
-  );
-}
-
 function HomeReview({ variant }: { variant: string }) {
   const daily =
     variant === "accelerator"
@@ -199,6 +165,7 @@ function HomeReview({ variant }: { variant: string }) {
           <WorkoutLaunchPanel
             day={3}
             title={WORKOUTS.W03.title}
+            actionLabel="Open Today’s Workout"
             href="/review/workout-day-3-ready"
           />
         </div>
@@ -537,6 +504,7 @@ function PlanReview({ complete }: { complete: boolean }) {
           <WorkoutLaunchPanel
             day={3}
             title={WORKOUTS.W03.title}
+            actionLabel="Open Today’s Workout"
             href="/review/workout-day-3-ready"
           />
         </section>
@@ -560,29 +528,14 @@ function PlanReview({ complete }: { complete: boolean }) {
                 key={day}
                 aria-label={`Day ${day}: ${title}. ${stateLabel}.`}
                 aria-current={current ? "step" : undefined}
-                className={`group -mx-3 grid min-h-20 grid-cols-[2.75rem_1fr_auto] items-center gap-3 px-3 py-4 transition-colors hover:bg-foreground/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2 ${current ? "bg-gxj-mint" : finished ? "text-foreground/45" : ""}`}
+                className="group -mx-3 block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2"
               >
-                <span
-                  className={`gxj-display-title grid size-9 place-items-center text-lg leading-none ${current ? "rounded-[2px] bg-gxj-orange text-white" : finished ? "text-foreground/45" : "text-foreground"}`}
-                >
-                  {`0${day}`}
-                </span>
-                <span>
-                  <span className="gxj-display-title block text-lg uppercase leading-tight tracking-wide sm:text-xl">
-                    {title}
-                  </span>
-                </span>
-                <span className="flex items-center gap-2">
-                  <span
-                    className={`hidden text-xs font-bold uppercase tracking-[0.1em] sm:inline ${current ? "text-gxj-orange" : "text-foreground/50"}`}
-                  >
-                    {stateLabel}
-                  </span>
-                  <ChevronRight
-                    className="size-5 transition-transform group-hover:translate-x-1"
-                    aria-hidden="true"
-                  />
-                </span>
+                <SevenDayScheduleRow
+                  day={day}
+                  title={title}
+                  state={finished ? "completed" : current ? "current" : "upcoming"}
+                  stateLabel={stateLabel}
+                />
               </a>
             );
           })}

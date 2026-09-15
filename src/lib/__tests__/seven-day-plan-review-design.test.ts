@@ -1,14 +1,25 @@
 import { readFileSync } from "node:fs";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { SevenDayScheduleRow } from "../../components/seven-day-schedule-row";
 
 const reviewSource = readFileSync(
   new URL("../../components/app-review-screen.tsx", import.meta.url),
   "utf8",
 );
+const planSource = readFileSync(
+  new URL("../../routes/your-plan.index.tsx", import.meta.url),
+  "utf8",
+);
+const launchSource = readFileSync(
+  new URL("../../components/workout-launch-panel.tsx", import.meta.url),
+  "utf8",
+);
 
 describe("7-Day plan review design", () => {
   it("reuses the Home workout launch panel on the active plan", () => {
-    expect(reviewSource).toContain("function WorkoutLaunchPanel");
+    expect(launchSource).toContain("export function WorkoutLaunchPanel");
     expect(reviewSource.match(/<WorkoutLaunchPanel/g)).toHaveLength(2);
   });
 
@@ -20,21 +31,48 @@ describe("7-Day plan review design", () => {
   });
 
   it("keeps the day number visible in every schedule state", () => {
-    expect(reviewSource).toContain("{`0${day}`}");
-    expect(reviewSource).not.toContain(
-      'finished ? <Check className="size-4" aria-hidden="true" /> : `0${day}`',
+    const completed = renderToStaticMarkup(
+      createElement(SevenDayScheduleRow, {
+        day: 1,
+        title: "Jump Rope + Full Body",
+        state: "completed",
+        stateLabel: "Complete",
+      }),
     );
-    expect(reviewSource).toContain('current ? "rounded-[2px] bg-gxj-orange text-white"');
-    expect(reviewSource).toContain('finished ? "text-foreground/45" : "text-foreground"');
-    expect(reviewSource).toContain(
-      'current ? "bg-gxj-mint" : finished ? "text-foreground/45" : ""',
+    const current = renderToStaticMarkup(
+      createElement(SevenDayScheduleRow, {
+        day: 3,
+        title: "Recovery",
+        state: "current",
+        stateLabel: "Today",
+      }),
     );
-    expect(reviewSource).toContain(
-      'stateLabel = finished ? "Complete" : current ? "Today" : "Upcoming"',
+    const upcoming = renderToStaticMarkup(
+      createElement(SevenDayScheduleRow, {
+        day: 7,
+        title: "Rest",
+        state: "upcoming",
+        stateLabel: "Upcoming",
+      }),
     );
-    expect(reviewSource).not.toContain(
-      '<span className="block text-xs font-bold uppercase tracking-[0.12em] text-foreground/55">\n' +
-        "                    Day {day}",
-    );
+
+    expect(completed).toContain("text-foreground/45");
+    expect(completed).toContain(">01<");
+    expect(completed).not.toContain("rounded-full bg-foreground");
+    expect(current).toContain("bg-gxj-mint");
+    expect(current).toContain("bg-gxj-orange");
+    expect(current).toContain(">03<");
+    expect(upcoming).toContain("text-foreground");
+    expect(upcoming).toContain(">07<");
+    expect(upcoming).not.toContain("text-foreground/45");
+  });
+
+  it("uses the same state component for every saved production-plan day", () => {
+    expect(planSource).toContain("hub.days.map");
+    expect(planSource).toContain("<SevenDayScheduleRow");
+    expect(planSource).toContain("const rowState: SevenDayScheduleState = complete");
+    expect(planSource).toContain('? "completed"');
+    expect(planSource).toContain('? "current"');
+    expect(planSource).not.toContain("Day {d.day}: {d.title}");
   });
 });
