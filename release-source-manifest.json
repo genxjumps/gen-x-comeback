@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "b4173e98ec79e72eeff7270c9e8cb70809c39395beae64926c285a4cd21c63d7"
+      "sha256": "af742cefe2471c5a828d0c2775fe4f6a0ff39b002077c18c8887475ea3512957"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -356,6 +356,10 @@
     {
       "path": "src/lib/__tests__/safe-supabase-auth-attacher-contract.test.ts",
       "sha256": "67bc23f0f9a9b01f3301cbb67b2a260842f86e8290cbc19be22095760e49287e"
+    },
+    {
+      "path": "src/lib/__tests__/seven-day-plan-review-design.test.ts",
+      "sha256": "82103532353962bad03e44527b29018051ffe401e05e2aa201cf6b679ec538b5"
     },
     {
       "path": "src/lib/__tests__/signup-destination.test.ts",
