@@ -1482,7 +1482,7 @@ function NutritionReview({ variant }: { variant: string }) {
     <Page
       kicker="Your Nutrition"
       title="Your Daily Targets"
-      description="Use these as a starting point, not a pass-or-fail test."
+      description="These are the numbers to follow each day. Hit your calorie and protein targets consistently to lose fat and protect muscle."
     >
       {variant === "review" ? (
         <Section>
