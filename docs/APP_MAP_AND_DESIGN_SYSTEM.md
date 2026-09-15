@@ -249,8 +249,48 @@ placement, and mobile keyboard behavior.
 
 ### Day 1 workout
 
-Use Day 1 to establish workout hierarchy, preparation boxes above the video, video treatment,
-detailed circuit reference, and the primary completion action.
+Use the focused workout page to establish the shared workout hierarchy, media treatment, overview,
+supporting information, and primary completion action. Additional workout information belongs
+below the media treatment, not in preparation boxes above it.
+
+### Approved Home and workout-page visual contract
+
+The September 2026 visual review establishes the following shared pattern for the participant Home
+and focused workout pages. These are presentation rules only. They do not change saved plans,
+workout selection, workout content, equipment, timing, progression, locking, completion, or any
+other product behavior.
+
+- Use the same participant header, cream page background, restrained edge texture, content width,
+  bottom navigation, dividers, typography families, and button treatment on both pages.
+- Keep the existing Gen X Jumps wordmark treatment unchanged.
+- Home uses **Today's Workout** as its page heading. It is visually prominent without competing
+  with the workout title inside the launch card.
+- The Home workout treatment is a special launch panel, not a miniature workout-detail page. It
+  shows the live day label, saved workout title, numbered artwork, and one orange action rail. Do
+  not add a redundant workout description beneath its title.
+- **Your Gen X Jumps Fitness Hub** follows the launch panel and introduces the Programs, Progress,
+  and Nutrition summary links. It is a section heading, so it remains smaller than the page heading
+  while staying distinct from the row titles below it.
+- The focused workout page repeats the live day label and saved workout title above the media card.
+  This page-level title uses the compact scale approved during the Home-to-workout continuity
+  review. The workout title inside the numbered media artwork remains visually strong.
+- The workout media card uses the matching numbered artwork and an orange **Start Workout** rail
+  when the existing workout state allows playback. Other rails continue to reflect the existing
+  locked, available-later, completed, and replay states.
+- **Workout Overview** appears immediately below the media card using the same section-heading
+  scale as **Your Gen X Jumps Fitness Hub** and the same card-to-section spacing rhythm used on
+  Home.
+- The overview facts use the approved website-style grid treatment. A two-by-two arrangement is
+  allowed on mobile but is not mandatory when the number or type of verified facts calls for a
+  different responsive arrangement.
+- Overview labels and values must stay simple and factual. Do not turn the overview into a list of
+  workout movements or invent descriptive workout copy.
+- Supporting workout information follows the media and overview. Do not use **Before You Start**,
+  **Before You Press Play**, or **Set Yourself Up to Train Well** as section copy.
+- Ordinary sections remain directly on the page with dividers. Do not add surrounding cards unless
+  the content genuinely needs containment.
+- Shared spacing and type tokens govern these relationships everywhere. Do not tune the same
+  heading-to-card or card-to-section relationship independently on individual workout pages.
 
 Approve these three patterns before applying the system to the remaining screen families.
 

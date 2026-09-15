@@ -68,21 +68,23 @@ describe("7-Day Plan calendar access", () => {
     expect(media).toContain('state.type === "blocked"');
     expect(media).toContain('state.type === "scheduled"');
     expect(media).toContain("Your next workout is scheduled.");
-    expect(assignment).toContain('!completed && (kind === "workout"');
-    expect(dayOne).toContain("{!completed ? (");
+    expect(assignment).toContain("<WorkoutScreen");
+    expect(dayOne).toContain("<WorkoutScreen");
+    expect(dayOne).not.toContain("Back to My Plan");
   });
 
-  it("keeps workout intros brief and places preparation guidance before the video", () => {
+  it("keeps workout intros brief and places guidance below the video", () => {
     const assignment = source("../../components/day-assignment.tsx");
+    const screen = source("../../components/workout-screen.tsx");
     const workoutBranch = assignment.indexOf('kind === "workout" && day?.code');
-    const cardio = assignment.indexOf("<CardioSection", workoutBranch);
-    const approach = assignment.indexOf("<ApproachSection", workoutBranch);
     const media = assignment.indexOf("<WorkoutMediaCard", workoutBranch);
+    const notes = assignment.indexOf("notes={", workoutBranch);
 
     expect(assignment).not.toContain("{day.description}");
-    expect(cardio).toBeGreaterThan(workoutBranch);
-    expect(approach).toBeGreaterThan(cardio);
-    expect(media).toBeGreaterThan(approach);
+    expect(media).toBeGreaterThan(workoutBranch);
+    expect(notes).toBeGreaterThan(media);
+    expect(screen.indexOf("{media}")).toBeLessThan(screen.indexOf("<WorkoutOverview"));
+    expect(screen.indexOf("<WorkoutOverview")).toBeLessThan(screen.indexOf("<WorkoutNotes"));
   });
 
   it("explains easy-movement days as recovery without fitness jargon", () => {
@@ -97,12 +99,12 @@ describe("7-Day Plan calendar access", () => {
   it("keeps the recovery day easy and removes workout-only guidance", () => {
     const assignment = source("../../components/day-assignment.tsx");
     const recoveryBranch = assignment.indexOf('kind === "recovery" && optional');
-    const recoveryEnd = assignment.indexOf('<section className="mt-8">', recoveryBranch);
+    const recoveryEnd = assignment.indexOf("\n  return (\n    <div", recoveryBranch);
     const recoveryMarkup = assignment.slice(recoveryBranch, recoveryEnd);
 
     expect(assignment).toContain("helping your body recover so you’re ready for the next workout");
     expect(assignment).toContain("you don’t need to work out today");
-    expect(assignment).toContain("If You Want to Move");
+    expect(assignment).toContain("This session is optional");
     expect(assignment).not.toContain("Recovery is your assigned action");
     expect(assignment).not.toContain("Rest is your assigned action");
     expect(recoveryMarkup).not.toContain("<CardioSection");

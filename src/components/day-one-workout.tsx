@@ -3,17 +3,13 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { WorkoutMediaCard } from "@/components/workout-media-card";
+import { WorkoutScreen } from "@/components/workout-screen";
 import { readStoredToken } from "@/lib/access-token";
 import { cardioGuidance, type CardioContext } from "@/lib/lead-plan";
 import { completePlanDay, getDayOneBrief } from "@/lib/lead.functions";
 import { WORKOUTS } from "@/lib/plan";
-import {
-  W01_APPROACH,
-  W01_CARDIO_HEADING,
-  W01_EQUIPMENT_NOTES,
-  W01_EXPECT,
-  W01_TITLE,
-} from "@/lib/w01-content";
+import { W01_APPROACH, W01_CARDIO_HEADING, W01_TITLE } from "@/lib/w01-content";
+import { sevenDayWorkoutOverview } from "@/lib/workout-presentation";
 
 /** Protected Day 1 workout. Requires a valid saved-plan access token. */
 export function DayOneWorkout() {
@@ -98,65 +94,35 @@ export function DayOneWorkout() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
-      <Link
-        to="/your-plan"
-        className="text-xs uppercase tracking-widest text-muted-foreground underline-offset-4 hover:underline"
-      >
-        Back to My Plan
-      </Link>
-
-      <p className="gxj-kicker mt-6 text-[10px] font-semibold uppercase tracking-[0.16em]">Day 1</p>
-      <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
-        {W01_TITLE}
-      </h1>
-      <section className="mt-6 rounded-lg border border-border bg-card p-4">
-        <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-          What to Expect
-        </h2>
-        <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
-          {W01_EXPECT.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="mt-6 rounded-lg border border-border bg-card p-4">
-        <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-          {W01_CARDIO_HEADING}
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          {cardioGuidance(cardio)}
-        </p>
-      </section>
-
-      <section className="mt-4 rounded-lg border border-border bg-card p-4">
-        <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-          How to Approach This Workout
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{W01_APPROACH}</p>
-      </section>
-
-      <section className="mt-4 rounded-lg border border-border bg-card p-4">
-        <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-          Equipment
-        </h2>
-        <ul className="mt-2 grid gap-1 text-sm text-muted-foreground">
-          {W01_EQUIPMENT_NOTES.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </section>
-
-      <WorkoutMediaCard
-        dayNumber={1}
-        code="W01"
-        title={W01_TITLE}
-        coverTitle={WORKOUTS.W01.title}
-        state={completed ? { type: "completed" } : { type: "ready" }}
-      />
-
-      <section className="mt-8">
+    <WorkoutScreen
+      kicker="Day 1 of 7"
+      title={W01_TITLE}
+      description="About 15 minutes. Use the easier option any time you need it."
+      media={
+        <WorkoutMediaCard
+          dayNumber={1}
+          dayLabel="Day 1 of 7"
+          code="W01"
+          title={W01_TITLE}
+          coverTitle={WORKOUTS.W01.title}
+          state={completed ? { type: "completed" } : { type: "ready" }}
+        />
+      }
+      overview={sevenDayWorkoutOverview("W01", 15)}
+      notes={
+        <>
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-[0.12em]">{W01_CARDIO_HEADING}</h3>
+            <p className="mt-2 text-foreground/80">{cardioGuidance(cardio)}</p>
+          </div>
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-[0.12em]">Workout Approach</h3>
+            <p className="mt-2 text-foreground/80">{W01_APPROACH}</p>
+          </div>
+        </>
+      }
+    >
+      <section className="pb-8 pt-1">
         {completed ? (
           <div className="rounded-lg border border-border bg-gxj-mint p-4">
             <p className="text-sm font-semibold">Day 1 Complete</p>
@@ -185,14 +151,6 @@ export function DayOneWorkout() {
           </>
         )}
       </section>
-
-      {!completed ? (
-        <div className="mt-6">
-          <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-            <Link to="/your-plan">Back to My Plan</Link>
-          </Button>
-        </div>
-      ) : null}
-    </div>
+    </WorkoutScreen>
   );
 }
