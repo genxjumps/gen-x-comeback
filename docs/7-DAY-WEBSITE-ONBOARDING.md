@@ -28,6 +28,12 @@ with content directly on the cream textured page rather than inside a surroundin
 change does not alter handoff validation, draft binding, assessment destination, recovery handling,
 or saved-plan routing.
 
+The approved Welcome email-access states use the same focused-setup background, typography, content
+width, and action treatment. Their centered standalone mail icon uses a black outline with a small
+orange offset echo borrowed from the intake interaction states. It never sits inside a box, circle,
+or card. **Check Your Email** and **Welcome Back** are presentation variants in the review hub; the
+live route continues to render only the state returned by existing signup and recovery behavior.
+
 ## Calendar and progression behavior
 
 - The participant's browser time zone is captured when the plan is first saved. The server anchors Day 1 to that local calendar date; Day N is assigned to Day 1 plus N minus one calendar days. Unlocking is never based on an elapsed 24-hour timer.
