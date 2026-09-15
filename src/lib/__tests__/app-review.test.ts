@@ -162,9 +162,14 @@ describe("app review catalog", () => {
   });
 
   it("gives the Accelerator an aqua identity without mixing in the 7-Day orange accent", () => {
-    expect(programsReviewSource).toContain("bg-gxj-aqua-soft");
-    expect(programsReviewSource).toContain("shadow-[4px_4px_0_var(--color-gxj-aqua)]");
+    expect(programsReviewSource).toContain(
+      "divide-y-2 divide-foreground border-y-2 border-foreground",
+    );
+    expect(programsReviewSource).toContain("bg-gxj-aqua text-foreground");
+    expect(programsReviewSource).toContain("bg-foreground text-background");
     expect(programsReviewSource).toContain('accelerator ? "28" : "07"');
+    expect(programsReviewSource).not.toContain("bg-gxj-aqua-soft");
+    expect(programsReviewSource).not.toContain("shadow-[4px_4px_0_var(--color-gxj-aqua)]");
     expect(programsReviewSource).not.toContain("gxj-orange");
     expect(reviewSource).toContain('accent={acceleratorAccent ? "aqua" : "orange"}');
   });

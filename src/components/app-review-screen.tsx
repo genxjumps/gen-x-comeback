@@ -1006,51 +1006,38 @@ function ProgramsReview({ variant }: { variant: string }) {
           <Action>Try Again</Action>
         </div>
       ) : (
-        <div className="grid gap-6">
+        <div className="divide-y-2 divide-foreground border-y-2 border-foreground">
           {entries.map((entry) => {
             const accelerator = entry.program === "accelerator";
             return (
-              <section
-                className={`border-2 border-foreground p-5 sm:p-6 ${
-                  accelerator
-                    ? "bg-gxj-aqua-soft shadow-[4px_4px_0_var(--color-gxj-aqua)]"
-                    : "bg-background"
-                }`}
-                key={entry.title}
-              >
-                <div className="grid grid-cols-[minmax(0,1fr)_4.5rem] items-start gap-4 sm:grid-cols-[minmax(0,1fr)_5.5rem]">
-                  <div>
-                    <p
-                      className={`inline-flex min-h-8 items-center rounded-[2px] px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] ${
-                        accelerator
-                          ? "bg-gxj-aqua text-foreground"
-                          : "bg-foreground text-background"
-                      }`}
-                    >
-                      {entry.status}
-                    </p>
-                    <h2 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
-                      {entry.title}
-                    </h2>
-                  </div>
+              <section className="py-7 sm:py-8" key={entry.title}>
+                <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-6">
                   <span
                     aria-hidden="true"
                     className={`gxj-display-title grid aspect-square place-items-center text-4xl leading-none sm:text-5xl ${
-                      accelerator
-                        ? "bg-gxj-aqua text-foreground"
-                        : "border-2 border-foreground text-foreground"
+                      accelerator ? "bg-gxj-aqua text-foreground" : "bg-foreground text-background"
                     }`}
                   >
                     {accelerator ? "28" : "07"}
                   </span>
-                </div>
-                <div className="mt-5 border-t border-foreground/20 pt-4">
-                  <p className="font-medium text-foreground/70">{entry.detail}</p>
-                  <div className="mt-5">
-                    <Action>
-                      {entry.action}
-                      <ArrowRight className="size-4" />
-                    </Action>
+                  <div>
+                    <p
+                      className={`text-xs font-bold uppercase tracking-[0.14em] ${
+                        accelerator ? "text-foreground" : "text-foreground/60"
+                      }`}
+                    >
+                      {entry.status}
+                    </p>
+                    <h2 className="gxj-display-title mt-2 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+                      {entry.title}
+                    </h2>
+                    <p className="mt-2 font-medium text-foreground/70">{entry.detail}</p>
+                    <div className="mt-5">
+                      <Action>
+                        {entry.action}
+                        <ArrowRight className="size-4" />
+                      </Action>
+                    </div>
                   </div>
                 </div>
               </section>
