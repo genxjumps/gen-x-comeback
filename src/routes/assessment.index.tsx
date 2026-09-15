@@ -108,7 +108,7 @@ function Question({
 }) {
   return (
     <section className="gxj-page-section py-6 sm:py-8">
-      <h2 className="text-lg font-semibold leading-snug sm:text-xl">{heading}</h2>
+      <h2 className="text-xl font-bold leading-snug sm:text-2xl">{heading}</h2>
       {hint ? (
         <p className="mt-1.5 text-sm font-normal leading-relaxed text-muted-foreground">{hint}</p>
       ) : null}
@@ -145,7 +145,11 @@ function SingleSelect({
           htmlFor={`${name}-${o.value}`}
           className="gxj-choice gxj-option-card cursor-pointer text-base font-semibold leading-snug"
         >
-          <RadioGroupItem id={`${name}-${o.value}`} value={o.value} className="sr-only" />
+          <RadioGroupItem
+            id={`${name}-${o.value}`}
+            value={o.value}
+            className="size-5 shrink-0 border-2 border-foreground/35 text-gxj-orange data-[state=checked]:border-gxj-orange data-[state=checked]:text-gxj-orange [&_svg]:size-2.5"
+          />
           <span className="gxj-assessment-choice-label">{o.label}</span>
         </Label>
       ))}
@@ -283,7 +287,7 @@ function Assessment() {
 
   return (
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
-      <header className="gxj-page-header py-7 sm:py-10">
+      <header className="gxj-page-header py-6 sm:py-8">
         <div className="w-full max-w-2xl">
           <div className="flex items-center gap-3">
             <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
@@ -300,14 +304,14 @@ function Assessment() {
             </div>
           </div>
 
-          <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
+          <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
             {step === 1
               ? "Your Starting Point"
               : step === 2
                 ? "Jump Rope and Impact"
                 : "Finish Your Plan"}
           </h1>
-          <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
+          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
             {step === 1
               ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
               : step === 2
@@ -317,7 +321,7 @@ function Assessment() {
         </div>
       </header>
 
-      <div className="gxj-page-body mx-auto max-w-3xl">
+      <div className="mx-auto max-w-3xl">
         {step === 1 ? (
           <>
             <Question
@@ -397,7 +401,7 @@ function Assessment() {
                       id={`equipment-${o.value}`}
                       checked={answers.equipment.includes(o.value)}
                       onCheckedChange={(c) => toggleEquipment(o.value, c === true)}
-                      className="sr-only"
+                      className="size-5 shrink-0 rounded-[2px] border-2 border-foreground/35 data-[state=checked]:border-gxj-orange data-[state=checked]:bg-transparent data-[state=checked]:text-transparent [&>span]:size-2.5 [&>span]:bg-gxj-orange [&>span_svg]:hidden"
                     />
                     <span className="gxj-assessment-choice-label">{o.label}</span>
                   </Label>
@@ -452,7 +456,7 @@ function Assessment() {
         ) : null}
       </div>
 
-      <div className="mt-7 flex items-stretch gap-3 border-t border-foreground/20 pt-5">
+      <div className="mx-auto mt-1 flex max-w-3xl items-stretch gap-3 border-t border-foreground/20 pt-5">
         {step > 1 ? (
           <Button
             type="button"

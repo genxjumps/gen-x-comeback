@@ -242,10 +242,31 @@ needs a separate success, warning, or error meaning.
 Use Home to establish the app shell, global navigation, and page spacing. Today's workout and the
 secondary summary links sit directly on the shared page background without a surrounding card.
 
-### Assessment Step 3
+### Approved free 7-Day intake
 
-Use Step 3 to establish the focused setup shell, form controls, optional-field treatment, short-page
-placement, and mobile keyboard behavior.
+The three-step free 7-Day intake at `/assessment` uses the same visual system as Home, the active
+7-Day plan, and the workout pages while keeping the focused setup shell appropriate to a form.
+
+- Use the shared cream background, header treatment, compact page-title scale, typography, orange
+  action color, content width, and spacing rhythm.
+- Keep the step label and progress bar together above the title. The progress bar is functional
+  orientation, not decoration.
+- Questions and supporting copy sit directly on the page with two-pixel dividers. Choice controls
+  and the weight input receive borders because their contents require interaction boundaries.
+- Choices stack in one column on mobile. Short choices may use two columns at wider sizes; long jump
+  rope experience choices remain one column for readability.
+- Selected answers use the orange marker and light highlighted background. Primary and secondary
+  actions use the same button treatment established elsewhere in the app.
+- Review screens must use the exact live questions and answer choices. Do not replace them with
+  shorthand questions or add measurements the intake does not collect. The free 7-Day intake asks
+  for optional weight, not waist.
+- Equipment answers personalize eligibility and plan construction according to the existing rules.
+  An equipment choice does not authorize inventing equipment inside a workout description.
+- The design is presentation only. Preserve validation, local draft saving, step recovery,
+  submission, plan construction, and all intake access controls.
+- This contract applies only to the free 7-Day intake. The 28-Day Accelerator setup at
+  `/my-programs/accelerator/setup` is a separate product flow with separate questions, data, and
+  behavior.
 
 ### Day 1 workout
 

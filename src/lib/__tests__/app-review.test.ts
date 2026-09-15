@@ -11,6 +11,11 @@ const assessmentReviewSource = reviewSource.slice(
   reviewSource.indexOf("function AssessmentReview"),
   reviewSource.indexOf("function AssessmentResultReview"),
 );
+const assessmentRouteSource = readFileSync(
+  new URL("../../routes/assessment.index.tsx", import.meta.url),
+  "utf8",
+);
+const stylesSource = readFileSync(new URL("../../styles.css", import.meta.url), "utf8");
 
 describe("app review catalog", () => {
   it("uses one stable URL for every review state", () => {
@@ -96,5 +101,19 @@ describe("app review catalog", () => {
     expect(reviewScreens.some((screen) => screen.route === "/my-programs/accelerator/setup")).toBe(
       true,
     );
+  });
+
+  it("applies the approved intake hierarchy to the working 7-Day assessment", () => {
+    expect(assessmentRouteSource).toContain(
+      "gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl",
+    );
+    expect(assessmentRouteSource).toContain(
+      'className="text-xl font-bold leading-snug sm:text-2xl"',
+    );
+    expect(assessmentRouteSource).not.toContain(
+      '<RadioGroupItem id={`${name}-${o.value}`} value={o.value} className="sr-only" />',
+    );
+    expect(stylesSource).toContain("grid-template-columns: minmax(0, 1fr)");
+    expect(stylesSource).toContain("background-color: var(--color-gxj-mint)");
   });
 });
