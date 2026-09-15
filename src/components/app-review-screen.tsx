@@ -509,6 +509,35 @@ function PlanReview({ complete }: { complete: boolean }) {
   );
 }
 
+function WorkoutDetails() {
+  return (
+    <section className="border-t-2 border-foreground pb-6 pt-5" aria-labelledby="workout-details">
+      <h2
+        id="workout-details"
+        className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
+      >
+        Workout Details
+      </h2>
+      <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Time</p>
+          <p className="mt-1 font-bold">About 15 minutes</p>
+        </div>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            Equipment
+          </p>
+          <p className="mt-1 font-bold">Rope and mat</p>
+        </div>
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Effort</p>
+          <p className="mt-1 font-bold">Steady</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function WorkoutReview({ variant }: { variant: string }) {
   const recovery = variant === "recovery";
   const day = recovery
@@ -532,26 +561,7 @@ function WorkoutReview({ variant }: { variant: string }) {
           : "About 15 minutes. Use the easier option any time you need it."
       }
     >
-      <Section title="Before You Start">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Time</p>
-            <p className="mt-1 font-bold">About 15 minutes</p>
-          </div>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Equipment
-            </p>
-            <p className="mt-1 font-bold">Rope and mat</p>
-          </div>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Effort
-            </p>
-            <p className="mt-1 font-bold">Steady</p>
-          </div>
-        </div>
-      </Section>
+      {recovery ? <WorkoutDetails /> : null}
       {recovery ? (
         <div className="border-y border-foreground/15 py-8">
           <h2 className="gxj-display-title text-3xl uppercase">Today's Work Is Rest</h2>
@@ -566,6 +576,7 @@ function WorkoutReview({ variant }: { variant: string }) {
       ) : (
         <WorkoutMediaCard
           dayNumber={day}
+          dayLabel={`Day ${day} of 7`}
           code={`w0${day}`}
           title={day === 2 ? "Easy Movement" : "Jump + Strength"}
           state={
@@ -579,6 +590,7 @@ function WorkoutReview({ variant }: { variant: string }) {
           }
         />
       )}
+      {!recovery ? <WorkoutDetails /> : null}
       {!recovery ? (
         <Section title="Workout Approach">
           <p className="leading-relaxed">

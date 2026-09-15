@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "423c47a5a65a414cbda0586225045f75c52f03b12e25c119955a9233d29ef395"
+      "sha256": "581cf5fec32ff65b0eefa77b28001222398b620252bb8b611c8f1c8ffdb74c09"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -259,7 +259,7 @@
     },
     {
       "path": "src/components/workout-media-card.tsx",
-      "sha256": "65f20d489d1584ff88dade5403346533937fd5638abce89f79fe13c9df063b93"
+      "sha256": "d15157f5886bcda5e3ccf5e1df994a3b754da11e40d78b4b9c661cba27907136"
     },
     {
       "path": "src/integrations/supabase/auth-attacher.ts",
@@ -323,7 +323,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
-      "sha256": "0617045dbf0b800934ceeb398570834b157a24bf018cc465b5bce0f8276262df"
+      "sha256": "2aec60b5f5c8fcbc3a718471585497077164968db13d6f13a7ab2ca8d5f3a264"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
