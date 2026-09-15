@@ -244,8 +244,9 @@ secondary summary links sit directly on the shared page background without a sur
 
 ### Approved free 7-Day intake
 
-The three-step free 7-Day intake at `/assessment` uses the same visual system as Home, the active
-7-Day plan, and the workout pages while keeping the focused setup shell appropriate to a form.
+The eligibility screen at `/assessment/start` and the three-step free 7-Day intake at `/assessment`
+use the same visual system as Home, the active 7-Day plan, and the workout pages while keeping the
+focused setup shell appropriate to a form.
 
 - Use the shared cream background, header treatment, compact page-title scale, typography, orange
   action color, content width, and spacing rhythm.
@@ -257,6 +258,11 @@ The three-step free 7-Day intake at `/assessment` uses the same visual system as
   rope experience choices remain one column for readability.
 - Selected answers use the orange marker and light highlighted background. Primary and secondary
   actions use the same button treatment established elsewhere in the app.
+- Standard page actions use uppercase Anton at 20px in a 56px-high button. Major workout-launch
+  actions use the same display face at a larger scale, preserving a clear action hierarchy.
+- The eligibility question uses the same direct-on-page question, divider, choice-control, content
+  width, and compact title treatment as the assessment. Its existing eligible and not-eligible copy
+  and behavior remain unchanged.
 - Review screens must use the exact live questions and answer choices. Do not replace them with
   shorthand questions or add measurements the intake does not collect. The free 7-Day intake asks
   for optional weight, not waist.

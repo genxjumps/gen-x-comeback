@@ -1279,7 +1279,7 @@
     },
     {
       "path": "src/routes/assessment.start.tsx",
-      "sha256": "7628b632d2ba9c31af2190dab482e943a20edb41a5f06fa00c711ec31eaeb629"
+      "sha256": "76bce2d9d0bdfeba79fbb537e6f1b4df19aed89091920373e1ed94842bc1546f"
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
