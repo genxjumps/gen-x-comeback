@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Check, Circle } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { getLeadIntakeWelcome } from "@/lib/lead-intake.functions";
 import type { LeadIntakeWelcomeResult } from "@/lib/lead-intake.functions";
@@ -25,9 +23,9 @@ export const Route = createFileRoute("/welcome")({
 });
 
 const steps = [
-  { label: "Access saved", state: "complete" },
-  { label: "Quick setup", state: "current" },
-  { label: "Plan ready", state: "upcoming" },
+  { number: 1, label: "Access saved", state: "complete" },
+  { number: 2, label: "Quick setup", state: "current" },
+  { number: 3, label: "Plan ready", state: "upcoming" },
 ] as const;
 
 function LeadWelcome() {
@@ -117,61 +115,57 @@ function LeadWelcome() {
     );
 
   return (
-    <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8 sm:py-12">
-      <section className="w-full">
-        <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
-          Congratulations
-        </p>
-        <h1 className="gxj-display-title mt-4 text-3xl leading-[1.05] tracking-tight sm:text-4xl">
-          {result.firstName}, Let&rsquo;s Build Your Comeback Plan
-        </h1>
-        <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground">
-          Answer a few quick questions about your fitness, schedule, equipment, and any limitations.
-          Then we&rsquo;ll build your personalized 7-day plan immediately.
-        </p>
-
-        <ol className="mt-7 grid gap-2 sm:grid-cols-3" aria-label="Plan setup progress">
-          {steps.map((step, index) => (
-            <li
-              key={step.label}
-              className={`flex items-center gap-3 rounded-md border p-3 ${
-                step.state === "complete"
-                  ? "border-gxj-teal bg-gxj-mint"
-                  : step.state === "current"
-                    ? "border-foreground bg-card"
-                    : "border-border bg-muted/30"
-              }`}
-              aria-current={step.state === "current" ? "step" : undefined}
-            >
-              <span
-                className={`grid size-7 shrink-0 place-items-center rounded-full text-xs font-semibold ${
-                  step.state === "complete"
-                    ? "bg-gxj-teal text-white"
-                    : "border border-border bg-background"
-                }`}
-              >
-                {step.state === "complete" ? (
-                  <Check aria-hidden="true" className="size-4" strokeWidth={3} />
-                ) : step.state === "current" ? (
-                  index + 1
-                ) : (
-                  <Circle aria-hidden="true" className="size-3 fill-muted text-muted" />
-                )}
-              </span>
-              <span className="text-sm font-semibold">{step.label}</span>
-            </li>
-          ))}
-        </ol>
-
-        <div className="mt-7">
-          <Button asChild size="lg" className="w-full sm:w-auto">
-            <Link to={destination}>Create My 7-Day Plan</Link>
-          </Button>
-          <p className="mt-3 text-xs text-muted-foreground">
-            About 2 minutes. No password required.
+    <div className="gxj-page mx-auto min-h-[calc(100svh-9rem)] w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="py-6 sm:py-8">
+        <div className="max-w-2xl">
+          <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
+            Congratulations
+          </p>
+          <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+            {result.firstName}, Let&rsquo;s Build Your Comeback Plan
+          </h1>
+          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+            Answer a few quick questions about your fitness, schedule, equipment, and any
+            limitations. Then we&rsquo;ll build your personalized 7-day plan immediately.
           </p>
         </div>
-      </section>
+      </header>
+
+      <ol className="grid max-w-3xl grid-cols-3 gap-2" aria-label="Plan setup progress">
+        {steps.map((step) => (
+          <li
+            key={step.label}
+            aria-current={step.state === "current" ? "step" : undefined}
+            className={`flex min-h-24 flex-col justify-between gap-4 p-3 sm:min-h-28 sm:p-4 ${
+              step.state === "complete"
+                ? "bg-foreground text-background"
+                : step.state === "current"
+                  ? "bg-gxj-orange text-white shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
+                  : "border-2 border-foreground/20 text-foreground/35"
+            }`}
+          >
+            <span className="gxj-display-title text-2xl leading-none tracking-wide sm:text-3xl">
+              {String(step.number).padStart(2, "0")}
+            </span>
+            <span className="text-xs font-bold uppercase leading-tight tracking-[0.08em] sm:text-sm">
+              {step.label}
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      <div className="mt-7 max-w-3xl border-t border-foreground/20 pt-5">
+        <Button
+          asChild
+          size="lg"
+          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+        >
+          <Link to={destination}>Create My 7-Day Plan</Link>
+        </Button>
+        <p className="mt-3 text-sm font-medium text-muted-foreground">
+          About 2 minutes. No password required.
+        </p>
+      </div>
     </div>
   );
 }
