@@ -79,7 +79,7 @@ export const reviewScreens: ReviewScreen[] = [
     slug: "assessment-step-3",
     title: "Assessment - Step 3",
     route: "/assessment",
-    state: "Optional measurements",
+    state: "Equipment, schedule, and optional weight",
     group: "Entry and setup",
     shell: "focused",
     kind: "assessment",
