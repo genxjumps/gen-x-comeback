@@ -130,9 +130,14 @@ function HomeReview({ variant }: { variant: string }) {
           ? ["1 program", "No measurements yet", "Set up your daily targets"]
           : ["2 programs", "Weight: 175 lb", "2,100 calories per day"];
   const rows = [
-    { title: "Programs", line: summary[0], icon: Dumbbell },
-    { title: "Progress", line: summary[1], icon: ChartNoAxesColumnIncreasing },
-    { title: "Nutrition", line: summary[2], icon: Apple },
+    { title: "Programs", line: summary[0], icon: Dumbbell, href: "/review/programs-active" },
+    {
+      title: "Progress",
+      line: summary[1],
+      icon: ChartNoAxesColumnIncreasing,
+      href: "/review/progress-active",
+    },
+    { title: "Nutrition", line: summary[2], icon: Apple, href: "/review/nutrition-active" },
   ];
 
   if (variant === "seven-day") {
@@ -178,21 +183,34 @@ function HomeReview({ variant }: { variant: string }) {
           </a>
         </div>
 
-        <div className="mx-auto mt-6 max-w-3xl divide-y divide-foreground/15 py-2">
-          {rows.map(({ title, line, icon: Icon }) => (
-            <div
-              key={title}
-              className="grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-4 py-5"
-            >
-              <Icon className="size-5" aria-hidden="true" />
-              <div>
-                <h2 className="gxj-display-title text-2xl uppercase tracking-wide">{title}</h2>
-                <p className="mt-1 text-sm font-medium">{line}</p>
-              </div>
-              <ArrowRight className="size-5" aria-hidden="true" />
-            </div>
-          ))}
-        </div>
+        <section className="mx-auto mt-5 max-w-3xl" aria-labelledby="plan-at-a-glance">
+          <h2
+            id="plan-at-a-glance"
+            className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl"
+          >
+            Your Plan at a Glance
+          </h2>
+          <div className="mt-3 divide-y divide-foreground/15 border-t-2 border-foreground">
+            {rows.map(({ title, line, icon: Icon, href }) => (
+              <a
+                href={href}
+                aria-label={`Open ${title}`}
+                key={title}
+                className="group -mx-3 grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-4 px-3 py-5 transition-colors hover:bg-foreground/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2"
+              >
+                <Icon className="size-5" aria-hidden="true" />
+                <div>
+                  <h3 className="gxj-display-title text-2xl uppercase tracking-wide">{title}</h3>
+                  <p className="mt-1 text-sm font-medium">{line}</p>
+                </div>
+                <ArrowRight
+                  className="size-5 transition-transform group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </a>
+            ))}
+          </div>
+        </section>
       </div>
     );
   }
