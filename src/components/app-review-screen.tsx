@@ -144,7 +144,7 @@ function HomeReview({ variant }: { variant: string }) {
     return (
       <div className="mx-auto min-h-full w-full max-w-5xl pb-10 pt-4 sm:pb-14 sm:pt-6">
         <div className="mx-auto max-w-3xl">
-          <p className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          <p className="gxj-display-title text-3xl uppercase tracking-wide sm:text-4xl">
             Today&rsquo;s Workout
           </p>
           <a
@@ -184,7 +184,10 @@ function HomeReview({ variant }: { variant: string }) {
         </div>
 
         <section className="mx-auto mt-5 max-w-3xl" aria-labelledby="fitness-hub">
-          <h2 id="fitness-hub" className="gxj-display-title text-2xl uppercase tracking-wide">
+          <h2
+            id="fitness-hub"
+            className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
+          >
             Your Gen X Jumps Fitness Hub
           </h2>
           <div className="mt-3 divide-y divide-foreground/15 border-t-2 border-foreground">
@@ -197,7 +200,9 @@ function HomeReview({ variant }: { variant: string }) {
               >
                 <Icon className="size-5" aria-hidden="true" />
                 <div>
-                  <h3 className="gxj-display-title text-2xl uppercase tracking-wide">{title}</h3>
+                  <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                    {title}
+                  </h3>
                   <p className="mt-1 text-sm font-medium">{line}</p>
                 </div>
                 <ArrowRight
