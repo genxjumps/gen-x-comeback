@@ -160,9 +160,6 @@ function HomeReview({ variant }: { variant: string }) {
                 <h1 className="gxj-display-title mt-2 text-3xl uppercase leading-[0.96] tracking-wide sm:text-4xl">
                   Jump + Strength
                 </h1>
-                <p className="mt-2 text-xs font-semibold text-background/75 sm:text-sm">
-                  15 minutes · Jump rope + body weight
-                </p>
               </div>
               <div className="overflow-hidden bg-background">
                 <img
