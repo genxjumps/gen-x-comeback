@@ -29,12 +29,14 @@ function StatusTitle({ children }: { children: React.ReactNode }) {
  */
 export function WorkoutMediaCard({
   dayNumber,
+  dayLabel,
   code,
   title,
   coverTitle = title,
   state,
 }: {
   dayNumber: number;
+  dayLabel?: string;
   code: string;
   title: string;
   coverTitle?: string;
@@ -47,7 +49,7 @@ export function WorkoutMediaCard({
 
   return (
     <section
-      className="mt-6 overflow-hidden rounded-lg border border-border bg-card shadow-sm"
+      className="mt-6 overflow-hidden rounded-md border border-foreground/70 bg-card shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]"
       aria-label={`Day ${dayNumber} workout video`}
     >
       <div className="aspect-video overflow-hidden bg-muted">
@@ -65,7 +67,7 @@ export function WorkoutMediaCard({
             <img src={cover} alt="" className="h-full w-full object-cover" />
             <div className="absolute inset-y-0 left-0 flex w-[57%] flex-col justify-center px-[5%] text-foreground">
               <p className="gxj-display-title text-[clamp(0.5rem,1.7vw,0.75rem)] uppercase tracking-[0.18em]">
-                Day {dayNumber} / Workout
+                {dayLabel ?? `Day ${dayNumber} / Workout`}
               </p>
               <h2 className="gxj-display-title mt-[3%] text-[clamp(1.45rem,5.8vw,3.25rem)] leading-[0.94] uppercase tracking-[-0.02em]">
                 {coverTitleFirstLine}
@@ -116,12 +118,14 @@ export function WorkoutMediaCard({
           type="button"
           onClick={() => setPlaying(true)}
           disabled={playing}
-          className="flex min-h-20 w-full items-center justify-between gap-4 bg-gxj-orange px-4 py-3 text-left text-white transition-[filter] hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white disabled:cursor-default disabled:hover:brightness-100 sm:px-5"
+          className="flex min-h-16 w-full items-center justify-between gap-5 bg-gxj-orange px-5 py-3 text-left text-white transition-[filter] hover:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-white disabled:cursor-default disabled:hover:brightness-100 sm:px-7"
           aria-label={playing ? "Workout video is open" : `Start Day ${dayNumber} workout`}
         >
-          <StatusTitle>{playing ? "Workout Open" : "Start Workout"}</StatusTitle>
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-gxj-orange">
-            <Play className="size-5 fill-current" aria-hidden="true" />
+          <span className="gxj-display-title text-2xl uppercase leading-none sm:text-3xl">
+            {playing ? "Workout Open" : "Start Workout"}
+          </span>
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-gxj-orange">
+            <Play className="size-4 fill-current" aria-hidden="true" />
           </span>
         </button>
       ) : (
