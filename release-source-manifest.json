@@ -1211,7 +1211,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "7b3c0304939bee88a2bac3708dc6ccfb10c8ae727bcf14eecb0024b1bb2639b4"
+      "sha256": "6720ebe79e18929fe4c9ec8db3b56a5654a725771de49929f24f9a6bf68872d6"
     },
     {
       "path": "src/router.tsx",
@@ -1372,6 +1372,10 @@
     {
       "path": "src/routes/review.$screen.tsx",
       "sha256": "f0191bb4f9dc912887444cc474f3e2f8a9117787c48c2b77196209fb11dfe877"
+    },
+    {
+      "path": "src/routes/review.accelerator-workout-day-9.tsx",
+      "sha256": "80816784a03acc82af6099ba6ca0dce26cdd1526153294c4cfcccaf8bec411f5"
     },
     {
       "path": "src/routes/review.index.tsx",
