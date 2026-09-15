@@ -56,6 +56,16 @@ export const reviewScreens: ReviewScreen[] = [
     variant: "default",
   },
   {
+    slug: "before-you-start-ineligible",
+    title: "Before You Start",
+    route: "/assessment/start",
+    state: "Not eligible",
+    group: "Entry and setup",
+    shell: "focused",
+    kind: "eligibility",
+    variant: "ineligible",
+  },
+  {
     slug: "assessment-step-1",
     title: "Assessment - Step 1",
     route: "/assessment",
