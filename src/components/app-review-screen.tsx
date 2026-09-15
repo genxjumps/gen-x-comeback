@@ -1367,6 +1367,7 @@ function ProgressReview({ variant }: { variant: string }) {
         kicker="Your Progress"
         title="Progress Couldn't Be Loaded"
         description="Your saved work hasn't been changed."
+        titleSize="compact"
       >
         <Action>Try Again</Action>
       </Page>
@@ -1380,6 +1381,7 @@ function ProgressReview({ variant }: { variant: string }) {
           ? "Complete your first day or add a measurement to begin."
           : "Program completion and measurements stay together here."
       }
+      titleSize="compact"
     >
       <Section title="Current program">
         <div className="flex items-end justify-between">
@@ -1394,7 +1396,7 @@ function ProgressReview({ variant }: { variant: string }) {
         </div>
         <div className="mt-4 h-2 overflow-hidden rounded-full bg-foreground/10">
           <div
-            className="h-full bg-gxj-orange"
+            className="h-full bg-gxj-aqua"
             style={{ width: variant === "empty" ? "0%" : "32%" }}
           />
         </div>
