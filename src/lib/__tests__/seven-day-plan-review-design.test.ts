@@ -29,5 +29,9 @@ describe("7-Day plan review design", () => {
     expect(reviewSource).toContain(
       'stateLabel = finished ? "Complete" : current ? "Today" : "Upcoming"',
     );
+    expect(reviewSource).not.toContain(
+      '<span className="block text-xs font-bold uppercase tracking-[0.12em] text-foreground/55">\n' +
+        "                    Day {day}",
+    );
   });
 });

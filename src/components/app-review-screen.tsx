@@ -568,10 +568,7 @@ function PlanReview({ complete }: { complete: boolean }) {
                   {`0${day}`}
                 </span>
                 <span>
-                  <span className="block text-xs font-bold uppercase tracking-[0.12em] text-foreground/55">
-                    Day {day}
-                  </span>
-                  <span className="gxj-display-title mt-1 block text-lg uppercase leading-tight tracking-wide sm:text-xl">
+                  <span className="gxj-display-title block text-lg uppercase leading-tight tracking-wide sm:text-xl">
                     {title}
                   </span>
                 </span>
