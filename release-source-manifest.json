@@ -331,7 +331,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-intake-flow.test.ts",
-      "sha256": "0d372c1b24c24f0ab534dbff4898a477ca46dd52f8f1f068b8f546f1012d7e3e"
+      "sha256": "5e8ad17f8277971a4b05725ab21de594cd3491baa1e823674244ceab09c58997"
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
@@ -1391,7 +1391,7 @@
     },
     {
       "path": "src/routes/welcome.tsx",
-      "sha256": "ac3a4e6ac67cec58246ac3c3183ecd05035162d1ead7603909c8002abddcbb2f"
+      "sha256": "46e4dd64fbec228f7011db555c03a650115a176e5dbc4237963e1ed7a926d6e9"
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",
