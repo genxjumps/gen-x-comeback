@@ -72,16 +72,24 @@ function Page({
   title,
   description,
   titleSize,
+  contentGap,
   children,
 }: {
   kicker: string;
   title: string;
   description: string;
   titleSize?: "default" | "compact";
+  contentGap?: "default" | "tight";
   children: ReactNode;
 }) {
   return (
-    <PlatformPage kicker={kicker} title={title} description={description} titleSize={titleSize}>
+    <PlatformPage
+      kicker={kicker}
+      title={title}
+      description={description}
+      titleSize={titleSize}
+      contentGap={contentGap}
+    >
       {children}
     </PlatformPage>
   );
@@ -182,7 +190,7 @@ function HomeReview({ variant }: { variant: string }) {
           </a>
         </div>
 
-        <section className="mx-auto mt-5 max-w-3xl" aria-labelledby="fitness-hub">
+        <section className="mx-auto mt-8 max-w-3xl" aria-labelledby="fitness-hub">
           <h2
             id="fitness-hub"
             className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
@@ -571,6 +579,7 @@ function WorkoutReview({ variant }: { variant: string }) {
       kicker={`Day ${day} of 7`}
       title={recovery ? "Full Rest" : day === 2 ? "Easy Movement" : "Jump + Strength"}
       titleSize="compact"
+      contentGap="tight"
       description={
         recovery
           ? "Recovery is part of the plan. Take the day off and let your body absorb the work."
