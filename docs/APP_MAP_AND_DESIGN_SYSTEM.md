@@ -82,6 +82,11 @@ funnel.
 | Purchases and Billing | `/account/purchases`     | Show purchases and refund access                            | Participant utility |
 | Access recovery       | `/recover` and `/return` | Restore password-free access                                | Recovery            |
 
+For an active Nutrition profile, the page gives a direct instruction: **These are the numbers to
+follow each day. Hit your calorie and protein targets consistently to lose fat and protect
+muscle.** Do not weaken this with optional or pass-or-fail framing. Setup retains its own
+setup-specific explanation until targets exist.
+
 ### 5. Internal and review-only screens
 
 These don't belong in the customer information architecture or visual navigation:
