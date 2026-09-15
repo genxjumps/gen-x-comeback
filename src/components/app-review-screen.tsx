@@ -1242,7 +1242,7 @@ function AcceleratorReview({ variant }: { variant: string }) {
             </div>
             <div className="overflow-hidden bg-background">
               <img
-                src="/workout-covers/accelerator-day-09.png"
+                src="/workout-covers/accelerator-day-09.webp"
                 alt=""
                 className="h-full w-full object-cover object-[70%_center] transition-transform duration-300 group-hover:scale-[1.02]"
               />
