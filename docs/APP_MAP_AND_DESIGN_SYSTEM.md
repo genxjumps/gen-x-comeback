@@ -87,6 +87,11 @@ follow each day. Hit your calorie and protein targets consistently to lose fat a
 muscle.** Do not weaken this with optional or pass-or-fail framing. Setup retains its own
 setup-specific explanation until targets exist.
 
+The active Nutrition page uses the compact **Your Nutrition** page heading with no kicker above it.
+**Daily Targets** begins the content below the description. Do not stack **Nutrition**, **Your Daily
+Targets**, and **Daily Targets** as three labels for the same information. This active-state rule
+does not pre-approve the separate setup, locked, review, or unavailable treatments.
+
 ### 5. Internal and review-only screens
 
 These don't belong in the customer information architecture or visual navigation:
