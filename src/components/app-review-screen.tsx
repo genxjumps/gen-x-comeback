@@ -948,7 +948,7 @@ function ProgramsReview({ variant }: { variant: string }) {
       ? [
           {
             status: "AVAILABLE",
-            title: "28-Day Fat Loss Accelerator",
+            title: "Fat Loss Accelerator",
             detail: "Ready when you want more structure",
             action: "Explore the Accelerator",
             program: "accelerator",
@@ -964,7 +964,7 @@ function ProgramsReview({ variant }: { variant: string }) {
                   : variant === "complete"
                     ? "COMPLETED"
                     : "NOT STARTED",
-            title: "28-Day Fat Loss Accelerator",
+            title: "Fat Loss Accelerator",
             detail:
               variant === "not-started"
                 ? "Owned for life. Start when you're ready."
@@ -985,7 +985,7 @@ function ProgramsReview({ variant }: { variant: string }) {
           },
           {
             status: variant === "complete" ? "COMPLETED" : "ACTIVE",
-            title: "7-Day Comeback Plan",
+            title: "Comeback Plan",
             detail: variant === "complete" ? "Completed September 7, 2026" : "Day 3 of 7",
             action: "Open My Plan",
             program: "seven-day",

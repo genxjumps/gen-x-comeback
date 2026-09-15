@@ -169,6 +169,10 @@ describe("app review catalog", () => {
     expect(programsReviewSource).toContain("bg-foreground text-background");
     expect(programsReviewSource).toContain('accelerator ? "28" : "7"');
     expect(programsReviewSource).toContain("Day");
+    expect(programsReviewSource).toContain('title: "Fat Loss Accelerator"');
+    expect(programsReviewSource).toContain('title: "Comeback Plan"');
+    expect(programsReviewSource).not.toContain('title: "28-Day Fat Loss Accelerator"');
+    expect(programsReviewSource).not.toContain('title: "7-Day Comeback Plan"');
     expect(programsReviewSource).not.toContain("bg-gxj-aqua-soft");
     expect(programsReviewSource).not.toContain("shadow-[4px_4px_0_var(--color-gxj-aqua)]");
     expect(programsReviewSource).not.toContain("gxj-orange");
