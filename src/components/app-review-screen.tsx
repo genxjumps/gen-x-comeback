@@ -535,7 +535,7 @@ function WorkoutOverview({ easyMovement = false }: { easyMovement?: boolean }) {
       ];
 
   return (
-    <section className="border-t-2 border-foreground pb-7 pt-5" aria-labelledby="workout-overview">
+    <section className="border-t-2 border-foreground pb-7 pt-8" aria-labelledby="workout-overview">
       <h2
         id="workout-overview"
         className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
