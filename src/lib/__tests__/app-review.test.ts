@@ -191,9 +191,13 @@ describe("app review catalog", () => {
     expect(acceleratorReviewSource).toContain("Jump Rope + Bodyweight");
     expect(acceleratorReviewSource).toContain("Your 28-Day Schedule");
     expect(acceleratorReviewSource).toContain("bg-gxj-aqua");
-    expect(acceleratorReviewSource).toContain("gxj-accelerator-workout-art");
-    expect(acceleratorReviewSource).toContain("gxj-accelerator-workout-letter");
-    expect(acceleratorReviewSource).toContain("gxj-accelerator-workout-name");
+    expect(acceleratorReviewSource).toContain(
+      "grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]",
+    );
+    expect(acceleratorReviewSource).toContain("Day 9 of 28");
+    expect(acceleratorReviewSource).toContain(">\n                09\n              </span>");
+    expect(acceleratorReviewSource).toContain("<ArrowRight");
+    expect(acceleratorReviewSource).not.toContain("gxj-accelerator-workout-art");
     expect(acceleratorReviewSource).not.toContain("radial-gradient(circle_at_center");
     expect(acceleratorReviewSource).not.toContain("Before You Start");
     expect(acceleratorReviewSource).not.toContain("Dumbbells");
