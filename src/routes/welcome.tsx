@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { Mail } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { getLeadIntakeWelcome } from "@/lib/lead-intake.functions";
 import type { LeadIntakeWelcomeResult } from "@/lib/lead-intake.functions";
@@ -100,17 +102,38 @@ function LeadWelcome() {
 
   if (result.state !== "setup")
     return (
-      <div className="mx-auto w-full max-w-xl px-5 py-12">
-        <h1 className="gxj-display-title text-3xl">Check Your Email</h1>
-        <p className="mt-4">
-          Use your secure welcome link to continue with your saved plan. Your progress stays saved.
-        </p>
-        <p className="mt-3 text-sm text-muted-foreground">
-          If it hasn't arrived, check spam or request another link.
-        </p>
-        <Button asChild className="mt-6">
-          <a href="https://genxjumps.com/start-here/#seven-day-optin">Request Another Link</a>
-        </Button>
+      <div className="gxj-page mx-auto min-h-[calc(100svh-9rem)] w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+        <header className="py-6 sm:py-8">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="relative mx-auto mb-7 h-16 w-20" aria-hidden="true">
+              <Mail
+                className="absolute inset-0 size-16 translate-x-2 translate-y-2 text-gxj-orange"
+                strokeWidth={2.2}
+              />
+              <Mail className="absolute inset-0 size-16 text-foreground" strokeWidth={2.2} />
+            </div>
+            <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+              Check Your Email
+            </h1>
+            <p className="mx-auto mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+              Use your secure welcome link to continue with your saved plan. Your progress stays
+              saved.
+            </p>
+            <p className="mt-3 text-sm font-medium text-muted-foreground">
+              If it hasn't arrived, check spam or request another link.
+            </p>
+          </div>
+        </header>
+
+        <div className="mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center">
+          <Button
+            asChild
+            size="lg"
+            className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+          >
+            <a href="https://genxjumps.com/start-here/#seven-day-optin">Request Another Link</a>
+          </Button>
+        </div>
       </div>
     );
 
