@@ -404,7 +404,7 @@ function Progress() {
           </div>
           {currentProgressPercent !== null ? (
             <p
-              className={`gxj-display-title text-4xl sm:text-5xl ${
+              className={`gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl ${
                 currentProgram.accent === "aqua" ? "text-gxj-aqua" : "text-gxj-orange"
               }`}
               aria-hidden="true"
