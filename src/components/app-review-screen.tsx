@@ -1232,8 +1232,13 @@ function AcceleratorReview({ variant }: { variant: string }) {
           Today&rsquo;s Workout
         </h2>
         <div className="mt-5 overflow-hidden border border-foreground/70 bg-foreground text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]">
-          <div className="relative flex aspect-video flex-col justify-center overflow-hidden px-6 py-8 sm:px-8">
-            <div className="absolute inset-y-0 right-0 w-2/5 bg-[radial-gradient(circle_at_center,color-mix(in_oklch,var(--color-gxj-aqua)_68%,transparent)_0_2px,transparent_2.5px)] bg-[length:12px_12px] opacity-45" />
+          <div className="gxj-accelerator-workout-art relative flex aspect-video flex-col justify-center overflow-hidden px-6 py-8 sm:px-8">
+            <span
+              aria-hidden="true"
+              className="gxj-accelerator-workout-letter gxj-display-title absolute -bottom-[18%] -right-[3%] text-[13rem] leading-none sm:text-[18rem]"
+            >
+              B
+            </span>
             <div className="relative max-w-[75%]">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-background/65">
                 Day 9 of 28

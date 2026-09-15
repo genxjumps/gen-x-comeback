@@ -228,6 +228,58 @@
   );
 }
 
+.gxj-accelerator-workout-art {
+  isolation: isolate;
+}
+
+.gxj-accelerator-workout-art::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(104deg, transparent 0 62%, var(--color-gxj-aqua) 62.5% 67%, transparent 67.5%),
+    repeating-linear-gradient(
+      168deg,
+      transparent 0 13px,
+      oklch(1 0 0 / 9%) 14px 15px,
+      transparent 16px 31px
+    ),
+    radial-gradient(ellipse at 14% 22%, oklch(1 0 0 / 18%) 0 0.7px, transparent 1.8px),
+    radial-gradient(ellipse at 72% 71%, oklch(1 0 0 / 15%) 0 0.9px, transparent 2px);
+  background-size:
+    auto,
+    auto,
+    9px 13px,
+    15px 11px;
+  content: "";
+  opacity: 0.72;
+  transform: scale(1.04) rotate(-0.4deg);
+}
+
+.gxj-accelerator-workout-art::after {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(91deg, transparent 0 34%, oklch(0 0 0 / 34%) 52%, transparent 76%),
+    repeating-linear-gradient(
+      7deg,
+      transparent 0 29px,
+      oklch(1 0 0 / 7%) 30px 31px,
+      transparent 32px 57px
+    );
+  content: "";
+  mix-blend-mode: screen;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.gxj-accelerator-workout-letter {
+  color: transparent;
+  opacity: 0.5;
+  transform: rotate(-5deg);
+  -webkit-text-stroke: 5px var(--color-gxj-aqua);
+}
+
 .gxj-display-title {
   font-family: "Anton", sans-serif;
   font-weight: 400;
