@@ -50,7 +50,7 @@ function Action({ children, outline = false }: { children: ReactNode; outline?: 
       type="button"
       variant={outline ? "outline" : "default"}
       size="lg"
-      className="min-h-13 w-full px-5 text-base sm:w-auto"
+      className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
     >
       {children}
     </Button>
