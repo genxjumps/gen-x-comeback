@@ -195,8 +195,8 @@ describe("app review catalog", () => {
       "grid-cols-[minmax(0,1fr)_5.5rem] sm:grid-cols-[minmax(0,1fr)_10rem]",
     );
     expect(acceleratorReviewSource).toContain("Day 9 of 28");
-    expect(acceleratorReviewSource).toContain(">\n                09\n              </span>");
-    expect(acceleratorReviewSource).toContain("gxj-accelerator-number-art");
+    expect(acceleratorReviewSource).toContain("/workout-covers/accelerator-day-09.png");
+    expect(acceleratorReviewSource).toContain("object-[70%_center]");
     expect(acceleratorReviewSource).toContain("Open Today&rsquo;s Workout");
     expect(acceleratorReviewSource).toContain("<ArrowRight");
     expect(acceleratorReviewSource).not.toContain("gxj-accelerator-workout-art");

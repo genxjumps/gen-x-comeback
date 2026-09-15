@@ -1240,13 +1240,12 @@ function AcceleratorReview({ variant }: { variant: string }) {
                 Workout B - EMOM
               </h3>
             </div>
-            <div
-              aria-hidden="true"
-              className="gxj-accelerator-number-art relative flex items-center justify-center overflow-hidden bg-background text-foreground"
-            >
-              <span className="gxj-display-title relative z-10 translate-x-1 text-[5.5rem] leading-none tracking-[-0.09em] sm:text-[9rem]">
-                09
-              </span>
+            <div className="overflow-hidden bg-background">
+              <img
+                src="/workout-covers/accelerator-day-09.png"
+                alt=""
+                className="h-full w-full object-cover object-[70%_center] transition-transform duration-300 group-hover:scale-[1.02]"
+              />
             </div>
           </div>
           <button

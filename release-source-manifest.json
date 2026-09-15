@@ -62,6 +62,10 @@
       "sha256": "345bc9c8edeed0ae70929aeb6917f8d8d6a995407bcf3b2a6928f490986c5195"
     },
     {
+      "path": "public/workout-covers/accelerator-day-09.png",
+      "sha256": "104e457b2fc60ea5a9e7c431d1f8ecf21cab3b259be94dd9702fe67090737e20"
+    },
+    {
       "path": "public/workout-covers/day-01.webp",
       "sha256": "3fe5e6ef774c5c1f4610c356c57ab626342c33957196e8a90e961d8cfe23b945"
     },
@@ -175,7 +179,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "f97b73f11badd2a86b99bddc5265f35a190eb637f81627f343e98e3e5ed1aa60"
+      "sha256": "4662c7c61286e885ea666e50fae1a15f93911db01c0756507e91bd94790b223f"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -307,7 +311,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "eda1f35a17c2a1b9bf7fc2fa6fc337d8d9be4f9b3b6e73af9ace4225f629a663"
+      "sha256": "ce165ffde44df3518a21f07ccf2c0a33bc5926a065da5f50563101051632c619"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -1411,7 +1415,7 @@
     },
     {
       "path": "src/styles.css",
-      "sha256": "e93b028275a50ea7ecdd8f00a3e3b31104e25e0b222419da896c970259b1e774"
+      "sha256": "522ac22226b2eb70ee24e9362e7220a791664aa2700eebdfb24975c2c0740e8f"
     },
     {
       "path": "supabase/accelerator-refunds.acceptance.sql",
