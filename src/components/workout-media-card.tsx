@@ -69,7 +69,7 @@ export function WorkoutMediaCard({
               <p className="gxj-display-title text-[clamp(0.5rem,1.7vw,0.75rem)] uppercase tracking-[0.18em]">
                 {dayLabel ?? `Day ${dayNumber} / Workout`}
               </p>
-              <h2 className="gxj-display-title mt-[3%] text-[clamp(1.45rem,5.8vw,3.25rem)] leading-[0.94] uppercase tracking-[-0.02em]">
+              <h2 className="gxj-display-title mt-[3%] text-[clamp(1.9rem,7vw,3.5rem)] leading-[0.94] uppercase tracking-[-0.02em]">
                 {coverTitleFirstLine}
                 {coverTitleSecondLine ? (
                   <>
