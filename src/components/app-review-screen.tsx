@@ -680,12 +680,6 @@ function WelcomeReview({ variant }: { variant: string }) {
 }
 
 function PlanReadyReview() {
-  const steps = [
-    { number: 1, label: "Access saved", state: "complete" },
-    { number: 2, label: "Quick setup", state: "complete" },
-    { number: 3, label: "Plan ready", state: "current" },
-  ] as const;
-
   return (
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
       <header className="py-6 sm:py-8">
@@ -703,35 +697,16 @@ function PlanReadyReview() {
         </div>
       </header>
 
-      <ol className="grid max-w-3xl grid-cols-3 gap-2" aria-label="Plan setup progress">
-        {steps.map((item) => (
-          <li
-            key={item.label}
-            aria-current={item.state === "current" ? "step" : undefined}
-            className={`flex min-h-24 flex-col justify-between gap-4 p-3 sm:min-h-28 sm:p-4 ${
-              item.state === "complete"
-                ? "bg-foreground text-background"
-                : "bg-gxj-orange text-white shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
-            }`}
-          >
-            <span className="gxj-display-title text-2xl leading-none tracking-wide sm:text-3xl">
-              {String(item.number).padStart(2, "0")}
-            </span>
-            <span className="text-xs font-bold uppercase leading-tight tracking-[0.08em] sm:text-sm">
-              {item.label}
-            </span>
-          </li>
-        ))}
-      </ol>
-
-      <div className="mt-7 max-w-3xl border-t border-foreground/20 pt-5">
+      <div className="max-w-2xl">
         <Button
           type="button"
           size="lg"
-          className="gxj-display-title min-h-14 w-full bg-foreground px-6 text-xl uppercase leading-none tracking-wide text-background hover:bg-foreground/90 sm:w-auto"
+          className="gxj-display-title min-h-20 w-full justify-between gap-5 bg-foreground px-5 text-left text-2xl uppercase leading-none tracking-wide text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)] hover:bg-foreground/90 sm:px-7 sm:text-3xl"
         >
-          <Download aria-hidden="true" className="size-5 text-gxj-orange" strokeWidth={2.5} />
           Add to My Home Screen
+          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-background text-gxj-orange sm:size-12">
+            <Download aria-hidden="true" className="size-5" strokeWidth={2.5} />
+          </span>
         </Button>
         <p className="mt-3 text-sm font-medium text-muted-foreground">No app store required.</p>
         <button
