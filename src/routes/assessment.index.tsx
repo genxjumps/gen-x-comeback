@@ -289,19 +289,27 @@ function Assessment() {
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
       <header className="gxj-page-header py-6 sm:py-8">
         <div className="w-full max-w-2xl">
-          <div className="flex items-center gap-3">
-            <p className="gxj-kicker shrink-0 text-xs font-bold uppercase tracking-[0.16em]">
-              Step {step} of 3
-            </p>
-            <div
-              className="h-1.5 max-w-64 flex-1 overflow-hidden rounded-full bg-foreground/12"
-              aria-hidden="true"
-            >
-              <span
-                className="block h-full bg-gxj-orange transition-[width] duration-200"
-                style={{ width: `${(step / 3) * 100}%` }}
-              />
-            </div>
+          <div className="grid max-w-md grid-cols-3 gap-2" aria-label={`Step ${step} of 3`}>
+            {[1, 2, 3].map((segment) => {
+              const state = segment < step ? "complete" : segment === step ? "current" : "upcoming";
+              return (
+                <div
+                  key={segment}
+                  aria-current={state === "current" ? "step" : undefined}
+                  className={`flex min-h-11 items-center px-3 ${
+                    state === "complete"
+                      ? "bg-foreground text-background"
+                      : state === "current"
+                        ? "bg-gxj-orange text-white shadow-[2px_2px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
+                        : "border-2 border-foreground/20 text-foreground/35"
+                  }`}
+                >
+                  <span className="gxj-display-title text-xl leading-none tracking-wide">
+                    {String(segment).padStart(2, "0")}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
           <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
