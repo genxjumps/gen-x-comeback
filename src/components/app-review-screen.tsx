@@ -71,15 +71,17 @@ function Page({
   kicker,
   title,
   description,
+  titleSize,
   children,
 }: {
   kicker: string;
   title: string;
   description: string;
+  titleSize?: "default" | "compact";
   children: ReactNode;
 }) {
   return (
-    <PlatformPage kicker={kicker} title={title} description={description}>
+    <PlatformPage kicker={kicker} title={title} description={description} titleSize={titleSize}>
       {children}
     </PlatformPage>
   );
@@ -568,6 +570,7 @@ function WorkoutReview({ variant }: { variant: string }) {
     <Page
       kicker={`Day ${day} of 7`}
       title={recovery ? "Full Rest" : day === 2 ? "Easy Movement" : "Jump + Strength"}
+      titleSize="compact"
       description={
         recovery
           ? "Recovery is part of the plan. Take the day off and let your body absorb the work."
