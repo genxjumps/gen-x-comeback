@@ -188,7 +188,7 @@ function HomeReview({ variant }: { variant: string }) {
             id="fitness-hub"
             className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl"
           >
-            Your Fitness Hub
+            Your Gen X Jumps Fitness Hub
           </h2>
           <div className="mt-3 divide-y divide-foreground/15 border-t-2 border-foreground">
             {rows.map(({ title, line, icon: Icon, href }) => (
