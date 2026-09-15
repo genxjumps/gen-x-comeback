@@ -184,10 +184,7 @@ function HomeReview({ variant }: { variant: string }) {
         </div>
 
         <section className="mx-auto mt-5 max-w-3xl" aria-labelledby="fitness-hub">
-          <h2
-            id="fitness-hub"
-            className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl"
-          >
+          <h2 id="fitness-hub" className="gxj-display-title text-2xl uppercase tracking-wide">
             Your Gen X Jumps Fitness Hub
           </h2>
           <div className="mt-3 divide-y divide-foreground/15 border-t-2 border-foreground">
