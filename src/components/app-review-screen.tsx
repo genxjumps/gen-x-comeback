@@ -1014,11 +1014,18 @@ function ProgramsReview({ variant }: { variant: string }) {
                 <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-6">
                   <span
                     aria-hidden="true"
-                    className={`gxj-display-title grid aspect-square place-items-center text-4xl leading-none sm:text-5xl ${
+                    className={`grid aspect-square place-items-center ${
                       accelerator ? "bg-gxj-aqua text-foreground" : "bg-foreground text-background"
                     }`}
                   >
-                    {accelerator ? "28" : "07"}
+                    <span className="flex flex-col items-center leading-none">
+                      <span className="gxj-display-title text-4xl sm:text-5xl">
+                        {accelerator ? "28" : "7"}
+                      </span>
+                      <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em]">
+                        Day
+                      </span>
+                    </span>
                   </span>
                   <div>
                     <p
