@@ -74,11 +74,11 @@ function AcceleratorCheckoutSuccess() {
   return (
     <div className="mx-auto w-full max-w-5xl px-5 py-10 sm:py-14">
       <PlatformPage
-        kicker="28-Day Fat Loss Accelerator"
-        title={status === "complete" ? "You Own It" : "Confirming Your Purchase"}
+        kicker={status === "complete" ? "You Own It" : "28-Day Fat Loss Accelerator"}
+        title={status === "complete" ? "Your New Program Is Ready" : "Confirming Your Purchase"}
         description={
           status === "complete"
-            ? "Your Accelerator is now in Programs. Day 1 has not started."
+            ? "You can find your 28-Day Fat Loss Accelerator under My Programs."
             : status === "error"
               ? "We could not finish opening your test purchase in this browser. No program was started."
               : "We’re checking your payment and account access."
@@ -92,9 +92,9 @@ function AcceleratorCheckoutSuccess() {
               <div className="grid size-11 place-items-center rounded-full bg-muted">
                 <Check className="size-5" />
               </div>
+              <p className="mt-4 font-bold">No email check needed</p>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Start when you’re ready. Your 7-Day plan stays saved, and your nutrition tools are
-                unlocked.
+                Set it up now or come back when you’re ready.
               </p>
               <div className="mt-5 flex flex-col gap-2 sm:flex-row">
                 <Button asChild className="w-full sm:w-auto">
