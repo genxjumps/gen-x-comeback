@@ -566,6 +566,26 @@ accent keeps the Accelerator visually distinct.
 - Preserve all existing Accelerator assignment, unlock, recovery, completion, pause, and progress
   behavior. This is a presentation contract only.
 
+### 28-Day Accelerator setup visual contract
+
+The real `/my-programs/accelerator/setup` screen reuses the same open setup treatment established
+by the approved assessment and Nutrition intake instead of introducing another card-based layout.
+
+- Use the compact app-page title scale, the full **28-Day Fat Loss Accelerator** product name, 16px
+  Barlow instructional copy, and the shared page width and spacing rhythm.
+- Keep the orientation and Starting Measurements as open sections separated by two-pixel dividers.
+  The video or pending-video field and the measurement inputs receive boundaries because they need
+  containment; the sections do not receive outer cards.
+- Starting weight and waist remain independently optional. Do not introduce a start-date choice or
+  another required setup step. The program begins only when the customer selects **Begin Day 1**.
+- Repeat-run measurement choices use the shared 56px control height. Errors and the existing
+  program-pause warning use a restrained left rule rather than a rounded alert card.
+- The review state mirrors the real first-run setup, including the orientation, written guidance,
+  optional inputs, units, and **Begin Day 1** action. It must not invent behavior that isn't present
+  on the live route.
+- Preserve entitlement validation, current-measurement loading, repeat-run choices, optional
+  measurement saving, program switching, start behavior, and failure handling.
+
 ### Approved 28-Day Accelerator workout-page visual contract
 
 The real Accelerator day renderer uses the same focused workout hierarchy as the 7-Day pages for
