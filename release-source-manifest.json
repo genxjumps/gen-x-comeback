@@ -155,7 +155,7 @@
     },
     {
       "path": "src/components/accelerator-offer-page.tsx",
-      "sha256": "57aa1544f9a5fe46ef966755fa226c8bc158370f35f6a2781da4d345a98d4365"
+      "sha256": "c4caf353357eb9a3f867fe9bdb538b5aab9e06b1a022aaf9d29c532deede9014"
     },
     {
       "path": "src/components/accelerator-program-preview.tsx",
@@ -319,7 +319,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "9317c679fad6d2a0e4dad631cc290381333b9d7334e25ba73c8d2bbcd22b3214"
+      "sha256": "cb090acfe955072a3788267eb9c69cd9c31aebd417e1e639e3a019d0e565b9a0"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
