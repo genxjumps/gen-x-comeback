@@ -90,7 +90,8 @@ The pre-setup Nutrition entry uses the approved sparse Magic Access screen struc
 existing Nutrition kicker, headline, and concise explanation in a narrow reading width. Follow them
 with one dominant **Set Up My Starting Targets** action and one restrained underlined link to the
 public Nutrition basics page. Do not add an explainer card, repeat the header copy, or restate the
-same ideas as a bullet list.
+same ideas as a bullet list. The headline uses the shared compact app-page scale: 30 px on mobile
+and 36 px at the wider breakpoint. Do not use the oversized landing-page title scale here.
 
 For an active Nutrition profile, the page gives a direct instruction: **These are the numbers to
 follow each day. Hit your calorie and protein targets consistently to lose fat and protect
