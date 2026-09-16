@@ -338,7 +338,7 @@ function LandingReview() {
           </div>
         </div>
 
-        <div className="border-2 border-foreground bg-background shadow-[6px_6px_0_var(--color-foreground)]">
+        <div>
           <div className="flex items-center justify-between border-b-2 border-foreground bg-foreground px-5 py-4 text-background">
             <p className="gxj-display-title text-xl uppercase tracking-wide">
               Your Week at a Glance
