@@ -88,16 +88,19 @@ muscle.** Do not weaken this with optional or pass-or-fail framing. Setup retain
 setup-specific explanation until targets exist.
 
 The active Nutrition page uses the compact **Your Nutrition** page heading with no kicker above it.
-**Starting Targets** begins the content below the description. Do not stack **Nutrition**, **Your
-Daily Targets**, and **Daily Targets** as three labels for the same information. The public active
-Nutrition review route mirrors the full active page, including target editing, the normal-day meal
+**Starting Targets** is the direct Anton section heading below the description. The sentence **These
+are your numbers for the whole day.** is supporting copy, not a second display heading or orange
+eyebrow. Do not stack **Nutrition**, **Your Daily Targets**, and **Daily Targets** as three labels for
+the same information. The public active Nutrition review route mirrors the full active page,
+including target editing, the normal-day meal
 split, meal-building guidance, recovery guidance, and the nutrition education link. It must not
 replace the real page with a short summary. Active Nutrition content sits directly on the cream
 page with strong and light dividers. Do not surround its targets, meal split, coaching sections,
 normal-day examples, or recovery guidance with dashboard cards. Keep containment only where the
 content needs it: target-review status, compact disclosures and controls, and the approved secondary
-**Learn the basics** card. This active-state rule does not pre-approve the separate setup, locked,
-review, or unavailable treatments.
+**Learn the basics** card. Starting Targets has no outer top border; its single bottom divider leads
+into the next section. This active-state rule does not pre-approve the separate setup, locked, review,
+or unavailable treatments.
 
 Active Nutrition uses the shared app typography hierarchy. Major section headings use uppercase
 Anton at the established section-heading scale. The four Starting Targets use the same bordered
