@@ -51,21 +51,19 @@ describe("pre-launch intake gate", () => {
   });
 
   it("keeps recovery available to existing participants", () => {
-    expect(closed).toContain('<Link to="/recover">Recover My Plan</Link>');
+    expect(closed).toContain('<Link to="/recover">Get My Access Link</Link>');
   });
 
-  it("uses the approved public offer treatment while intake is closed", () => {
-    expect(closed).toContain("Prove You&rsquo;re Not Done Yet");
-    expect(closed).toContain("text-5xl");
-    expect(closed).toContain("sm:text-7xl");
-    expect(closed).toContain("Opening Soon");
-    expect(closed).toContain("isn&rsquo;t available to new participants yet.");
-    expect(closed).toContain("Built for a real comeback");
-    expect(closed).toContain("Short workouts");
-    expect(closed).toContain("Simple food targets");
-    expect(closed).toContain("Options for your joints");
+  it("uses the approved simple access-page treatment while intake is closed", () => {
+    expect(closed).toContain("Plan Access");
+    expect(closed).toContain("Pick Up Where You Left Off");
+    expect(closed).toContain("text-3xl");
+    expect(closed).toContain("sm:text-4xl");
+    expect(closed).toContain("text-base font-medium leading-relaxed");
     expect(closed).toContain("min-h-14");
-    expect(closed).toContain('variant="outline"');
+    expect(closed).toContain("No password needed.");
+    expect(closed).not.toContain("Opening Soon");
+    expect(closed).not.toContain("Built for a real comeback");
     expect(closed).not.toContain("rounded-lg border border-border bg-card");
     expect(closed).not.toContain('to="/">Back to Start</Link>');
     expect(root).toContain("gxj-platform-shell flex min-h-screen");
