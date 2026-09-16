@@ -1649,7 +1649,9 @@ function NutritionReview({ variant }: { variant: string }) {
         <Section>
           <Status>Target Review</Status>
           <h2 className="gxj-display-title mt-4 text-3xl uppercase">Your Weight Changed</h2>
-          <p className="mt-2">Review the proposed update before anything changes.</p>
+          <p className="mt-2 text-base leading-relaxed">
+            Review the proposed update before anything changes.
+          </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
             <p>
               <strong>Calories</strong>

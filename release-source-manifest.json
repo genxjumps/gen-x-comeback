@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "e087d6ffcf3a488379d82b4ce20e91bdbe1213506e101aab5c2c5cc0004d5b49"
+      "sha256": "3e9ad4d66a86b7fa556be4d0e8cfbb014186f78d6cce9bd4967a9192b03af32f"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -315,7 +315,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "983b12953b1744f1121a6340b77a99b554cac91f95374ffebd6bcfb427bd523f"
+      "sha256": "9d58499134b65fd12b6f343b701b54d2602f1ba5b0eac383d35226a5d70faab8"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -1347,7 +1347,7 @@
     },
     {
       "path": "src/routes/nutrition.tsx",
-      "sha256": "9aa2a518929a6aa946c62e6a3cb0be45d91297d216ae50c5fecfdf52eab34eed"
+      "sha256": "e07cff35fd53b343c8d1589015dc4f09a037adcde2567360852f4ea4f5c24cd3"
     },
     {
       "path": "src/routes/plan-ready.tsx",

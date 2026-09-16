@@ -361,6 +361,9 @@ describe("app review catalog", () => {
       'kicker={profile && !editing ? undefined : setupActive ? undefined : "Nutrition"}',
     );
     expect(nutritionRouteSource).toContain('titleSize="compact"');
+    for (const source of [nutritionReviewSource, nutritionRouteSource]) {
+      expect(source).toContain('className="mt-2 text-base leading-relaxed"');
+    }
   });
 
   it("exposes the real pre-setup Nutrition entry state for review", () => {
