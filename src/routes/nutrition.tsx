@@ -748,7 +748,7 @@ function NutritionResults({
                 <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
                   {mealLabels[allocation.occasion]}
                 </h3>
-                <p className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                <p className="gxj-display-title translate-y-1 text-xl uppercase tracking-wide sm:text-2xl">
                   {allocation.percentage}%
                 </p>
               </div>
