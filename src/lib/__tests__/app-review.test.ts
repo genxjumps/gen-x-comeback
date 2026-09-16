@@ -303,6 +303,16 @@ describe("app review catalog", () => {
       expect(source.match(/text-base leading-relaxed/g)?.length).toBeGreaterThanOrEqual(6);
       expect(source).not.toContain("text-base leading-relaxed text-foreground/80");
       expect(source).toContain("space-y-2 text-base leading-relaxed");
+      expect(source).toContain(
+        '<p className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">',
+      );
+      expect(source).toContain("mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4");
+      expect(source).toContain(
+        "gxj-display-title text-xl uppercase leading-none tracking-wide sm:text-2xl",
+      );
+      expect(source).toContain(
+        "mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground",
+      );
       expect(source).not.toContain("mt-3 text-sm leading-relaxed text-muted-foreground");
       expect(source).not.toContain(
         '<section className="rounded-lg border border-border bg-card p-5 sm:p-6">',
@@ -310,6 +320,12 @@ describe("app review catalog", () => {
       expect(source).not.toContain("border-y-2 border-foreground py-6 sm:py-8");
       expect(source).not.toContain('className="rounded-md border border-border bg-background p-4"');
     }
+    expect(activeNutritionReviewSource).not.toContain(
+      '<p className="text-sm font-semibold">{percentage}</p>',
+    );
+    expect(nutritionResultsSource).not.toContain(
+      '<p className="text-sm font-semibold">{allocation.percentage}%</p>',
+    );
     for (const source of [activeNutritionReviewSource, nutritionRouteSource]) {
       expect(source).toContain(
         "grid grid-cols-2 border-l border-t border-foreground/25 sm:grid-cols-4",
