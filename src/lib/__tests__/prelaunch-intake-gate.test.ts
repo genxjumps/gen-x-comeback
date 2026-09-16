@@ -10,6 +10,7 @@ function source(relativePath: string): string {
 
 const leadFunctions = source("../lead.functions.ts");
 const handoffRoute = source("../../routes/intake.7-day.ts");
+const root = source("../../routes/__root.tsx");
 const home = source("../../routes/index.tsx");
 const signup = source("../../routes/start.7-day.tsx");
 const start = source("../../routes/assessment.start.tsx");
@@ -53,11 +54,22 @@ describe("pre-launch intake gate", () => {
     expect(closed).toContain('<Link to="/recover">Recover My Plan</Link>');
   });
 
-  it("uses the approved open access-screen treatment", () => {
-    expect(closed).toContain("text-base font-medium leading-relaxed");
+  it("uses the approved public offer treatment while intake is closed", () => {
+    expect(closed).toContain("Prove You&rsquo;re Not Done Yet");
+    expect(closed).toContain("text-5xl");
+    expect(closed).toContain("sm:text-7xl");
+    expect(closed).toContain("Opening Soon");
+    expect(closed).toContain("isn&rsquo;t available to new participants yet.");
+    expect(closed).toContain("Built for a real comeback");
+    expect(closed).toContain("Short workouts");
+    expect(closed).toContain("Simple food targets");
+    expect(closed).toContain("Options for your joints");
     expect(closed).toContain("min-h-14");
+    expect(closed).toContain('variant="outline"');
     expect(closed).not.toContain("rounded-lg border border-border bg-card");
     expect(closed).not.toContain('to="/">Back to Start</Link>');
+    expect(root).toContain("gxj-platform-shell flex min-h-screen");
+    expect(root).toContain("gxj-app-surface flex-1");
   });
 
   it("lets a valid controlled-test handoff finish while direct intake stays closed", () => {

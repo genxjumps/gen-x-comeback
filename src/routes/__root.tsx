@@ -190,7 +190,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AccountSessionSync />
       <AuthSessionBootstrap />
-      <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <div className="gxj-platform-shell flex min-h-screen flex-col bg-background text-foreground">
         <header className="border-b border-border">
           <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-5 py-4">
             {inAssessment || inOnboarding ? (
@@ -211,7 +211,7 @@ function RootComponent() {
           </div>
         </header>
 
-        <main className="flex-1">
+        <main className="gxj-app-surface flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>

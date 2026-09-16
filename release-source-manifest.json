@@ -199,7 +199,7 @@
     },
     {
       "path": "src/components/intake-closed.tsx",
-      "sha256": "f0137306ba5182a8f358988782740027d6c310e8e5aab96bb319ac835605aa0b"
+      "sha256": "0e31c42970b82fffaed3bb18fbeecd5620821c06c99a112d49db381c5a044ac7"
     },
     {
       "path": "src/components/plan-access.tsx",
@@ -363,7 +363,7 @@
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
-      "sha256": "695f3fe9a87e076637f4b3de2a819db019e7c2abbbada0f616cece9db8bd3995"
+      "sha256": "c949574b2554350605f0c228824ebb6fed29700432c346f17097732f7ee5de7a"
     },
     {
       "path": "src/lib/__tests__/pwa-install-contract.test.ts",
@@ -1243,7 +1243,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "0c3622770bfb857c17d6dc82dc868973e88c994c364534f9479f8a902f3590c6"
+      "sha256": "4af333afd82946d7b41b27a44ae8418d15b600146699942a24dd454b8ac6e6d0"
     },
     {
       "path": "src/routes/accelerator.tsx",
