@@ -523,7 +523,6 @@ function LandingReview() {
   );
 }
 
-
 function EligibilityReview({ ineligible = false }: { ineligible?: boolean }) {
   if (ineligible) {
     return (
