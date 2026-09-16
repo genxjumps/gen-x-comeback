@@ -748,7 +748,9 @@ function NutritionResults({
                 <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
                   {mealLabels[allocation.occasion]}
                 </h3>
-                <p className="text-sm font-semibold">{allocation.percentage}%</p>
+                <p className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                  {allocation.percentage}%
+                </p>
               </div>
               {!oneMeal && adjusting ? (
                 <div className="mt-3">
@@ -771,11 +773,22 @@ function NutritionResults({
                   </div>
                 </div>
               ) : null}
-              <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
-                <span>{allocation.targets.calories.toLocaleString()} cal</span>
-                <span>{allocation.targets.proteinGrams} g protein</span>
-                <span>{allocation.targets.carbohydrateGrams} g carbs</span>
-                <span>{allocation.targets.fatGrams} g fat</span>
+              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4">
+                {[
+                  { label: "Calories", value: allocation.targets.calories.toLocaleString() },
+                  { label: "Protein", value: `${allocation.targets.proteinGrams} g` },
+                  { label: "Carbs", value: `${allocation.targets.carbohydrateGrams} g` },
+                  { label: "Fat", value: `${allocation.targets.fatGrams} g` },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <p className="gxj-display-title text-xl uppercase leading-none tracking-wide sm:text-2xl">
+                      {value}
+                    </p>
+                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                      {label}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
