@@ -223,6 +223,24 @@ Public and focused routes use the same `gxj-platform-shell` and `gxj-app-surface
 treatment as their review states. This keeps the real entry experience and the review catalog from
 silently drifting into different visual systems.
 
+### Public entry when intake is open
+
+The root landing page is the public conversion page for the free 7-Day Comeback Plan. Its job is to
+make the offer clear, show the participant what they receive, and move a new visitor into the short
+assessment. Use a deliberate public-page composition rather than stretching an app utility screen:
+
+- The hero uses **Start Where You Are. Know What to Do Next.**, a concise personalized-plan
+  explanation, one **Build My Free 7-Day Plan** action, and the free/two-minute/no-password
+  reassurance.
+- A bordered week-at-a-glance preview shows recognizable app output: guided workouts, recovery, and
+  a personalized protein target. This is grouped product information, so the boundary is functional.
+- The next two open sections explain what the participant gets and the three steps from questions to
+  Day 1. Use dividers and direct hierarchy rather than generic feature cards.
+- The final black action strip repeats the plan-building action and the line **You need the right next
+  step.**
+- Public landing content may use the dedicated hero scale. Supporting sections continue to use the
+  established compact app typography.
+
 ## Global component inventory
 
 ### Navigation and page frame
