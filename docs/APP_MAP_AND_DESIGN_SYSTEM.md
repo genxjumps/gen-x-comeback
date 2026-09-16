@@ -212,12 +212,12 @@ navigation.
 
 ### Public entry while intake is closed
 
-The closed-intake root page is still the public offer page, not a recovery utility or an internal
-project-status notice. Preserve the approved free-offer hero, description, benefit treatment, and
-public landing-page scale. Replace the unavailable signup action with a clear **Opening Soon**
-status, while keeping recovery in a separate secondary section for returning participants. Do not
-restore the old boxed access screen, make recovery the primary page action, or show implementation
-language about finishing the app.
+When new-plan intake is closed, the app root is a simple access screen rather than a sales page or
+project-status notice. Use the approved compact status-page hierarchy: **Plan Access**, **Pick Up
+Where You Left Off**, one sentence explaining the secure access link, and one **Get My Access Link**
+action. Do not show an opening-soon announcement, sales benefits, an outer card, or implementation
+language about finishing the app. The public website carries the sales message; the closed app root
+helps existing participants get back into what they own.
 
 Public and focused routes use the same `gxj-platform-shell` and `gxj-app-surface` background
 treatment as their review states. This keeps the real entry experience and the review catalog from
