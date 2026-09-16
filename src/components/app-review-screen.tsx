@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { AcceleratorOfferPage } from "@/components/accelerator-offer-page";
 import { PlatformPage } from "@/components/platform-page";
 import { ReviewShell } from "@/components/review-shell";
 import { SetupProgress } from "@/components/setup-progress";
@@ -1060,37 +1061,7 @@ function ProgramsReview({ variant }: { variant: string }) {
 }
 
 function OfferReview() {
-  return (
-    <Page
-      kicker="Your Next Program"
-      title="28-Day Fat Loss Accelerator"
-      description="Four weeks of jump rope, dumbbell strength, simple nutrition targets, and visible progress."
-    >
-      <Section title="What You Get">
-        <ul className="space-y-3">
-          {[
-            "A clear workout for every program day",
-            "Jump rope and dumbbell options",
-            "Personal calorie and protein targets",
-            "Progress and measurement tracking",
-            "Lifetime access to the program",
-          ].map((x) => (
-            <li key={x} className="flex gap-3 font-medium">
-              <Check className="size-5 shrink-0" />
-              {x}
-            </li>
-          ))}
-        </ul>
-      </Section>
-      <Section>
-        <p className="gxj-display-title text-5xl">$47</p>
-        <p className="mt-1 text-sm text-muted-foreground">One payment. No subscription.</p>
-        <div className="mt-6">
-          <Action>Get the 28-Day Accelerator</Action>
-        </div>
-      </Section>
-    </Page>
-  );
+  return <AcceleratorOfferPage actionLabel="Get the Accelerator" />;
 }
 
 function CheckoutReview({ pending }: { pending: boolean }) {
