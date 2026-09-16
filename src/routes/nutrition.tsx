@@ -1168,7 +1168,7 @@ function Nutrition() {
             ? "Build starting targets, see how they fit across your normal day, and repeat meals that work."
             : "Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
       }
-      titleSize={(profile && !editing) || setupActive ? "compact" : undefined}
+      titleSize="compact"
     >
       {!profile || editing ? (
         !profile && !setupStarted ? (
