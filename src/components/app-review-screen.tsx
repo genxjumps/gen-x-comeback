@@ -1577,20 +1577,56 @@ function NutritionReview({ variant }: { variant: string }) {
           </p>
           <div className="mt-5 divide-y divide-foreground/15 border-y border-foreground/15">
             {[
-              ["Breakfast", "25%", "525 cal", "44 g protein", "53 g carbs", "16 g fat"],
-              ["Lunch", "25%", "525 cal", "44 g protein", "53 g carbs", "16 g fat"],
-              ["Dinner", "50%", "1,050 cal", "87 g protein", "104 g carbs", "30 g fat"],
-            ].map(([meal, percentage, ...targets]) => (
+              {
+                meal: "Breakfast",
+                percentage: "25%",
+                targets: [
+                  { label: "Calories", value: "525" },
+                  { label: "Protein", value: "44 g" },
+                  { label: "Carbs", value: "53 g" },
+                  { label: "Fat", value: "16 g" },
+                ],
+              },
+              {
+                meal: "Lunch",
+                percentage: "25%",
+                targets: [
+                  { label: "Calories", value: "525" },
+                  { label: "Protein", value: "44 g" },
+                  { label: "Carbs", value: "53 g" },
+                  { label: "Fat", value: "16 g" },
+                ],
+              },
+              {
+                meal: "Dinner",
+                percentage: "50%",
+                targets: [
+                  { label: "Calories", value: "1,050" },
+                  { label: "Protein", value: "87 g" },
+                  { label: "Carbs", value: "104 g" },
+                  { label: "Fat", value: "30 g" },
+                ],
+              },
+            ].map(({ meal, percentage, targets }) => (
               <div key={meal} className="py-4">
                 <div className="flex items-baseline justify-between gap-3">
                   <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
                     {meal}
                   </h3>
-                  <p className="text-sm font-semibold">{percentage}</p>
+                  <p className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                    {percentage}
+                  </p>
                 </div>
-                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
-                  {targets.map((target) => (
-                    <span key={target}>{target}</span>
+                <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4">
+                  {targets.map(({ label, value }) => (
+                    <div key={label}>
+                      <p className="gxj-display-title text-xl uppercase leading-none tracking-wide sm:text-2xl">
+                        {value}
+                      </p>
+                      <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                        {label}
+                      </p>
+                    </div>
                   ))}
                 </div>
               </div>
