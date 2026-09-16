@@ -1606,11 +1606,13 @@ function NutritionReview({ variant }: { variant: string }) {
         description="Nutrition guidance unlocks with an eligible paid program."
       >
         <Section>
-          <ShieldCheck className="size-8" />
-          <h2 className="gxj-display-title mt-4 text-3xl uppercase">Not Unlocked</h2>
-          <p className="mt-2 text-muted-foreground">
-            Included with the 28-Day Fat Loss Accelerator.
-          </p>
+          <div className="text-center">
+            <ShieldCheck className="mx-auto size-8" />
+            <h2 className="gxj-display-title mt-4 text-3xl uppercase">Not Unlocked</h2>
+            <p className="mt-2 text-muted-foreground">
+              Included with the 28-Day Fat Loss Accelerator.
+            </p>
+          </div>
         </Section>
         <Action>Explore the Accelerator</Action>
       </Page>
