@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "3e9ad4d66a86b7fa556be4d0e8cfbb014186f78d6cce9bd4967a9192b03af32f"
+      "sha256": "5d945949c97e8afa4f96bf0161fd0f6a304daaca7552b6487ddcbd2cecfba1cb"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -315,7 +315,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "9d58499134b65fd12b6f343b701b54d2602f1ba5b0eac383d35226a5d70faab8"
+      "sha256": "c13340bcc631efd2589a826e877f7758c57e8f5f4e56ecc27e47df5225607526"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -1127,7 +1127,7 @@
     },
     {
       "path": "src/lib/nutrition/__tests__/nutrition-contract.test.ts",
-      "sha256": "795d0d0172f6576f63858633a1367f4dcc648d804d2ca0572a035f06ec55bb0f"
+      "sha256": "05da395be475645652e8db69243669fa0ff8d103c2b39d51c426dd820a8b131c"
     },
     {
       "path": "src/lib/nutrition/__tests__/target-review.test.ts",
@@ -1347,7 +1347,7 @@
     },
     {
       "path": "src/routes/nutrition.tsx",
-      "sha256": "e07cff35fd53b343c8d1589015dc4f09a037adcde2567360852f4ea4f5c24cd3"
+      "sha256": "0b5d9c83234c5a27d91136e262289b6e3cb9533b17537e2554708167054973ff"
     },
     {
       "path": "src/routes/plan-ready.tsx",
