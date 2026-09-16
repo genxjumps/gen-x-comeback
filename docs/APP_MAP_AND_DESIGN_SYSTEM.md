@@ -87,6 +87,26 @@ follow each day. Hit your calorie and protein targets consistently to lose fat a
 muscle.** Do not weaken this with optional or pass-or-fail framing. Setup retains its own
 setup-specific explanation until targets exist.
 
+The Nutrition intake uses the approved three-step assessment system rather than a stack of rounded
+question cards:
+
+- Step 1 collects the fitness goal and weight direction.
+- Step 2 collects starting numbers, typical daily activity, and current training.
+- Step 3 collects eating occasions and the biggest meal, then calculates and saves the targets.
+- Use the shared numbered progress segments above the compact page title: completed steps are black,
+  the current step is orange with the restrained offset shadow, and upcoming steps are ghosted and
+  outlined.
+- Questions and supporting copy sit directly on the cream page between two-pixel dividers. Only
+  answer choices, numeric inputs, and unit selectors receive interaction boundaries. Do not put an
+  outer card around a question or step.
+- Reuse the assessment choice treatment: one column on mobile, two columns for short answers at wider
+  sizes, orange and mint selected states, and the small offset shadow.
+- Reuse the 56 px uppercase Anton Back, Continue, and final calculation actions. Keep the saved-answer
+  reassurance below the actions and preserve all existing intake fields, validation, calculation,
+  save, edit, and target-review behavior.
+- The review hub exposes all three fixed setup steps so the real responsive form can be checked
+  without an account or saved profile.
+
 The active Nutrition page uses the compact **Your Nutrition** page heading with no kicker above it.
 **Starting Targets** is the direct Anton section heading below the description. The sentence **These
 are your numbers for the whole day.** is supporting copy, not a second display heading or orange
@@ -99,8 +119,8 @@ page with strong and light dividers. Do not surround its targets, meal split, co
 normal-day examples, or recovery guidance with dashboard cards. Keep containment only where the
 content needs it: target-review status, compact disclosures and controls, and the approved secondary
 **Learn the basics** card. Starting Targets has no outer top border; its single bottom divider leads
-into the next section. This active-state rule does not pre-approve the separate setup, locked, review,
-or unavailable treatments.
+into the next section. The setup treatment is governed separately above. These rules do not
+pre-approve the locked, target-review, or unavailable treatments.
 
 Active Nutrition uses the shared app typography hierarchy. Major section headings use uppercase
 Anton at the established section-heading scale. The four Starting Targets use the same bordered

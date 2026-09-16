@@ -2,6 +2,7 @@ import { ACCESS_TOKEN_STORAGE_KEY } from "@/lib/lead-plan";
 import { ASSESSMENT_STORAGE_KEY } from "@/lib/plan";
 import { ELIGIBILITY_STORAGE_KEY } from "@/lib/signup-draft";
 import { LEAD_INTAKE_STORAGE_KEY } from "@/lib/lead-intake-draft";
+import { NUTRITION_DRAFT_STORAGE_KEY } from "@/lib/nutrition/draft";
 
 export const LOGOUT_EVENT_KEY = "gxj_logout_event_v1";
 const PRIVATE_LOCAL_KEYS = [
@@ -24,6 +25,7 @@ export function clearBrowserAccountData(): void {
   }
   try {
     window.sessionStorage.removeItem(LEAD_INTAKE_STORAGE_KEY);
+    window.sessionStorage.removeItem(NUTRITION_DRAFT_STORAGE_KEY);
   } catch {
     failed = true;
   }
@@ -44,6 +46,7 @@ export function watchLogoutEvents(clearCache: () => void): () => void {
   const discard = () => {
     try {
       window.sessionStorage.removeItem(LEAD_INTAKE_STORAGE_KEY);
+      window.sessionStorage.removeItem(NUTRITION_DRAFT_STORAGE_KEY);
       window.sessionStorage.setItem("gxj_seen_logout_v1", logoutEvent() ?? "");
     } catch {
       // Always discard the private in-memory page, including when storage is blocked.
@@ -53,7 +56,10 @@ export function watchLogoutEvents(clearCache: () => void): () => void {
   };
   try {
     const previous = window.sessionStorage.getItem("gxj_seen_logout_v1");
-    if (initial && previous !== initial) window.sessionStorage.removeItem(LEAD_INTAKE_STORAGE_KEY);
+    if (initial && previous !== initial) {
+      window.sessionStorage.removeItem(LEAD_INTAKE_STORAGE_KEY);
+      window.sessionStorage.removeItem(NUTRITION_DRAFT_STORAGE_KEY);
+    }
     window.sessionStorage.setItem("gxj_seen_logout_v1", initial ?? "");
   } catch {
     // The Account action itself reports storage failures. Keep navigation usable.

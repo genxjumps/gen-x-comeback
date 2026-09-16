@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ExternalLink, Info, RotateCcw } from "lucide-react";
 
 import { PlatformPage } from "@/components/platform-page";
+import { SetupProgress } from "@/components/setup-progress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,11 +23,16 @@ import {
   recommendedMealPercentages,
   redistributeMealPercentages,
 } from "@/lib/nutrition/calculator";
+import {
+  clearNutritionDraft,
+  readNutritionDraft,
+  writeNutritionDraft,
+  type NutritionDraftForm,
+} from "@/lib/nutrition/draft";
 import { getNutritionProfile, saveNutritionProfile } from "@/lib/nutrition/functions";
 import { nutritionIntakeSchema } from "@/lib/nutrition/schemas";
 import { buildNutritionTargetReview } from "@/lib/nutrition/target-review";
 import type {
-  BiggestMeal,
   FitnessGoal,
   MealOccasion,
   MealPercentages,
@@ -80,23 +86,9 @@ const mealLabels: Record<MealOccasion, string> = {
   extras: "Snacks, shakes, or dessert",
 };
 
-type FormState = {
-  fitnessGoal: FitnessGoal | "";
-  weightDirection: WeightDirection | "";
-  weightUnit: "lb" | "kg";
-  currentWeight: string;
-  goalWeight: string;
-  heightUnit: "imperial" | "metric";
-  heightFeet: string;
-  heightInches: string;
-  heightCentimeters: string;
-  age: string;
-  sex: "male" | "female" | "";
-  movement: MovementLevel | "";
-  training: TrainingType | "";
-  mealOccasions: MealOccasion[];
-  biggestMeal: BiggestMeal;
-};
+type FormState = NutritionDraftForm;
+
+type NutritionSetupStep = 1 | 2 | 3;
 
 const emptyForm: FormState = {
   fitnessGoal: "",
@@ -132,15 +124,25 @@ function ChoiceGroup<T extends string>({
   onChange: (value: T) => void;
 }) {
   return (
-    <RadioGroup value={value} onValueChange={(next) => onChange(next as T)} className="gap-2">
+    <RadioGroup
+      value={value}
+      onValueChange={(next) => onChange(next as T)}
+      className={`gxj-assessment-options ${
+        options.some((option) => option.label.length >= 28) ? "gxj-assessment-options--stacked" : ""
+      }`}
+    >
       {options.map((option) => (
         <Label
           key={option.value}
           htmlFor={choiceId(name, option.value)}
-          className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
+          className="gxj-choice gxj-option-card cursor-pointer text-base font-semibold leading-snug"
         >
-          <RadioGroupItem id={choiceId(name, option.value)} value={option.value} />
-          <span>{option.label}</span>
+          <RadioGroupItem
+            id={choiceId(name, option.value)}
+            value={option.value}
+            className="size-5 shrink-0 border-2 border-foreground/35 text-gxj-orange data-[state=checked]:border-gxj-orange data-[state=checked]:text-gxj-orange [&_svg]:size-2.5"
+          />
+          <span className="gxj-assessment-choice-label">{option.label}</span>
         </Label>
       ))}
     </RadioGroup>
@@ -157,9 +159,9 @@ function FormSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-lg border border-border bg-card p-4 sm:p-5">
-      <h2 className="text-base font-semibold leading-snug">{title}</h2>
-      {hint ? <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{hint}</p> : null}
+    <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+      <h2 className="text-xl font-bold leading-snug sm:text-2xl">{title}</h2>
+      {hint ? <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{hint}</p> : null}
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -281,22 +283,26 @@ function NutritionWelcome({ onStart }: { onStart: () => void }) {
 
 function SetupForm({
   form,
+  step,
   saving,
   error,
   stopped,
   submitLabel,
   onChange,
+  onStepChange,
   onSubmit,
   onCancel,
 }: {
   form: FormState;
+  step: NutritionSetupStep;
   saving: boolean;
   error: string | null;
   stopped: boolean;
   submitLabel: string;
   onChange: (next: FormState) => void;
+  onStepChange: (step: NutritionSetupStep) => void;
   onSubmit: () => void;
-  onCancel?: () => void;
+  onCancel: () => void;
 }) {
   const selectedMainMeals = form.mealOccasions.filter((occasion) => occasion !== "extras");
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
@@ -316,264 +322,300 @@ function SetupForm({
   }
 
   return (
-    <div className="space-y-4">
-      <FormSection title="What is your current fitness goal?">
-        <ChoiceGroup
-          name="fitness-goal"
-          value={form.fitnessGoal}
-          options={fitnessGoalOptions}
-          onChange={(value) => set("fitnessGoal", value)}
-        />
-      </FormSection>
-
-      <FormSection title="What do you want your body weight to do?">
-        <ChoiceGroup
-          name="weight-direction"
-          value={form.weightDirection}
-          options={weightDirectionOptions}
-          onChange={(value) =>
-            onChange({
-              ...form,
-              weightDirection: value,
-              goalWeight: value === "maintain" ? "" : form.goalWeight,
-            })
-          }
-        />
-      </FormSection>
-
-      <FormSection title="Your starting numbers">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <Label htmlFor="nutrition-current-weight">Current weight</Label>
-            <div className="mt-2 grid grid-cols-[minmax(0,1fr)_5.5rem] gap-2">
-              <Input
-                id="nutrition-current-weight"
-                type="number"
-                min={form.weightUnit === "lb" ? 70 : 32}
-                max={form.weightUnit === "lb" ? 700 : 318}
-                step="0.1"
-                inputMode="decimal"
-                value={form.currentWeight}
-                onChange={(event) => set("currentWeight", event.target.value)}
-              />
-              <Select
-                value={form.weightUnit}
-                onValueChange={(value) => set("weightUnit", value as "lb" | "kg")}
-              >
-                <SelectTrigger aria-label="Weight unit">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="lb">lb</SelectItem>
-                  <SelectItem value="kg">kg</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {form.weightDirection && form.weightDirection !== "maintain" ? (
-            <div>
-              <Label htmlFor="nutrition-goal-weight">Goal weight</Label>
-              <div className="mt-2 grid grid-cols-[minmax(0,1fr)_5.5rem] gap-2">
-                <Input
-                  id="nutrition-goal-weight"
-                  type="number"
-                  min={form.weightUnit === "lb" ? 70 : 32}
-                  max={form.weightUnit === "lb" ? 700 : 318}
-                  step="0.1"
-                  inputMode="decimal"
-                  value={form.goalWeight}
-                  onChange={(event) => set("goalWeight", event.target.value)}
-                />
-                <div className="flex h-9 items-center rounded-md border border-input px-3 text-sm">
-                  {form.weightUnit}
-                </div>
-              </div>
-            </div>
-          ) : null}
-
-          <div>
-            <Label>Height</Label>
-            <Select
-              value={form.heightUnit}
-              onValueChange={(value) => set("heightUnit", value as "imperial" | "metric")}
-            >
-              <SelectTrigger className="mt-2" aria-label="Height unit">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="imperial">Feet and inches</SelectItem>
-                <SelectItem value="metric">Centimeters</SelectItem>
-              </SelectContent>
-            </Select>
-            {form.heightUnit === "imperial" ? (
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <div>
-                  <Label className="sr-only" htmlFor="nutrition-height-feet">
-                    Height in feet
-                  </Label>
-                  <Input
-                    id="nutrition-height-feet"
-                    type="number"
-                    min="4"
-                    max="7"
-                    step="1"
-                    inputMode="numeric"
-                    placeholder="Feet"
-                    value={form.heightFeet}
-                    onChange={(event) => set("heightFeet", event.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label className="sr-only" htmlFor="nutrition-height-inches">
-                    Height in inches
-                  </Label>
-                  <Input
-                    id="nutrition-height-inches"
-                    type="number"
-                    min="0"
-                    max="11"
-                    step="1"
-                    inputMode="numeric"
-                    placeholder="Inches"
-                    value={form.heightInches}
-                    onChange={(event) => set("heightInches", event.target.value)}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="mt-2">
-                <Label className="sr-only" htmlFor="nutrition-height-centimeters">
-                  Height in centimeters
-                </Label>
-                <Input
-                  id="nutrition-height-centimeters"
-                  type="number"
-                  min="122"
-                  max="213"
-                  step="0.1"
-                  inputMode="decimal"
-                  placeholder="Centimeters"
-                  value={form.heightCentimeters}
-                  onChange={(event) => set("heightCentimeters", event.target.value)}
-                />
-              </div>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="nutrition-age">Age</Label>
-            <Input
-              id="nutrition-age"
-              className="mt-2"
-              type="number"
-              min="18"
-              max="100"
-              step="1"
-              inputMode="numeric"
-              value={form.age}
-              onChange={(event) => set("age", event.target.value)}
-            />
-          </div>
-        </div>
-        <fieldset className="mt-5">
-          <legend className="text-sm font-medium">Sex used for the calorie calculation</legend>
-          <div className="mt-2">
+    <div>
+      {step === 1 ? (
+        <>
+          <FormSection title="What is your current fitness goal?">
             <ChoiceGroup
-              name="sex"
-              value={form.sex}
-              options={[
-                { label: "Male", value: "male" as const },
-                { label: "Female", value: "female" as const },
-              ]}
-              onChange={(value) => set("sex", value)}
+              name="fitness-goal"
+              value={form.fitnessGoal}
+              options={fitnessGoalOptions}
+              onChange={(value) => set("fitnessGoal", value)}
             />
-          </div>
-        </fieldset>
-      </FormSection>
+          </FormSection>
 
-      <FormSection title="Outside of workouts, how active is your typical day?">
-        <ChoiceGroup
-          name="movement"
-          value={form.movement}
-          options={movementOptions}
-          onChange={(value) => set("movement", value)}
-        />
-      </FormSection>
-
-      <FormSection title="How are you training right now?">
-        <ChoiceGroup
-          name="training"
-          value={form.training}
-          options={trainingOptions}
-          onChange={(value) => set("training", value)}
-        />
-      </FormSection>
-
-      <FormSection
-        title="On a typical weekday, which of these eating occasions do you use?"
-        hint="Choose at least one. This shapes the meal-by-meal view, not your daily targets."
-      >
-        <div className="grid gap-2">
-          {(Object.keys(mealLabels) as MealOccasion[]).map((occasion) => (
-            <Label
-              key={occasion}
-              htmlFor={choiceId("meal", occasion)}
-              className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
-            >
-              <input
-                id={choiceId("meal", occasion)}
-                type="checkbox"
-                className="size-4 accent-gxj-teal"
-                checked={form.mealOccasions.includes(occasion)}
-                onChange={(event) => toggleMeal(occasion, event.target.checked)}
-              />
-              <span>{mealLabels[occasion]}</span>
-            </Label>
-          ))}
-        </div>
-      </FormSection>
-
-      {selectedMainMeals.length > 1 ? (
-        <FormSection title="Which meal tends to be your biggest?">
-          <ChoiceGroup
-            name="biggest-meal"
-            value={form.biggestMeal ?? ""}
-            options={[
-              ...selectedMainMeals.map((occasion) => ({
-                label: mealLabels[occasion],
-                value: occasion,
-              })),
-              { label: "They're about the same", value: "same" as const },
-            ]}
-            onChange={(value) => set("biggestMeal", value)}
-          />
-        </FormSection>
+          <FormSection title="What do you want your body weight to do?">
+            <ChoiceGroup
+              name="weight-direction"
+              value={form.weightDirection}
+              options={weightDirectionOptions}
+              onChange={(value) =>
+                onChange({
+                  ...form,
+                  weightDirection: value,
+                  goalWeight: value === "maintain" ? "" : form.goalWeight,
+                })
+              }
+            />
+          </FormSection>
+        </>
       ) : null}
 
-      <div aria-live="polite">
-        {stopped ? (
-          <p className="rounded-md border border-border bg-muted/50 p-4 text-sm font-medium">
-            These inputs need an individualized nutrition target. Work with a registered dietitian
-            instead of using this calculator.
-          </p>
-        ) : error ? (
-          <p className="rounded-md border border-border bg-muted/50 p-4 text-sm font-medium">
-            {error}
-          </p>
-        ) : null}
-      </div>
+      {step === 2 ? (
+        <>
+          <FormSection title="Your starting numbers">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="nutrition-current-weight">Current weight</Label>
+                <div className="mt-2 grid grid-cols-[minmax(0,1fr)_5.5rem] gap-2">
+                  <Input
+                    id="nutrition-current-weight"
+                    className="min-h-14"
+                    type="number"
+                    min={form.weightUnit === "lb" ? 70 : 32}
+                    max={form.weightUnit === "lb" ? 700 : 318}
+                    step="0.1"
+                    inputMode="decimal"
+                    value={form.currentWeight}
+                    onChange={(event) => set("currentWeight", event.target.value)}
+                  />
+                  <Select
+                    value={form.weightUnit}
+                    onValueChange={(value) => set("weightUnit", value as "lb" | "kg")}
+                  >
+                    <SelectTrigger className="min-h-14" aria-label="Weight unit">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="lb">lb</SelectItem>
+                      <SelectItem value="kg">kg</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-        {onCancel ? (
-          <Button type="button" variant="outline" disabled={saving} onClick={onCancel}>
-            Cancel
-          </Button>
-        ) : null}
-        <Button type="button" size="lg" disabled={saving} onClick={onSubmit}>
-          {saving ? "Saving..." : submitLabel}
+              {form.weightDirection && form.weightDirection !== "maintain" ? (
+                <div>
+                  <Label htmlFor="nutrition-goal-weight">Goal weight</Label>
+                  <div className="mt-2 grid grid-cols-[minmax(0,1fr)_5.5rem] gap-2">
+                    <Input
+                      id="nutrition-goal-weight"
+                      className="min-h-14"
+                      type="number"
+                      min={form.weightUnit === "lb" ? 70 : 32}
+                      max={form.weightUnit === "lb" ? 700 : 318}
+                      step="0.1"
+                      inputMode="decimal"
+                      value={form.goalWeight}
+                      onChange={(event) => set("goalWeight", event.target.value)}
+                    />
+                    <div className="flex min-h-14 items-center rounded-md border border-input px-3 text-sm">
+                      {form.weightUnit}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              <div>
+                <Label>Height</Label>
+                <Select
+                  value={form.heightUnit}
+                  onValueChange={(value) => set("heightUnit", value as "imperial" | "metric")}
+                >
+                  <SelectTrigger className="mt-2 min-h-14" aria-label="Height unit">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="imperial">Feet and inches</SelectItem>
+                    <SelectItem value="metric">Centimeters</SelectItem>
+                  </SelectContent>
+                </Select>
+                {form.heightUnit === "imperial" ? (
+                  <div className="mt-2 grid grid-cols-2 gap-2">
+                    <div>
+                      <Label className="sr-only" htmlFor="nutrition-height-feet">
+                        Height in feet
+                      </Label>
+                      <Input
+                        id="nutrition-height-feet"
+                        className="min-h-14"
+                        type="number"
+                        min="4"
+                        max="7"
+                        step="1"
+                        inputMode="numeric"
+                        placeholder="Feet"
+                        value={form.heightFeet}
+                        onChange={(event) => set("heightFeet", event.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label className="sr-only" htmlFor="nutrition-height-inches">
+                        Height in inches
+                      </Label>
+                      <Input
+                        id="nutrition-height-inches"
+                        className="min-h-14"
+                        type="number"
+                        min="0"
+                        max="11"
+                        step="1"
+                        inputMode="numeric"
+                        placeholder="Inches"
+                        value={form.heightInches}
+                        onChange={(event) => set("heightInches", event.target.value)}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-2">
+                    <Label className="sr-only" htmlFor="nutrition-height-centimeters">
+                      Height in centimeters
+                    </Label>
+                    <Input
+                      id="nutrition-height-centimeters"
+                      className="min-h-14"
+                      type="number"
+                      min="122"
+                      max="213"
+                      step="0.1"
+                      inputMode="decimal"
+                      placeholder="Centimeters"
+                      value={form.heightCentimeters}
+                      onChange={(event) => set("heightCentimeters", event.target.value)}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="nutrition-age">Age</Label>
+                <Input
+                  id="nutrition-age"
+                  className="mt-2 min-h-14"
+                  type="number"
+                  min="18"
+                  max="100"
+                  step="1"
+                  inputMode="numeric"
+                  value={form.age}
+                  onChange={(event) => set("age", event.target.value)}
+                />
+              </div>
+            </div>
+            <fieldset className="mt-5">
+              <legend className="text-sm font-medium">Sex used for the calorie calculation</legend>
+              <div className="mt-2">
+                <ChoiceGroup
+                  name="sex"
+                  value={form.sex}
+                  options={[
+                    { label: "Male", value: "male" as const },
+                    { label: "Female", value: "female" as const },
+                  ]}
+                  onChange={(value) => set("sex", value)}
+                />
+              </div>
+            </fieldset>
+          </FormSection>
+
+          <FormSection title="Outside of workouts, how active is your typical day?">
+            <ChoiceGroup
+              name="movement"
+              value={form.movement}
+              options={movementOptions}
+              onChange={(value) => set("movement", value)}
+            />
+          </FormSection>
+
+          <FormSection title="How are you training right now?">
+            <ChoiceGroup
+              name="training"
+              value={form.training}
+              options={trainingOptions}
+              onChange={(value) => set("training", value)}
+            />
+          </FormSection>
+        </>
+      ) : null}
+
+      {step === 3 ? (
+        <>
+          <FormSection
+            title="On a typical weekday, which of these eating occasions do you use?"
+            hint="Choose at least one. This shapes the meal-by-meal view, not your daily targets."
+          >
+            <div className="grid gap-3 sm:grid-cols-2">
+              {(Object.keys(mealLabels) as MealOccasion[]).map((occasion) => {
+                const selected = form.mealOccasions.includes(occasion);
+                return (
+                  <Label
+                    key={occasion}
+                    htmlFor={choiceId("meal", occasion)}
+                    className={`relative flex min-h-14 cursor-pointer items-center border-2 px-4 py-3 text-base font-semibold leading-snug transition-[background-color,border-color,box-shadow,transform] duration-150 ${
+                      selected
+                        ? "-translate-x-px -translate-y-px border-gxj-orange bg-gxj-mint shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]"
+                        : "border-foreground/25 bg-background"
+                    }`}
+                  >
+                    <input
+                      id={choiceId("meal", occasion)}
+                      type="checkbox"
+                      className="mr-3 size-5 shrink-0 accent-gxj-orange"
+                      checked={selected}
+                      onChange={(event) => toggleMeal(occasion, event.target.checked)}
+                    />
+                    <span>{mealLabels[occasion]}</span>
+                  </Label>
+                );
+              })}
+            </div>
+          </FormSection>
+
+          {selectedMainMeals.length > 1 ? (
+            <FormSection title="Which meal tends to be your biggest?">
+              <ChoiceGroup
+                name="biggest-meal"
+                value={form.biggestMeal ?? ""}
+                options={[
+                  ...selectedMainMeals.map((occasion) => ({
+                    label: mealLabels[occasion],
+                    value: occasion,
+                  })),
+                  { label: "They're about the same", value: "same" as const },
+                ]}
+                onChange={(value) => set("biggestMeal", value)}
+              />
+            </FormSection>
+          ) : null}
+
+          <div aria-live="polite">
+            {stopped ? (
+              <p className="border-l-4 border-gxj-orange py-2 pl-4 text-sm font-medium">
+                These inputs need an individualized nutrition target. Work with a registered
+                dietitian instead of using this calculator.
+              </p>
+            ) : error ? (
+              <p className="border-l-4 border-gxj-orange py-2 pl-4 text-sm font-medium">{error}</p>
+            ) : null}
+          </div>
+        </>
+      ) : null}
+
+      <div className="mt-1 flex flex-col-reverse gap-3 border-t border-foreground/20 pt-5 sm:flex-row sm:justify-between">
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+          disabled={saving}
+          onClick={() => (step === 1 ? onCancel() : onStepChange((step - 1) as NutritionSetupStep))}
+        >
+          Back
+        </Button>
+        <Button
+          type="button"
+          size="lg"
+          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+          disabled={saving}
+          onClick={() => (step === 3 ? onSubmit() : onStepChange((step + 1) as NutritionSetupStep))}
+        >
+          {step === 3 ? (saving ? "Saving..." : submitLabel) : "Continue"}
         </Button>
       </div>
+      <p className="mt-4 text-center text-sm font-medium text-muted-foreground">
+        Your answers are saved as you go.
+      </p>
     </div>
   );
 }
@@ -958,6 +1000,7 @@ function Nutrition() {
   const [mealPercentages, setMealPercentages] = useState<MealPercentages>({});
   const [editing, setEditing] = useState(false);
   const [setupStarted, setSetupStarted] = useState(false);
+  const [setupStep, setSetupStep] = useState<NutritionSetupStep>(1);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stopped, setStopped] = useState(false);
@@ -970,11 +1013,23 @@ function Nutrition() {
         if (!active) return;
         setResult(loaded);
         if (loaded.ok && loaded.access === "eligible") {
+          const draft = readNutritionDraft();
           if (loaded.profile) {
             setProfile(loaded.profile);
             setTargetReview(loaded.targetReview);
-            setForm(profileToForm(loaded.profile));
             setMealPercentages(loaded.profile.mealPercentages);
+            if (draft?.editing) {
+              setForm(draft.form);
+              setSetupStep(draft.step);
+              setEditing(true);
+            } else {
+              if (draft) clearNutritionDraft();
+              setForm(profileToForm(loaded.profile));
+            }
+          } else if (draft) {
+            setForm(draft.form);
+            setSetupStep(draft.step);
+            setSetupStarted(true);
           } else if (loaded.savedWeight) {
             setForm((current) => ({
               ...current,
@@ -991,6 +1046,11 @@ function Nutrition() {
       active = false;
     };
   }, [loadNutrition]);
+
+  useEffect(() => {
+    if (!setupStarted && !editing) return;
+    writeNutritionDraft({ form, step: setupStep, editing });
+  }, [editing, form, setupStarted, setupStep]);
 
   async function calculateAndSave() {
     setError(null);
@@ -1037,6 +1097,9 @@ function Nutrition() {
       setForm(profileToForm(saved.profile));
       setMealPercentages(saved.profile.mealPercentages);
       setEditing(false);
+      setSetupStarted(false);
+      setSetupStep(1);
+      clearNutritionDraft();
       window.dispatchEvent(new CustomEvent("gxj:notifications-changed"));
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
@@ -1088,27 +1151,49 @@ function Nutrition() {
     );
   }
 
+  const setupActive = (!profile && setupStarted) || editing;
+
+  function changeSetupStep(nextStep: NutritionSetupStep) {
+    setSetupStep(nextStep);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   return (
     <PlatformPage
-      kicker={profile && !editing ? undefined : "Nutrition"}
+      headerPrefix={
+        setupActive ? (
+          <SetupProgress currentStep={setupStep} label="Nutrition setup progress" />
+        ) : undefined
+      }
+      kicker={profile && !editing ? undefined : setupActive ? undefined : "Nutrition"}
       title={
         profile && !editing
           ? "Your Nutrition"
-          : "Calories Matter. Protein First. Meals Stay Simple."
+          : setupActive
+            ? "Set Up Your Daily Targets"
+            : "Calories Matter. Protein First. Meals Stay Simple."
       }
       description={
         profile && !editing
           ? "These are the numbers to follow each day. Hit your calorie and protein targets consistently to lose fat and protect muscle."
-          : "Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
+          : setupActive
+            ? "Build starting targets, see how they fit across your normal day, and repeat meals that work."
+            : "Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
       }
-      titleSize={profile && !editing ? "compact" : undefined}
+      titleSize={(profile && !editing) || setupActive ? "compact" : undefined}
     >
       {!profile || editing ? (
         !profile && !setupStarted ? (
-          <NutritionWelcome onStart={() => setSetupStarted(true)} />
+          <NutritionWelcome
+            onStart={() => {
+              setSetupStep(1);
+              setSetupStarted(true);
+            }}
+          />
         ) : (
           <SetupForm
             form={form}
+            step={setupStep}
             saving={saving}
             error={error}
             stopped={stopped}
@@ -1118,17 +1203,20 @@ function Nutrition() {
               setError(null);
               setStopped(false);
             }}
+            onStepChange={changeSetupStep}
             onSubmit={() => void calculateAndSave()}
-            onCancel={
-              profile
-                ? () => {
-                    setForm(profileToForm(profile));
-                    setEditing(false);
-                    setError(null);
-                    setStopped(false);
-                  }
-                : undefined
-            }
+            onCancel={() => {
+              if (profile) {
+                setForm(profileToForm(profile));
+                setEditing(false);
+                clearNutritionDraft();
+              } else {
+                setSetupStarted(false);
+              }
+              setSetupStep(1);
+              setError(null);
+              setStopped(false);
+            }}
           />
         )
       ) : (
@@ -1139,6 +1227,8 @@ function Nutrition() {
           message={message}
           mealPercentages={mealPercentages}
           onEdit={() => {
+            clearNutritionDraft();
+            setSetupStep(1);
             setEditing(true);
             setError(null);
             setStopped(false);
@@ -1149,6 +1239,8 @@ function Nutrition() {
               Math.round((targetReview?.currentWeight ?? profile.intake.currentWeight) * 10) / 10,
             );
             setForm(next);
+            clearNutritionDraft();
+            setSetupStep(1);
             setEditing(true);
             setError(null);
             setStopped(false);

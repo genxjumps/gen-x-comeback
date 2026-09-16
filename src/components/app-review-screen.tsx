@@ -16,6 +16,7 @@ import type { ReactNode } from "react";
 
 import { PlatformPage } from "@/components/platform-page";
 import { ReviewShell } from "@/components/review-shell";
+import { SetupProgress } from "@/components/setup-progress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { WorkoutMediaCard } from "@/components/workout-media-card";
@@ -111,6 +112,7 @@ function AssessmentChoice({
 }
 
 function Page({
+  headerPrefix,
   kicker,
   title,
   description,
@@ -118,6 +120,7 @@ function Page({
   contentGap,
   children,
 }: {
+  headerPrefix?: ReactNode;
   kicker?: string;
   title: string;
   description?: string;
@@ -127,6 +130,7 @@ function Page({
 }) {
   return (
     <PlatformPage
+      headerPrefix={headerPrefix}
       kicker={kicker}
       title={title}
       description={description}
@@ -1436,6 +1440,153 @@ function ProgressReview({ variant }: { variant: string }) {
   );
 }
 
+function NutritionSetupSection({
+  title,
+  hint,
+  children,
+}: {
+  title: string;
+  hint?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+      <h2 className="text-xl font-bold leading-snug sm:text-2xl">{title}</h2>
+      {hint ? <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{hint}</p> : null}
+      <div className="mt-4">{children}</div>
+    </section>
+  );
+}
+
+function NutritionSetupReview({ step }: { step: 1 | 2 | 3 }) {
+  return (
+    <Page
+      headerPrefix={<SetupProgress currentStep={step} label="Nutrition setup progress" />}
+      title="Set Up Your Daily Targets"
+      description="Build starting targets, see how they fit across your normal day, and repeat meals that work."
+      titleSize="compact"
+    >
+      {step === 1 ? (
+        <>
+          <NutritionSetupSection title="What is your current fitness goal?">
+            <div className="grid gap-3">
+              <AssessmentChoice selected>Lose fat</AssessmentChoice>
+              <AssessmentChoice>Add lean muscle and lose fat</AssessmentChoice>
+              <AssessmentChoice>Add lean muscle</AssessmentChoice>
+              <AssessmentChoice>Maintain your results</AssessmentChoice>
+            </div>
+          </NutritionSetupSection>
+          <NutritionSetupSection title="What do you want your body weight to do?">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <AssessmentChoice selected>Lose weight</AssessmentChoice>
+              <AssessmentChoice>Maintain my current weight</AssessmentChoice>
+              <AssessmentChoice>Add weight slowly</AssessmentChoice>
+            </div>
+          </NutritionSetupSection>
+        </>
+      ) : null}
+
+      {step === 2 ? (
+        <>
+          <NutritionSetupSection title="Your starting numbers">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label className="font-bold">
+                Current weight
+                <div className="mt-2 grid grid-cols-[minmax(0,1fr)_5.5rem] gap-2">
+                  <Input className="min-h-14" value="175" readOnly />
+                  <div className="flex min-h-14 items-center border border-input px-3 text-sm">
+                    lb
+                  </div>
+                </div>
+              </label>
+              <label className="font-bold">
+                Goal weight
+                <div className="mt-2 grid grid-cols-[minmax(0,1fr)_5.5rem] gap-2">
+                  <Input className="min-h-14" value="165" readOnly />
+                  <div className="flex min-h-14 items-center border border-input px-3 text-sm">
+                    lb
+                  </div>
+                </div>
+              </label>
+              <label className="font-bold">
+                Height
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <Input className="min-h-14" value="6" readOnly />
+                  <Input className="min-h-14" value="1" readOnly />
+                </div>
+              </label>
+              <label className="font-bold">
+                Age
+                <Input className="mt-2 min-h-14" value="59" readOnly />
+              </label>
+            </div>
+            <fieldset className="mt-5">
+              <legend className="text-sm font-medium">Sex used for the calorie calculation</legend>
+              <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                <AssessmentChoice selected>Male</AssessmentChoice>
+                <AssessmentChoice>Female</AssessmentChoice>
+              </div>
+            </fieldset>
+          </NutritionSetupSection>
+          <NutritionSetupSection title="Outside of workouts, how active is your typical day?">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <AssessmentChoice selected>Mostly sitting</AssessmentChoice>
+              <AssessmentChoice>On my feet most of the day</AssessmentChoice>
+              <AssessmentChoice>Physically active work</AssessmentChoice>
+            </div>
+          </NutritionSetupSection>
+          <NutritionSetupSection title="How are you training right now?">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <AssessmentChoice>Jump rope or conditioning</AssessmentChoice>
+              <AssessmentChoice>Strength training</AssessmentChoice>
+              <AssessmentChoice selected>Both</AssessmentChoice>
+              <AssessmentChoice>Not training right now</AssessmentChoice>
+            </div>
+          </NutritionSetupSection>
+        </>
+      ) : null}
+
+      {step === 3 ? (
+        <>
+          <NutritionSetupSection
+            title="On a typical weekday, which of these eating occasions do you use?"
+            hint="Choose at least one. This shapes the meal-by-meal view, not your daily targets."
+          >
+            <div className="grid gap-3 sm:grid-cols-2">
+              <AssessmentChoice multiple selected>
+                Breakfast
+              </AssessmentChoice>
+              <AssessmentChoice multiple selected>
+                Lunch
+              </AssessmentChoice>
+              <AssessmentChoice multiple selected>
+                Dinner
+              </AssessmentChoice>
+              <AssessmentChoice multiple>Snacks, shakes, or dessert</AssessmentChoice>
+            </div>
+          </NutritionSetupSection>
+          <NutritionSetupSection title="Which meal tends to be your biggest?">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <AssessmentChoice>Breakfast</AssessmentChoice>
+              <AssessmentChoice>Lunch</AssessmentChoice>
+              <AssessmentChoice selected>Dinner</AssessmentChoice>
+              <AssessmentChoice>They&rsquo;re about the same</AssessmentChoice>
+            </div>
+          </NutritionSetupSection>
+        </>
+      ) : null}
+
+      <div className="mt-1 flex flex-col-reverse gap-3 border-t border-foreground/20 pt-5 sm:flex-row sm:justify-between">
+        <Action outline>Back</Action>
+        <Action>{step === 3 ? "Calculate My Targets" : "Continue"}</Action>
+      </div>
+      <p className="mt-4 text-center text-sm font-medium text-muted-foreground">
+        Your answers are saved as you go.
+      </p>
+    </Page>
+  );
+}
+
 function NutritionReview({ variant }: { variant: string }) {
   if (variant === "error")
     return (
@@ -1464,22 +1615,10 @@ function NutritionReview({ variant }: { variant: string }) {
         <Action>Explore the Accelerator</Action>
       </Page>
     );
-  if (variant === "setup")
-    return (
-      <Page
-        kicker="Your Nutrition"
-        title="Set Up Your Daily Targets"
-        description="Use your current weight to create a practical calorie and protein starting point."
-      >
-        <Section title="Current weight">
-          <div className="flex max-w-sm gap-3">
-            <Input className="min-h-12" value="175" readOnly />
-            <Button variant="outline">lb</Button>
-          </div>
-        </Section>
-        <Action>Build My Targets</Action>
-      </Page>
-    );
+  if (variant.startsWith("setup")) {
+    const step = variant === "setup-2" ? 2 : variant === "setup-3" ? 3 : 1;
+    return <NutritionSetupReview step={step} />;
+  }
   return (
     <Page
       title="Your Nutrition"
