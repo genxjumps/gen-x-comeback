@@ -296,15 +296,12 @@ describe("app review catalog", () => {
       expect(source).toContain(
         '<h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">',
       );
-      expect(source).toContain(
-        '<p className="mt-2 text-base font-medium leading-relaxed text-foreground/80">',
-      );
+      expect(source).toContain('<p className="mt-2 text-base font-medium leading-relaxed">');
       expect(source).toContain(
         "These are your numbers for the whole day. Every meal counts. All seven days count.",
       );
-      expect(
-        source.match(/text-base leading-relaxed text-foreground\/80/g)?.length,
-      ).toBeGreaterThanOrEqual(6);
+      expect(source.match(/text-base leading-relaxed/g)?.length).toBeGreaterThanOrEqual(6);
+      expect(source).not.toContain("text-base leading-relaxed text-foreground/80");
       expect(source).toContain("space-y-2 text-base leading-relaxed");
       expect(source).not.toContain("mt-3 text-sm leading-relaxed text-muted-foreground");
       expect(source).not.toContain(
