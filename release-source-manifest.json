@@ -183,7 +183,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "a1d67b2561a39f8252b44d61eacfef9c28b3f3e9c883c69308954be1996046ad"
+      "sha256": "5fbadd4277f387768071d9c8760e4c1d3e57eec0103ae264c76e642bbc506422"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -1343,7 +1343,7 @@
     },
     {
       "path": "src/routes/my-programs_.accelerator.setup.tsx",
-      "sha256": "ff80e1576dd8d71687cca9dac371a0922068c3a4f38b0fdabec49cd8f9c735c7"
+      "sha256": "b0607bdb6b9a4543137930a479ca9627338e4507eb62652228c8bccf351684d0"
     },
     {
       "path": "src/routes/notifications.tsx",
