@@ -153,12 +153,12 @@ export function AcceleratorOfferPage({
       <dl className="grid grid-cols-3 border-l border-t border-foreground/25">
         {[
           ["5", "Guided workouts each week"],
-          ["24-28", "Minutes per workout"],
+          ["28", "Days mapped out"],
           ["$37", "One-time payment"],
         ].map(([value, label]) => (
           <div
             key={label}
-            className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-3 sm:p-5"
+            className="flex min-h-32 flex-col items-center justify-center border-b border-r border-foreground/25 p-3 text-center sm:p-5"
           >
             <dt className="order-2 mt-3 text-xs font-bold uppercase leading-tight tracking-[0.16em] text-muted-foreground sm:text-sm">
               {label}
