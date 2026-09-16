@@ -86,6 +86,12 @@ The active Nutrition page and the three-step Nutrition intake are **approved and
 work should extend these patterns to unresolved Nutrition states rather than restyling the approved
 screens page by page.
 
+The pre-setup Nutrition entry uses the approved sparse Magic Access screen structure. Keep the
+existing Nutrition kicker, headline, and concise explanation in a narrow reading width. Follow them
+with one dominant **Set Up My Starting Targets** action and one restrained underlined link to the
+public Nutrition basics page. Do not add an explainer card, repeat the header copy, or restate the
+same ideas as a bullet list.
+
 For an active Nutrition profile, the page gives a direct instruction: **These are the numbers to
 follow each day. Hit your calorie and protein targets consistently to lose fat and protect
 muscle.** Do not weaken this with optional or pass-or-fail framing. Setup retains its own

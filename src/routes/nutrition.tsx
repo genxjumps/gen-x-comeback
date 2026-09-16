@@ -247,35 +247,23 @@ function TargetCard({ label, value }: { label: string; value: string }) {
 
 function NutritionWelcome({ onStart }: { onStart: () => void }) {
   return (
-    <div className="space-y-4">
-      <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
-        <p className="text-sm leading-relaxed">
-          The Nutrition tool gives you starting calorie and macro targets, then shows how those
-          numbers fit across the way you actually eat. It does not require food logging.
-        </p>
-        <ul className="mt-4 space-y-2 text-sm font-medium">
-          <li>Calories still matter.</li>
-          <li>Protein comes first.</li>
-          <li>Build meals around protein.</li>
-          <li>Repeat simple meals that work.</li>
-        </ul>
-        <Button type="button" size="lg" className="mt-6 w-full sm:w-auto" onClick={onStart}>
-          Set Up My Starting Targets
-        </Button>
-      </section>
+    <div className="max-w-lg">
+      <Button
+        type="button"
+        size="lg"
+        className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+        onClick={onStart}
+      >
+        Set Up My Starting Targets
+      </Button>
       <a
         href="https://genxjumps.com/nutrition/"
         target="_blank"
         rel="noreferrer"
-        className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/35 p-5 font-semibold transition-colors hover:bg-muted/55"
+        className="mt-5 inline-flex items-center gap-2 text-sm font-semibold underline underline-offset-4"
       >
-        <span>
-          Learn the basics
-          <span className="mt-1 block text-xs font-normal text-muted-foreground">
-            Deeper nutrition explanations and examples on Gen X Jumps.
-          </span>
-        </span>
-        <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
+        Learn the nutrition basics on Gen X Jumps
+        <ExternalLink aria-hidden="true" className="size-4" />
       </a>
     </div>
   );
