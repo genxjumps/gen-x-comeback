@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Video } from "lucide-react";
 import { z } from "zod";
+import { PlatformPage } from "@/components/platform-page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -113,35 +114,39 @@ function AcceleratorSetup() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl">
-      <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
-        Program Setup
-      </p>
-      <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight sm:text-4xl">
-        Start Your 28-Day Accelerator
-      </h1>
-      <section className="mt-8 rounded-lg border border-border bg-card p-5 sm:p-6">
-        <h2 className="text-xl font-semibold">{ACCELERATOR_ORIENTATION.title}</h2>
-        <div className="mt-4 flex aspect-video items-center justify-center rounded-md border border-dashed border-border bg-muted/60 px-5 text-center">
+    <PlatformPage
+      kicker="28-Day Fat Loss Accelerator"
+      title="Set Your Starting Point"
+      description="Review how the program works, then add starting measurements if you want a clear before-and-after record. Both measurements are optional."
+      titleSize="compact"
+    >
+      <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          {ACCELERATOR_ORIENTATION.title}
+        </h2>
+        <div className="mt-4 flex aspect-video items-center justify-center border-2 border-dashed border-foreground/25 bg-background/60 px-5 text-center">
           <div>
-            <Video className="mx-auto size-7 text-muted-foreground" />
-            <p className="mt-3 text-sm font-semibold">Orientation video pending recording</p>
+            <Video className="mx-auto size-8 text-foreground/55" aria-hidden="true" />
+            <p className="mt-3 text-base font-semibold">Orientation video coming soon</p>
           </div>
         </div>
-        <div className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
+        <div className="mt-5 space-y-4 text-base leading-relaxed text-foreground/80">
           {ACCELERATOR_ORIENTATION.writtenExplanation.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
       </section>
-      <section className="mt-4 rounded-lg border border-border bg-card p-5 sm:p-6">
-        <h2 className="text-xl font-semibold">Starting Measurements</h2>
+
+      <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          Starting Measurements
+        </h2>
         {repeatRun && (currentWeight || currentWaist) ? (
-          <div className="mt-3 rounded-md border border-border bg-muted/50 p-4">
-            <p className="text-sm font-semibold">
+          <div className="mt-4">
+            <p className="text-base font-semibold">
               Use your current measurements as the starting point for your next 28 days?
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-foreground/65">
               {[
                 currentWeight ? `${currentWeight.value} ${currentWeight.unit}` : null,
                 currentWaist ? `${currentWaist.value} ${currentWaist.unit} waist` : null,
@@ -149,11 +154,12 @@ function AcceleratorSetup() {
                 .filter(Boolean)
                 .join(" - ")}
             </p>
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <Button
                 type="button"
-                size="sm"
+                size="lg"
                 variant={measurementChoice === "current" ? "default" : "outline"}
+                className="min-h-14"
                 aria-pressed={measurementChoice === "current"}
                 onClick={useCurrentMeasurements}
               >
@@ -161,20 +167,21 @@ function AcceleratorSetup() {
               </Button>
               <Button
                 type="button"
-                size="sm"
+                size="lg"
                 variant={measurementChoice === "skipped" ? "default" : "outline"}
+                className="min-h-14"
                 aria-pressed={measurementChoice === "skipped"}
                 onClick={skipCurrentMeasurements}
               >
                 Skip Measurements
               </Button>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
+            <p className="mt-3 text-sm text-foreground/65">
               You can change or clear either number below before starting.
             </p>
           </div>
         ) : (
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-foreground/80">
             Both are optional. Skip either one or both and start anyway.
           </p>
         )}
@@ -192,7 +199,7 @@ function AcceleratorSetup() {
                 if (repeatRun) setMeasurementChoice("changed");
               }}
               placeholder="Optional"
-              className="mt-2"
+              className="mt-2 min-h-14"
             />
           </div>
           <div>
@@ -208,21 +215,35 @@ function AcceleratorSetup() {
                 if (repeatRun) setMeasurementChoice("changed");
               }}
               placeholder="Optional"
-              className="mt-2"
+              className="mt-2 min-h-14"
             />
           </div>
         </div>
       </section>
-      {error ? <p className="mt-4 text-sm font-medium">{error}</p> : null}
+
+      <div aria-live="polite">
+        {error ? (
+          <p className="border-l-4 border-gxj-aqua py-2 pl-4 text-base font-medium">{error}</p>
+        ) : null}
+      </div>
       {willPauseAnother ? (
-        <p className="mt-4 rounded-md border border-border bg-muted/50 p-4 text-sm leading-relaxed">
+        <p className="mt-4 border-l-4 border-gxj-aqua py-2 pl-4 text-base leading-relaxed">
           Starting this program will pause your current structured program. Its progress will be
           saved.
         </p>
       ) : null}
-      <Button type="button" size="lg" className="mt-6 w-full" disabled={saving} onClick={begin}>
-        {saving ? "Starting..." : "Begin Day 1"}
-      </Button>
-    </div>
+
+      <div className="mt-6 border-t border-foreground/20 pt-5">
+        <Button
+          type="button"
+          size="lg"
+          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+          disabled={saving}
+          onClick={begin}
+        >
+          {saving ? "Starting..." : "Begin Day 1"}
+        </Button>
+      </div>
+    </PlatformPage>
   );
 }
