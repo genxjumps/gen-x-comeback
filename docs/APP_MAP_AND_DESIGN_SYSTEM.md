@@ -148,6 +148,10 @@ classes rather than approximating the hierarchy with route-specific bold text.
 The target-review notice follows the same rule: its explanatory body copy is 16 px Barlow, while
 the small status label remains secondary metadata.
 
+The locked Nutrition state keeps its page heading, explanation, and **Explore the Accelerator**
+action left-aligned. Center only the contained **Not Unlocked** status group: its icon, status
+heading, and short inclusion line.
+
 The normal-day meal split uses the same approved stat language instead of dashboard boxes:
 
 - Each meal is an open row between horizontal dividers. Do not wrap an individual meal in a card.
