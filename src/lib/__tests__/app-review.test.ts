@@ -248,7 +248,9 @@ describe("app review catalog", () => {
 
   it("uses one accurate sales page for the Accelerator route and review", () => {
     expect(getReviewScreen("accelerator-offer")?.variant).toBe("default");
-    expect(reviewSource).toContain('<AcceleratorOfferPage actionLabel="Get the Accelerator" />');
+    expect(reviewSource).toContain(
+      '<AcceleratorOfferPage actionLabel="Get the Fat Loss Accelerator" />',
+    );
     expect(offerPageSource).toContain("Turn the Next Four Weeks Into a Real Fitness Comeback");
     expect(offerPageSource).toContain("Five guided workouts each week");
     expect(offerPageSource).toContain("24 to 28 minutes");

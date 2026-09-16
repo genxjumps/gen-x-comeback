@@ -117,7 +117,7 @@ describe("Accelerator Stripe edge contract", () => {
 
   it("keeps the responsive program detail page separate from the catalog", () => {
     expect(PROGRAM_ROUTE).toContain('createFileRoute("/programs_/accelerator")');
-    expect(PROGRAM_ROUTE).toContain("Get the Accelerator");
+    expect(PROGRAM_ROUTE).toContain("Get the Fat Loss Accelerator");
     expect(PROGRAM_ROUTE).toContain("<AcceleratorOfferPage");
     expect(PROGRAM_OFFER).toContain("Turn the Next Four Weeks Into a Real Fitness Comeback");
     expect(PROGRAM_OFFER).toContain('className="grid grid-cols-3 gap-4"');
