@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 export function PlatformPage({
+  headerPrefix,
   kicker,
   title,
   description,
@@ -8,6 +9,7 @@ export function PlatformPage({
   contentGap = "default",
   children,
 }: {
+  headerPrefix?: ReactNode;
   kicker?: string;
   title: string;
   description?: string;
@@ -22,13 +24,14 @@ export function PlatformPage({
           contentGap === "tight" ? "pb-2 sm:pb-4" : "pb-7 sm:pb-10"
         }`}
       >
+        {headerPrefix}
         <div className="w-full max-w-2xl">
           {kicker ? (
             <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">{kicker}</p>
           ) : null}
           <h1
             className={`gxj-display-title uppercase leading-[0.95] tracking-wide ${
-              kicker ? "mt-4" : ""
+              kicker || headerPrefix ? "mt-4" : ""
             } ${titleSize === "compact" ? "text-3xl sm:text-4xl" : "text-5xl sm:text-7xl"}`}
           >
             {title}

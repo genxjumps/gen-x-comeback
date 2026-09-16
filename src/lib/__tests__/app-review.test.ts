@@ -29,6 +29,10 @@ const acceleratorReviewSource = reviewSource.slice(
 );
 const progressReviewSource = reviewSource.slice(
   reviewSource.indexOf("function ProgressReview"),
+  reviewSource.indexOf("function NutritionSetupSection"),
+);
+const nutritionSetupReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function NutritionSetupSection"),
   reviewSource.indexOf("function NutritionReview"),
 );
 const nutritionReviewSource = reviewSource.slice(
@@ -50,9 +54,17 @@ const nutritionRouteSource = readFileSync(
   new URL("../../routes/nutrition.tsx", import.meta.url),
   "utf8",
 );
+const setupProgressSource = readFileSync(
+  new URL("../../components/setup-progress.tsx", import.meta.url),
+  "utf8",
+);
 const nutritionResultsSource = nutritionRouteSource.slice(
   nutritionRouteSource.indexOf("function NutritionResults"),
   nutritionRouteSource.indexOf("function Nutrition()"),
+);
+const nutritionSetupRouteSource = nutritionRouteSource.slice(
+  nutritionRouteSource.indexOf("function SetupForm"),
+  nutritionRouteSource.indexOf("function NutritionResults"),
 );
 const stylesSource = readFileSync(new URL("../../styles.css", import.meta.url), "utf8");
 
@@ -341,14 +353,46 @@ describe("app review catalog", () => {
       );
     }
     expect(nutritionRouteSource).toContain('? "Your Nutrition"');
+    expect(nutritionRouteSource).toContain('? "Set Up Your Daily Targets"');
     expect(nutritionRouteSource).toContain(
       ': "Calories Matter. Protein First. Meals Stay Simple."',
     );
     expect(nutritionRouteSource).toContain(
-      'kicker={profile && !editing ? undefined : "Nutrition"}',
+      'kicker={profile && !editing ? undefined : setupActive ? undefined : "Nutrition"}',
     );
     expect(nutritionRouteSource).toContain(
-      'titleSize={profile && !editing ? "compact" : undefined}',
+      'titleSize={(profile && !editing) || setupActive ? "compact" : undefined}',
     );
+  });
+
+  it("uses the approved three-step assessment system for Nutrition setup", () => {
+    expect(
+      reviewScreens.filter(
+        (screen) => screen.kind === "nutrition" && screen.variant.startsWith("setup"),
+      ),
+    ).toHaveLength(3);
+    for (const source of [nutritionSetupReviewSource, nutritionSetupRouteSource]) {
+      expect(source).toContain("What is your current fitness goal?");
+      expect(source).toContain("What do you want your body weight to do?");
+      expect(source).toContain("Your starting numbers");
+      expect(source).toContain("Outside of workouts, how active is your typical day?");
+      expect(source).toContain("How are you training right now?");
+      expect(source).toContain("On a typical weekday, which of these eating occasions do you use?");
+      expect(source).toContain("Which meal tends to be your biggest?");
+      expect(source).toContain("Your answers are saved as you go.");
+      expect(source).not.toContain("rounded-lg border border-border bg-card");
+    }
+    expect(nutritionSetupReviewSource).toContain("border-t-2 border-foreground/20 py-6 sm:py-8");
+    expect(nutritionRouteSource).toContain("border-t-2 border-foreground/20 py-6 sm:py-8");
+    expect(nutritionSetupReviewSource).toContain("Nutrition setup progress");
+    expect(nutritionSetupRouteSource).toContain(
+      'step === 3 ? (saving ? "Saving..." : submitLabel) : "Continue"',
+    );
+    expect(nutritionRouteSource).toContain(
+      '<SetupProgress currentStep={setupStep} label="Nutrition setup progress" />',
+    );
+    expect(setupProgressSource).toContain("bg-foreground text-background");
+    expect(setupProgressSource).toContain("bg-gxj-orange text-white");
+    expect(setupProgressSource).toContain("border-2 border-foreground/20 text-foreground/35");
   });
 });

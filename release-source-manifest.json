@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "6a3ecc7657858268d5be2ef39e59ace724c54f0b1603012e8e8d34821deb9599"
+      "sha256": "99f1a8ddc8aa3f86f3738018b40244272e2abefb642b23a9a40dc34c3c8e27c1"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -211,7 +211,7 @@
     },
     {
       "path": "src/components/platform-page.tsx",
-      "sha256": "cb7ed4a44662eaf5c8655710d317741f424f95ecdb126d6fb26a9de5a3a3bfc6"
+      "sha256": "15e2bc6bf074e545d52c31f1bc19455d2d40ed95cbb2be0c1ef717178c823f0d"
     },
     {
       "path": "src/components/platform-shell.tsx",
@@ -224,6 +224,10 @@
     {
       "path": "src/components/review-shell.tsx",
       "sha256": "e039e3dca4fe8529800f13cfc372449ac86ddd3f7742f3879aa60b417fd0dcad"
+    },
+    {
+      "path": "src/components/setup-progress.tsx",
+      "sha256": "11fd19c282a3e5224329cf81e3de2bebbbd3314545b587c5bf48e4c16994524c"
     },
     {
       "path": "src/components/seven-day-next-step.tsx",
@@ -311,7 +315,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "f0ab15210db240e3c62ddd0aeb58850110465cab1848c946c62729df49048286"
+      "sha256": "7413f10fb609b11806638c1089509ce0b2363b7e54cfe881ddb6409063fb860a"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -547,7 +551,7 @@
     },
     {
       "path": "src/lib/account/browser-session.ts",
-      "sha256": "8b8b8705bdc0ef83ee5fb42890236cf828b2e3493b5b10cae68a46873dd2a930"
+      "sha256": "c8a405c4da5eb2fa794e51d9969bd1249cce76c81740d2b15dd519549b4200ca"
     },
     {
       "path": "src/lib/account/customer-account.server.ts",
@@ -595,7 +599,7 @@
     },
     {
       "path": "src/lib/app-review.ts",
-      "sha256": "779544ed67f8223c96c2f41515c9907924744036c7e2e344bb9696b47e23e76d"
+      "sha256": "901e5fe16a7d6ce1e604aef90ac37d5d47b7722045d912bcf1b23d491a54d9a0"
     },
     {
       "path": "src/lib/commerce/__tests__/checkout-path.test.ts",
@@ -1118,6 +1122,10 @@
       "sha256": "75e35d92cea02760cd665beb3eae8c1f2374558ea13c1c5fcab650e41af07b34"
     },
     {
+      "path": "src/lib/nutrition/__tests__/draft.test.ts",
+      "sha256": "2538fe94d6823ef18ed0452d4f4094c78f7a20a87fd7ff5a748a0f8d9532c116"
+    },
+    {
       "path": "src/lib/nutrition/__tests__/nutrition-contract.test.ts",
       "sha256": "795d0d0172f6576f63858633a1367f4dcc648d804d2ca0572a035f06ec55bb0f"
     },
@@ -1132,6 +1140,10 @@
     {
       "path": "src/lib/nutrition/calculator.ts",
       "sha256": "5185ab0add73c9b02e55077daff5e8bcc8054a6d0da706cc94f9c850123ec84c"
+    },
+    {
+      "path": "src/lib/nutrition/draft.ts",
+      "sha256": "340cd6c3c2af32bc10ce32ba61b7d8880a981ebe0a26c2cf6608986957339658"
     },
     {
       "path": "src/lib/nutrition/functions.ts",
@@ -1335,7 +1347,7 @@
     },
     {
       "path": "src/routes/nutrition.tsx",
-      "sha256": "09179453b5b0c0e54cd41901e901fcf3010f241ec2ed40d699e84504f678f884"
+      "sha256": "f0464bc3681c60dab29d65ed8036e183e21250740f3e5ba87470f127185793ca"
     },
     {
       "path": "src/routes/plan-ready.tsx",
