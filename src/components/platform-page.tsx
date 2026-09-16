@@ -5,7 +5,7 @@ export function PlatformPage({
   kicker,
   title,
   description,
-  titleSize = "default",
+  titleSize = "compact",
   contentGap = "default",
   children,
 }: {
@@ -13,7 +13,7 @@ export function PlatformPage({
   kicker?: string;
   title: string;
   description?: string;
-  titleSize?: "default" | "compact";
+  titleSize?: "compact" | "hero";
   contentGap?: "default" | "tight";
   children: ReactNode;
 }) {
@@ -32,12 +32,12 @@ export function PlatformPage({
           <h1
             className={`gxj-display-title uppercase leading-[0.95] tracking-wide ${
               kicker || headerPrefix ? "mt-4" : ""
-            } ${titleSize === "compact" ? "text-3xl sm:text-4xl" : "text-5xl sm:text-7xl"}`}
+            } ${titleSize === "hero" ? "text-5xl sm:text-7xl" : "text-3xl sm:text-4xl"}`}
           >
             {title}
           </h1>
           {description ? (
-            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
+            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80">
               {description}
             </p>
           ) : null}

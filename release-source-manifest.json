@@ -183,7 +183,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "5fbadd4277f387768071d9c8760e4c1d3e57eec0103ae264c76e642bbc506422"
+      "sha256": "3d9a152d8178aef92ce6802aff699bd238462e40f436ed45367d2db6a336158d"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -215,7 +215,7 @@
     },
     {
       "path": "src/components/platform-page.tsx",
-      "sha256": "15e2bc6bf074e545d52c31f1bc19455d2d40ed95cbb2be0c1ef717178c823f0d"
+      "sha256": "39a4f94a454b3fd5ab9a23a0bce66250ac62d6116987a09e1b74a292a8142dd9"
     },
     {
       "path": "src/components/platform-shell.tsx",
@@ -356,6 +356,10 @@
     {
       "path": "src/lib/__tests__/plan-hub-actions-contract.test.ts",
       "sha256": "19002694c8c24bd5b2f43cdc0b830390f6d2c8217ccf45c9a6794fc66c19be01"
+    },
+    {
+      "path": "src/lib/__tests__/platform-page-design.test.ts",
+      "sha256": "4b2c688abf47052b04f8db0adabe4e30960566a0eed423f658a893c30fbea88e"
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
