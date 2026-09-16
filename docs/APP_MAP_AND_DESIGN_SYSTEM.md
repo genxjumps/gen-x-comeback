@@ -210,6 +210,19 @@ The 7-Day plan and workout pages use Participant app mode. Their internal links 
 Today, Schedule, Plan Tips, and Change My Answers - remain local plan navigation, not global app
 navigation.
 
+### Public entry while intake is closed
+
+The closed-intake root page is still the public offer page, not a recovery utility or an internal
+project-status notice. Preserve the approved free-offer hero, description, benefit treatment, and
+public landing-page scale. Replace the unavailable signup action with a clear **Opening Soon**
+status, while keeping recovery in a separate secondary section for returning participants. Do not
+restore the old boxed access screen, make recovery the primary page action, or show implementation
+language about finishing the app.
+
+Public and focused routes use the same `gxj-platform-shell` and `gxj-app-surface` background
+treatment as their review states. This keeps the real entry experience and the review catalog from
+silently drifting into different visual systems.
+
 ## Global component inventory
 
 ### Navigation and page frame
