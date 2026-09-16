@@ -47,9 +47,23 @@ The test exposed one bounded navigation defect: the purchase-success screen is
 outside the protected platform shell while a guest purchase is still being
 confirmed, so its generic brand link returned a newly authenticated buyer to
 the public landing page. On this success route, the brand link now opens Home.
-The completed state keeps Set Up My Accelerator primary and adds direct Open My
-Programs and Open My Nutrition paths. Stripe confirmation, account handoff,
-ownership, setup, program progress, and public-intake controls are unchanged.
+The completed state uses **You Own It** and **Your New Program Is Ready**. It tells
+the customer, **You can find your 28-Day Fat Loss Accelerator plan under My
+Programs.** The primary action continues into setup, with direct My Programs and
+Nutrition paths available where the existing state supports them.
+
+While ownership is still being confirmed, the same sparse status layout uses
+**Purchase Received** and **We’re Finishing Your Purchase**. It confirms that the
+payment went through, says the 28-Day Fat Loss Accelerator is being added to My
+Programs, sets the expectation that this usually takes only a moment, and offers
+**Check Again**. This state must never imply that the customer needs to pay again.
+
+Both states use the shared compact title, 16px Barlow body copy, open cream page,
+narrow reading width, and standard primary button treatment. They don't add an
+outer card or center the full page. This is the approved simple status-page
+pattern for future short transactional and recovery states. Stripe confirmation,
+account handoff, ownership, setup, program progress, and public-intake controls
+are unchanged.
 
 ## Website embedded checkout checkpoint
 
