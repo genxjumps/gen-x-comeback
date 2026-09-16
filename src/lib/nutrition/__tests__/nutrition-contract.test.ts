@@ -35,7 +35,8 @@ describe("Your Nutrition V1 contract", () => {
     const route = readSource("../../../routes/nutrition.tsx");
     expect(access).toContain('NUTRITION_ELIGIBLE_PRODUCT_CODES = ["accelerator_28"]');
     expect(access).not.toContain("paid_program_enrollments");
-    expect(route).toContain("The free 7-Day Comeback Plan does not unlock the nutrition tool");
+    expect(route).toContain("Nutrition guidance unlocks with an eligible paid program.");
+    expect(route).toContain("Included with the 28-Day Fat Loss Accelerator.");
     expect(route).not.toMatch(/completeAcceleratorDay|beginAccelerator|activateLeadPlan/);
   });
 
