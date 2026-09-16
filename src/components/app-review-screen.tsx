@@ -1613,7 +1613,7 @@ function NutritionReview({ variant }: { variant: string }) {
                   <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
                     {meal}
                   </h3>
-                  <p className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                  <p className="gxj-display-title translate-y-1 text-xl uppercase tracking-wide sm:text-2xl">
                     {percentage}
                   </p>
                 </div>

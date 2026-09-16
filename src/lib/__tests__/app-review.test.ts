@@ -304,7 +304,7 @@ describe("app review catalog", () => {
       expect(source).not.toContain("text-base leading-relaxed text-foreground/80");
       expect(source).toContain("space-y-2 text-base leading-relaxed");
       expect(source).toContain(
-        '<p className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">',
+        '<p className="gxj-display-title translate-y-1 text-xl uppercase tracking-wide sm:text-2xl">',
       );
       expect(source).toContain("mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4");
       expect(source).toContain(
