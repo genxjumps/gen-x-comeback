@@ -1515,11 +1515,8 @@ function NutritionReview({ variant }: { variant: string }) {
               <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
                 Starting Targets
               </h2>
-              <p className="mt-2 text-base font-medium leading-relaxed">
-                These are your numbers for the whole day.
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Every meal counts. All seven days count.
+              <p className="mt-2 text-base font-medium leading-relaxed text-foreground/80">
+                These are your numbers for the whole day. Every meal counts. All seven days count.
               </p>
             </div>
             <Button type="button" variant="outline">
@@ -1574,7 +1571,7 @@ function NutritionReview({ variant }: { variant: string }) {
               Adjust Your Day
             </Button>
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-foreground/80">
             Adjust the sliders to match how you actually eat. This changes the split, not your daily
             totals.
           </p>
@@ -1608,12 +1605,12 @@ function NutritionReview({ variant }: { variant: string }) {
           <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
             Keep the food simple.
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-foreground/80">
             Start with protein. Use labels, serving sizes, and standard nutrition information to fit
             the rest of each meal to its numbers. A small rotation is enough: one or two breakfasts,
             one or two lunches, up to three dinners, and a few smart snack options.
           </p>
-          <p className="mt-3 text-sm leading-relaxed">
+          <p className="mt-3 text-base leading-relaxed text-foreground/80">
             Lean meat, eggs, potatoes, rice, beans, vegetables, fruit, yogurt, and other foods with
             predictable numbers make this easier. Plenty of filling, enjoyable food fits the plan.
             You do not have to go hungry.
@@ -1627,7 +1624,7 @@ function NutritionReview({ variant }: { variant: string }) {
           <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
             I keep the structure and adjust the extras.
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-foreground/80">
             Most of my meals stay the same when I want to lean out. I do not rebuild my whole diet.
             I remove or reduce the parts adding extra calories while keeping the protein-centered
             structure and foods I already like.
@@ -1637,7 +1634,7 @@ function NutritionReview({ variant }: { variant: string }) {
               <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
                 Maintenance
               </h3>
-              <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+              <ul className="mt-3 space-y-2 text-base leading-relaxed">
                 <li>
                   <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 1/2 cup uncooked
                   oatmeal, 5 g creatine
@@ -1658,7 +1655,7 @@ function NutritionReview({ variant }: { variant: string }) {
               <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
                 When I want to cut body fat
               </h3>
-              <ul className="mt-3 space-y-2 text-sm leading-relaxed">
+              <ul className="mt-3 space-y-2 text-base leading-relaxed">
                 <li>
                   <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 5 g creatine
                 </li>
@@ -1675,7 +1672,7 @@ function NutritionReview({ variant }: { variant: string }) {
               </ul>
             </div>
           </div>
-          <p className="mt-4 text-sm leading-relaxed">
+          <p className="mt-4 text-base leading-relaxed text-foreground/80">
             This is how I use the method. It is not a command for you to eat the same foods I eat.
             Find foods you like, check the labels and serving sizes, and make them fit your targets.
           </p>
@@ -1688,12 +1685,12 @@ function NutritionReview({ variant }: { variant: string }) {
           <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
             Check what you drink and what you pour.
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-base leading-relaxed text-foreground/80">
             Regular soda, juice, sweetened coffee or tea, calorie-containing flavored drinks,
             dressing, mayo, oils, butter, cheese, ketchup, and barbecue sauce can add up fast. Read
             the label. Check the serving size. Measure it when needed.
           </p>
-          <p className="mt-3 text-sm leading-relaxed">
+          <p className="mt-3 text-base leading-relaxed text-foreground/80">
             Sugar can appear as cane sugar, high-fructose corn syrup, corn syrup, glucose, dextrose,
             fructose, honey, molasses, syrup, or fruit-juice concentrate. Turn the package over.
             Check calories, total carbohydrate, added sugars, fiber, and serving size.
@@ -1715,7 +1712,7 @@ function NutritionReview({ variant }: { variant: string }) {
           <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
             If results stall
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-base leading-relaxed text-foreground/80">
             Review labels, portions, drinks, dressings, sauces, serving sizes, calorie-dense foods,
             and consistency before rebuilding the whole diet. This app cannot verify what you ate.
           </p>
