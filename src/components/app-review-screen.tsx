@@ -347,7 +347,9 @@ function LandingReview() {
 
       <section className="py-10 sm:py-14 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-14">
         <div>
-          <Status>Free Personalized 7-Day Fitness Plan for Adults 50+</Status>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-gxj-orange">
+            Free Personalized 7-Day Fitness Plan for Adults 50+
+          </p>
           <h1 className="gxj-display-title mt-5 max-w-3xl text-5xl uppercase leading-[0.92] tracking-wide sm:text-7xl">
             Start Losing Fat. Get Back in Shape. This Week.
           </h1>
