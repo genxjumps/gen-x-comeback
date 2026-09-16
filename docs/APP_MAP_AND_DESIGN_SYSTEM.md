@@ -145,6 +145,8 @@ treatment. Direct coaching callouts may use 16 px semibold Barlow in black. Meal
 controls remain 14 px; labels and disclosures remain 12 px. Do not alternate black and muted-gray
 body paragraphs without a semantic reason. The review route and real page must use the same type
 classes rather than approximating the hierarchy with route-specific bold text.
+The target-review notice follows the same rule: its explanatory body copy is 16 px Barlow, while
+the small status label remains secondary metadata.
 
 The normal-day meal split uses the same approved stat language instead of dashboard boxes:
 
