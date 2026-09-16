@@ -289,142 +289,240 @@ function HomeReview({ variant }: { variant: string }) {
   );
 }
 
-const landingPlanPreview = [
-  { day: "Day 1", type: "Guided Workout", detail: "Your starting level" },
-  { day: "Day 2", type: "Recovery", detail: "Move and reset" },
-  { day: "Day 3", type: "Guided Workout", detail: "Your next step" },
-];
+const LANDING_BEFORE_PHOTO =
+  "https://imagedelivery.net/wmhzoNsPEpPXHu1pd_0qNw/6ba452cc-6dfa-4d5b-796c-2777580a8700/public";
+const LANDING_CURRENT_PHOTO =
+  "https://imagedelivery.net/wmhzoNsPEpPXHu1pd_0qNw/c8f3774a-ce2c-4e2b-0035-9ea6f3868c00/public";
 
-const landingBenefits = [
-  ["01", "Your schedule", "Seven clear days of training, recovery, and next steps."],
-  ["02", "Your workouts", "Guided sessions with options for your experience and joints."],
-  ["03", "Your protein target", "One useful daily number without tracking every calorie."],
-];
-
-const landingSteps = [
+const landingDeliverables = [
   [
-    "01",
-    "Tell us where you are",
-    "Answer a few short questions about your current starting point.",
+    "Your complete 7-day schedule",
+    "Know which days to train, recover, and rest based on where you are now.",
   ],
   [
-    "02",
-    "Get your complete plan",
-    "Your workouts, recovery days, and protein target are ready immediately.",
+    "Guided jump-rope workouts",
+    "Press play and follow the workout level your answers point you toward.",
   ],
-  ["03", "Open Day 1", "Follow the workout and keep moving forward one day at a time."],
-];
+  [
+    "Bodyweight strength work",
+    "Rebuild useful strength without needing a gym, bench, or rack of equipment.",
+  ],
+  [
+    "Your calorie and protein targets",
+    "Use clear starting numbers that support fat loss and the muscle you want to keep.",
+  ],
+] as const;
+
+const landingFaqs = [
+  [
+    "What if I cannot jump rope yet?",
+    "That is a valid starting point. Your answers help determine the level and impact options that make sense for you now.",
+  ],
+  [
+    "Do I need a gym?",
+    "No. The plan uses jump-rope conditioning and bodyweight strength work you can do at home.",
+  ],
+  [
+    "How much time will this take?",
+    "The assessment takes about two minutes. Your plan then tells you what to do each day instead of leaving you to build the week yourself.",
+  ],
+  [
+    "Is this a meal plan?",
+    "No. You receive calorie and protein targets, not a rigid menu of foods you may not want to eat.",
+  ],
+  [
+    "Is it really free?",
+    "Yes. There is no credit card, membership, or automatic charge at the end of the seven days.",
+  ],
+] as const;
 
 function LandingReview() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-12">
-      <section className="grid items-center gap-9 border-b-2 border-foreground pb-10 sm:gap-12 sm:pb-14 lg:grid-cols-[1.05fr_0.95fr]">
+    <div className="mx-auto w-full max-w-6xl px-5 pb-12 pt-6 sm:px-8 sm:pb-16 sm:pt-8">
+      <div className="flex items-center justify-end border-b border-foreground/15 pb-4">
+        <button className="text-sm font-bold underline decoration-gxj-orange decoration-2 underline-offset-4">
+          Already have a plan? Open it
+        </button>
+      </div>
+
+      <section className="py-10 sm:py-14 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-14">
         <div>
-          <Status>Free 7-Day Comeback Plan</Status>
-          <h1 className="gxj-display-title mt-5 max-w-2xl text-5xl uppercase leading-[0.94] tracking-wide sm:text-6xl">
-            Start Where You Are. Know What to Do Next.
+          <Status>Free Personalized 7-Day Fitness Plan for Adults 50+</Status>
+          <h1 className="gxj-display-title mt-5 max-w-3xl text-5xl uppercase leading-[0.92] tracking-wide sm:text-7xl">
+            Start Losing Fat. Get Back in Shape. This Week.
           </h1>
-          <p className="mt-5 max-w-xl text-lg font-medium leading-relaxed">
-            Get a personalized workout and protein plan built around your current fitness, schedule,
-            equipment, and the impact level that works for you.
+        </div>
+        <div className="mt-7 border-t-2 border-foreground pt-6 lg:mt-0">
+          <p className="text-lg font-bold leading-snug sm:text-xl">
+            Stop trying to figure out what to do every day - then wondering whether any of it will
+            work.
           </p>
-          <div className="mt-7">
+          <p className="mt-4 text-base leading-relaxed text-foreground/75">
+            Your free Comeback Plan gives you seven days of workouts, recovery, calorie guidance,
+            and a protein target built around your current fitness, schedule, equipment, and
+            physical limitations.
+          </p>
+          <div className="mt-6">
             <Action>
               Build My Free 7-Day Plan <ArrowRight className="size-4" />
             </Action>
-            <p className="mt-3 text-sm font-medium text-foreground/65">
-              Free. Takes about two minutes. No password required.
+            <p className="mt-3 text-sm font-medium text-foreground/60">
+              Free. Takes about two minutes. No credit card or membership.
             </p>
           </div>
         </div>
-
-        <div>
-          <div className="flex items-center justify-between border-b-2 border-foreground bg-foreground px-5 py-4 text-background">
-            <p className="gxj-display-title text-xl uppercase tracking-wide">
-              Your Week at a Glance
-            </p>
-            <span className="text-xs font-bold uppercase tracking-[0.14em]">Personalized</span>
-          </div>
-          <div className="divide-y divide-foreground/20 px-5">
-            {landingPlanPreview.map(({ day, type, detail }) => (
-              <div key={day} className="grid grid-cols-[4rem_1fr] gap-4 py-4">
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground/55">
-                  {day}
-                </p>
-                <div>
-                  <p className="font-bold">{type}</p>
-                  <p className="mt-1 text-sm text-foreground/65">{detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="border-t-2 border-foreground bg-gxj-aqua px-5 py-4">
-            <p className="text-xs font-bold uppercase tracking-[0.12em]">Daily Protein Target</p>
-            <p className="mt-1 text-sm font-medium">A practical number based on you.</p>
-          </div>
-        </div>
       </section>
 
-      <section className="border-b border-foreground/15 py-9 sm:py-12">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-gxj-orange">
-          What You Get
+      <section className="-mx-5 bg-foreground px-5 py-8 text-background sm:-mx-8 sm:px-8 sm:py-10">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-gxj-orange">
+          Seven Days From Now
         </p>
-        <h2 className="gxj-display-title mt-2 text-3xl uppercase tracking-wide sm:text-4xl">
-          A Plan You Can Actually Follow
-        </h2>
-        <div className="mt-7 grid gap-6 sm:grid-cols-3">
-          {landingBenefits.map(([number, title, body]) => (
-            <div key={number} className="border-t-2 border-foreground pt-4">
-              <p className="gxj-display-title text-2xl leading-none text-gxj-orange">{number}</p>
-              <h3 className="mt-4 text-lg font-bold">{title}</h3>
-              <p className="mt-2 text-base leading-relaxed text-foreground/70">{body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="py-9 sm:py-12">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-gxj-orange">
-          How It Works
-        </p>
-        <h2 className="gxj-display-title mt-2 text-3xl uppercase tracking-wide sm:text-4xl">
-          From Questions to Day 1
-        </h2>
-        <div className="mt-7 divide-y-2 divide-foreground border-y-2 border-foreground">
-          {landingSteps.map(([number, title, body]) => (
-            <div
-              key={number}
-              className="grid gap-2 py-5 sm:grid-cols-[4rem_12rem_1fr] sm:items-center sm:gap-5"
-            >
-              <p className="gxj-display-title text-3xl leading-none">{number}</p>
-              <h3 className="text-base font-bold">{title}</h3>
-              <p className="text-base leading-relaxed text-foreground/70">{body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-foreground px-5 py-8 text-background sm:flex sm:items-center sm:justify-between sm:gap-8 sm:px-8 sm:py-10">
-        <div>
-          <h2 className="gxj-display-title text-3xl uppercase leading-[0.95] tracking-wide sm:text-4xl">
-            You Don’t Need the Perfect Starting Point.
+        <div className="mt-3 grid gap-5 sm:grid-cols-[1fr_1.25fr] sm:items-end sm:gap-10">
+          <h2 className="gxj-display-title text-4xl uppercase leading-none tracking-wide sm:text-5xl">
+            You Could Already Be Back in Motion.
           </h2>
-          <p className="mt-2 text-base font-medium text-background/75">
-            You need the right next step.
+          <p className="text-base leading-relaxed text-background/75 sm:text-lg">
+            You will not be finished. You will have completed a week of training, eaten toward clear
+            targets, and started proving to yourself that you can get back in shape.
           </p>
         </div>
-        <Button
-          type="button"
-          size="lg"
-          className="gxj-display-title mt-6 min-h-14 w-full shrink-0 bg-gxj-orange px-6 text-xl uppercase leading-none tracking-wide text-foreground hover:bg-gxj-orange/90 sm:mt-0 sm:w-auto"
-        >
-          Build My Free Plan
-          <ArrowRight className="size-4" />
-        </Button>
+      </section>
+
+      <section className="border-b border-foreground/15 py-10 sm:py-14">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-gxj-orange">
+          What You Get
+        </p>
+        <h2 className="gxj-display-title mt-3 max-w-3xl text-4xl uppercase leading-none tracking-wide sm:text-5xl">
+          A Real Starting Point Built Around You
+        </h2>
+        <div className="mt-8 grid gap-x-10 sm:grid-cols-2">
+          {landingDeliverables.map(([title, body]) => (
+            <div key={title} className="flex gap-4 border-t-2 border-foreground py-6">
+              <Check className="mt-1 size-5 shrink-0 text-gxj-orange" aria-hidden="true" />
+              <div>
+                <h3 className="text-lg font-bold leading-snug">{title}</h3>
+                <p className="mt-2 text-base leading-relaxed text-foreground/70">{body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2">
+          <Action>
+            Build My Free 7-Day Plan <ArrowRight className="size-4" />
+          </Action>
+        </div>
+      </section>
+
+      <section className="grid gap-8 border-b border-foreground/15 py-10 sm:py-14 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-gxj-orange">
+            Built Around You
+          </p>
+          <h2 className="gxj-display-title mt-3 text-4xl uppercase leading-none tracking-wide sm:text-5xl">
+            Your Plan Starts Where You Are - Not Where You Think You Should Be.
+          </h2>
+        </div>
+        <div>
+          <p className="text-lg font-bold leading-snug">
+            Answer a few short questions about what you can do now and what you want to accomplish.
+          </p>
+          <p className="mt-4 text-base leading-relaxed text-foreground/75">
+            Your answers shape the schedule, workout level, impact options, and nutrition targets.
+            You do not need to get in shape before you begin, and you will not be dropped into a
+            generic plan made for someone else.
+          </p>
+          <p className="mt-6 border-l-4 border-gxj-orange pl-4 text-xl font-bold leading-snug">
+            Start where you are. Know what to do next.
+          </p>
+        </div>
+      </section>
+
+      <section className="border-b border-foreground/15 py-10 sm:py-14">
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-14">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5">
+            <figure>
+              <img
+                src={LANDING_BEFORE_PHOTO}
+                alt="Todd before rebuilding his fitness"
+                className="aspect-[4/5] w-full object-cover grayscale"
+              />
+              <figcaption className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-foreground/55">
+                Before - 235 lb
+              </figcaption>
+            </figure>
+            <figure>
+              <img
+                src={LANDING_CURRENT_PHOTO}
+                alt="Todd after rebuilding his fitness"
+                className="aspect-[4/5] w-full object-cover grayscale"
+              />
+              <figcaption className="mt-2 text-xs font-bold uppercase tracking-[0.14em] text-foreground/55">
+                Rebuilt - 175 lb
+              </figcaption>
+            </figure>
+          </div>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-gxj-orange">
+              I Have Had to Rebuild Too
+            </p>
+            <h2 className="gxj-display-title mt-3 text-4xl uppercase leading-none tracking-wide sm:text-5xl">
+              I Am Not Teaching This From the Sidelines.
+            </h2>
+            <p className="mt-5 text-base leading-relaxed text-foreground/75">
+              I know what it is like to realize you are not where you want to be. I have had to lose
+              body fat, rebuild my conditioning, get stronger, and learn how to train in a way I can
+              keep doing as I get older.
+            </p>
+            <p className="mt-4 text-xl font-bold leading-snug">
+              Your plan does not need to look like mine. It needs to fit you.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-8 border-b border-foreground/15 py-10 sm:py-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-gxj-orange">
+            Questions Before You Start
+          </p>
+          <h2 className="gxj-display-title mt-3 text-4xl uppercase leading-none tracking-wide sm:text-5xl">
+            A Few Things You Might Be Wondering
+          </h2>
+        </div>
+        <div className="divide-y-2 divide-foreground border-y-2 border-foreground">
+          {landingFaqs.map(([question, answer]) => (
+            <details key={question} className="group py-5">
+              <summary className="cursor-pointer list-none pr-6 text-base font-bold marker:hidden">
+                {question}
+              </summary>
+              <p className="mt-3 max-w-xl text-base leading-relaxed text-foreground/70">{answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section className="py-10 text-center sm:py-14">
+        <Status>Ready to Start?</Status>
+        <h2 className="gxj-display-title mx-auto mt-5 max-w-3xl text-4xl uppercase leading-none tracking-wide sm:text-6xl">
+          Your Next Seven Days Can Start Today.
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-foreground/70 sm:text-lg">
+          Tell me where you are now and what you want to accomplish. I will build your starting
+          point from there.
+        </p>
+        <div className="mt-7 flex justify-center">
+          <Action>
+            Build My Free 7-Day Plan <ArrowRight className="size-4" />
+          </Action>
+        </div>
+        <p className="mt-3 text-sm font-medium text-foreground/60">
+          Free. No credit card. No membership.
+        </p>
       </section>
     </div>
   );
 }
+
 
 function EligibilityReview({ ineligible = false }: { ineligible?: boolean }) {
   if (ineligible) {
