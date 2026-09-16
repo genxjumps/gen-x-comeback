@@ -993,6 +993,7 @@ function Nutrition() {
   const [error, setError] = useState<string | null>(null);
   const [stopped, setStopped] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -1033,7 +1034,7 @@ function Nutrition() {
     return () => {
       active = false;
     };
-  }, [loadNutrition]);
+  }, [loadNutrition, loadAttempt]);
 
   useEffect(() => {
     if (!setupStarted && !editing) return;
@@ -1121,7 +1122,34 @@ function Nutrition() {
 
   if (!result) return <p className="text-sm text-muted-foreground">Loading your nutrition...</p>;
   if (!result.ok) {
-    return <p className="text-sm text-muted-foreground">Your nutrition could not be loaded.</p>;
+    return (
+      <PlatformPage
+        kicker="Your Nutrition"
+        title="Nutrition Couldn't Be Loaded"
+        description="We couldn't confirm your account or load your saved nutrition targets. Nothing was changed."
+      >
+        <Button
+          type="button"
+          size="lg"
+          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+          onClick={() => {
+            setResult(null);
+            setLoadAttempt((attempt) => attempt + 1);
+          }}
+        >
+          Try Again
+        </Button>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          Still not working?{" "}
+          <Link
+            to="/recover"
+            className="font-semibold text-foreground underline underline-offset-4"
+          >
+            Sign in again.
+          </Link>
+        </p>
+      </PlatformPage>
+    );
   }
   if (result.access === "locked") {
     return (
