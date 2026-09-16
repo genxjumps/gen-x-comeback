@@ -11,6 +11,10 @@ const offerPageSource = readFileSync(
   new URL("../../components/accelerator-offer-page.tsx", import.meta.url),
   "utf8",
 );
+const landingReviewSource = reviewSource.slice(
+  reviewSource.indexOf("function LandingReview"),
+  reviewSource.indexOf("function EligibilityReview"),
+);
 const assessmentReviewSource = reviewSource.slice(
   reviewSource.indexOf("function AssessmentReview"),
   reviewSource.indexOf("function AssessmentResultReview"),
@@ -117,6 +121,16 @@ describe("app review catalog", () => {
       expect(screen.slug).not.toContain("?");
       expect(screen.slug).toMatch(/^[a-z0-9-]+$/);
     }
+  });
+
+  it("presents the free plan as a complete conversion page", () => {
+    expect(landingReviewSource).toContain("Start Where You Are. Know What to Do Next.");
+    expect(landingReviewSource).toContain("Build My Free 7-Day Plan");
+    expect(landingReviewSource).toContain("Your Week at a Glance");
+    expect(landingReviewSource).toContain("A Plan You Can Actually Follow");
+    expect(landingReviewSource).toContain("From Questions to Day 1");
+    expect(landingReviewSource).toContain("You Don’t Need the Perfect Starting Point.");
+    expect(landingReviewSource).not.toContain("Opening Soon");
   });
 
   it("provides a ready-state review URL for every workout video", () => {

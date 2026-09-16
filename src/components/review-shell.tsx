@@ -62,7 +62,11 @@ export function ReviewShell({
     return (
       <div className="gxj-platform-shell flex min-h-screen flex-col bg-background text-foreground">
         <header className="relative z-10 border-b border-foreground/15 bg-background/95">
-          <div className="mx-auto flex h-[4.5rem] w-full max-w-2xl items-center justify-between px-5">
+          <div
+            className={`mx-auto flex h-[4.5rem] w-full items-center justify-between px-5 sm:px-8 ${
+              mode === "public" ? "max-w-5xl" : "max-w-2xl"
+            }`}
+          >
             <Brand />
             {mode === "focused" ? <HeaderActions /> : null}
           </div>

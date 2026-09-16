@@ -289,30 +289,139 @@ function HomeReview({ variant }: { variant: string }) {
   );
 }
 
+const landingPlanPreview = [
+  { day: "Day 1", type: "Guided Workout", detail: "Your starting level" },
+  { day: "Day 2", type: "Recovery", detail: "Move and reset" },
+  { day: "Day 3", type: "Guided Workout", detail: "Your next step" },
+];
+
+const landingBenefits = [
+  ["01", "Your schedule", "Seven clear days of training, recovery, and next steps."],
+  ["02", "Your workouts", "Guided sessions with options for your experience and joints."],
+  ["03", "Your protein target", "One useful daily number without tracking every calorie."],
+];
+
+const landingSteps = [
+  [
+    "01",
+    "Tell us where you are",
+    "Answer a few short questions about your current starting point.",
+  ],
+  [
+    "02",
+    "Get your complete plan",
+    "Your workouts, recovery days, and protein target are ready immediately.",
+  ],
+  ["03", "Open Day 1", "Follow the workout and keep moving forward one day at a time."],
+];
+
 function LandingReview() {
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
-      <Status>Free 7-Day Plan</Status>
-      <h1 className="gxj-display-title mt-5 text-5xl uppercase leading-[0.94] tracking-wide sm:text-7xl">
-        Prove You're Not Done Yet
-      </h1>
-      <p className="mt-5 max-w-xl text-lg font-medium leading-relaxed">
-        Get a simple jump rope, strength, and nutrition plan built around what you can do right now.
-      </p>
-      <div className="mt-8">
-        <Action>
-          Build My 7-Day Plan <ArrowRight className="size-4" />
-        </Action>
-      </div>
-      <Section title="Built for a real comeback">
-        <div className="grid gap-5 sm:grid-cols-3">
-          {["Short workouts", "Simple food targets", "Options for your joints"].map((item) => (
-            <p key={item} className="border-t-2 border-foreground pt-3 font-bold">
-              {item}
+    <div className="mx-auto w-full max-w-5xl px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-12">
+      <section className="grid items-center gap-9 border-b-2 border-foreground pb-10 sm:gap-12 sm:pb-14 lg:grid-cols-[1.05fr_0.95fr]">
+        <div>
+          <Status>Free 7-Day Comeback Plan</Status>
+          <h1 className="gxj-display-title mt-5 max-w-2xl text-5xl uppercase leading-[0.94] tracking-wide sm:text-6xl">
+            Start Where You Are. Know What to Do Next.
+          </h1>
+          <p className="mt-5 max-w-xl text-lg font-medium leading-relaxed">
+            Get a personalized workout and protein plan built around your current fitness, schedule,
+            equipment, and the impact level that works for you.
+          </p>
+          <div className="mt-7">
+            <Action>
+              Build My Free 7-Day Plan <ArrowRight className="size-4" />
+            </Action>
+            <p className="mt-3 text-sm font-medium text-foreground/65">
+              Free. Takes about two minutes. No password required.
             </p>
+          </div>
+        </div>
+
+        <div className="border-2 border-foreground bg-background shadow-[6px_6px_0_var(--color-foreground)]">
+          <div className="flex items-center justify-between border-b-2 border-foreground bg-foreground px-5 py-4 text-background">
+            <p className="gxj-display-title text-xl uppercase tracking-wide">
+              Your Week at a Glance
+            </p>
+            <span className="text-xs font-bold uppercase tracking-[0.14em]">Personalized</span>
+          </div>
+          <div className="divide-y divide-foreground/20 px-5">
+            {landingPlanPreview.map(({ day, type, detail }) => (
+              <div key={day} className="grid grid-cols-[4rem_1fr] gap-4 py-4">
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground/55">
+                  {day}
+                </p>
+                <div>
+                  <p className="font-bold">{type}</p>
+                  <p className="mt-1 text-sm text-foreground/65">{detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="border-t-2 border-foreground bg-gxj-aqua px-5 py-4">
+            <p className="text-xs font-bold uppercase tracking-[0.12em]">Daily Protein Target</p>
+            <p className="mt-1 text-sm font-medium">A practical number based on you.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-foreground/15 py-9 sm:py-12">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-gxj-orange">
+          What You Get
+        </p>
+        <h2 className="gxj-display-title mt-2 text-3xl uppercase tracking-wide sm:text-4xl">
+          A Plan You Can Actually Follow
+        </h2>
+        <div className="mt-7 grid gap-6 sm:grid-cols-3">
+          {landingBenefits.map(([number, title, body]) => (
+            <div key={number} className="border-t-2 border-foreground pt-4">
+              <p className="gxj-display-title text-2xl leading-none text-gxj-orange">{number}</p>
+              <h3 className="mt-4 text-lg font-bold">{title}</h3>
+              <p className="mt-2 text-base leading-relaxed text-foreground/70">{body}</p>
+            </div>
           ))}
         </div>
-      </Section>
+      </section>
+
+      <section className="py-9 sm:py-12">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-gxj-orange">
+          How It Works
+        </p>
+        <h2 className="gxj-display-title mt-2 text-3xl uppercase tracking-wide sm:text-4xl">
+          From Questions to Day 1
+        </h2>
+        <div className="mt-7 divide-y-2 divide-foreground border-y-2 border-foreground">
+          {landingSteps.map(([number, title, body]) => (
+            <div
+              key={number}
+              className="grid gap-2 py-5 sm:grid-cols-[4rem_12rem_1fr] sm:items-center sm:gap-5"
+            >
+              <p className="gxj-display-title text-3xl leading-none">{number}</p>
+              <h3 className="text-base font-bold">{title}</h3>
+              <p className="text-base leading-relaxed text-foreground/70">{body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-foreground px-5 py-8 text-background sm:flex sm:items-center sm:justify-between sm:gap-8 sm:px-8 sm:py-10">
+        <div>
+          <h2 className="gxj-display-title text-3xl uppercase leading-[0.95] tracking-wide sm:text-4xl">
+            You Don’t Need the Perfect Starting Point.
+          </h2>
+          <p className="mt-2 text-base font-medium text-background/75">
+            You need the right next step.
+          </p>
+        </div>
+        <Button
+          type="button"
+          size="lg"
+          className="gxj-display-title mt-6 min-h-14 w-full shrink-0 bg-gxj-orange px-6 text-xl uppercase leading-none tracking-wide text-foreground hover:bg-gxj-orange/90 sm:mt-0 sm:w-auto"
+        >
+          Build My Free Plan
+          <ArrowRight className="size-4" />
+        </Button>
+      </section>
     </div>
   );
 }
