@@ -154,7 +154,7 @@ export function AcceleratorOfferPage({
         {[
           ["5", "Guided workouts each week"],
           ["28", "Days mapped out"],
-          ["$37", "One-time payment"],
+          ["4", "Weekly coaching primers"],
         ].map(([value, label]) => (
           <div
             key={label}
@@ -342,13 +342,10 @@ export function AcceleratorOfferPage({
 
       <OfferSection kicker="Ready to Commit?" title="Start Your Next 28 Days Today">
         <p>
-          Get the complete 28-Day Fat Loss Accelerator for one payment of $37. If it is not right
-          for you after experiencing Week 1, request a refund within seven days of purchase.
+          Get the complete 28-Day Fat Loss Accelerator. If it is not right for you after
+          experiencing Week 1, request a refund within seven days of purchase.
         </p>
-        <p className="gxj-display-title mt-6 text-5xl uppercase leading-none">$37</p>
-        <p className="mt-2 font-medium text-foreground/70">
-          One payment. No subscription. Access does not expire.
-        </p>
+        <p className="mt-4 font-medium text-foreground/70">Access does not expire.</p>
         <div className="mt-6">{action()}</div>
         {status ? <div className="mt-3 text-sm leading-relaxed">{status}</div> : null}
       </OfferSection>
@@ -379,9 +376,7 @@ export function AcceleratorOfferPage({
           remove the uncertainty and give every day of your effort a place to go.
         </p>
         <div className="mt-6">{action(true)}</div>
-        <p className="mt-4 text-sm text-background/70">
-          One $37 payment. Seven days to experience the first week.
-        </p>
+        <p className="mt-4 text-sm text-background/70">Seven days to experience the first week.</p>
       </section>
     </PlatformPage>
   );

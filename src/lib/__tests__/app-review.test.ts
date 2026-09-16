@@ -257,7 +257,8 @@ describe("app review catalog", () => {
     expect(offerPageSource).toContain("Jump rope builds the conditioning");
     expect(offerPageSource).toContain("Bodyweight training builds the strength");
     expect(offerPageSource).toContain("Nutrition creates the fat-loss conditions");
-    expect(offerPageSource).toContain("$37");
+    expect(offerPageSource).toContain("Weekly coaching primers");
+    expect(offerPageSource).not.toMatch(/\$37|one-time payment|one payment|no subscription/i);
     expect(offerPageSource).toContain("refund within seven days");
     expect(offerPageSource).toContain("Access does not expire");
     expect(offerPageSource).not.toMatch(/dumbbell|active recovery|rest day|app store|membership/i);
