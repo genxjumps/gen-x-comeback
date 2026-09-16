@@ -652,7 +652,7 @@ function NutritionResults({
           <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
             Your targets may need an update
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-base leading-relaxed">
             Your latest weight is {targetReview.measuredWeight.value}{" "}
             {targetReview.measuredWeight.unit}. Review how it affects your daily targets before
             saving anything.
