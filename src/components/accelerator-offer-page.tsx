@@ -150,24 +150,25 @@ export function AcceleratorOfferPage({
       titleSize="compact"
       contentGap="tight"
     >
-      <div className="border-y-2 border-foreground py-6">
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            ["5", "Guided workouts each week"],
-            ["24-28", "Minutes per workout"],
-            ["$37", "One-time payment"],
-          ].map(([value, label]) => (
-            <div key={label}>
-              <p className="gxj-display-title text-3xl uppercase leading-none sm:text-4xl">
-                {value}
-              </p>
-              <p className="mt-2 text-xs font-bold uppercase leading-tight tracking-[0.1em] text-foreground/60 sm:text-sm">
-                {label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+      <dl className="grid border-l border-t border-foreground/25 sm:grid-cols-3">
+        {[
+          ["5", "Guided workouts each week"],
+          ["24-28", "Minutes per workout"],
+          ["$37", "One-time payment"],
+        ].map(([value, label]) => (
+          <div
+            key={label}
+            className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-5"
+          >
+            <dt className="order-2 mt-3 text-xs font-bold uppercase leading-tight tracking-[0.16em] text-muted-foreground sm:text-sm">
+              {label}
+            </dt>
+            <dd className="gxj-display-title order-1 text-5xl uppercase leading-none tracking-wide sm:text-6xl">
+              {value}
+            </dd>
+          </div>
+        ))}
+      </dl>
 
       <div className="py-7">
         {action()}
