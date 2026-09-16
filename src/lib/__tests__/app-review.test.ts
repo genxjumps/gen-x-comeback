@@ -394,6 +394,21 @@ describe("app review catalog", () => {
     expect(nutritionRouteSource).not.toContain('<PlatformPage className="text-center"');
   });
 
+  it("explains the Nutrition unavailable state and gives both recovery steps", () => {
+    expect(getReviewScreen("nutrition-unavailable")?.variant).toBe("error");
+    for (const source of [nutritionReviewSource, nutritionRouteSource]) {
+      expect(source).toContain("Nutrition Couldn't Be Loaded");
+      expect(source).toContain(
+        "We couldn't confirm your account or load your saved nutrition targets. Nothing was changed.",
+      );
+      expect(source).toContain("Try Again");
+      expect(source).toContain("Still not working?");
+      expect(source).toContain("Sign in again.");
+    }
+    expect(nutritionRouteSource).toContain('to="/recover"');
+    expect(nutritionRouteSource).toContain("setLoadAttempt((attempt) => attempt + 1)");
+  });
+
   it("uses the approved three-step assessment system for Nutrition setup", () => {
     expect(
       reviewScreens.filter(
