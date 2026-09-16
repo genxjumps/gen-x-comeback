@@ -100,10 +100,12 @@ content needs it: target-review status, compact disclosures and controls, and th
 review, or unavailable treatments.
 
 Active Nutrition uses the shared app typography hierarchy. Major section headings use uppercase
-Anton at the established section-heading scale, target values use Anton at the shared measurement
-scale, and meal and example subheads use the smaller Anton display scale. Labels, percentages,
-instructions, lists, and supporting copy remain in Barlow. The review route and real page must use
-the same type classes rather than approximating the hierarchy with route-specific bold text.
+Anton at the established section-heading scale. The four Starting Targets use the same bordered
+data grid as Workout Overview: uppercase 12 px Barlow labels and 24 px Anton values at the desktop
+scale. This grid is grouped data, not a dashboard card. Meal and example subheads use the same 24 px
+Anton display scale. Percentages, instructions, lists, and supporting copy remain in Barlow. The
+review route and real page must use the same type classes rather than approximating the hierarchy
+with route-specific bold text.
 
 ### 5. Internal and review-only screens
 

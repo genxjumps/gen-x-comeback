@@ -300,7 +300,16 @@ describe("app review catalog", () => {
     }
     for (const source of [activeNutritionReviewSource, nutritionRouteSource]) {
       expect(source).toContain(
-        "gxj-display-title mt-1 text-3xl uppercase tracking-wide sm:text-4xl",
+        "grid grid-cols-2 border-l border-t border-foreground/25 sm:grid-cols-4",
+      );
+      expect(source).toContain(
+        "flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-4",
+      );
+      expect(source).toContain(
+        "text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground",
+      );
+      expect(source).toContain(
+        "gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl",
       );
     }
     expect(nutritionRouteSource).toContain('? "Your Nutrition"');
