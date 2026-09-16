@@ -179,7 +179,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "99f1a8ddc8aa3f86f3738018b40244272e2abefb642b23a9a40dc34c3c8e27c1"
+      "sha256": "6f6981402a3b04e1f1eee38e8825f56d960e85da286f8a6f45537d3ff4a6f6b0"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -315,7 +315,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "7413f10fb609b11806638c1089509ce0b2363b7e54cfe881ddb6409063fb860a"
+      "sha256": "725b8de95b2bcbacb1fac3a355ec5229b9c002965f8aef7df5e23898449e8da3"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -599,7 +599,7 @@
     },
     {
       "path": "src/lib/app-review.ts",
-      "sha256": "901e5fe16a7d6ce1e604aef90ac37d5d47b7722045d912bcf1b23d491a54d9a0"
+      "sha256": "bb0030a594209e0cae1c97a49cb6fa7534d2a68a717f1ff0d93ba692aed583fb"
     },
     {
       "path": "src/lib/commerce/__tests__/checkout-path.test.ts",
