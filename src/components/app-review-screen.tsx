@@ -1527,7 +1527,7 @@ function NutritionReview({ variant }: { variant: string }) {
             </Button>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-y-5 sm:grid-cols-4 sm:divide-x sm:divide-foreground/15">
+          <div className="mt-5 grid grid-cols-2 border-l border-t border-foreground/25 sm:grid-cols-4">
             {[
               ["Calories", "2,100"],
               ["Protein", "175 g"],
@@ -1536,10 +1536,12 @@ function NutritionReview({ variant }: { variant: string }) {
             ].map(([label, value]) => (
               <div
                 key={label}
-                className="min-w-0 pr-4 even:pl-4 sm:px-4 sm:first:pl-0 sm:last:pr-0"
+                className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-4"
               >
-                <p className="text-xs font-medium text-muted-foreground">{label}</p>
-                <p className="gxj-display-title mt-1 text-3xl uppercase tracking-wide sm:text-4xl">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  {label}
+                </p>
+                <p className="gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl">
                   {value}
                 </p>
               </div>
