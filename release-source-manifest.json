@@ -183,7 +183,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "a8e82a30e9af78c33447bf648bb16c3f3b180445e53aaee2bcbabc89c4f590bc"
+      "sha256": "5d9dfb1637d7d325a85a8e5d992a4e4a11e66c561b2d6d6394cb761cfe9bdf7c"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
