@@ -4,23 +4,27 @@ import { Button } from "@/components/ui/button";
 
 export function IntakeClosed() {
   return (
-    <section className="rounded-lg border border-border bg-card p-5">
-      <h1 className="gxj-display-title text-2xl leading-tight tracking-tight sm:text-3xl">
+    <section className="py-6 sm:py-8">
+      <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
+        7-Day Comeback Plan
+      </p>
+      <h1 className="gxj-display-title mt-4 max-w-2xl text-3xl uppercase leading-none tracking-wide sm:text-4xl">
         The 7-Day Comeback Plan Is Almost Ready
       </h1>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+      <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
         I&rsquo;m finishing the experience before opening it publicly. New plans aren&rsquo;t
         available right now.
       </p>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+      <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
         Already have a plan? Use your access email or request a fresh secure link.
       </p>
-      <div className="mt-5 flex flex-wrap gap-3">
-        <Button asChild>
+      <div className="mt-6 border-t border-foreground/20 pt-5">
+        <Button
+          asChild
+          size="lg"
+          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+        >
           <Link to="/recover">Recover My Plan</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link to="/">Back to Start</Link>
         </Button>
       </div>
     </section>
