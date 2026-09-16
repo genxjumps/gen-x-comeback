@@ -234,9 +234,11 @@ function formToIntake(form: FormState): NutritionIntake | null {
 
 function TargetCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 pr-4 even:pl-4 sm:px-4 sm:first:pl-0 sm:last:pr-0">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <p className="gxj-display-title mt-1 text-3xl uppercase tracking-wide sm:text-4xl">{value}</p>
+    <div className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-4">
+      <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+      <p className="gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl">
+        {value}
+      </p>
     </div>
   );
 }
@@ -664,7 +666,7 @@ function NutritionResults({
           </Button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-y-5 sm:grid-cols-4 sm:divide-x sm:divide-foreground/15">
+        <div className="mt-5 grid grid-cols-2 border-l border-t border-foreground/25 sm:grid-cols-4">
           <TargetCard label="Calories" value={profile.targets.calories.toLocaleString()} />
           <TargetCard label="Protein" value={`${profile.targets.proteinGrams} g`} />
           <TargetCard label="Carbs" value={`${profile.targets.carbohydrateGrams} g`} />
