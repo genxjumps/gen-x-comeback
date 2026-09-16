@@ -65,7 +65,7 @@ funnel.
 | My Programs              | `/my-programs`                    | Show owned, active, paused, completed, and available programs  | Participant app             |
 | Program catalog redirect | `/programs`                       | Route into the available-program experience                    | Participant app             |
 | Accelerator offer        | `/programs/accelerator`           | Explain and sell the Accelerator inside the app                | Participant app offer       |
-| Purchase confirmation    | `/checkout/accelerator/success`   | Confirm ownership or recover a delayed purchase record         | Participant app transaction |
+| Purchase confirmation    | `/checkout/accelerator/success`   | Confirm ownership or explain and retry delayed purchase setup  | Participant app transaction |
 | Accelerator setup        | `/my-programs/accelerator/setup`  | Explain the program and collect optional starting measurements | Participant app setup       |
 | Accelerator program      | `/accelerator`                    | Show today's workout and 28-day progress                       | Participant app             |
 | Accelerator history      | `/my-programs/accelerator/runs`   | Preserve completed or replaced program history                 | Participant app support     |
@@ -409,6 +409,36 @@ plan. It uses the approved design from the isolated **Home Screen Prompt** revie
 - The installed confirmation may remain contained because it communicates a real status state.
 - This is a presentation contract only. Preserve platform detection, install tracking, the 24-hour
   reminder delay, standalone routing, and all existing plan navigation behavior.
+
+### Approved simple status-page contract
+
+The Accelerator purchase-confirmed and purchase-processing states establish the shared pattern for
+short success, waiting, recovery, and other single-purpose status pages.
+
+- Use the shared participant header, cream background, restrained texture, compact app-page title
+  scale, Anton display type, Barlow body type, narrow reading width, and standard spacing rhythm.
+- Keep the main content left-aligned. Do not center the entire page, add a hero treatment, or wrap
+  the message in a card merely because the page has little content.
+- Use one small uppercase kicker, one clear headline, a short explanation of what happened, one
+  strong next-step or timing line, one concise supporting line when needed, and one primary action.
+- Use the shared 56px uppercase Anton button treatment. Secondary actions stay restrained and must
+  earn their place by helping the customer continue or recover.
+- State the real product name when it matters. Do not use vague shorthand such as **The
+  Accelerator** when the customer needs **28-Day Fat Loss Accelerator** or **28-Day Fat Loss
+  Accelerator plan** to understand the message.
+- The confirmed state uses **You Own It** and **Your New Program Is Ready**, then tells the customer
+  they can find their **28-Day Fat Loss Accelerator plan under My Programs**.
+- The processing state uses **Purchase Received** and **We’re Finishing Your Purchase**, confirms
+  that payment went through, explains that the program is being added to **My Programs**, gives an
+  honest short wait expectation, and offers **Check Again** without implying another payment is
+  needed.
+- Preserve the real checkout verification, retry, ownership, entitlement, navigation, and error
+  behavior. The review variants must mirror the corresponding live states rather than becoming
+  independent mockups.
+
+Reuse this layout before inventing a new composition for another short transactional or status
+screen. A real warning, destructive confirmation, complex form, or multi-step recovery flow may
+require a different contained treatment.
 
 ### Day 1 workout
 
