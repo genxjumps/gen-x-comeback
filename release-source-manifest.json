@@ -154,6 +154,10 @@
       "sha256": "540e718e2bd302e8cab37997b2259f1746634ecb89dd71593e410d100413083c"
     },
     {
+      "path": "src/components/accelerator-offer-page.tsx",
+      "sha256": "7667375bd08e10ea20dfed87755fd3be08712fee8cbdc46b4cce7729e29e1d5a"
+    },
+    {
       "path": "src/components/accelerator-program-preview.tsx",
       "sha256": "5da70088255fd72696c28eae7e614d61fa467e174fa3ed9fdb8fa5cd06dff27e"
     },
@@ -179,7 +183,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "3725e983fc8d9d19b995df848c43d22cd4fa4a7028cd47c47997d28fe1bf097f"
+      "sha256": "3e41c63b331fbeef4f34f916496e8f7930e73bff4be1c5ecbd44726eff5466fc"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -315,7 +319,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "fe621344b8e93c21c01615fe0f23e16e7dcd6d6240df95695cabf60b7ff482cd"
+      "sha256": "887d7e142f2916a2dd7450d026010aac8868dbf74da0905b12f3a76ff73f7900"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -631,7 +635,7 @@
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge-contract.test.ts",
-      "sha256": "101b410f4e94e4ef91ba338e4fc0b9d37a9b231583c890693827cfbf7ddd1ccb"
+      "sha256": "a05b6842eae7e2d81bd585e7f2020c51c7052014cbae4f67051557421ac3f617"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge.test.ts",
@@ -1367,7 +1371,7 @@
     },
     {
       "path": "src/routes/programs_.accelerator.tsx",
-      "sha256": "387d05c6f8fa33f9387caba2d3c4d56d7009790d8d9a7ffe7412fc3e3c4dea72"
+      "sha256": "9fe5fa60fe427e27a09d0e65ed62ac359df965018b4e19c38080f358e7957240"
     },
     {
       "path": "src/routes/progress.tsx",

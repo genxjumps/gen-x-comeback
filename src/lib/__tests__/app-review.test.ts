@@ -7,6 +7,10 @@ const reviewSource = readFileSync(
   new URL("../../components/app-review-screen.tsx", import.meta.url),
   "utf8",
 );
+const offerPageSource = readFileSync(
+  new URL("../../components/accelerator-offer-page.tsx", import.meta.url),
+  "utf8",
+);
 const assessmentReviewSource = reviewSource.slice(
   reviewSource.indexOf("function AssessmentReview"),
   reviewSource.indexOf("function AssessmentResultReview"),
@@ -240,6 +244,21 @@ describe("app review catalog", () => {
     expect(acceleratorReviewSource).not.toContain("Before You Start");
     expect(acceleratorReviewSource).not.toContain("Dumbbells");
     expect(acceleratorReviewSource).not.toContain("gxj-orange");
+  });
+
+  it("uses one accurate sales page for the Accelerator route and review", () => {
+    expect(getReviewScreen("accelerator-offer")?.variant).toBe("default");
+    expect(reviewSource).toContain('<AcceleratorOfferPage actionLabel="Get the Accelerator" />');
+    expect(offerPageSource).toContain("Turn the Next Four Weeks Into a Real Fitness Comeback");
+    expect(offerPageSource).toContain("Five guided workouts each week");
+    expect(offerPageSource).toContain("24 to 28 minutes");
+    expect(offerPageSource).toContain("Jump rope builds the conditioning");
+    expect(offerPageSource).toContain("Bodyweight training builds the strength");
+    expect(offerPageSource).toContain("Nutrition creates the fat-loss conditions");
+    expect(offerPageSource).toContain("$37");
+    expect(offerPageSource).toContain("refund within seven days");
+    expect(offerPageSource).toContain("Access does not expire");
+    expect(offerPageSource).not.toMatch(/dumbbell|active recovery|rest day|app store|membership/i);
   });
 
   it("uses the approved direct-on-page Progress treatment in review and production", () => {

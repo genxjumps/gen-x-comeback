@@ -25,6 +25,10 @@ const PROGRAM_ROUTE = readFileSync(
   join(process.cwd(), "src", "routes", "programs_.accelerator.tsx"),
   "utf8",
 );
+const PROGRAM_OFFER = readFileSync(
+  join(process.cwd(), "src", "components", "accelerator-offer-page.tsx"),
+  "utf8",
+);
 const GUEST_HANDOFF_MIGRATION = readFileSync(
   join(
     process.cwd(),
@@ -113,9 +117,11 @@ describe("Accelerator Stripe edge contract", () => {
 
   it("keeps the responsive program detail page separate from the catalog", () => {
     expect(PROGRAM_ROUTE).toContain('createFileRoute("/programs_/accelerator")');
-    expect(PROGRAM_ROUTE).toContain("Get the 28-Day Accelerator");
-    expect(PROGRAM_ROUTE).toContain("lg:grid-cols-");
-    expect(PROGRAM_ROUTE).toMatch(/Buying creates your[\s\S]*access but does not start Day 1\./);
+    expect(PROGRAM_ROUTE).toContain("Get the Accelerator");
+    expect(PROGRAM_ROUTE).toContain("<AcceleratorOfferPage");
+    expect(PROGRAM_OFFER).toContain("Turn the Next Four Weeks Into a Real Fitness Comeback");
+    expect(PROGRAM_OFFER).toContain('className="grid grid-cols-3 gap-4"');
+    expect(PROGRAM_OFFER).toContain("Access does not expire");
   });
 
   it("authenticates the app proxy independently of Supabase JWT verification", () => {

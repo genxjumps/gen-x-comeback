@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Check } from "lucide-react";
 import { z } from "zod";
 
+import { AcceleratorOfferPage } from "@/components/accelerator-offer-page";
 import { checkoutPath } from "@/lib/commerce/checkout-path";
-import { Button } from "@/components/ui/button";
 import {
   createGuestAcceleratorCheckout,
   createAcceleratorCheckout,
@@ -29,14 +28,6 @@ export const Route = createFileRoute("/programs_/accelerator")({
   }),
   component: AcceleratorProgramDetail,
 });
-
-const INCLUDED = [
-  "A complete 28-day workout schedule",
-  "Five guided workouts each week, plus active recovery and rest",
-  "Weekly coaching and progress support",
-  "Personal calorie and macro targets with an adjustable meal-by-meal breakdown",
-  "Permanent access and the option to start the program again",
-];
 
 function AcceleratorProgramDetail() {
   const { checkout } = Route.useSearch();
@@ -88,69 +79,30 @@ function AcceleratorProgramDetail() {
   const checkoutAvailable = path === "account" || path === "guest";
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-5 py-10 sm:py-14">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
-        <div>
-          <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
-            28-Day Fat Loss Accelerator
-          </p>
-          <h1 className="gxj-display-title mt-3 max-w-3xl text-4xl leading-tight tracking-tight sm:text-5xl">
-            Know Exactly What To Do For The Next 28 Days
-          </h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Keep building strength, fitness, and consistency with guided video workouts you can
-            follow on any device. Your next workout is laid out, and your nutrition tools help you
-            turn daily targets into meals that work.
-          </p>
-
-          <section className="mt-8 rounded-lg border border-border bg-card p-5 sm:p-6">
-            <h2 className="text-xl font-semibold">What’s included</h2>
-            <ul className="mt-4 grid gap-3">
-              {INCLUDED.map((item) => (
-                <li key={item} className="flex gap-3 text-sm leading-relaxed">
-                  <Check className="mt-0.5 size-4 shrink-0 text-gxj-teal" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
-
-        <aside className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6 lg:sticky lg:top-6">
-          <p className="mt-3 text-3xl font-semibold">$37</p>
-          <p className="mt-1 text-sm text-muted-foreground">One payment. Access does not expire.</p>
-          {owned ? (
-            <Button asChild className="mt-5 w-full">
-              <Link to="/my-programs">Open Programs</Link>
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              className="mt-5 w-full"
-              disabled={!checkoutAvailable || opening}
-              onClick={() => void beginCheckout()}
-            >
-              {opening ? "Opening Stripe..." : "Get the 28-Day Accelerator"}
-            </Button>
-          )}
-          <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-            This checkout uses Stripe test mode and cannot charge a real card. Buying creates your
-            access but does not start Day 1.
-          </p>
-          <p className="mt-3 text-sm font-medium">7-day money-back guarantee.</p>
+    <AcceleratorOfferPage
+      actionLabel={
+        owned ? "Open My Programs" : opening ? "Opening Stripe..." : "Get the Accelerator"
+      }
+      actionDisabled={!owned && (!checkoutAvailable || opening)}
+      onAction={owned ? () => window.location.assign("/my-programs") : () => void beginCheckout()}
+      status={
+        <>
+          {!owned ? (
+            <p>This checkout uses Stripe test mode and cannot charge a real card.</p>
+          ) : null}
           {!checkoutAvailable && !owned ? (
-            <p role="status" className="mt-3 text-sm">
+            <p role="status" className="mt-2 font-medium">
               {path === "loading"
                 ? "Checking your access..."
                 : "Checkout isn't open for this account right now."}
             </p>
           ) : null}
           {checkout === "cancelled" ? (
-            <p className="mt-3 text-sm font-medium">Checkout was canceled. Nothing was charged.</p>
+            <p className="mt-2 font-medium">Checkout was canceled. Nothing was charged.</p>
           ) : null}
-          {error ? <p className="mt-3 text-sm font-medium">{error}</p> : null}
-        </aside>
-      </div>
-    </div>
+          {error ? <p className="mt-2 font-medium">{error}</p> : null}
+        </>
+      }
+    />
   );
 }
