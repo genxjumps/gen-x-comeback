@@ -1061,7 +1061,7 @@ function ProgramsReview({ variant }: { variant: string }) {
 }
 
 function OfferReview() {
-  return <AcceleratorOfferPage actionLabel="Get the Accelerator" />;
+  return <AcceleratorOfferPage actionLabel="Get the Fat Loss Accelerator" />;
 }
 
 function CheckoutReview({ pending }: { pending: boolean }) {

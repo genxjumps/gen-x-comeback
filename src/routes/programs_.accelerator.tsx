@@ -81,7 +81,7 @@ function AcceleratorProgramDetail() {
   return (
     <AcceleratorOfferPage
       actionLabel={
-        owned ? "Open My Programs" : opening ? "Opening Stripe..." : "Get the Accelerator"
+        owned ? "Open My Programs" : opening ? "Opening Stripe..." : "Get the Fat Loss Accelerator"
       }
       actionDisabled={!owned && (!checkoutAvailable || opening)}
       onAction={owned ? () => window.location.assign("/my-programs") : () => void beginCheckout()}
