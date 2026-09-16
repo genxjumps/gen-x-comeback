@@ -371,6 +371,12 @@ describe("app review catalog", () => {
       expect(source).toContain("Calories Matter. Protein First. Meals Stay Simple.");
       expect(source).toContain("Set Up My Starting Targets");
       expect(source).toContain("No food logging required.");
+      expect(source).toContain("Learn the nutrition basics on Gen X Jumps");
+      expect(source).toContain("max-w-lg");
+      expect(source).not.toContain(
+        "The Nutrition tool gives you starting calorie and macro targets",
+      );
+      expect(source).not.toContain("rounded-lg border border-border bg-card p-5 sm:p-6");
     }
   });
 
