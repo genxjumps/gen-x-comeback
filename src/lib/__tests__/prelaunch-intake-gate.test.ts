@@ -54,16 +54,20 @@ describe("pre-launch intake gate", () => {
     expect(closed).toContain('<Link to="/recover">Get My Access Link</Link>');
   });
 
-  it("uses the approved simple access-page treatment while intake is closed", () => {
-    expect(closed).toContain("Plan Access");
-    expect(closed).toContain("Pick Up Where You Left Off");
+  it("keeps the full free-plan explanation while intake is closed", () => {
+    expect(closed).toContain("Free 7-Day Plan");
+    expect(closed).toContain("Start Where You Are. Know What to Do Next.");
     expect(closed).toContain("text-3xl");
     expect(closed).toContain("sm:text-4xl");
     expect(closed).toContain("text-base font-medium leading-relaxed");
+    expect(closed).toContain("Your Plan Includes");
+    expect(closed).toContain("A Clear 7-Day Schedule");
+    expect(closed).toContain("Workouts Scaled to You");
+    expect(closed).toContain("A Practical Protein Target");
+    expect(closed).toContain("How It Works");
+    expect(closed).toContain("Already Have a Plan?");
     expect(closed).toContain("min-h-14");
-    expect(closed).toContain("No password needed.");
     expect(closed).not.toContain("Opening Soon");
-    expect(closed).not.toContain("Built for a real comeback");
     expect(closed).not.toContain("rounded-lg border border-border bg-card");
     expect(closed).not.toContain('to="/">Back to Start</Link>');
     expect(root).toContain("gxj-platform-shell flex min-h-screen");
