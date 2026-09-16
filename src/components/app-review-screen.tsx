@@ -11,6 +11,7 @@ import {
   Mail,
   RotateCcw,
   ShieldCheck,
+  Video,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -24,6 +25,7 @@ import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { WorkoutLaunchPanel } from "@/components/workout-launch-panel";
 import { WorkoutOverview, WorkoutNotes } from "@/components/workout-screen";
 import { SevenDayScheduleRow } from "@/components/seven-day-schedule-row";
+import { ACCELERATOR_ORIENTATION } from "@/lib/accelerator/content";
 import { acceleratorVideoSrc } from "@/lib/accelerator/video";
 import type { ReviewScreen } from "@/lib/app-review";
 import { WORKOUTS } from "@/lib/plan";
@@ -1100,29 +1102,48 @@ function CheckoutReview({ pending }: { pending: boolean }) {
 function AcceleratorSetupReview() {
   return (
     <Page
-      kicker="28-Day Accelerator"
+      kicker="28-Day Fat Loss Accelerator"
       title="Set Your Starting Point"
-      description="Choose your start date and add measurements if you want a clear before-and-after record."
+      description="Review how the program works, then add starting measurements if you want a clear before-and-after record. Both measurements are optional."
+      titleSize="compact"
     >
-      <Section title="Start date">
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Choice selected>Start today</Choice>
-          <Choice>Choose a date</Choice>
+      <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          {ACCELERATOR_ORIENTATION.title}
+        </h2>
+        <div className="mt-4 flex aspect-video items-center justify-center border-2 border-dashed border-foreground/25 bg-background/60 px-5 text-center">
+          <div>
+            <Video className="mx-auto size-8 text-foreground/55" aria-hidden="true" />
+            <p className="mt-3 text-base font-semibold">Orientation video coming soon</p>
+          </div>
         </div>
-      </Section>
-      <Section title="Starting measurements">
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="mt-5 space-y-4 text-base leading-relaxed text-foreground/80">
+          {ACCELERATOR_ORIENTATION.writtenExplanation.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+      </section>
+      <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
+          Starting Measurements
+        </h2>
+        <p className="mt-3 text-base leading-relaxed text-foreground/80">
+          Both are optional. Skip either one or both and start anyway.
+        </p>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
           <label className="font-bold">
-            Weight <span className="font-normal text-muted-foreground">(optional)</span>
-            <Input className="mt-2 min-h-12" placeholder="175" />
+            Weight - lb
+            <Input className="mt-2 min-h-14" placeholder="Optional" />
           </label>
           <label className="font-bold">
-            Waist <span className="font-normal text-muted-foreground">(optional)</span>
-            <Input className="mt-2 min-h-12" placeholder="34" />
+            Waist - in
+            <Input className="mt-2 min-h-14" placeholder="Optional" />
           </label>
         </div>
-      </Section>
-      <Action>Start My Accelerator</Action>
+      </section>
+      <div className="mt-1 border-t border-foreground/20 pt-5">
+        <Action>Begin Day 1</Action>
+      </div>
     </Page>
   );
 }
