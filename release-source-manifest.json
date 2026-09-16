@@ -155,7 +155,7 @@
     },
     {
       "path": "src/components/accelerator-offer-page.tsx",
-      "sha256": "f8d57d6550d86306445b43ae6683a4f395e6ada38a5ae47f76c10df602dea47a"
+      "sha256": "513d1ad95b7aa3c4c79a5baf6a449ea96bfbc3869fcbb9d0b6dcca7c7347ae5e"
     },
     {
       "path": "src/components/accelerator-program-preview.tsx",
@@ -635,7 +635,7 @@
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge-contract.test.ts",
-      "sha256": "e7148360219235eaf984489a5fb8a7322c0e96191ffe62c7641e88717bd07f08"
+      "sha256": "f4378aa756ab12c5d5d01b1b89c78d22d1c6886b23a9c87827a3b20aad24a55c"
     },
     {
       "path": "src/lib/commerce/__tests__/stripe-edge.test.ts",

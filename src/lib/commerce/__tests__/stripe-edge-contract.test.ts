@@ -121,7 +121,7 @@ describe("Accelerator Stripe edge contract", () => {
     expect(PROGRAM_ROUTE).toContain("<AcceleratorOfferPage");
     expect(PROGRAM_OFFER).toContain("Turn the Next Four Weeks Into a Real Fitness Comeback");
     expect(PROGRAM_OFFER).toContain(
-      'className="grid border-l border-t border-foreground/25 sm:grid-cols-3"',
+      'className="grid grid-cols-3 border-l border-t border-foreground/25"',
     );
     expect(PROGRAM_OFFER).toContain("text-5xl uppercase leading-none tracking-wide sm:text-6xl");
     expect(PROGRAM_OFFER).toContain("Access does not expire");

@@ -150,7 +150,7 @@ export function AcceleratorOfferPage({
       titleSize="compact"
       contentGap="tight"
     >
-      <dl className="grid border-l border-t border-foreground/25 sm:grid-cols-3">
+      <dl className="grid grid-cols-3 border-l border-t border-foreground/25">
         {[
           ["5", "Guided workouts each week"],
           ["24-28", "Minutes per workout"],
@@ -158,7 +158,7 @@ export function AcceleratorOfferPage({
         ].map(([value, label]) => (
           <div
             key={label}
-            className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-5"
+            className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-3 sm:p-5"
           >
             <dt className="order-2 mt-3 text-xs font-bold uppercase leading-tight tracking-[0.16em] text-muted-foreground sm:text-sm">
               {label}
