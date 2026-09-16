@@ -1621,6 +1621,7 @@ function NutritionReview({ variant }: { variant: string }) {
         kicker="Nutrition"
         title="Calories Matter. Protein First. Meals Stay Simple."
         description="Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
+        titleSize="compact"
       >
         <div className="max-w-lg">
           <Action>Set Up My Starting Targets</Action>

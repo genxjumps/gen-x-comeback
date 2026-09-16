@@ -360,9 +360,7 @@ describe("app review catalog", () => {
     expect(nutritionRouteSource).toContain(
       'kicker={profile && !editing ? undefined : setupActive ? undefined : "Nutrition"}',
     );
-    expect(nutritionRouteSource).toContain(
-      'titleSize={(profile && !editing) || setupActive ? "compact" : undefined}',
-    );
+    expect(nutritionRouteSource).toContain('titleSize="compact"');
   });
 
   it("exposes the real pre-setup Nutrition entry state for review", () => {
@@ -378,6 +376,7 @@ describe("app review catalog", () => {
       );
       expect(source).not.toContain("rounded-lg border border-border bg-card p-5 sm:p-6");
     }
+    expect(nutritionReviewSource).toContain('titleSize="compact"');
   });
 
   it("uses the approved three-step assessment system for Nutrition setup", () => {
