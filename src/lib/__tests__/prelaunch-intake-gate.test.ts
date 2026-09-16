@@ -53,6 +53,13 @@ describe("pre-launch intake gate", () => {
     expect(closed).toContain('<Link to="/recover">Recover My Plan</Link>');
   });
 
+  it("uses the approved open access-screen treatment", () => {
+    expect(closed).toContain("text-base font-medium leading-relaxed");
+    expect(closed).toContain("min-h-14");
+    expect(closed).not.toContain("rounded-lg border border-border bg-card");
+    expect(closed).not.toContain('to="/">Back to Start</Link>');
+  });
+
   it("lets a valid controlled-test handoff finish while direct intake stays closed", () => {
     expect(start).toContain("useNewPlanIntakeAccess");
     expect(assessment).toContain("useNewPlanIntakeAccess");
