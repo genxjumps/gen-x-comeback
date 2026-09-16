@@ -82,6 +82,10 @@ funnel.
 | Purchases and Billing | `/account/purchases`     | Show purchases and refund access                            | Participant utility |
 | Access recovery       | `/recover` and `/return` | Restore password-free access                                | Recovery            |
 
+The active Nutrition page and the three-step Nutrition intake are **approved and locked**. Future
+work should extend these patterns to unresolved Nutrition states rather than restyling the approved
+screens page by page.
+
 For an active Nutrition profile, the page gives a direct instruction: **These are the numbers to
 follow each day. Hit your calorie and protein targets consistently to lose fat and protect
 muscle.** Do not weaken this with optional or pass-or-fail framing. Setup retains its own
@@ -104,6 +108,9 @@ question cards:
 - Reuse the 56 px uppercase Anton Back, Continue, and final calculation actions. Keep the saved-answer
   reassurance below the actions and preserve all existing intake fields, validation, calculation,
   save, edit, and target-review behavior.
+- Save the current step and answers during the browser session. Restore an unfinished setup or edit
+  when the participant returns in the same session, then clear that draft after a successful save,
+  cancellation, or logout.
 - The review hub exposes all three fixed setup steps so the real responsive form can be checked
   without an account or saved profile.
 
@@ -131,6 +138,21 @@ treatment. Direct coaching callouts may use 16 px semibold Barlow in black. Meal
 controls remain 14 px; labels and disclosures remain 12 px. Do not alternate black and muted-gray
 body paragraphs without a semantic reason. The review route and real page must use the same type
 classes rather than approximating the hierarchy with route-specific bold text.
+
+The normal-day meal split uses the same approved stat language instead of dashboard boxes:
+
+- Each meal is an open row between horizontal dividers. Do not wrap an individual meal in a card.
+- Put the meal name at the left and its percentage at the right on the same baseline row. Both use
+  the same 20 px mobile and 24 px desktop Anton scale. The percentage is lowered slightly so it sits
+  with the meal name rather than floating above it.
+- Show calories, protein, carbs, and fat beneath the meal heading in a two-column mobile and
+  four-column desktop stat grid. Values use the same 20 px mobile and 24 px desktop Anton scale;
+  labels use uppercase 12 px Barlow.
+- Percentages and every other progress value follow the app-wide rule: the progress number stays at
+  the same visual scale as the neighboring number or heading on its line. Do not enlarge a percent
+  merely because it summarizes progress.
+- Meal-split sliders move in one-percent increments and may go as low as 5 percent for a selected
+  eating occasion. They redistribute the remaining percentage without changing the daily totals.
 
 ### 5. Internal and review-only screens
 
