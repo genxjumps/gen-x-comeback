@@ -1509,15 +1509,15 @@ function NutritionReview({ variant }: { variant: string }) {
         </Section>
       ) : null}
       <div>
-        <section className="border-y-2 border-foreground py-6 sm:py-8">
+        <section className="border-b border-foreground/15 pb-6 sm:pb-8">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+              <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
                 Starting Targets
-              </p>
-              <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
-                These are your numbers for the whole day.
               </h2>
+              <p className="mt-2 text-base font-medium leading-relaxed">
+                These are your numbers for the whole day.
+              </p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Every meal counts. All seven days count.
               </p>
