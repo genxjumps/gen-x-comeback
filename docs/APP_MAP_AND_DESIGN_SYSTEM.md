@@ -309,6 +309,9 @@ needs a separate success, warning, or error meaning.
 - Cream, black, warm neutral, and orange are shared app tokens. Legacy teal and mint references
   resolve to this palette so old screens can't reintroduce green.
 - Barlow is the shared interface typeface and Anton is the shared display typeface.
+- The shared `PlatformPage` defaults to the compact app-page title scale and 16 px introduction
+  copy at every breakpoint. True public landing-page heroes must request the separate hero scale
+  deliberately rather than receiving it as an inherited default.
 - Primary and secondary buttons come from the shared button component. Routes don't invent their
   own border weight or shadow treatment.
 - Pages use one shared header, content width, texture, and section-divider system.

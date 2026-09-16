@@ -127,7 +127,7 @@ function Page({
   kicker?: string;
   title: string;
   description?: string;
-  titleSize?: "default" | "compact";
+  titleSize?: "compact" | "hero";
   contentGap?: "default" | "tight";
   children: ReactNode;
 }) {
