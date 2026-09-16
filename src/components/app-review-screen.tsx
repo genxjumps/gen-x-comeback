@@ -1068,10 +1068,10 @@ function CheckoutReview({ pending }: { pending: boolean }) {
   return (
     <Page
       kicker={pending ? "Purchase Received" : "You Own It"}
-      title={pending ? "Finishing Your Purchase" : "Your New Program Is Ready"}
+      title={pending ? "We’re Finishing Your Purchase" : "Your New Program Is Ready"}
       description={
         pending
-          ? "Payment went through. We're connecting the program to your account."
+          ? "Your payment went through. We’re adding your 28-Day Fat Loss Accelerator to My Programs."
           : "You can find your 28-Day Fat Loss Accelerator under My Programs."
       }
     >
@@ -1086,7 +1086,7 @@ function CheckoutReview({ pending }: { pending: boolean }) {
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {pending
-                ? "You can safely refresh this page."
+                ? "Wait here, or tap Check Again if the page doesn’t update."
                 : "Set it up now or come back when you're ready."}
             </p>
           </div>

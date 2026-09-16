@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Check } from "lucide-react";
+import { Check, RotateCcw } from "lucide-react";
 import { z } from "zod";
 
 import { PlatformPage } from "@/components/platform-page";
@@ -74,19 +74,50 @@ function AcceleratorCheckoutSuccess() {
   return (
     <div className="mx-auto w-full max-w-5xl px-5 py-10 sm:py-14">
       <PlatformPage
-        kicker={status === "complete" ? "You Own It" : "28-Day Fat Loss Accelerator"}
-        title={status === "complete" ? "Your New Program Is Ready" : "Confirming Your Purchase"}
+        kicker={
+          status === "complete"
+            ? "You Own It"
+            : status === "checking"
+              ? "Purchase Received"
+              : "28-Day Fat Loss Accelerator"
+        }
+        title={
+          status === "complete"
+            ? "Your New Program Is Ready"
+            : status === "checking"
+              ? "We’re Finishing Your Purchase"
+              : "Confirming Your Purchase"
+        }
         description={
           status === "complete"
             ? "You can find your 28-Day Fat Loss Accelerator under My Programs."
             : status === "error"
               ? "We could not finish opening your test purchase in this browser. No program was started."
-              : "We’re checking your payment and account access."
+              : "Your payment went through. We’re adding your 28-Day Fat Loss Accelerator to My Programs."
         }
       >
         <section className="rounded-lg border border-border bg-card p-6">
           {status === "checking" ? (
-            <p className="text-sm text-muted-foreground">Checking the verified Stripe payment...</p>
+            <div>
+              <div className="flex gap-4">
+                <span className="grid size-11 shrink-0 animate-spin place-items-center rounded-full bg-foreground text-background">
+                  <RotateCcw aria-hidden="true" className="size-5" />
+                </span>
+                <div>
+                  <p className="font-bold">This usually takes only a moment</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Wait here, or tap Check Again if the page doesn’t update.
+                  </p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                className="mt-5 w-full sm:w-auto"
+                onClick={() => window.location.reload()}
+              >
+                Check Again
+              </Button>
+            </div>
           ) : status === "complete" ? (
             <div>
               <div className="grid size-11 place-items-center rounded-full bg-muted">

@@ -183,7 +183,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "759d0ee83c3a22b732ec98d953488060be9fff6afb4d8235be4c43bc41180547"
+      "sha256": "a1d67b2561a39f8252b44d61eacfef9c28b3f3e9c883c69308954be1996046ad"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -1303,7 +1303,7 @@
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
-      "sha256": "601e574385f22bc2c6fe9734c75cf661970c62aa637e79f884efc58cef4a1ac8"
+      "sha256": "d736677c4d800caf1c3e3685a3c5ea0eea6a417f4073d7e7f611e1224250fc0d"
     },
     {
       "path": "src/routes/email-preferences.ts",
