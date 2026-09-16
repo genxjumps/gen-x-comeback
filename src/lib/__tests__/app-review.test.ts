@@ -382,6 +382,18 @@ describe("app review catalog", () => {
     expect(nutritionReviewSource).toContain('titleSize="compact"');
   });
 
+  it("centers only the Nutrition locked-status block", () => {
+    for (const source of [nutritionReviewSource, nutritionRouteSource]) {
+      expect(source).toContain("Simple Targets That Fit Your Plan");
+      expect(source).toContain("Included with the 28-Day Fat Loss Accelerator.");
+      expect(source).toContain('<div className="text-center">');
+      expect(source).toContain('className="mx-auto size-8"');
+      expect(source).toContain("Explore the Accelerator");
+    }
+    expect(nutritionReviewSource).not.toContain('<Page className="text-center"');
+    expect(nutritionRouteSource).not.toContain('<PlatformPage className="text-center"');
+  });
+
   it("uses the approved three-step assessment system for Nutrition setup", () => {
     expect(
       reviewScreens.filter(
