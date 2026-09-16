@@ -285,7 +285,7 @@ describe("app review catalog", () => {
     }
     expect(activeNutritionReviewSource).not.toContain('Section title="Build your day"');
     for (const source of [activeNutritionReviewSource, nutritionResultsSource]) {
-      expect(source).toContain("border-y-2 border-foreground py-6 sm:py-8");
+      expect(source).toContain("border-b border-foreground/15 pb-6 sm:pb-8");
       expect(source).toContain("border-b border-foreground/15 py-6 sm:py-8");
       expect(source).toContain("divide-y divide-foreground/15 border-y");
       expect(
@@ -293,9 +293,14 @@ describe("app review catalog", () => {
           ?.length,
       ).toBeGreaterThanOrEqual(4);
       expect(source).toContain("gxj-display-title text-xl uppercase tracking-wide sm:text-2xl");
+      expect(source).toContain(
+        '<h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">',
+      );
+      expect(source).toContain('<p className="mt-2 text-base font-medium leading-relaxed">');
       expect(source).not.toContain(
         '<section className="rounded-lg border border-border bg-card p-5 sm:p-6">',
       );
+      expect(source).not.toContain("border-y-2 border-foreground py-6 sm:py-8");
       expect(source).not.toContain('className="rounded-md border border-border bg-background p-4"');
     }
     for (const source of [activeNutritionReviewSource, nutritionRouteSource]) {
