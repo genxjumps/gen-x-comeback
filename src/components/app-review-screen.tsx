@@ -1593,9 +1593,15 @@ function NutritionReview({ variant }: { variant: string }) {
       <Page
         kicker="Your Nutrition"
         title="Nutrition Couldn't Be Loaded"
-        description="Your targets haven't been changed."
+        description="We couldn't confirm your account or load your saved nutrition targets. Nothing was changed."
       >
         <Action>Try Again</Action>
+        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+          Still not working?{" "}
+          <span className="font-semibold text-foreground underline underline-offset-4">
+            Sign in again.
+          </span>
+        </p>
       </Page>
     );
   if (variant === "locked")
