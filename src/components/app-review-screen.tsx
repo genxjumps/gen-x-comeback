@@ -1615,6 +1615,44 @@ function NutritionReview({ variant }: { variant: string }) {
         <Action>Explore the Accelerator</Action>
       </Page>
     );
+  if (variant === "welcome")
+    return (
+      <Page
+        kicker="Nutrition"
+        title="Calories Matter. Protein First. Meals Stay Simple."
+        description="Build starting targets, see how they fit across your normal day, and repeat meals that work. No food logging required."
+      >
+        <div className="space-y-4">
+          <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
+            <p className="text-sm leading-relaxed">
+              The Nutrition tool gives you starting calorie and macro targets, then shows how those
+              numbers fit across the way you actually eat. It does not require food logging.
+            </p>
+            <ul className="mt-4 space-y-2 text-sm font-medium">
+              <li>Calories still matter.</li>
+              <li>Protein comes first.</li>
+              <li>Build meals around protein.</li>
+              <li>Repeat simple meals that work.</li>
+            </ul>
+            <div className="mt-6">
+              <Action>Set Up My Starting Targets</Action>
+            </div>
+          </section>
+          <a
+            href="https://genxjumps.com/nutrition/"
+            className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/35 p-5 font-semibold"
+          >
+            <span>
+              Learn the basics
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">
+                Deeper nutrition explanations and examples on Gen X Jumps.
+              </span>
+            </span>
+            <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
+          </a>
+        </div>
+      </Page>
+    );
   if (variant.startsWith("setup")) {
     const step = variant === "setup-2" ? 2 : variant === "setup-3" ? 3 : 1;
     return <NutritionSetupReview step={step} />;

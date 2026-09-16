@@ -551,6 +551,16 @@ export const reviewScreens: ReviewScreen[] = [
     variant: "locked",
   },
   {
+    slug: "nutrition-entry",
+    title: "Your Nutrition",
+    route: "/nutrition",
+    state: "Before setup",
+    group: "Nutrition",
+    shell: "participant",
+    kind: "nutrition",
+    variant: "welcome",
+  },
+  {
     slug: "nutrition-setup",
     title: "Your Nutrition",
     route: "/nutrition",

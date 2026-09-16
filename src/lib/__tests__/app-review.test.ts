@@ -365,6 +365,15 @@ describe("app review catalog", () => {
     );
   });
 
+  it("exposes the real pre-setup Nutrition entry state for review", () => {
+    expect(getReviewScreen("nutrition-entry")?.variant).toBe("welcome");
+    for (const source of [nutritionReviewSource, nutritionRouteSource]) {
+      expect(source).toContain("Calories Matter. Protein First. Meals Stay Simple.");
+      expect(source).toContain("Set Up My Starting Targets");
+      expect(source).toContain("No food logging required.");
+    }
+  });
+
   it("uses the approved three-step assessment system for Nutrition setup", () => {
     expect(
       reviewScreens.filter(
