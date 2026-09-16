@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ExternalLink, Info, RotateCcw } from "lucide-react";
+import { ExternalLink, Info, RotateCcw, ShieldCheck } from "lucide-react";
 
 import { PlatformPage } from "@/components/platform-page";
 import { SetupProgress } from "@/components/setup-progress";
@@ -1126,13 +1126,22 @@ function Nutrition() {
   if (result.access === "locked") {
     return (
       <PlatformPage
-        kicker="Nutrition"
-        title="Available With An Eligible Paid Program"
-        description="The free 7-Day Comeback Plan does not unlock the nutrition tool. Your workouts and saved progress are unaffected."
+        kicker="Your Nutrition"
+        title="Simple Targets That Fit Your Plan"
+        description="Nutrition guidance unlocks with an eligible paid program."
       >
+        <section className="border-t border-foreground/15 py-6 first:border-t-0 first:pt-0 sm:py-8">
+          <div className="text-center">
+            <ShieldCheck className="mx-auto size-8" />
+            <h2 className="gxj-display-title mt-4 text-3xl uppercase">Not Unlocked</h2>
+            <p className="mt-2 text-muted-foreground">
+              Included with the 28-Day Fat Loss Accelerator.
+            </p>
+          </div>
+        </section>
         <Button asChild>
           <Link to="/my-programs" hash="available">
-            View Programs
+            Explore the Accelerator
           </Link>
         </Button>
       </PlatformPage>
