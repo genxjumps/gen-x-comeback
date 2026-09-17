@@ -18,32 +18,32 @@ export function PlatformPage({
   children: ReactNode;
 }) {
   return (
-    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl pb-10 sm:pb-14">
+    <div className="gxj-page mx-auto min-h-full w-full max-w-[var(--pu-content-app)] pb-10 sm:pb-14">
       <header
         className={`gxj-page-header pt-7 sm:pt-10 ${
-          contentGap === "tight" ? "pb-2 sm:pb-4" : "pb-7 sm:pb-10"
+          contentGap === "tight" ? "pb-3 sm:pb-4" : "pb-7 sm:pb-10"
         }`}
       >
         {headerPrefix}
-        <div className="w-full max-w-2xl">
-          {kicker ? (
-            <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">{kicker}</p>
-          ) : null}
+        <div className="w-full max-w-[var(--pu-content-reading)]">
+          {kicker ? <p className="gxj-kicker">{kicker}</p> : null}
           <h1
-            className={`gxj-display-title uppercase leading-[0.95] tracking-wide ${
-              kicker || headerPrefix ? "mt-4" : ""
-            } ${titleSize === "hero" ? "text-5xl sm:text-7xl" : "text-3xl sm:text-4xl"}`}
+            className={`gxj-display-title ${kicker || headerPrefix ? "mt-3" : ""} ${
+              titleSize === "hero"
+                ? "text-[2.75rem] leading-[0.96] tracking-[-0.03em] sm:text-[3.5rem]"
+                : "text-[2rem] leading-[1.05] tracking-[-0.025em] sm:text-[2.5rem]"
+            }`}
           >
             {title}
           </h1>
           {description ? (
-            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80">
+            <p className="mt-3 max-w-xl text-base font-normal leading-6 text-[var(--pu-text-secondary)]">
               {description}
             </p>
           ) : null}
         </div>
       </header>
-      <div className="gxj-page-body mx-auto max-w-3xl">{children}</div>
+      <div className="gxj-page-body mx-auto w-full max-w-[var(--pu-content-reading)]">{children}</div>
     </div>
   );
 }
