@@ -56,7 +56,7 @@ export function WorkoutMediaCard({
     state.type === "blocked"
       ? `Complete Day ${state.previousDay} first · Available ${state.availableLabel}`
       : state.type === "scheduled"
-        ? `Available ${state.availableLabel}`
+        ? `Your next workout is scheduled. Available ${state.availableLabel}.`
         : !src
           ? missingVideoNotice(code)
           : dayLabel;
