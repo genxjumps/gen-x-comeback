@@ -164,7 +164,7 @@ export function PuRadioChoice({
 }: {
   name: string;
   value: string;
-  label: string;
+  label: ReactNode;
   checked: boolean;
   onChange?: InputHTMLAttributes<HTMLInputElement>["onChange"];
 }) {
@@ -193,7 +193,7 @@ export function PuCheckboxChoice({
 }: {
   name: string;
   value: string;
-  label: string;
+  label: ReactNode;
   checked: boolean;
   onChange?: InputHTMLAttributes<HTMLInputElement>["onChange"];
 }) {

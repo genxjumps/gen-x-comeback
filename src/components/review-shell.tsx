@@ -1,6 +1,7 @@
 import { Bell, ChartNoAxesColumnIncreasing, Dumbbell, Home, Apple, UserRound } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { platformShellStyles as shell } from "@/components/platform-shell-styles";
 import type { ReviewShell as ReviewShellMode } from "@/lib/app-review";
 
 const navigation = [
@@ -16,21 +17,21 @@ const navigation = [
 ] as const;
 
 function HeaderActions({ unread = false }: { unread?: boolean }) {
+  const actionClass =
+    "relative grid size-10 place-items-center rounded-full border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] text-[var(--pu-text-primary)]";
+
   return (
     <div className="flex items-center gap-2">
-      <span
-        aria-label="Account menu"
-        className="grid size-10 place-items-center rounded-full border border-foreground/25"
-      >
+      <span aria-label="Account menu" className={actionClass}>
         <UserRound aria-hidden="true" className="size-5" />
       </span>
       <span
         aria-label={unread ? "Notifications - unread reminder" : "Notifications"}
-        className="relative grid size-10 place-items-center rounded-full border border-foreground/25"
+        className={actionClass}
       >
         <Bell aria-hidden="true" className="size-4" />
         {unread ? (
-          <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive" />
+          <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[var(--pu-status-danger)]" />
         ) : null}
       </span>
     </div>
@@ -38,30 +39,22 @@ function HeaderActions({ unread = false }: { unread?: boolean }) {
 }
 
 function Brand() {
-  return (
-    <span className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]">
-      Gen X Jumps
-    </span>
-  );
+  return <span className={shell.brand}>Gen X Jumps</span>;
 }
 
-export function ReviewShell({
-  mode,
-  active = "home",
-  accent = "orange",
-  unread = false,
-  children,
-}: {
+export function ReviewShell(props: {
   mode: ReviewShellMode;
   active?: "home" | "programs" | "progress" | "nutrition" | "none";
   accent?: "orange" | "aqua";
   unread?: boolean;
   children: ReactNode;
 }) {
+  const { mode, active = "home", unread = false, children } = props;
+
   if (mode !== "participant") {
     return (
-      <div className="gxj-platform-shell flex min-h-screen flex-col bg-background text-foreground">
-        <header className="relative z-10 border-b border-foreground/15 bg-background/95">
+      <div className={shell.shell}>
+        <header className="border-b border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)]">
           <div
             className={`mx-auto flex h-[4.5rem] w-full items-center justify-between px-5 sm:px-8 ${
               mode === "public" ? "max-w-5xl" : "max-w-2xl"
@@ -77,39 +70,35 @@ export function ReviewShell({
   }
 
   return (
-    <div className="gxj-platform-shell min-h-screen bg-background text-foreground">
-      <header className="gxj-platform-header sticky top-0 z-30 border-b border-foreground/15 bg-background/95 text-foreground shadow-[0_2px_12px_oklch(0_0_0/6%)] backdrop-blur-sm">
-        <div className="mx-auto flex h-[4.5rem] w-full max-w-6xl items-center justify-between px-5 sm:px-8">
+    <div className={shell.shell}>
+      <header className={shell.header}>
+        <div className={shell.headerInner}>
           <Brand />
-          <nav className="hidden items-center gap-1.5 lg:flex" aria-label="Main navigation">
-            {navigation.map((item) => (
-              <a
-                key={item.key}
-                href={item.href}
-                aria-current={active === item.key ? "page" : undefined}
-                className={`relative min-h-11 px-4 py-3 text-sm font-bold uppercase tracking-[0.08em] ${
-                  active === item.key
-                    ? `text-foreground after:absolute after:inset-x-4 after:bottom-1.5 after:h-0.5 ${
-                        accent === "aqua" ? "after:bg-gxj-aqua" : "after:bg-gxj-orange"
-                      }`
-                    : "text-foreground/55"
-                }`}
-              >
-                {item.label}
-              </a>
-            ))}
+          <nav className={shell.desktopNav} aria-label="Main navigation">
+            {navigation.map((item) => {
+              const selected = active === item.key;
+              return (
+                <a
+                  key={item.key}
+                  href={item.href}
+                  aria-current={selected ? "page" : undefined}
+                  className={`${shell.desktopItemBase} ${
+                    selected ? shell.desktopItemActive : shell.desktopItemInactive
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
           </nav>
           <HeaderActions unread={unread} />
         </div>
       </header>
-      <main className="gxj-app-surface mx-auto w-full max-w-6xl px-5 pb-28 sm:px-8 lg:pb-14">
-        {children}
-      </main>
-      <nav
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-foreground/15 bg-background/95 shadow-[0_-3px_14px_oklch(0_0_0/8%)] backdrop-blur-sm pb-[env(safe-area-inset-bottom)] lg:hidden"
-        aria-label="Main navigation"
-      >
-        <div className="mx-auto grid max-w-2xl grid-cols-4">
+
+      <main className={shell.main}>{children}</main>
+
+      <nav className={shell.mobileNav} aria-label="Main navigation">
+        <div className={shell.mobileGrid}>
           {navigation.map((item) => {
             const Icon = item.icon;
             const selected = active === item.key;
@@ -118,15 +107,11 @@ export function ReviewShell({
                 key={item.key}
                 href={item.href}
                 aria-current={selected ? "page" : undefined}
-                className={`relative flex min-h-[4.25rem] flex-col items-center justify-center gap-1 px-1 text-xs font-bold uppercase tracking-[0.05em] ${
-                  selected
-                    ? `text-foreground after:absolute after:inset-x-3 after:top-0 after:h-0.5 ${
-                        accent === "aqua" ? "after:bg-gxj-aqua" : "after:bg-gxj-orange"
-                      }`
-                    : "text-foreground/50"
+                className={`${shell.mobileItemBase} ${
+                  selected ? shell.mobileItemActive : shell.mobileItemInactive
                 }`}
               >
-                <Icon aria-hidden="true" className="size-5" strokeWidth={selected ? 2.5 : 2} />
+                <Icon aria-hidden="true" className="size-6" strokeWidth={selected ? 2.2 : 1.8} />
                 <span>{item.label}</span>
               </a>
             );
