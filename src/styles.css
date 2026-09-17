@@ -3,6 +3,7 @@
 @import "@fontsource/barlow/500.css";
 @import "@fontsource/barlow/600.css";
 @import "@fontsource/barlow/700.css";
+@import "./design-system/precision/tokens.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -15,12 +16,8 @@
  * The @theme inline block maps CSS custom properties to Tailwind utility
  * classes (e.g. --color-primary -> bg-primary, text-primary).
  *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
- *
- * To add a new semantic color:
- * 1. Add the variable to :root (light value) and .dark (dark value)
- * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ * Legacy theme variables remain available while the app migrates to the
+ * approved Precision Utility semantic tokens.
  */
 
 @theme inline {
@@ -105,7 +102,6 @@
   --sidebar-accent-foreground: oklch(0.24 0 0);
   --sidebar-border: oklch(0.9 0 0);
   --sidebar-ring: oklch(0.6 0 0);
-  /* Legacy names now resolve to the shared orange and warm-neutral app palette. */
   --gxj-teal: oklch(0.63 0.2 42);
   --gxj-mint: oklch(0.95 0.025 75);
   --gxj-orange: oklch(0.63 0.2 42);
@@ -408,4 +404,153 @@
   .gxj-assessment-options:not(.gxj-assessment-options--stacked) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* Precision Utility migration bridge.
+ * Existing route markup inherits the approved system through shared semantic
+ * variables and shared classes while routes are migrated by primitive.
+ */
+:root:not(.dark) {
+  --radius: var(--pu-radius-control);
+  --background: var(--pu-surface-page);
+  --foreground: var(--pu-text-primary);
+  --card: var(--pu-surface-contained);
+  --card-foreground: var(--pu-text-primary);
+  --popover: var(--pu-surface-contained);
+  --popover-foreground: var(--pu-text-primary);
+  --primary: var(--pu-text-primary);
+  --primary-foreground: #ffffff;
+  --secondary: var(--pu-surface-subtle);
+  --secondary-foreground: var(--pu-text-primary);
+  --muted: var(--pu-surface-subtle);
+  --muted-foreground: var(--pu-text-secondary);
+  --accent: var(--pu-action-tint);
+  --accent-foreground: var(--pu-text-primary);
+  --destructive: var(--pu-status-danger);
+  --destructive-foreground: #ffffff;
+  --border: var(--pu-border-subtle);
+  --input: var(--pu-border-strong);
+  --ring: var(--pu-action-primary);
+  --gxj-teal: var(--pu-action-primary);
+  --gxj-mint: var(--pu-action-tint);
+  --gxj-orange: var(--pu-action-primary);
+  --gxj-aqua: var(--pu-accent-program);
+}
+
+body,
+.gxj-platform-shell,
+.gxj-page {
+  background-color: var(--pu-surface-page);
+  color: var(--pu-text-primary);
+}
+
+.gxj-platform-shell::before,
+.gxj-page::before {
+  content: none;
+  background-image: none;
+}
+
+.gxj-display-title {
+  font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.gxj-kicker,
+.gxj-page .gxj-kicker {
+  display: block;
+  width: fit-content;
+  border-radius: 0;
+  background: transparent;
+  color: var(--pu-action-primary);
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gxj-page-section {
+  border-top: 1px solid var(--pu-border-strong);
+}
+
+.gxj-choice {
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.gxj-choice:has([data-state="checked"]) {
+  border-color: var(--pu-action-primary);
+  background-color: var(--pu-action-tint);
+  box-shadow: var(--pu-shadow-subtle);
+}
+
+.gxj-option-card {
+  min-height: 3.25rem;
+  border: 1px solid var(--pu-border-subtle);
+  border-radius: var(--pu-radius-control);
+  background: var(--pu-surface-contained);
+  color: var(--pu-text-primary);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.gxj-option-card:hover {
+  border-color: var(--pu-border-strong);
+  transform: none;
+}
+
+.gxj-option-card:has([data-state="checked"]) {
+  border: 2px solid var(--pu-action-primary);
+  background-color: var(--pu-action-tint);
+  box-shadow: var(--pu-shadow-subtle);
+  transform: none;
+}
+
+.gxj-option-card:has(:focus-visible),
+.gxj-assessment-weight:has(:focus-visible) {
+  outline: 3px solid var(--pu-action-primary);
+  outline-offset: 3px;
+}
+
+.gxj-assessment-weight {
+  min-height: 3rem;
+  border: 1px solid var(--pu-border-strong);
+  border-radius: var(--pu-radius-control);
+  background: var(--pu-surface-contained);
+}
+
+.gxj-assessment-unit {
+  border-left: 1px solid var(--pu-border-subtle);
+  background: var(--pu-surface-subtle);
+}
+
+.gxj-assessment-unit-button {
+  min-width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--pu-radius-control);
+}
+
+.gxj-assessment-unit-button[aria-pressed="true"] {
+  background: var(--pu-text-primary);
+  color: var(--pu-surface-contained);
+}
+
+.gxj-platform-header [aria-label="Account menu"],
+.gxj-platform-header a[aria-label^="Notifications"] {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border-color: var(--pu-border-subtle);
+  border-radius: var(--pu-radius-control);
+  color: var(--pu-text-primary);
+}
+
+.gxj-platform-header [aria-label="Account menu"]:hover,
+.gxj-platform-header a[aria-label^="Notifications"]:hover {
+  background-color: var(--pu-surface-subtle);
 }
