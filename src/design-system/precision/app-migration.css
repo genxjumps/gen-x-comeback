@@ -1,0 +1,185 @@
+@import "./tokens.css";
+
+/*
+ * Precision Utility app-wide migration bridge.
+ *
+ * This file intentionally sits after the legacy app stylesheet while routes are
+ * migrated by shared primitive. It maps existing semantic variables and legacy
+ * shared classes to the approved system so route code does not need page-by-page
+ * visual rewrites.
+ */
+
+:root {
+  --background: var(--pu-surface-page);
+  --foreground: var(--pu-text-primary);
+  --card: var(--pu-surface-contained);
+  --card-foreground: var(--pu-text-primary);
+  --popover: var(--pu-surface-contained);
+  --popover-foreground: var(--pu-text-primary);
+  --primary: var(--pu-action-primary);
+  --primary-foreground: #ffffff;
+  --secondary: var(--pu-surface-subtle);
+  --secondary-foreground: var(--pu-text-primary);
+  --muted: var(--pu-surface-subtle);
+  --muted-foreground: var(--pu-text-secondary);
+  --accent: var(--pu-surface-subtle);
+  --accent-foreground: var(--pu-text-primary);
+  --destructive: var(--pu-status-danger);
+  --destructive-foreground: #ffffff;
+  --border: var(--pu-border-subtle);
+  --input: var(--pu-border-strong);
+  --ring: var(--pu-action-primary);
+  --gxj-teal: var(--pu-action-primary);
+  --gxj-mint: var(--pu-action-tint);
+  --gxj-orange: var(--pu-action-primary);
+  --gxj-aqua: var(--pu-accent-program);
+}
+
+html,
+body {
+  background: var(--pu-surface-page);
+  color: var(--pu-text-primary);
+  font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
+}
+
+.gxj-platform-shell {
+  background: var(--pu-surface-page);
+  color: var(--pu-text-primary);
+}
+
+.gxj-platform-shell::before,
+.gxj-page::before {
+  display: none;
+  content: none;
+}
+
+.gxj-platform-shell :focus-visible {
+  outline: 3px solid var(--pu-action-primary);
+  outline-offset: 3px;
+}
+
+.gxj-display-title {
+  font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  text-wrap: balance;
+}
+
+.gxj-kicker,
+.gxj-page .gxj-kicker {
+  display: block;
+  width: fit-content;
+  border-radius: 0;
+  background: transparent;
+  color: var(--pu-action-primary);
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gxj-page {
+  background: var(--pu-surface-page);
+}
+
+.gxj-page-body {
+  padding-inline: 0;
+}
+
+.gxj-page-section {
+  border-top: 1px solid var(--pu-border-strong);
+}
+
+.gxj-choice {
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.gxj-choice:has([data-state="checked"]) {
+  border-color: var(--pu-action-primary);
+  background: var(--pu-action-tint);
+  box-shadow: var(--pu-shadow-subtle);
+}
+
+.gxj-option-card {
+  min-height: 3.25rem;
+  border: 1px solid var(--pu-border-subtle);
+  border-radius: var(--pu-radius-control);
+  background: var(--pu-surface-contained);
+  padding: 0.875rem 1rem;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.gxj-option-card:hover {
+  border-color: var(--pu-border-strong);
+  transform: none;
+}
+
+.gxj-option-card:has([data-state="checked"]) {
+  border: 2px solid var(--pu-action-primary);
+  background: var(--pu-action-tint);
+  box-shadow: var(--pu-shadow-subtle);
+  transform: none;
+}
+
+.gxj-option-card:has(:focus-visible),
+.gxj-assessment-weight:has(:focus-visible) {
+  outline: 3px solid var(--pu-action-primary);
+  outline-offset: 3px;
+}
+
+.gxj-assessment-weight {
+  min-height: 3rem;
+  border: 1px solid var(--pu-border-strong);
+  border-radius: var(--pu-radius-control);
+  background: var(--pu-surface-contained);
+}
+
+.gxj-assessment-unit {
+  border-left: 1px solid var(--pu-border-subtle);
+  background: var(--pu-surface-subtle);
+}
+
+.gxj-assessment-unit-button {
+  min-width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--pu-radius-control);
+}
+
+.gxj-assessment-unit-button[aria-pressed="true"] {
+  background: var(--pu-text-primary);
+  color: #ffffff;
+}
+
+.gxj-platform-header [aria-label="Account menu"],
+.gxj-platform-header a[aria-label^="Notifications"] {
+  border-color: var(--pu-border-subtle);
+  color: var(--pu-text-primary);
+}
+
+.gxj-platform-header [aria-label="Account menu"]:hover,
+.gxj-platform-header a[aria-label^="Notifications"]:hover {
+  background: var(--pu-surface-subtle);
+}
+
+.gxj-signal-stripes {
+  background-image: none;
+  background-color: var(--pu-surface-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gxj-platform-shell *,
+  .gxj-platform-shell *::before,
+  .gxj-platform-shell *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
