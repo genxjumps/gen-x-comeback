@@ -1,5 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
+import { AppLoadingState, AppStatePanel } from "@/components/precision-surfaces";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 const PLATFORM_AUTH_FRAGMENT_KEY = "gxj_auth";
@@ -52,35 +54,30 @@ export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
 
   if (status === "checking") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-5 text-foreground">
-        <p className="text-sm text-muted-foreground">Loading your Gen X Jumps account...</p>
+      <div className="mx-auto flex min-h-[60vh] w-full max-w-md items-center px-5">
+        <AppLoadingState label="Loading your Gen X Jumps account" lines={3} className="w-full" />
       </div>
     );
   }
 
   if (status === "denied") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-5 text-foreground">
-        <div className="w-full max-w-md rounded-lg border border-border bg-card p-6 sm:p-8">
-          <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
-            Private Access
-          </p>
-          <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight">
-            Open Your Secure Access Link
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            We couldn&rsquo;t confirm a signed-in Gen X Jumps account in this browser.
-          </p>
-          <a
-            href="/recover"
-            className="mt-5 inline-block rounded-md bg-foreground px-4 py-3 text-sm font-semibold text-background"
-          >
-            Get a Magic Access Link
-          </a>
-          <a href="/account" className="mt-3 block text-sm underline">
-            Account and Log Out
-          </a>
-        </div>
+      <div className="mx-auto flex min-h-[60vh] w-full max-w-md items-center px-5">
+        <AppStatePanel
+          state="locked"
+          title="Open Your Secure Access Link"
+          description="We couldn’t confirm a signed-in Gen X Jumps account in this browser."
+          action={
+            <div className="grid gap-3 sm:flex sm:flex-wrap">
+              <Button asChild className="w-full sm:w-auto">
+                <a href="/recover">Get a Magic Access Link</a>
+              </Button>
+              <Button asChild variant="outline" className="w-full sm:w-auto">
+                <a href="/account">Account and Log Out</a>
+              </Button>
+            </div>
+          }
+        />
       </div>
     );
   }

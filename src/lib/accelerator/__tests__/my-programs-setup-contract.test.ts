@@ -98,10 +98,11 @@ describe("My Programs and setup contract", () => {
     expect(previousRuns).toContain("run.programVersion");
   });
 
-  it("uses the approved open program-list presentation without repeating durations", () => {
+  it("uses the approved shared program-list presentation without repeating durations", () => {
     const programs = readSource("../../../routes/my-programs.tsx");
 
-    expect(programs).toContain("divide-y-2 divide-foreground border-y-2 border-foreground");
+    expect(programs).toContain("<AppList>");
+    expect(programs).toContain("<AppListRow");
     expect(programs).toContain('titleSize="compact"');
     expect(programs).toContain('title="Your Programs"');
     expect(programs).not.toContain("Your Programs, In One Place");
@@ -112,6 +113,7 @@ describe("My Programs and setup contract", () => {
     expect(programs).toContain("Comeback Plan");
     expect(programs).not.toContain("28-Day Fat Loss Accelerator");
     expect(programs).not.toContain("7-Day Comeback Plan");
+    expect(programs).not.toContain("divide-y-2 divide-foreground border-y-2 border-foreground");
     expect(programs).not.toContain("rounded-lg border border-border bg-card");
   });
 

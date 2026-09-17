@@ -54,8 +54,8 @@ second integration line.
 - Precision Utility production design system with semantic tokens, shared production primitives,
   photo-free branded workout media, and a hidden noindex component showcase.
 - Shared legacy UI primitives are being migrated system-first to Precision Utility so button, form,
-  page hierarchy, progress, shell, and navigation changes inherit across routes instead of being
-  rebuilt page by page.
+  page hierarchy, progress, shell, navigation, status, list/row, and workout-media changes inherit
+  across routes instead of being rebuilt page by page.
 - A review catalog for controlled visual and copy review.
 - Production lifecycle and Recovery email links are pinned to `https://app.genxjumps.com`; staging
   email runtimes remain separately configurable.
@@ -103,10 +103,11 @@ second integration line.
 
 ## Active checkpoint
 
-Precision Utility shared-primitive migration is the active design checkpoint. The current bounded
-checkpoint migrates the shared controls, form controls, page hierarchy, setup progress, persistent
-shell/navigation, and global compatibility bridge while preserving route behavior and product
-contracts. Route-specific visual cleanup comes only after this shared layer is verified.
+Precision Utility shared-surface migration is the active design checkpoint. The current bounded
+checkpoint migrates shared loading, empty, locked, error, notice, list/row, and workout-media
+surfaces while preserving route behavior and product contracts. Programs, Purchases, secure-access
+states, workout detail media, and next-workout launch surfaces inherit the approved shared system.
+Route-specific visual cleanup comes only after this shared layer is verified.
 
 ## Updating this file
 

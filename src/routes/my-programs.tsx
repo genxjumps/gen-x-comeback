@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight } from "lucide-react";
+
 import { PlatformPage } from "@/components/platform-page";
+import {
+  AppList,
+  AppListRow,
+  AppLoadingState,
+  AppNotice,
+  AppStatePanel,
+} from "@/components/precision-surfaces";
 import { Button } from "@/components/ui/button";
 import { activateLeadPlan } from "@/lib/accelerator/activate-lead-plan";
 import { getMyPrograms, pauseAccelerator, resumeAccelerator } from "@/lib/accelerator/functions";
@@ -22,9 +30,6 @@ const statusLabels = {
   completed: "Completed",
 } as const;
 
-const programActionClass =
-  "gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto";
-
 function ProgramLengthMarker({
   days,
   accelerator = false,
@@ -35,13 +40,15 @@ function ProgramLengthMarker({
   return (
     <span
       aria-hidden="true"
-      className={`grid aspect-square place-items-center ${
-        accelerator ? "bg-gxj-aqua text-foreground" : "bg-foreground text-background"
+      className={`grid size-14 shrink-0 place-items-center rounded-[var(--pu-radius-control)] border ${
+        accelerator
+          ? "border-[var(--pu-accent-program)] bg-[var(--pu-accent-program-tint)] text-[var(--pu-accent-program)]"
+          : "border-[var(--pu-border-strong)] bg-[var(--pu-surface-contained)] text-[var(--pu-text-primary)]"
       }`}
     >
       <span className="flex flex-col items-center leading-none">
-        <span className="gxj-display-title text-4xl sm:text-5xl">{days}</span>
-        <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em]">Day</span>
+        <span className="text-2xl font-extrabold">{days}</span>
+        <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.12em]">Day</span>
       </span>
     </span>
   );
@@ -69,9 +76,26 @@ function MyPrograms() {
     };
   }, [loadPrograms]);
 
-  if (!result) return <p className="text-sm text-muted-foreground">Loading your programs...</p>;
-  if (!result.ok)
-    return <p className="text-sm text-muted-foreground">Your programs couldn&rsquo;t be loaded.</p>;
+  if (!result) {
+    return (
+      <PlatformPage title="Your Programs" titleSize="compact">
+        <AppLoadingState label="Loading your programs" />
+      </PlatformPage>
+    );
+  }
+
+  if (!result.ok) {
+    return (
+      <PlatformPage title="Your Programs" titleSize="compact">
+        <AppStatePanel
+          state="error"
+          title="Your programs couldn’t be loaded"
+          description="Open Programs again to retry."
+        />
+      </PlatformPage>
+    );
+  }
+
   const accelerator = result.accelerator;
 
   async function updateRun(action: "pause" | "resume") {
@@ -117,28 +141,34 @@ function MyPrograms() {
 
   return (
     <PlatformPage title="Your Programs" titleSize="compact">
-      <div className="space-y-10">
+      <div className="space-y-12">
         {accelerator || result.leadPlans.length ? (
-          <div className="divide-y-2 divide-foreground border-y-2 border-foreground">
+          <AppList>
             {accelerator ? (
-              <section className="py-7 sm:py-8">
-                <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-6">
-                  <ProgramLengthMarker days={28} accelerator />
-                  <div className="min-w-0">
-                    <p className="text-xs font-bold uppercase tracking-[0.14em]">
-                      {statusLabels[accelerator.status]}
-                    </p>
-                    <h2 className="gxj-display-title mt-2 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
-                      Fat Loss Accelerator
-                    </h2>
-                    <p className="mt-2 font-medium text-foreground/70">
+              <AppListRow
+                title={
+                  <div className="flex items-start gap-4">
+                    <ProgramLengthMarker days={28} accelerator />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
+                        {statusLabels[accelerator.status]}
+                      </p>
+                      <h2 className="mt-1 text-2xl font-extrabold leading-tight">
+                        Fat Loss Accelerator
+                      </h2>
+                    </div>
+                  </div>
+                }
+                detail={
+                  <div className="pl-[4.5rem]">
+                    <p>
                       {accelerator.currentRun
                         ? `${accelerator.currentRun.completedDays} of 28 days complete`
                         : "Owned for life. Start when you’re ready."}
                     </p>
-                    <div className="mt-5 flex flex-wrap gap-2">
+                    <div className="mt-4 flex flex-wrap gap-2">
                       {accelerator.status !== "paused" ? (
-                        <Button asChild className={programActionClass}>
+                        <Button asChild>
                           <Link
                             to={
                               accelerator.status === "not_started" ||
@@ -166,7 +196,6 @@ function MyPrograms() {
                         <Button
                           type="button"
                           variant="outline"
-                          className={programActionClass}
                           disabled={acting}
                           onClick={() => void updateRun("pause")}
                         >
@@ -177,7 +206,6 @@ function MyPrograms() {
                         <Button
                           type="button"
                           variant="outline"
-                          className={programActionClass}
                           disabled={acting}
                           onClick={() => setConfirmResume(true)}
                         >
@@ -185,24 +213,21 @@ function MyPrograms() {
                         </Button>
                       ) : null}
                       {accelerator.previousRuns.length ? (
-                        <Button
-                          asChild
-                          type="button"
-                          variant="outline"
-                          className={programActionClass}
-                        >
+                        <Button asChild type="button" variant="outline">
                           <Link to="/my-programs/accelerator/runs">Accelerator History</Link>
                         </Button>
                       ) : null}
                     </div>
                     {confirmResume ? (
-                      <div className="mt-4 rounded-md border border-border bg-muted/50 p-4">
-                        <p className="text-sm font-semibold">Resume your Accelerator?</p>
-                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      <AppNotice tone="warning" className="mt-4">
+                        <p className="font-bold text-[var(--pu-text-primary)]">
+                          Resume your Accelerator?
+                        </p>
+                        <p className="mt-1">
                           If another structured program is active, it will be paused. Neither
                           program loses progress.
                         </p>
-                        <div className="mt-3 flex gap-2">
+                        <div className="mt-3 flex flex-wrap gap-2">
                           <Button
                             type="button"
                             size="sm"
@@ -221,53 +246,66 @@ function MyPrograms() {
                             Cancel
                           </Button>
                         </div>
-                      </div>
+                      </AppNotice>
                     ) : null}
-                    {actionError ? <p className="mt-3 text-sm font-medium">{actionError}</p> : null}
+                    {actionError ? (
+                      <AppNotice tone="danger" className="mt-4">
+                        {actionError}
+                      </AppNotice>
+                    ) : null}
                   </div>
-                </div>
-              </section>
+                }
+              />
             ) : null}
 
             {result.leadPlans.map((plan) => {
               const needsSwitch = plan.status === "paused" && result.activeProgram !== null;
               return (
-                <section key={plan.leadPlanId} className="py-7 sm:py-8">
-                  <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-6">
-                    <ProgramLengthMarker days={7} />
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-foreground/60">
-                        {statusLabels[plan.status]}
-                      </p>
-                      <h2 className="gxj-display-title mt-2 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
-                        Comeback Plan
-                      </h2>
-                      <p className="mt-2 font-medium text-foreground/70">
+                <AppListRow
+                  key={plan.leadPlanId}
+                  title={
+                    <div className="flex items-start gap-4">
+                      <ProgramLengthMarker days={7} />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-text-secondary)]">
+                          {statusLabels[plan.status]}
+                        </p>
+                        <h2 className="mt-1 text-2xl font-extrabold leading-tight">
+                          Comeback Plan
+                        </h2>
+                      </div>
+                    </div>
+                  }
+                  detail={
+                    <div className="pl-[4.5rem]">
+                      <p>
                         {plan.completedDays} of {plan.totalDays} days complete
                       </p>
                       {needsSwitch ? (
                         <Button
                           type="button"
                           variant="outline"
-                          className={`mt-5 ${programActionClass}`}
+                          className="mt-4"
                           disabled={acting}
                           onClick={() => setConfirmLeadPlanId(plan.leadPlanId)}
                         >
                           Switch to 7-Day Plan
                         </Button>
                       ) : (
-                        <Button asChild className={`mt-5 ${programActionClass}`}>
+                        <Button asChild className="mt-4">
                           <Link to="/your-plan">Open Plan</Link>
                         </Button>
                       )}
                       {confirmLeadPlanId === plan.leadPlanId ? (
-                        <div className="mt-4 rounded-md border border-border bg-muted/50 p-4">
-                          <p className="text-sm font-semibold">Switch to your 7-Day Plan?</p>
-                          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        <AppNotice tone="warning" className="mt-4">
+                          <p className="font-bold text-[var(--pu-text-primary)]">
+                            Switch to your 7-Day Plan?
+                          </p>
+                          <p className="mt-1">
                             Your current structured program will be paused. Progress in both
                             programs stays saved.
                           </p>
-                          <div className="mt-3 flex gap-2">
+                          <div className="mt-3 flex flex-wrap gap-2">
                             <Button
                               type="button"
                               size="sm"
@@ -286,49 +324,62 @@ function MyPrograms() {
                               Cancel
                             </Button>
                           </div>
-                        </div>
+                        </AppNotice>
                       ) : null}
                     </div>
-                  </div>
-                </section>
+                  }
+                />
               );
             })}
-          </div>
+          </AppList>
         ) : (
-          <p className="border-y-2 border-foreground py-6 text-sm text-muted-foreground">
-            No programs are linked to this account yet.
-          </p>
+          <AppStatePanel
+            state="empty"
+            title="No programs are linked to this account yet"
+            description="Available programs are listed below."
+          />
         )}
 
         <section id="available" className="scroll-mt-24">
-          <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-            Available Programs
-          </h2>
+          <h2 className="text-2xl font-extrabold">Available Programs</h2>
           {accelerator ? (
-            <p className="mt-4 border-t border-foreground/20 pt-4 text-sm text-muted-foreground">
-              You own every program currently available. New programs will appear here.
-            </p>
+            <AppStatePanel
+              state="empty"
+              title="You own every program currently available"
+              description="New programs will appear here."
+              className="mt-4"
+            />
           ) : (
-            <div className="mt-4 border-y-2 border-foreground py-7 sm:py-8">
-              <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-start gap-4 sm:grid-cols-[5.5rem_minmax(0,1fr)] sm:gap-6">
-                <ProgramLengthMarker days={28} accelerator />
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold uppercase tracking-[0.14em]">Available</p>
-                  <h3 className="gxj-display-title mt-2 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
-                    Fat Loss Accelerator
-                  </h3>
-                  <p className="mt-2 font-medium leading-relaxed text-foreground/70">
-                    Keep building strength, fitness, and consistency with four weeks of guided
-                    workouts and unlocked nutrition tools.
-                  </p>
-                  <Button asChild className={`mt-5 ${programActionClass}`}>
-                    <Link to="/programs/accelerator">
-                      View Program <ArrowRight className="size-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
+            <AppList className="mt-4">
+              <AppListRow
+                title={
+                  <div className="flex items-start gap-4">
+                    <ProgramLengthMarker days={28} accelerator />
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
+                        Available
+                      </p>
+                      <h3 className="mt-1 text-2xl font-extrabold leading-tight">
+                        Fat Loss Accelerator
+                      </h3>
+                    </div>
+                  </div>
+                }
+                detail={
+                  <div className="pl-[4.5rem]">
+                    <p>
+                      Keep building strength, fitness, and consistency with four weeks of guided
+                      workouts and unlocked nutrition tools.
+                    </p>
+                    <Button asChild className="mt-4">
+                      <Link to="/programs/accelerator">
+                        View Program <ArrowRight className="size-4" />
+                      </Link>
+                    </Button>
+                  </div>
+                }
+              />
+            </AppList>
           )}
         </section>
       </div>

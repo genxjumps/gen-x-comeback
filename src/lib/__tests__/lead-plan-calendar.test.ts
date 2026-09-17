@@ -68,6 +68,7 @@ describe("7-Day Plan calendar access", () => {
     expect(media).toContain('state.type === "blocked"');
     expect(media).toContain('state.type === "scheduled"');
     expect(media).toContain("Your next workout is scheduled.");
+    expect(media).toContain("state={mediaState(state)}");
     expect(assignment).toContain("<WorkoutScreen");
     expect(dayOne).toContain("<WorkoutScreen");
     expect(dayOne).not.toContain("Back to My Plan");
@@ -111,14 +112,14 @@ describe("7-Day Plan calendar access", () => {
     expect(recoveryMarkup).not.toContain("<ApproachSection");
   });
 
-  it("provides one numbered cover for every plan day while keeping workout names dynamic", () => {
+  it("uses shared photo-free numbered media while keeping workout names dynamic", () => {
     const media = source("../../components/workout-media-card.tsx");
-    for (let day = 1; day <= 7; day += 1) {
-      expect(media).toContain(`${day}: "/workout-covers/day-0${day}.webp"`);
-    }
+    expect(media).toContain("<PuWorkoutMedia");
+    expect(media).toContain("workoutNumber={dayNumber}");
     expect(media).toContain("coverTitle = title");
     expect(media).toContain("dayLabel?: string");
-    expect(media).toContain("{dayLabel ?? `Day ${dayNumber} / Workout`}");
+    expect(media).toContain("program={program}");
+    expect(media).not.toContain("/workout-covers/day-");
 
     const review = source("../../components/app-review-screen.tsx");
     expect(review).toContain("dayLabel={`Day ${day} of 7`}");
