@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { AppBody } from "@/components/app-primitives";
+
 export function PlatformPage({
   headerPrefix,
   kicker,
@@ -36,11 +38,7 @@ export function PlatformPage({
           >
             {title}
           </h1>
-          {description ? (
-            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80">
-              {description}
-            </p>
-          ) : null}
+          {description ? <AppBody className="mt-3 max-w-lg">{description}</AppBody> : null}
         </div>
       </header>
       <div className="gxj-page-body mx-auto max-w-3xl">{children}</div>

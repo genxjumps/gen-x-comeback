@@ -1,5 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
+import { AppPanel, AppSupportingText } from "@/components/app-primitives";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 const PLATFORM_AUTH_FRAGMENT_KEY = "gxj_auth";
@@ -53,7 +55,7 @@ export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
   if (status === "checking") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-5 text-foreground">
-        <p className="text-sm text-muted-foreground">Loading your Gen X Jumps account...</p>
+        <AppSupportingText>Loading your Gen X Jumps account...</AppSupportingText>
       </div>
     );
   }
@@ -61,26 +63,23 @@ export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
   if (status === "denied") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-5 text-foreground">
-        <div className="w-full max-w-md rounded-lg border border-border bg-card p-6 sm:p-8">
+        <AppPanel className="w-full max-w-md p-6 sm:p-8">
           <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
             Private Access
           </p>
-          <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight">
+          <h1 className="gxj-display-title mt-3 text-3xl uppercase leading-[0.95] tracking-wide sm:text-4xl">
             Open Your Secure Access Link
           </h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+          <AppSupportingText className="mt-3">
             We couldn&rsquo;t confirm a signed-in Gen X Jumps account in this browser.
-          </p>
-          <a
-            href="/recover"
-            className="mt-5 inline-block rounded-md bg-foreground px-4 py-3 text-sm font-semibold text-background"
-          >
-            Get a Magic Access Link
-          </a>
-          <a href="/account" className="mt-3 block text-sm underline">
+          </AppSupportingText>
+          <Button asChild className="mt-5 w-full sm:w-auto">
+            <a href="/recover">Get a Magic Access Link</a>
+          </Button>
+          <a href="/account" className="mt-4 block text-sm font-medium underline underline-offset-4">
             Account and Log Out
           </a>
-        </div>
+        </AppPanel>
       </div>
     );
   }
