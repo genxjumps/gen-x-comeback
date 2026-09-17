@@ -1,208 +1,98 @@
 # Gen X Jumps App
 
-Mobile-first Gen X Jumps PWA for the free personalized 7-Day Plan and the upcoming 28-Day Fat Loss Accelerator.
+Mobile-first Gen X Jumps PWA for the free personalized 7-Day Plan and the $37 one-time 28-Day Fat
+Loss Accelerator.
 
-The repository and Lovable project still use the historical working name `Gen X Comeback`. That is a project slug, not a locked public product title.
+The repository and Lovable project retain the historical working slug `Gen X Comeback`. That slug
+is not the public product name.
 
-## Current status
+## Start here
 
-The app is **pre-launch and still in development**. There are no real external users or live paid customers using it yet.
+Read these before changing the project:
 
-New public plan intake is closed in source during pre-launch. Existing participants can still use
-their saved access or request a recovery link. Reopening intake requires a reviewed source change
-and release.
+1. [`AGENTS.md`](AGENTS.md) - safety, development, migration, and release rules.
+2. [`CURRENT_STATE.md`](CURRENT_STATE.md) - the only current-status source.
+3. [`docs/DOCUMENT_AUTHORITY.md`](docs/DOCUMENT_AUTHORITY.md) - which documents govern when
+   sources disagree.
+4. The durable product contract or runbook relevant to the bounded checkpoint.
 
-The free 7-Day Plan is the accepted functional baseline. The paid 28-Day Accelerator is the active
-next development phase. Its product contract, deterministic sequence, private paid-domain data
-model, calendar-based progress, and independent measurement history now exist in source. Checkout,
-public enrollment, paid email, and the public offer remain unimplemented.
+The September 17 preservation inventory is recorded in
+[`docs/release-evidence/2026-09-17-project-reset-inventory.md`](docs/release-evidence/2026-09-17-project-reset-inventory.md).
 
-`main` and `release/v1.1` are kept aligned as the accepted pre-launch baseline before new V1.1 checkpoints begin.
+## Current source boundary
 
-## What currently works
+- GitHub is authoritative.
+- `release/v1.1` is the active V1.1 integration source.
+- `main` is protected but stale and pending reconciliation.
+- New work begins from the exact current `release/v1.1` head on one bounded `agent/<checkpoint>`
+  branch.
+- Run `bun run verify` before requesting merge. GitHub CI must pass.
+- Lovable is used for controlled review and explicitly approved publication, not routine source
+  editing.
 
-- Direct website-to-signup route for the free 7-Day Plan
-- Front-of-flow name, email, and approved consent capture before personalization
-- Multi-step fitness assessment
-- Personalized 3-, 4-, 5-, and 7-workout schedules
-- Automatic enrollment and plan opening after the assessment
-- Lead, consent, assessment, and plan persistence
-- Day 1 through Day 7 assignment flow
-- Server-enforced sequential completion
-- Saved-plan return access
-- Passwordless secure return links
-- Public recovery flow
-- All seven workout videos
-- Plan progress and completion behavior
-- Six proactive free-plan lifecycle emails: Plan Ready, Start Day 1, Halfway, Stalled, Final Rescue, and Plan Completed
-- User-requested recovery email
-- Resend delivery integration and signed webhook reconciliation
-- Production-capable scheduler and email safeguards
-- Direct MailerLite subscriber sync foundation for marketing-consented leads
-- PWA manifest and installable-app foundation
-- Current Gen X Jumps V1 visual system
-- Source-level verified customer-account and legacy-plan linking foundation; migration unapplied
-- Account-owned Accelerator purchase and permanent-entitlement foundation; migration unapplied
-- Repeatable, versioned program runs with one active structured run per account
-- Not Started ownership plus Active, Paused, and Completed run behavior
-- Server-enforced Day 1 through Day 28 completion and resume behavior
-- Independent optional weight and waist history with corrections and removals
+See [`CURRENT_STATE.md`](CURRENT_STATE.md) for current SHAs, live-vs-source identity, implemented
+scope, operating gates, and the active checkpoint.
 
-The existing email and scheduler infrastructure has been heavily staged and verified, but that does **not** mean the overall product has launched to customers.
+## Locked product foundation
 
-The website's free-plan CTA should target `/start/7-day`. New visitors see the signup form
-immediately instead of the general app landing page. Their valid signup is held only in session
-storage while they complete the safety check and personalization questions. The existing atomic
-lead, consent, assessment, plan, access, and Plan Ready transaction then runs once and opens the
-saved plan. Returning participants with valid access bypass signup and continue to their existing
-plan. The older completion-page form remains as a failure-safe fallback when no valid front-of-flow
-handoff exists.
+- Free personalized 7-Day Plan with saved sequential progression and recovery.
+- Passwordless portable return access.
+- Permanent customer-account ownership of paid programs.
+- $37 one-time 28-Day Fat Loss Accelerator ownership with a seven-day refund-request window.
+- Purchase and program start remain separate.
+- Repeatable versioned runs with Not Started, Active, Paused, and Completed behavior.
+- Sequential 28-day progression without missed-day skipping or expiration.
+- Optional weight and waist history.
+- Account-level Nutrition access for qualifying paid ownership, independent of workout progression.
+- Home, Programs, Progress, and Nutrition as permanent member navigation, with Account and
+  Notifications as persistent utilities.
 
-## Verification baseline
+Detailed behavior remains governed by the relevant durable product contracts, not by old checkpoint
+status text.
 
-The repository uses Bun 1.3.8 and one complete verification command:
+## Current operating gates
+
+The app remains pre-launch. Public intake, live payment processing, genuine-customer paid enrollment,
+broad customer email, migration application, provider changes, and production publication remain
+controlled operations requiring their existing approvals.
+
+## Verification
+
+The project uses Bun 1.3.8.
 
 ```sh
-bun run verify
-```
-
-That command runs:
-
-- Vitest
-- TypeScript
-- ESLint
-- Prettier check
-- Production build
-
-The current regression count is reported by Vitest during `bun run verify`; that command is the
-authoritative quality gate rather than a manually maintained test total in this README.
-
-GitHub Actions runs the same quality gate for changes targeting `main` or `release/v1.1`.
-
-## Development workflow
-
-The development order is:
-
-**ChatGPT / coding agent -> GitHub -> Lovable**
-
-GitHub is the source of truth. Lovable is used later for controlled visual/interaction review and publication, not as the default coding environment.
-
-Branch roles:
-
-- `main` - accepted pre-launch baseline
-- `release/v1.1` - V1.1 integration branch
-- `agent/<checkpoint>` - one bounded development checkpoint
-
-New work should begin from the current `release/v1.1` head, pass `bun run verify`, and reach `release/v1.1` through a pull request.
-
-See [`docs/DEVELOPMENT_WORKFLOW.md`](docs/DEVELOPMENT_WORKFLOW.md) and [`AGENTS.md`](AGENTS.md) for the working rules.
-
-## Backend during pre-launch development
-
-Because there are no real external users yet, the current Lovable/Supabase backend remains the development backend for now.
-
-A separate staging backend is **not required** just to continue V1.1 development. Revisit that decision before public launch, or earlier if a particular checkpoint introduces enough operating risk to justify isolation.
-
-Development rules still apply:
-
-- Use clearly identifiable test data.
-- Keep secrets and local `.env` files out of Git.
-- Keep schema changes in version-controlled forward-only migrations.
-- Keep real-money and test payment behavior separated when Stripe is added.
-- Keep outbound email testing bounded to intended recipients.
-- Review and clean test state before public launch.
-
-## MailerLite lead sync
-
-The app has a direct, no-Zapier MailerLite sync path. It uses the existing five-minute scheduler,
-but has its own fail-closed environment gate. The published app calls a service-role-authenticated
-Cloud Edge Function for the provider request because McLovable project secrets are available there
-at runtime. It does not depend on Resend sending being enabled.
-
-Only a future activation of `marketing_consent_active` creates a durable sync job. Publishing the
-migration does not backfill existing participants. The provider payload contains only:
-
-- Normalized email address
-- First name
-- Marketing-consent timestamp
-- The configured MailerLite group ID
-
-Assessment answers, weight, protein targets, plan details, and progress are never sent to
-MailerLite. The integration never sets MailerLite's `resubscribe` flag, so it cannot reactivate a
-contact MailerLite already marks unsubscribed, bounced, or junk.
-
-Activation requires all three Edge Function project secrets:
-
-- `MARKETING_SYNC_ENABLED=true`
-- `MAILERLITE_API_TOKEN`
-- `MAILERLITE_GROUP_ID`
-
-After changing a McLovable project secret, publish a fresh project version before expecting the
-new value to exist in the live runtime. Preview receives project-secret changes immediately.
-
-Before enabling it, confirm the selected MailerLite group and review any automation attached to
-that group. MailerLite group assignment can itself trigger a campaign automation.
-
-## Local development
-
-Bun 1.3.8 is the locked runtime.
-
-```sh
-git clone https://github.com/genxjumps/gen-x-comeback.git
-cd gen-x-comeback
-cp .env.example .env
 bun install --frozen-lockfile
-bun run dev
-```
-
-Before opening or merging a pull request:
-
-```sh
 bun run verify
 ```
+
+The complete gate runs migration integrity, Vitest, isolated database contract tests, TypeScript,
+ESLint, Prettier, and the production build.
+
+After changing a tracked build input under `.env`, root build configuration, `public/`,
+`scripts/`, `src/`, or `supabase/`, run:
+
+```sh
+bun run release:manifest
+bun run verify
+```
+
+Documentation-only changes do not require a release-manifest rewrite.
 
 ## Main technology
 
 - React 19
 - TypeScript
-- TanStack Start / Router
+- TanStack Start and Router
 - Tailwind CSS 4
 - Lovable Cloud / Supabase-compatible backend
-- Resend for email transport
+- Stripe test checkout
+- Resend email transport
 - Vitest
 - Bun 1.3.8
 
-## Next development phase
+## Preservation rule
 
-Resume V1.1 from a fresh bounded branch created from `release/v1.1`.
-
-The expanded Accelerator experience is governed by
-[`docs/V1_1_28_DAY_PRODUCT_CONTRACT.md`](docs/V1_1_28_DAY_PRODUCT_CONTRACT.md). PR #16's private
-foundation is documented in
-[`docs/V1_1_28_DAY_DATA_FOUNDATION.md`](docs/V1_1_28_DAY_DATA_FOUNDATION.md), but its migration
-remains unapplied and requires reconciliation with the expanded contract before use.
-
-The read-only foundation gap audit is complete. The dependency-based build sequence and GitHub
-Actions discipline are recorded in
-[`docs/V1_1_ACCELERATOR_IMPLEMENTATION_PLAN.md`](docs/V1_1_ACCELERATOR_IMPLEMENTATION_PLAN.md).
-The unified customer-account, ownership/program-run, and program-progress corrections are complete
-at source level. Customer-local next-day unlocking, missed-day persistence, bounded Undo,
-completed-day reopening, separate video views, and safe 7-Day Plan switching are represented and
-tested. Both migrations remain unapplied and every public entry point remains closed.
-
-Independent optional weight and waist history is also complete at source level, including safe
-corrections, removals, account-wide latest values, and run-specific starting, newest, and final
-values.
-
-The read-only program-content source audit is complete and recorded in
-[`docs/V1_1_ACCELERATOR_PROGRAM_CONTENT_AUDIT.md`](docs/V1_1_ACCELERATOR_PROGRAM_CONTENT_AUDIT.md).
-Workouts A-E provide a usable foundation, but source corrections, an Accelerator-specific Active
-Recovery F, the welcome/orientation, and four weekly coaching primers are still required. Final
-files will be transferred to Cloudflare Stream once, after the source package is approved, and then
-recorded in the immutable V1 program snapshot. Later checkpoints may apply and verify the corrected
-migration chain inside a controlled development boundary, approve nutrition formulas, and add a
-tested checkout handoff. Public enrollment remains fail-closed throughout that work.
-
-## Historical implementation evidence
-
-Detailed email-staging, migration, scheduler, and production-safety evidence previously stored in this README remains preserved in Git history and the governing project documentation. It was removed from the README so this file can serve as a clean current-state entry point for development.
+Do not delete stale branches, close stale pull requests, rewrite history, or discard old documents
+merely because they appear superseded. First prove whether their commits are reachable from the
+current release or preserved by an explicit archive. The September 17 reset begins with inventory
+and authority cleanup only.
