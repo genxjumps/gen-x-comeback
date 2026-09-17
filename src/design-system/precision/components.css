@@ -210,7 +210,11 @@
   border-radius: var(--pu-radius-control);
   background: var(--pu-surface-contained);
   color: var(--pu-text-primary);
-  font: 500 1rem/1.25 "Barlow", ui-sans-serif, system-ui, sans-serif;
+  font:
+    500 1rem/1.25 "Barlow",
+    ui-sans-serif,
+    system-ui,
+    sans-serif;
   padding: 0 0.875rem;
 }
 

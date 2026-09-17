@@ -28,28 +28,28 @@ moments. Ordinary app screens should not compete with their content.
 
 Use semantic color roles instead of arbitrary route-level colors or opacity values.
 
-| Role | Value | Use |
-| --- | --- | --- |
-| Page surface | `#F5F2EA` | Default app background |
-| Contained surface | `#FFFFFF` | Forms, media, warnings, confirmations, interactive containment |
-| Subtle surface | `#EAE6DD` | Selected/quiet utility backgrounds |
-| Primary text / structure | `#171717` | Main text and strong structure |
-| Secondary text | `#5C5851` | Supporting copy and metadata |
-| Subtle border | `#CDC7BC` | Ordinary component boundaries |
-| Strong border | `#242321` | Section rules and strong control boundaries |
-| Primary action | `#C94F16` | Main CTA, focus identity, active setup step |
-| Primary action hover | `#B94712` | Hover/pressed primary action state |
-| Primary action tint | `#F8E8DF` | Selected control background |
-| Program accent | `#167A86` | Bounded Accelerator/program context |
-| Program accent tint | `#E2F0F2` | Program-accent background when needed |
-| Success | `#2F6F4E` | Actual successful outcome only |
-| Warning | `#8A6500` | Actual warning state only |
-| Danger | `#A43B31` | Actual error/destructive state only |
-| Workout media dark top | `#071019` | Photo-free workout media base |
-| Workout media dark bottom | `#10161C` | Photo-free workout media base |
-| Workout media secondary text | `#C7CCD1` | Supporting metadata on dark media |
-| Workout media accent text | `#FF8F57` | Program/week/workout label on dark media |
-| Workout progress accent | `#71D2FF` | In-progress ring only |
+| Role                         | Value     | Use                                                            |
+| ---------------------------- | --------- | -------------------------------------------------------------- |
+| Page surface                 | `#F5F2EA` | Default app background                                         |
+| Contained surface            | `#FFFFFF` | Forms, media, warnings, confirmations, interactive containment |
+| Subtle surface               | `#EAE6DD` | Selected/quiet utility backgrounds                             |
+| Primary text / structure     | `#171717` | Main text and strong structure                                 |
+| Secondary text               | `#5C5851` | Supporting copy and metadata                                   |
+| Subtle border                | `#CDC7BC` | Ordinary component boundaries                                  |
+| Strong border                | `#242321` | Section rules and strong control boundaries                    |
+| Primary action               | `#C94F16` | Main CTA, focus identity, active setup step                    |
+| Primary action hover         | `#B94712` | Hover/pressed primary action state                             |
+| Primary action tint          | `#F8E8DF` | Selected control background                                    |
+| Program accent               | `#167A86` | Bounded Accelerator/program context                            |
+| Program accent tint          | `#E2F0F2` | Program-accent background when needed                          |
+| Success                      | `#2F6F4E` | Actual successful outcome only                                 |
+| Warning                      | `#8A6500` | Actual warning state only                                      |
+| Danger                       | `#A43B31` | Actual error/destructive state only                            |
+| Workout media dark top       | `#071019` | Photo-free workout media base                                  |
+| Workout media dark bottom    | `#10161C` | Photo-free workout media base                                  |
+| Workout media secondary text | `#C7CCD1` | Supporting metadata on dark media                              |
+| Workout media accent text    | `#FF8F57` | Program/week/workout label on dark media                       |
+| Workout progress accent      | `#71D2FF` | In-progress ring only                                          |
 
 Orange is functional, not decorative. Aqua is a bounded program accent and never competes with the
 primary CTA. Green, amber, and red are reserved for their semantic meanings.
@@ -61,15 +61,15 @@ Barlow is the primary interface and heading family.
 Anton is no longer the default app-heading font. Reserve it for the Gen X Jumps wordmark and rare
 brand-impact or campaign moments after explicit approval.
 
-| Role | Desktop | Mobile | Weight |
-| --- | --- | --- | --- |
-| Hero | 56/54 | 44/42 | 800 |
-| H1 | 40/40 | 32/34 | 800 |
-| H2 | 28/30 | 28/30 | 800 |
-| H3 | 20/24 | 20/24 | 700 |
-| Body | 16/24 | 16/24 | 400-500 |
-| Supporting | 14/20 | 14/20 | 400-500 |
-| Metadata | 12/16 | 12/16 | 700, uppercase |
+| Role       | Desktop | Mobile | Weight         |
+| ---------- | ------- | ------ | -------------- |
+| Hero       | 56/54   | 44/42  | 800            |
+| H1         | 40/40   | 32/34  | 800            |
+| H2         | 28/30   | 28/30  | 800            |
+| H3         | 20/24   | 20/24  | 700            |
+| Body       | 16/24   | 16/24  | 400-500        |
+| Supporting | 14/20   | 14/20  | 400-500        |
+| Metadata   | 12/16   | 12/16  | 700, uppercase |
 
 Do not create route-specific font sizes or text opacities to approximate another screen.
 

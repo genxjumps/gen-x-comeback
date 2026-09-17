@@ -1,10 +1,4 @@
-import {
-  Check,
-  Clock3,
-  Dumbbell,
-  LockKeyhole,
-  Play,
-} from "lucide-react";
+import { Check, Clock3, Dumbbell, LockKeyhole, Play } from "lucide-react";
 import type {
   ButtonHTMLAttributes,
   CSSProperties,
@@ -81,12 +75,7 @@ export function PuButton({
   return (
     <button
       type={type}
-      className={cn(
-        "pu-button",
-        `pu-button--${variant}`,
-        `pu-button--${size}`,
-        className,
-      )}
+      className={cn("pu-button", `pu-button--${variant}`, `pu-button--${size}`, className)}
       {...props}
     />
   );
@@ -250,8 +239,11 @@ export function PuProgress({
     >
       {Array.from({ length: steps }, (_, index) => {
         const step = index + 1;
-        const state = step < currentStep ? "complete" : step === currentStep ? "current" : "upcoming";
-        return <span key={step} className="pu-progress__step" data-state={state} aria-hidden="true" />;
+        const state =
+          step < currentStep ? "complete" : step === currentStep ? "current" : "upcoming";
+        return (
+          <span key={step} className="pu-progress__step" data-state={state} aria-hidden="true" />
+        );
       })}
     </div>
   );
@@ -390,8 +382,13 @@ export function PuWorkoutMedia({
   onAction?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
   className?: string;
 }) {
-  const numberLabel = workoutNumber === undefined ? undefined : String(workoutNumber).padStart(2, "0");
-  const kicker = [program, week !== undefined ? `Week ${week}` : undefined, workoutNumber !== undefined ? `Workout ${workoutNumber}` : undefined]
+  const numberLabel =
+    workoutNumber === undefined ? undefined : String(workoutNumber).padStart(2, "0");
+  const kicker = [
+    program,
+    week !== undefined ? `Week ${week}` : undefined,
+    workoutNumber !== undefined ? `Workout ${workoutNumber}` : undefined,
+  ]
     .filter(Boolean)
     .join(" · ");
   const normalizedProgress = Math.max(0, Math.min(100, progress ?? 50));

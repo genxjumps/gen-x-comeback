@@ -67,9 +67,7 @@ export function PrecisionUtilityShowcase() {
               <PuText tone="body">
                 Clear 16px body copy is the default reading size across the app.
               </PuText>
-              <PuText tone="support">
-                Supporting text is quieter but remains fully readable.
-              </PuText>
+              <PuText tone="support">Supporting text is quieter but remains fully readable.</PuText>
               <PuText tone="meta">Week 2 · Day 9 of 28</PuText>
             </PuPanel>
           </div>
@@ -112,7 +110,11 @@ export function PrecisionUtilityShowcase() {
                   help="Use your current weight, not your goal weight."
                   inputProps={{ inputMode: "decimal", placeholder: "180 lb" }}
                 />
-                <PuSelect id="showcase-goal" label="Primary goal" selectProps={{ defaultValue: "fat" }}>
+                <PuSelect
+                  id="showcase-goal"
+                  label="Primary goal"
+                  selectProps={{ defaultValue: "fat" }}
+                >
                   <option value="fat">Lose fat</option>
                   <option value="recomp">Add lean muscle and lose fat</option>
                   <option value="maintain">Maintain</option>
@@ -184,8 +186,16 @@ export function PrecisionUtilityShowcase() {
               <PuNav items={navItems} current="Programs" label="Showcase primary navigation" />
               <PuList className="mt-6">
                 <PuListRow title="Programs" detail="2 programs owned" end={<ChevronRight />} />
-                <PuListRow title="Progress" detail="Waist: 34 in · Weight: 176 lb" end={<ChevronRight />} />
-                <PuListRow title="Nutrition" detail="1,900 calories · 195 g protein" end={<ChevronRight />} />
+                <PuListRow
+                  title="Progress"
+                  detail="Waist: 34 in · Weight: 176 lb"
+                  end={<ChevronRight />}
+                />
+                <PuListRow
+                  title="Nutrition"
+                  detail="1,900 calories · 195 g protein"
+                  end={<ChevronRight />}
+                />
               </PuList>
             </PuPanel>
           </div>

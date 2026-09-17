@@ -286,6 +286,22 @@
       "sha256": "3e7bcc84b33aa358eefc37958333060a5e6563d5bc78659797d6f87f7f3399b2"
     },
     {
+      "path": "src/design-system/precision/components.css",
+      "sha256": "3f816b0931921b42a19b2ffd12261e764f7b643a0290e6efafab68f91d53897b"
+    },
+    {
+      "path": "src/design-system/precision/components.tsx",
+      "sha256": "ac0cb05a987af9b5251d75ddf1dd695bf8620641097719962eebc03f59f1a9ff"
+    },
+    {
+      "path": "src/design-system/precision/showcase.tsx",
+      "sha256": "68edbb250bc05825a9daf2b4fc0fadc1eb1f449f8c41d66d8ab4e62d78cc981d"
+    },
+    {
+      "path": "src/design-system/precision/tokens.css",
+      "sha256": "5c9ecc9e21aacd12227e726be4c9597a3e98f5af3a30253bed97e48f15b54ca4"
+    },
+    {
       "path": "src/integrations/supabase/auth-attacher.ts",
       "sha256": "6f3a336700721b5cbf9235fb18b9575cdb5d1f55e4656b2f4a3cadc7ae81b8eb"
     },
@@ -1231,7 +1247,7 @@
     },
     {
       "path": "src/routeTree.gen.ts",
-      "sha256": "6720ebe79e18929fe4c9ec8db3b56a5654a725771de49929f24f9a6bf68872d6"
+      "sha256": "4188f7f4b8309d7eb65aace0ea921cd42c436018a587802ff49594a68ec6173c"
     },
     {
       "path": "src/router.tsx",
@@ -1308,6 +1324,10 @@
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
       "sha256": "d736677c4d800caf1c3e3685a3c5ea0eea6a417f4073d7e7f611e1224250fc0d"
+    },
+    {
+      "path": "src/routes/design-system.tsx",
+      "sha256": "4c222bb9ef61855eb023852b2f748370a4a11f2e4053cca24765fac0d05ac4f8"
     },
     {
       "path": "src/routes/email-preferences.ts",

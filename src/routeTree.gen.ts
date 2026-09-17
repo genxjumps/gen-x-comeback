@@ -24,6 +24,7 @@ import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as JumpRopesRouteImport } from './routes/jump-ropes'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as EmailPreferencesRouteImport } from './routes/email-preferences'
+import { Route as DesignSystemRouteImport } from './routes/design-system'
 import { Route as AcceleratorRouteImport } from './routes/accelerator'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as YourPlanIndexRouteImport } from './routes/your-plan.index'
@@ -129,6 +130,11 @@ const HomeRoute = HomeRouteImport.update({
 const EmailPreferencesRoute = EmailPreferencesRouteImport.update({
   id: '/email-preferences',
   path: '/email-preferences',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignSystemRoute = DesignSystemRouteImport.update({
+  id: '/design-system',
+  path: '/design-system',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AcceleratorRoute = AcceleratorRouteImport.update({
@@ -296,6 +302,7 @@ const ApiPublicCheckoutAcceleratorSessionRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/accelerator': typeof AcceleratorRoute
+  '/design-system': typeof DesignSystemRoute
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
@@ -344,6 +351,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accelerator': typeof AcceleratorRoute
+  '/design-system': typeof DesignSystemRoute
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
@@ -392,6 +400,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/accelerator': typeof AcceleratorRoute
+  '/design-system': typeof DesignSystemRoute
   '/email-preferences': typeof EmailPreferencesRoute
   '/home': typeof HomeRoute
   '/jump-ropes': typeof JumpRopesRoute
@@ -442,6 +451,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/accelerator'
+    | '/design-system'
     | '/email-preferences'
     | '/home'
     | '/jump-ropes'
@@ -490,6 +500,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/accelerator'
+    | '/design-system'
     | '/email-preferences'
     | '/home'
     | '/jump-ropes'
@@ -537,6 +548,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/accelerator'
+    | '/design-system'
     | '/email-preferences'
     | '/home'
     | '/jump-ropes'
@@ -586,6 +598,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AcceleratorRoute: typeof AcceleratorRoute
+  DesignSystemRoute: typeof DesignSystemRoute
   EmailPreferencesRoute: typeof EmailPreferencesRoute
   HomeRoute: typeof HomeRoute
   JumpRopesRoute: typeof JumpRopesRoute
@@ -734,6 +747,13 @@ declare module '@tanstack/react-router' {
       path: '/email-preferences'
       fullPath: '/email-preferences'
       preLoaderRoute: typeof EmailPreferencesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/design-system': {
+      id: '/design-system'
+      path: '/design-system'
+      fullPath: '/design-system'
+      preLoaderRoute: typeof DesignSystemRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/accelerator': {
@@ -974,6 +994,7 @@ const ReviewRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AcceleratorRoute: AcceleratorRoute,
+  DesignSystemRoute: DesignSystemRoute,
   EmailPreferencesRoute: EmailPreferencesRoute,
   HomeRoute: HomeRoute,
   JumpRopesRoute: JumpRopesRoute,
