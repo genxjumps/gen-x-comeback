@@ -12,7 +12,7 @@ export function AppListRow({
   detail,
   end,
   ...props
-}: HTMLAttributes<HTMLDivElement> & {
+}: Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   title: ReactNode;
   detail?: ReactNode;
   end?: ReactNode;
@@ -52,7 +52,7 @@ export function AppListButton({
   end,
   className,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & {
+}: Omit<ButtonHTMLAttributes<HTMLButtonElement>, "title"> & {
   title: ReactNode;
   detail?: ReactNode;
   end?: ReactNode;
