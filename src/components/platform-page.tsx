@@ -39,7 +39,7 @@ export function PlatformPage({
             {title}
           </h1>
           {description ? (
-            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/75">
+            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80">
               {description}
             </p>
           ) : null}
