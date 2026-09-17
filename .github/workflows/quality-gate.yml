@@ -28,7 +28,8 @@ jobs:
       VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
       # One-time branch-reconciliation exception. The historical main parent predates the
       # migration lock, while the release parent already passed the complete gate.
-      MIGRATION_BASE_REF: ${{ (github.event_name == 'pull_request' && github.base_ref == 'main' && github.head_ref == 'release/v1.1') && 'origin/release/v1.1' || (github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Merge PR #272: Reconcile main')) && 'HEAD^2' || '' }}
+      MIGRATION_BASE_REF: >-
+        ${{ (github.event_name == 'pull_request' && github.base_ref == 'main' && github.head_ref == 'release/v1.1') && 'origin/release/v1.1' || (github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Merge PR #272: Reconcile main')) && 'HEAD^2' || '' }}
 
     steps:
       - name: Check out source
