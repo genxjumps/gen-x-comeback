@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { AppList, AppListRow } from "@/components/app-list";
+import { AppLoading, AppNotice, AppState } from "@/components/app-state";
 import { Button } from "@/components/ui/button";
 import {
   getRefundPurchases,
@@ -11,6 +13,23 @@ const date = (value: string) =>
   new Date(value).toLocaleDateString(undefined, { dateStyle: "medium" });
 const deadline = (value: string) =>
   new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+
+function purchaseStatusLabel(purchase: RefundPurchasesResult extends { ok: true; purchases: infer P }
+  ? P extends readonly (infer Item)[]
+    ? Item
+    : never
+  : never) {
+  return purchase.purchaseStatus === "refunded"
+    ? "Refunded"
+    : purchase.requestedAt
+      ? "Refund Requested"
+      : purchase.purchaseStatus === "disputed"
+        ? "Disputed"
+        : purchase.purchaseStatus === "canceled"
+          ? "Canceled"
+          : "Paid";
+}
+
 export function AccountPurchases() {
   const load = useServerFn(getRefundPurchases);
   const submit = useServerFn(requestAcceleratorRefund);
@@ -18,6 +37,7 @@ export function AccountPurchases() {
   const [confirm, setConfirm] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+
   useEffect(() => {
     let active = true;
     void load()
@@ -27,6 +47,7 @@ export function AccountPurchases() {
       active = false;
     };
   }, [load]);
+
   async function request(purchaseId: string) {
     if (busy) return;
     setBusy(true);
@@ -47,126 +68,125 @@ export function AccountPurchases() {
         setMessage("This purchase is no longer eligible for a new refund request.");
         setConfirm(null);
         setResult(await load());
-      } else
-        setMessage(
-          "We couldn’t confirm your request. Try again - retrying won’t create a duplicate.",
-        );
+      } else {
+        setMessage("We couldn’t confirm your request. Try again - retrying won’t create a duplicate.");
+      }
     } catch {
-      setMessage(
-        "We couldn’t confirm your request. Try again - retrying won’t create a duplicate.",
-      );
+      setMessage("We couldn’t confirm your request. Try again - retrying won’t create a duplicate.");
     } finally {
       setBusy(false);
     }
   }
+
   return (
     <section
       id="purchases"
       aria-labelledby="purchases-heading"
-      className="mt-10 scroll-mt-24 border-t border-border pt-8"
+      className="mt-10 scroll-mt-24 border-t border-[var(--pu-border-strong)] pt-8"
     >
       <h2 id="purchases-heading" className="text-xl font-semibold">
         Purchases &amp; Billing
       </h2>
+
       {message ? (
-        <p role="status" className="mt-4 text-sm">
+        <AppNotice tone="info" className="mt-4" role="status">
           {message}
-        </p>
+        </AppNotice>
       ) : null}
+
       {!result ? (
-        <p className="mt-5">Loading your purchases...</p>
+        <AppLoading className="mt-5" />
       ) : !result.ok ? (
-        <div className="mt-5">
-          <p role="alert">We couldn’t load your purchases.</p>
-          <Button
-            className="mt-3"
-            onClick={() =>
-              void load()
-                .then(setResult)
-                .catch(() => setResult({ ok: false }))
-            }
-          >
-            Try Again
-          </Button>
-        </div>
+        <AppState
+          className="mt-5"
+          state="error"
+          title="Purchases Couldn't Be Loaded"
+          description="Try again. Nothing about your purchases or access was changed."
+          action={
+            <Button
+              onClick={() =>
+                void load()
+                  .then(setResult)
+                  .catch(() => setResult({ ok: false }))
+              }
+            >
+              Try Again
+            </Button>
+          }
+        />
       ) : result.purchases.length === 0 ? (
-        <p className="mt-5">No Accelerator purchases yet.</p>
+        <AppState
+          className="mt-5"
+          state="empty"
+          title="No Accelerator Purchases Yet"
+          description="Your completed purchases will appear here."
+        />
       ) : (
-        <div className="mt-5 space-y-4">
-          {result.purchases.map((p) => (
-            <section key={p.purchaseId} className="border-b border-border py-6 last:border-b-0">
-              <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
-                <div className="min-w-0">
-                  <h3 className="font-semibold">28-Day Fat Loss Accelerator</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Purchased {date(p.purchasedAt)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <p className="font-semibold tabular-nums">$37</p>
-                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">
-                    {p.purchaseStatus === "refunded"
-                      ? "Refunded"
-                      : p.requestedAt
-                        ? "Refund Requested"
-                        : p.purchaseStatus === "disputed"
-                          ? "Disputed"
-                          : p.purchaseStatus === "canceled"
-                            ? "Canceled"
-                            : "Paid"}
-                  </span>
-                </div>
-              </div>
-              {p.purchaseStatus === "refunded" ? (
-                <p className="mt-3 text-sm text-muted-foreground">
-                  Access from this purchase has ended.
+        <AppList className="mt-5">
+          {result.purchases.map((p) => {
+            const detail = (
+              <div className="space-y-3">
+                <p>Purchased {date(p.purchasedAt)}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-text-secondary)]">
+                  {purchaseStatusLabel(p)} · $37
                 </p>
-              ) : p.requestedAt ? (
-                <p className="mt-3 text-sm text-muted-foreground">
-                  Submitted {date(p.requestedAt)}. Todd will review your request.
-                </p>
-              ) : p.canRequest ? (
-                <div className="mt-4">
-                  <p className="mb-3 text-sm text-muted-foreground">
-                    7-day guarantee. Request a refund by {deadline(p.deadline)} (your local time).
-                  </p>
-                  {confirm === p.purchaseId ? (
-                    <div>
-                      <p>Send a refund request for this purchase?</p>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        Todd reviews requests. Your access stays available until a full refund is
-                        confirmed.
-                      </p>
-                      <div className="mt-3 flex gap-3">
-                        <Button disabled={busy} onClick={() => void request(p.purchaseId)}>
-                          {busy ? "Sending..." : "Send Request"}
-                        </Button>
-                        <Button variant="outline" disabled={busy} onClick={() => setConfirm(null)}>
-                          Keep My Purchase
-                        </Button>
+
+                {p.purchaseStatus === "refunded" ? (
+                  <p>Access from this purchase has ended.</p>
+                ) : p.requestedAt ? (
+                  <p>Submitted {date(p.requestedAt)}. Todd will review your request.</p>
+                ) : p.canRequest ? (
+                  <div>
+                    <p>
+                      7-day guarantee. Request a refund by {deadline(p.deadline)} (your local time).
+                    </p>
+                    {confirm === p.purchaseId ? (
+                      <div className="mt-3 border-l-4 border-[var(--pu-status-warning)] pl-4">
+                        <p className="font-semibold text-[var(--pu-text-primary)]">
+                          Send a refund request for this purchase?
+                        </p>
+                        <p className="mt-1">
+                          Todd reviews requests. Your access stays available until a full refund is
+                          confirmed.
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-3">
+                          <Button disabled={busy} onClick={() => void request(p.purchaseId)}>
+                            {busy ? "Sending..." : "Send Request"}
+                          </Button>
+                          <Button variant="outline" disabled={busy} onClick={() => setConfirm(null)}>
+                            Keep My Purchase
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <Button
-                      disabled={busy}
-                      variant="outline"
-                      onClick={() => {
-                        setConfirm(p.purchaseId);
-                        setMessage(null);
-                      }}
-                    >
-                      Request a Refund
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <p className="mt-3 text-sm text-muted-foreground">
-                  Refund requests are closed for this purchase.
-                </p>
-              )}
-            </section>
-          ))}
-        </div>
+                    ) : (
+                      <Button
+                        className="mt-3"
+                        disabled={busy}
+                        variant="outline"
+                        onClick={() => {
+                          setConfirm(p.purchaseId);
+                          setMessage(null);
+                        }}
+                      >
+                        Request a Refund
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <p>Refund requests are closed for this purchase.</p>
+                )}
+              </div>
+            );
+
+            return (
+              <AppListRow
+                key={p.purchaseId}
+                title="28-Day Fat Loss Accelerator"
+                detail={detail}
+              />
+            );
+          })}
+        </AppList>
       )}
     </section>
   );
