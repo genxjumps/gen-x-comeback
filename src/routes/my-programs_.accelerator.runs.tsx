@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { PlatformPage } from "@/components/platform-page";
+import { AppLoadingState, AppStatePanel } from "@/components/precision-surfaces";
 import { Button } from "@/components/ui/button";
 import { getMyPrograms } from "@/lib/accelerator/functions";
 import { measurementChange } from "@/lib/accelerator/measurements";
@@ -55,7 +56,11 @@ function PreviousRuns() {
   }, [loadPrograms]);
 
   if (!result)
-    return <p className="text-sm text-muted-foreground">Loading Accelerator history...</p>;
+    return (
+      <PlatformPage kicker="Programs" title="Accelerator History">
+        <AppLoadingState label="Loading Accelerator history" />
+      </PlatformPage>
+    );
   const runs = result.ok ? (result.accelerator?.previousRuns ?? []) : [];
   return (
     <PlatformPage
@@ -63,9 +68,9 @@ function PreviousRuns() {
       title="Accelerator History"
       description="Every completed or replaced 28-day program keeps its original version, dates, and progress."
     >
-      <div className="space-y-3">
+      <div className="divide-y divide-[var(--pu-border-subtle)] border-y border-[var(--pu-border-strong)]">
         {runs.map((run) => (
-          <section key={run.enrollmentId} className="rounded-lg border border-border bg-card p-5">
+          <section key={run.enrollmentId} className="py-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="font-semibold">28-Day Accelerator</h2>
@@ -76,14 +81,14 @@ function PreviousRuns() {
               </div>
               <p className="text-xs text-muted-foreground">{runDate(run.startedAt)}</p>
             </div>
-            <dl className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-md bg-muted/60 p-3">
+            <dl className="mt-4 grid gap-x-6 gap-y-4 border-t border-[var(--pu-border-subtle)] pt-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="py-1">
                 <dt className="text-xs text-muted-foreground">Starting weight</dt>
                 <dd className="mt-1 text-sm font-semibold">
                   {measurementValue(run.measurementSummary.runStarting.weight)}
                 </dd>
               </div>
-              <div className="rounded-md bg-muted/60 p-3">
+              <div className="py-1">
                 <dt className="text-xs text-muted-foreground">Newest weight</dt>
                 <dd className="mt-1 text-sm font-semibold">
                   {measurementValue(run.measurementSummary.runNewest.weight)}
@@ -97,13 +102,13 @@ function PreviousRuns() {
                   </p>
                 ) : null}
               </div>
-              <div className="rounded-md bg-muted/60 p-3">
+              <div className="py-1">
                 <dt className="text-xs text-muted-foreground">Starting waist</dt>
                 <dd className="mt-1 text-sm font-semibold">
                   {measurementValue(run.measurementSummary.runStarting.waist)}
                 </dd>
               </div>
-              <div className="rounded-md bg-muted/60 p-3">
+              <div className="py-1">
                 <dt className="text-xs text-muted-foreground">Newest waist</dt>
                 <dd className="mt-1 text-sm font-semibold">
                   {measurementValue(run.measurementSummary.runNewest.waist)}
@@ -121,9 +126,11 @@ function PreviousRuns() {
           </section>
         ))}
         {!runs.length ? (
-          <p className="rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">
-            No Accelerator history yet.
-          </p>
+          <AppStatePanel
+            state="empty"
+            title="No Accelerator history yet"
+            description="Completed or replaced runs will stay here."
+          />
         ) : null}
       </div>
       <Button asChild variant="outline" className="mt-6">

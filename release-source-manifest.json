@@ -147,7 +147,7 @@
     },
     {
       "path": "src/components/accelerator-completion.tsx",
-      "sha256": "dc4c88d111f123fb2ccc8b17e578c61b9647700b9a1f1bacab02bfdb58789fe9"
+      "sha256": "b1b832167c0642acd3bddf9a679b9f8c504e99e39508305480e1395a5553bc2c"
     },
     {
       "path": "src/components/accelerator-flow-preview.tsx",
@@ -163,7 +163,7 @@
     },
     {
       "path": "src/components/accelerator-program.tsx",
-      "sha256": "7187b9339a58eddd5409c8b0535869c2fba9dd0bdfa2711cb5621df4267b17c1"
+      "sha256": "d965bb1d8e7b5b37fef50ebdf33d07e0a4b178359cdea0ceb8a58224a2a20932"
     },
     {
       "path": "src/components/accelerator-video-tracker.tsx",
@@ -227,7 +227,7 @@
     },
     {
       "path": "src/components/pwa-install.tsx",
-      "sha256": "43652e8e916c881cfe600dd032dd2bb40e070183db69f90c1f0901f80fb314f9"
+      "sha256": "5a04f9b7db57d769cc7a0d04369113138aa17e95b0c65ddc73b79319d75969ca"
     },
     {
       "path": "src/components/review-shell.tsx",
@@ -239,7 +239,7 @@
     },
     {
       "path": "src/components/seven-day-next-step.tsx",
-      "sha256": "fb523480ab4f82169ea4ecf1a43ac5eb7514e65bb52f7d22d2d6be4f53c9c0cb"
+      "sha256": "84c863c516c65d62698238a2926a2dd3d75a7690697316fe1bee1b1b16a029f6"
     },
     {
       "path": "src/components/seven-day-schedule-row.tsx",
@@ -391,7 +391,7 @@
     },
     {
       "path": "src/lib/__tests__/pwa-install-contract.test.ts",
-      "sha256": "1ff624084fc4d2298a67c5b8be4174f43f14e87c789975b7165b54d7f0b04251"
+      "sha256": "aefe0b08e584492605ee399fb48cde369bf0a6d55e20934e676185fa2b607665"
     },
     {
       "path": "src/lib/__tests__/release-fingerprint.test.ts",
@@ -1331,7 +1331,7 @@
     },
     {
       "path": "src/routes/checkout.accelerator.success.tsx",
-      "sha256": "d736677c4d800caf1c3e3685a3c5ea0eea6a417f4073d7e7f611e1224250fc0d"
+      "sha256": "0d4ae7827f4fc918887f4a17c8c905ffbecc7eaff393adff62582b7dde37f729"
     },
     {
       "path": "src/routes/design-system.tsx",
@@ -1371,7 +1371,7 @@
     },
     {
       "path": "src/routes/my-programs_.accelerator.runs.tsx",
-      "sha256": "8e93d8a700fe1df41e5fbe022527fe7bd19f78fcd3cfcce8bc62528be38aed69"
+      "sha256": "79e9093520512cdb6503d926241a19b068e02539a0a856f2d057c8eaa4c95640"
     },
     {
       "path": "src/routes/my-programs_.accelerator.setup.tsx",
@@ -1455,7 +1455,7 @@
     },
     {
       "path": "src/routes/your-plan.index.tsx",
-      "sha256": "b8946df5a88db8d8ef23b68b2a80e872ee49498c0819a0468fa302b4670b2597"
+      "sha256": "6a1e92130b44898a5671b30122bcd051a09c9b367e41fc41b6d722453dbe04a5"
     },
     {
       "path": "src/server.ts",

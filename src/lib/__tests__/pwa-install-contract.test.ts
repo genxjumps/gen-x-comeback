@@ -41,11 +41,13 @@ describe("Home Screen install experience", () => {
     expect(readyRoute).toContain(
       "gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl",
     );
-    expect(component).toContain("min-h-20 w-full justify-between");
-    expect(component).toContain("bg-foreground");
-    expect(component).toContain("rounded-full bg-background text-gxj-orange");
-    expect(component).not.toContain("rounded-lg border border-border bg-card p-5 sm:p-6");
-    expect(component).toContain('compact\n            ? "mt-5 w-full sm:w-auto"');
+    expect(component).not.toContain("min-h-20 w-full justify-between");
+    expect(component).not.toContain("rounded-full bg-background text-gxj-orange");
+    expect(component).toContain(': "mt-7 w-full sm:w-auto"');
+    expect(component).toContain("border-y border-[var(--pu-border-subtle)] py-5");
+    expect(component).toContain(
+      'className={compact ? "mt-5 w-full sm:w-auto" : "mt-7 w-full sm:w-auto"}',
+    );
   });
 
   it("registers the PWA shell and captures native install events", () => {

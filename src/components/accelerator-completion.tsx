@@ -62,7 +62,7 @@ function FinalMeasurementForm({
         />
         <select
           aria-label={`${label} unit`}
-          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+          className="min-h-12 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-strong)] bg-[var(--pu-surface-contained)] px-3 text-base"
           value={unit}
           disabled={disabled}
           onChange={(event) => setUnit(event.target.value as MeasurementUnit)}
@@ -141,11 +141,11 @@ export function AcceleratorCompletion({
   }
 
   return (
-    <section className="rounded-lg border border-border bg-gxj-mint p-6">
-      <div className="flex size-10 items-center justify-center rounded-full bg-gxj-teal text-white">
+    <section className="border-y border-[var(--pu-border-strong)] py-6">
+      <div className="flex size-10 items-center justify-center rounded-full bg-[var(--pu-status-success)] text-white">
         <Check aria-hidden="true" className="size-5" />
       </div>
-      <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
+      <p className="mt-5 text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-status-success)]">
         Program complete
       </p>
       <h2 className="mt-2 text-2xl font-semibold">You Completed All 28 Days</h2>
@@ -153,23 +153,23 @@ export function AcceleratorCompletion({
         That is the full Accelerator - one day at a time, all the way through.
       </p>
 
-      <dl className="mt-6 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-md bg-background/80 p-4">
+      <dl className="mt-6 grid gap-x-6 gap-y-4 border-y border-[var(--pu-border-subtle)] py-4 sm:grid-cols-3 sm:divide-x sm:divide-[var(--pu-border-subtle)]">
+        <div className="py-2 sm:px-4 first:sm:pl-0">
           <dt className="text-xs text-muted-foreground">Final progress</dt>
           <dd className="mt-1 font-semibold">28 of 28 days</dd>
         </div>
-        <div className="rounded-md bg-background/80 p-4">
+        <div className="py-2 sm:px-4 first:sm:pl-0">
           <dt className="text-xs text-muted-foreground">Weight change</dt>
           <dd className="mt-1 font-semibold">{formatChange(weightChange)}</dd>
         </div>
-        <div className="rounded-md bg-background/80 p-4">
+        <div className="py-2 sm:px-4 first:sm:pl-0">
           <dt className="text-xs text-muted-foreground">Waist change</dt>
           <dd className="mt-1 font-semibold">{formatChange(waistChange)}</dd>
         </div>
       </dl>
 
       {!finalWeight || !finalWaist ? (
-        <div className="mt-6 rounded-lg border border-border bg-background/80 p-4">
+        <div className="mt-6 rounded-[var(--pu-radius-contained)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] p-4">
           <h3 className="font-semibold">Optional Final Measurements</h3>
           <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
             Add either one, both, or skip them. Your program is already complete.

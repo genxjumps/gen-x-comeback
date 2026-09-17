@@ -59,8 +59,11 @@ function ManualSteps({ platform }: { platform: InstallPlatform }) {
   if (platform === "ios") {
     return (
       <ol className="mt-5 grid gap-3" aria-label="Add Gen X Jumps to your Home Screen">
-        <li className="flex gap-3 rounded-md border border-border bg-background p-3">
-          <Share2 aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-gxj-teal" />
+        <li className="flex gap-3 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] p-3">
+          <Share2
+            aria-hidden="true"
+            className="mt-0.5 size-5 shrink-0 text-[var(--pu-action-primary)]"
+          />
           <p className="text-sm leading-relaxed">
             <strong>1. Open the Share menu</strong>
             <span className="block text-muted-foreground">
@@ -68,15 +71,21 @@ function ManualSteps({ platform }: { platform: InstallPlatform }) {
             </span>
           </p>
         </li>
-        <li className="flex gap-3 rounded-md border border-border bg-background p-3">
-          <SquarePlus aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-gxj-teal" />
+        <li className="flex gap-3 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] p-3">
+          <SquarePlus
+            aria-hidden="true"
+            className="mt-0.5 size-5 shrink-0 text-[var(--pu-action-primary)]"
+          />
           <p className="text-sm leading-relaxed">
             <strong>2. Choose Add to Home Screen</strong>
             <span className="block text-muted-foreground">Scroll the Share menu if needed.</span>
           </p>
         </li>
-        <li className="flex gap-3 rounded-md border border-border bg-background p-3">
-          <Check aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-gxj-teal" />
+        <li className="flex gap-3 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] p-3">
+          <Check
+            aria-hidden="true"
+            className="mt-0.5 size-5 shrink-0 text-[var(--pu-action-primary)]"
+          />
           <p className="text-sm leading-relaxed">
             <strong>3. Tap Add</strong>
             <span className="block text-muted-foreground">
@@ -89,8 +98,11 @@ function ManualSteps({ platform }: { platform: InstallPlatform }) {
   }
 
   return (
-    <div className="mt-5 flex gap-3 rounded-md border border-border bg-background p-4">
-      <MoreVertical aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-gxj-teal" />
+    <div className="mt-5 flex gap-3 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] p-4">
+      <MoreVertical
+        aria-hidden="true"
+        className="mt-0.5 size-5 shrink-0 text-[var(--pu-action-primary)]"
+      />
       <p className="text-sm leading-relaxed">
         <strong>Use your browser&rsquo;s install option.</strong>
         <span className="block text-muted-foreground">
@@ -159,9 +171,12 @@ export function InstallExperience({
 
   if (installed) {
     return (
-      <div className="rounded-lg border border-gxj-teal bg-gxj-mint p-4" role="status">
+      <div
+        className="rounded-[var(--pu-radius-control)] border border-[var(--pu-status-success)] bg-[var(--pu-surface-contained)] p-4"
+        role="status"
+      >
         <p className="flex items-center gap-2 text-sm font-semibold">
-          <Check aria-hidden="true" className="size-5 text-gxj-teal" />
+          <Check aria-hidden="true" className="size-5 text-[var(--pu-status-success)]" />
           {platform === "desktop"
             ? "Gen X Jumps is installed."
             : "Gen X Jumps is on your Home Screen."}
@@ -179,7 +194,7 @@ export function InstallExperience({
     <div>
       {compact ? (
         <>
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gxj-teal">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-action-primary)]">
             Keep Your Plan Close
           </p>
           <h2 className="mt-2 text-lg font-semibold tracking-tight">
@@ -200,21 +215,12 @@ export function InstallExperience({
       <Button
         type="button"
         size="lg"
-        className={
-          compact
-            ? "mt-5 w-full sm:w-auto"
-            : "gxj-display-title mt-7 min-h-20 w-full justify-between gap-5 bg-foreground px-5 text-left text-2xl uppercase leading-none tracking-wide text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)] hover:bg-foreground/90 sm:px-7 sm:text-3xl"
-        }
+        className={compact ? "mt-5 w-full sm:w-auto" : "mt-7 w-full sm:w-auto"}
         disabled={working}
         onClick={() => void install()}
       >
-        {compact ? <Download aria-hidden="true" className="size-4" /> : null}
+        <Download aria-hidden="true" className="size-4" />
         <span>{working ? "Opening..." : "Add to My Home Screen"}</span>
-        {!compact ? (
-          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-background text-gxj-orange sm:size-12">
-            <Download aria-hidden="true" className="size-5" strokeWidth={2.5} />
-          </span>
-        ) : null}
       </Button>
       <p className={`${compact ? "text-xs" : "text-sm font-medium"} mt-3 text-muted-foreground`}>
         No app store required.
@@ -255,7 +261,7 @@ export function InstallNudge({ track }: { track: TrackInstall }) {
   useEffect(() => setVisible(shouldShowInstallNudge()), []);
   if (!visible) return null;
   return (
-    <section className="mt-6 rounded-lg border border-border bg-card p-4">
+    <section className="mt-6 border-y border-[var(--pu-border-subtle)] py-5">
       <InstallExperience compact track={track} onDismiss={() => setVisible(false)} />
     </section>
   );

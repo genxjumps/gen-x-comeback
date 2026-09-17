@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { SevenDayNextStep } from "@/components/seven-day-next-step";
+import { AppLinearProgress, AppLoadingState } from "@/components/precision-surfaces";
 import {
   SevenDayScheduleRow,
   type SevenDayScheduleState,
@@ -146,7 +147,7 @@ function PlanHubPage() {
   if (status === "checking") {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
-        <p className="text-sm text-muted-foreground">Loading your plan...</p>
+        <AppLoadingState label="Loading your plan" />
       </div>
     );
   }
@@ -198,22 +199,13 @@ function PlanHubPage() {
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
       <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">Your Plan</p>
-      <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
+      <h1 className="mt-2 text-3xl font-extrabold leading-tight sm:text-4xl">
         {hub.firstName}, Here&rsquo;s What To Do Next
       </h1>
       <p className="mt-3 text-sm font-medium">
         {completedCount} of {TOTAL_ASSIGNMENTS} days complete
       </p>
-      <div
-        className="mt-2 h-2 w-full overflow-hidden rounded-[2px] bg-muted"
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={TOTAL_ASSIGNMENTS}
-        aria-valuenow={completedCount}
-        aria-label="Plan progress"
-      >
-        <div className="h-full bg-gxj-teal" style={{ width: `${pct}%` }} />
-      </div>
+      <AppLinearProgress value={pct} label="Plan progress" className="mt-3" />
 
       {completedCount === TOTAL_ASSIGNMENTS ? (
         <SevenDayNextStep />
@@ -221,7 +213,7 @@ function PlanHubPage() {
         <InstallNudge track={trackInstall} />
       )}
       {completedCount === TOTAL_ASSIGNMENTS && hub.planVersionId ? (
-        <section className="mt-6 rounded-lg border border-border bg-card p-4">
+        <section className="mt-6 border-y border-[var(--pu-border-strong)] py-5">
           <h2 className="text-lg font-semibold">Want to Repeat Your 7-Day Plan?</h2>
           <p className="mt-2 text-sm">
             Your completed week stays saved. Start another week with the same workouts whenever
@@ -319,7 +311,7 @@ function PlanHubPage() {
       </div>
 
       {completedCount < TOTAL_ASSIGNMENTS && confirmUpdate ? (
-        <div className="mt-3 rounded-lg border border-border bg-card p-4">
+        <div className="mt-3 rounded-[var(--pu-radius-contained)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] p-4">
           <p className="text-sm leading-relaxed">
             Changing your answers will rebuild this plan and reset your progress.
           </p>
@@ -349,8 +341,8 @@ function PlanHubPage() {
       {/* Current workout */}
       <section
         id="current"
-        className={`mt-8 scroll-mt-6 rounded-lg border border-border p-4 ${
-          currentEntry ? "bg-card" : "bg-gxj-mint"
+        className={`mt-8 scroll-mt-6 rounded-[var(--pu-radius-contained)] border border-[var(--pu-border-subtle)] p-4 ${
+          currentEntry ? "bg-[var(--pu-surface-contained)]" : "bg-[var(--pu-action-tint)]"
         }`}
       >
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
@@ -375,7 +367,7 @@ function PlanHubPage() {
               </p>
             ) : null}
             {currentEntry.optional ? (
-              <div className="mt-3 rounded-md border border-dashed border-border p-3">
+              <div className="mt-3 rounded-[var(--pu-radius-control)] border border-dashed border-[var(--pu-border-subtle)] p-3">
                 <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
                   Optional Active Recovery
                 </p>
