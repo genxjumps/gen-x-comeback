@@ -1,3 +1,4 @@
+:root,
 .gxj-pu {
   --pu-surface-page: #f5f2ea;
   --pu-surface-contained: #ffffff;
@@ -26,7 +27,9 @@
   --pu-shadow-overlay: 0 10px 28px rgb(23 23 23 / 10%);
   --pu-content-app: 70rem;
   --pu-content-reading: 45rem;
+}
 
+.gxj-pu {
   min-height: 100%;
   background: var(--pu-surface-page);
   color: var(--pu-text-primary);
