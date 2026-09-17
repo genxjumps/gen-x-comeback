@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex min-w-0 items-center justify-center gap-2 whitespace-normal rounded-md text-center text-sm font-semibold cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex min-w-0 items-center justify-center gap-2 whitespace-normal rounded-[2px] text-center cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -19,10 +19,11 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "min-h-9 px-4 py-2",
-        sm: "min-h-8 rounded-md px-3 py-1.5 text-xs",
-        lg: "min-h-10 rounded-md px-8 py-2",
-        icon: "h-9 w-9",
+        default:
+          "gxj-display-title min-h-14 px-6 py-3 text-xl uppercase leading-none tracking-wide",
+        sm: "min-h-10 px-3 py-2 text-sm font-semibold",
+        lg: "gxj-display-title min-h-14 px-6 py-3 text-xl uppercase leading-none tracking-wide",
+        icon: "h-10 w-10 rounded-full",
       },
     },
     defaultVariants: {
