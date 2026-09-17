@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { AppLoadingState, AppNotice, AppStatePanel } from "@/components/precision-surfaces";
 import { Button } from "@/components/ui/button";
 import { IntakeClosed } from "@/components/intake-closed";
 import { Separator } from "@/components/ui/separator";
@@ -236,7 +237,7 @@ function ResultsPage() {
   const rest = plan.days.slice(1);
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
-      <h1 className="gxj-display-title text-2xl leading-tight tracking-tight sm:text-3xl">
+      <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
         Your Personalized 7-Day Fitness Plan Is Ready
       </h1>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
@@ -245,15 +246,15 @@ function ResultsPage() {
         of days you can consistently train.
       </p>
       {recognized ? (
-        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+        <AppNotice tone="warning" className="mt-4">
           Your saved plan is still intact. Confirm below if you want to replace it with these
           answers.
-        </p>
+        </AppNotice>
       ) : null}
 
       {/* Protein */}
-      <section className="mt-6 rounded-lg border border-border bg-card p-4">
-        <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+      <section className="mt-6 border-y border-[var(--pu-border-strong)] py-5">
+        <h2 className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-text-secondary)]">
           Your Daily Protein Target
         </h2>
         {plan.protein.grams !== null ? (
@@ -291,8 +292,8 @@ function ResultsPage() {
       </section>
 
       {/* How to approach the workouts */}
-      <section className="mt-4 rounded-lg border border-border bg-card p-4">
-        <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
+      <section className="mt-5 border-b border-[var(--pu-border-subtle)] pb-5">
+        <h2 className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-text-secondary)]">
           How to Approach the Workouts
         </h2>
         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
@@ -304,8 +305,8 @@ function ResultsPage() {
 
       {/* Days */}
       <section className="mt-8">
-        <ul className="mt-3 divide-y divide-border overflow-hidden rounded-lg border border-border">
-          <li className="bg-card px-4 py-2.5">
+        <ul className="mt-3 divide-y divide-[var(--pu-border-subtle)] border-y border-[var(--pu-border-strong)]">
+          <li className="py-3">
             <div className="flex items-baseline justify-between gap-3">
               <h3 className="text-sm font-semibold">Day 1: {dayOne.title}</h3>
               <span className="shrink-0 text-[10px] uppercase tracking-widest text-muted-foreground">
@@ -324,13 +325,13 @@ function ResultsPage() {
           </li>
 
           {rest.map((d) => (
-            <li key={d.day} className={unlocked ? "bg-card px-4 py-2" : "bg-muted/30 px-4 py-2"}>
+            <li key={d.day} className={unlocked ? "py-3" : "bg-[var(--pu-surface-subtle)] py-3"}>
               <div className="flex items-baseline justify-between gap-3">
                 <h3
                   className={
                     unlocked
                       ? "text-sm font-medium"
-                      : "text-sm font-medium text-muted-foreground/80"
+                      : "text-sm font-medium text-[var(--pu-text-secondary)]"
                   }
                 >
                   Day {d.day}: {d.title}
@@ -344,7 +345,7 @@ function ResultsPage() {
       <Separator className="my-8" />
 
       {recognized && !unlocked ? (
-        <section className="rounded-lg border border-border bg-card p-4">
+        <section className="border-y border-[var(--pu-border-strong)] py-5">
           <h2 className="text-lg font-semibold">Replace My Current Plan?</h2>
           <p className="mt-2 text-sm">
             This saves these answers and resets your current progress. Completed plans must be
@@ -381,56 +382,59 @@ function ResultsPage() {
             <Link to="/your-plan">Keep My Plan</Link>
           </Button>
           {error ? (
-            <p role="alert" className="mt-3">
+            <AppNotice tone="danger" className="mt-4" role="alert">
               {error}
-            </p>
+            </AppNotice>
           ) : null}
         </section>
       ) : unlocked ? (
-        <section className="rounded-lg border border-border bg-card p-4">
-          <h2 className="text-lg font-semibold tracking-tight">
+        <AppNotice tone="success">
+          <strong className="block text-[var(--pu-text-primary)]">
             Your Full 7-Day Workout Plan Is Unlocked
-          </h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          </strong>
+          <span className="mt-1 block">
             Your complete workout and recovery schedule is now available. Start with Day 1 and
             follow the plan in order.
-          </p>
-        </section>
+          </span>
+        </AppNotice>
       ) : checkingAccess ||
         handoffStatus === "checking" ||
         handoffStatus === "available" ||
         intakeDraft ? (
-        <section className="rounded-lg border border-border bg-card p-4" aria-live="polite">
-          <h2 className="text-lg font-semibold tracking-tight">Opening Your 7-Day Plan</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            {error
-              ? "Your answers are still here. Try saving your plan again."
-              : "Your answers are complete. We’re saving your plan now."}
-          </p>
+        <div aria-live="polite">
           {error ? (
-            <Button
-              type="button"
-              className="mt-4 w-full sm:w-auto"
-              onClick={() => window.location.reload()}
-            >
-              Try Saving My Plan Again
-            </Button>
-          ) : null}
-        </section>
+            <>
+              <AppNotice tone="danger">
+                Your answers are still here. Try saving your plan again.
+              </AppNotice>
+              <Button
+                type="button"
+                className="mt-4 w-full sm:w-auto"
+                onClick={() => window.location.reload()}
+              >
+                Try Saving My Plan Again
+              </Button>
+            </>
+          ) : (
+            <div>
+              <p className="mb-3 text-sm font-semibold">Opening Your 7-Day Plan</p>
+              <AppLoadingState label="Saving your 7-Day plan" lines={2} />
+            </div>
+          )}
+        </div>
       ) : !NEW_PLAN_INTAKE_OPEN ? (
         <IntakeClosed />
       ) : (
-        <section className="rounded-lg border border-border bg-card p-4">
-          <h2 className="text-lg font-semibold tracking-tight">Your Answers Are Still Saved</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            We couldn&rsquo;t find the secure signup that brought you here. Return to the short
-            website form and submit it again. You won&rsquo;t need to repeat these assessment
-            answers.
-          </p>
-          <Button asChild className="mt-4 w-full sm:w-auto">
-            <a href="https://genxjumps.com/start-here/#seven-day-optin">Return to My Signup</a>
-          </Button>
-        </section>
+        <AppStatePanel
+          state="error"
+          title="Your Answers Are Still Saved"
+          description="We couldn't find the secure signup that brought you here. Return to the short website form and submit it again. You won't need to repeat these assessment answers."
+          action={
+            <Button asChild>
+              <a href="https://genxjumps.com/start-here/#seven-day-optin">Return to My Signup</a>
+            </Button>
+          }
+        />
       )}
     </div>
   );
