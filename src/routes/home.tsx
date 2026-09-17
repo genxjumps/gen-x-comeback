@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Apple, ChartNoAxesColumnIncreasing, Dumbbell } from "lucide-react";
 
 import { homeAssignment } from "@/lib/accelerator/home-snapshot";
+import { PlatformPage } from "@/components/platform-page";
 import { Button } from "@/components/ui/button";
 import { getAcceleratorHub, getMyPrograms } from "@/lib/accelerator/functions";
 import { getNutritionProfile } from "@/lib/nutrition/functions";
@@ -121,72 +122,57 @@ function PlatformHome() {
     },
   ] as const;
 
-  return (
-    <div className="mx-auto min-h-full w-full max-w-5xl pb-10 sm:pb-14">
-      <header className="gxj-page-header pb-6 pt-4 sm:pb-8 sm:pt-6">
-        <div className="w-full max-w-2xl">
-          {dailyAssignment.label ? (
-            <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
-              {dailyAssignment.label}
-            </p>
-          ) : null}
-          <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
-            {dailyAssignment.title}
-          </h1>
-          {dailyAssignment.description ? (
-            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
-              {dailyAssignment.description}
-            </p>
-          ) : null}
-          {programs ? (
-            <Button asChild size="lg" className="mt-6 min-h-12 w-full px-6 sm:w-auto">
-              <Link to={dailyAssignment.to}>
-                {dailyAssignment.button}
-                <ArrowRight aria-hidden="true" className="size-4" />
-              </Link>
-            </Button>
-          ) : null}
-        </div>
-      </header>
+  const headerAction = programs ? (
+    <Button asChild className="w-full sm:w-auto">
+      <Link to={dailyAssignment.to}>
+        {dailyAssignment.button}
+        <ArrowRight aria-hidden="true" className="size-4" />
+      </Link>
+    </Button>
+  ) : null;
 
-      <div className="gxj-page-body mx-auto max-w-3xl">
-        <section
-          className="gxj-page-section divide-y divide-foreground/15 py-2"
-          aria-label="Programs, progress, and nutrition"
-        >
-          {shortcuts.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className="group grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-4 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2"
-              >
-                <Icon aria-hidden="true" className="size-5" strokeWidth={2.25} />
-                <div>
-                  <h2 className="gxj-display-title text-2xl uppercase tracking-wide">
-                    {item.title}
-                  </h2>
-                  <div className="mt-1 space-y-1 text-sm leading-relaxed">
-                    {item.lines.map((line, index) => (
-                      <p
-                        key={index}
-                        className={index === 0 ? "font-medium" : "text-muted-foreground"}
-                      >
-                        {line}
-                      </p>
-                    ))}
-                  </div>
+  return (
+    <PlatformPage
+      kicker={dailyAssignment.label ?? undefined}
+      title={dailyAssignment.title}
+      description={dailyAssignment.description ?? undefined}
+      headerActions={headerAction}
+      titleSize="hero"
+    >
+      <section
+        className="gxj-page-section divide-y divide-foreground/15 py-2"
+        aria-label="Programs, progress, and nutrition"
+      >
+        {shortcuts.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="group grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-4 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2"
+            >
+              <Icon aria-hidden="true" className="size-5" strokeWidth={2.25} />
+              <div>
+                <h2 className="gxj-display-title text-2xl uppercase tracking-wide">{item.title}</h2>
+                <div className="mt-1 space-y-1 text-sm leading-relaxed">
+                  {item.lines.map((line, index) => (
+                    <p
+                      key={index}
+                      className={index === 0 ? "font-medium" : "text-muted-foreground"}
+                    >
+                      {line}
+                    </p>
+                  ))}
                 </div>
-                <ArrowRight
-                  aria-hidden="true"
-                  className="size-5 transition-transform group-hover:translate-x-1"
-                />
-              </Link>
-            );
-          })}
-        </section>
-      </div>
-    </div>
+              </div>
+              <ArrowRight
+                aria-hidden="true"
+                className="size-5 transition-transform group-hover:translate-x-1"
+              />
+            </Link>
+          );
+        })}
+      </section>
+    </PlatformPage>
   );
 }
