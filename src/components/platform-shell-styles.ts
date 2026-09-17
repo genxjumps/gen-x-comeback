@@ -13,8 +13,7 @@ export const platformShellStyles = {
   desktopItemActive: "bg-[var(--pu-surface-subtle)] text-[var(--pu-text-primary)]",
   desktopItemInactive:
     "text-[var(--pu-text-secondary)] hover:bg-[var(--pu-surface-subtle)] hover:text-[var(--pu-text-primary)]",
-  main:
-    "gxj-app-surface mx-auto w-full max-w-[var(--pu-content-app)] px-5 pb-28 sm:px-8 lg:px-10 lg:pb-14",
+  main: "gxj-app-surface mx-auto w-full max-w-[var(--pu-content-app)] px-5 pb-28 sm:px-8 lg:px-10 lg:pb-14",
   mobileNav:
     "fixed inset-x-0 bottom-0 z-30 border-t border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] text-[var(--pu-text-primary)] pb-[env(safe-area-inset-bottom)] lg:hidden",
   mobileGrid: "mx-auto grid max-w-2xl grid-cols-4 gap-1 p-2",

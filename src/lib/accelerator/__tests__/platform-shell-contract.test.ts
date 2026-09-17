@@ -8,6 +8,7 @@ describe("authenticated platform shell source contract", () => {
     const home = readSource("../../../routes/home.tsx");
     const shell = readSource("../../../components/platform-shell.tsx");
     const actions = readSource("../../../components/platform-header-actions.tsx");
+    const shellStyles = readSource("../../../components/platform-shell-styles.ts");
     const renderedHome = home.slice(home.indexOf("function PlatformHome"));
 
     expect(renderedHome).toContain("{dailyAssignment.title}");
@@ -21,7 +22,8 @@ describe("authenticated platform shell source contract", () => {
     expect(shell).toContain('{ label: "Progress", to: "/progress"');
     expect(shell).toContain('{ label: "Nutrition", to: "/nutrition"');
     expect(shell).not.toContain('{ label: "Explore"');
-    expect(shell).toContain("grid-cols-4");
+    expect(shell).toContain("platformShellStyles as shell");
+    expect(shellStyles).toContain("grid-cols-4");
     expect(actions).toContain('to="/notifications"');
     expect(home).toMatch(/<h1[^>]*>\s*\{dailyAssignment\.title\}\s*<\/h1>/);
     expect(home).toContain('["Browse available programs"]');
@@ -50,7 +52,9 @@ describe("authenticated platform shell source contract", () => {
     expect(root).toContain("<PlatformShell>");
     expect(root).toContain("<PlatformAccessBoundary>");
     expect(shell).toContain('aria-label="Main navigation"');
-    expect(shell).toContain("safe-area-inset-bottom");
+    const shellStyles = readSource("../../../components/platform-shell-styles.ts");
+    expect(shell).toContain("platformShellStyles as shell");
+    expect(shellStyles).toContain("safe-area-inset-bottom");
     expect(access).toContain("supabase.auth.getSession()");
     expect(access).toContain("supabase.auth.onAuthStateChange");
     expect(access).toContain("<AppStatePanel");

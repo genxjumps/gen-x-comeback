@@ -17,6 +17,13 @@ import type { ReactNode } from "react";
 
 import { AcceleratorOfferPage } from "@/components/accelerator-offer-page";
 import { PlatformPage } from "@/components/platform-page";
+import {
+  PuCheckboxChoice,
+  PuEyebrow,
+  PuHeading,
+  PuRadioChoice,
+  PuSection,
+} from "@/design-system/precision/components";
 import { ReviewShell } from "@/components/review-shell";
 import { SetupProgress } from "@/components/setup-progress";
 import { Button } from "@/components/ui/button";
@@ -33,33 +40,24 @@ import { sevenDayWorkoutOverview, sevenDayWorkoutRuntime } from "@/lib/workout-p
 
 function Section({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <section className="border-t border-foreground/15 py-6 first:border-t-0 first:pt-0 sm:py-8">
+    <PuSection className="first:border-t-0 first:pt-0">
       {title ? (
-        <h2 className="gxj-display-title mb-4 text-2xl uppercase tracking-wide sm:text-3xl">
+        <PuHeading level={2} className="mb-4">
           {title}
-        </h2>
+        </PuHeading>
       ) : null}
       {children}
-    </section>
+    </PuSection>
   );
 }
 
 function Status({ children }: { children: ReactNode }) {
-  return (
-    <p className="inline-flex min-h-8 items-center rounded-[2px] bg-foreground px-3 py-1 text-xs font-bold uppercase tracking-[0.12em] text-background">
-      {children}
-    </p>
-  );
+  return <PuEyebrow>{children}</PuEyebrow>;
 }
 
 function Action({ children, outline = false }: { children: ReactNode; outline?: boolean }) {
   return (
-    <Button
-      type="button"
-      variant={outline ? "outline" : "default"}
-      size="lg"
-      className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
-    >
+    <Button type="button" variant={outline ? "outline" : "default"} size="lg">
       {children}
     </Button>
   );
@@ -67,16 +65,13 @@ function Action({ children, outline = false }: { children: ReactNode; outline?: 
 
 function Choice({ children, selected = false }: { children: ReactNode; selected?: boolean }) {
   return (
-    <div
-      className={`flex min-h-14 items-center rounded-md border px-4 py-3 font-semibold ${
-        selected ? "border-gxj-orange bg-gxj-mint" : "border-foreground/20 bg-background"
-      }`}
-    >
-      <span
-        className={`mr-3 size-4 rounded-full border ${selected ? "border-[5px] border-gxj-orange" : "border-foreground/40"}`}
-      />
-      {children}
-    </div>
+    <PuRadioChoice
+      name="review-choice"
+      value={typeof children === "string" ? children : "review-choice"}
+      label={children}
+      checked={selected}
+      onChange={() => undefined}
+    />
   );
 }
 
@@ -89,28 +84,23 @@ function AssessmentChoice({
   selected?: boolean;
   multiple?: boolean;
 }) {
-  return (
-    <div
-      className={`relative flex min-h-14 items-center border-2 px-4 py-3 pr-12 text-base font-semibold leading-snug transition-[background-color,border-color,box-shadow,transform] duration-150 ${
-        selected
-          ? "-translate-x-px -translate-y-px border-gxj-orange bg-gxj-mint shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]"
-          : "border-foreground/25 bg-background"
-      }`}
-    >
-      <span
-        aria-hidden="true"
-        className={`mr-3 grid size-5 shrink-0 place-items-center border-2 ${
-          multiple ? "rounded-[2px]" : "rounded-full"
-        } ${selected ? "border-gxj-orange" : "border-foreground/35"}`}
-      >
-        {selected ? (
-          <span
-            className={`${multiple ? "size-2.5 rounded-[1px]" : "size-2.5 rounded-full"} bg-gxj-orange`}
-          />
-        ) : null}
-      </span>
-      {children}
-    </div>
+  const value = typeof children === "string" ? children : "review-assessment-choice";
+  return multiple ? (
+    <PuCheckboxChoice
+      name="review-assessment-choice"
+      value={value}
+      label={children}
+      checked={selected}
+      onChange={() => undefined}
+    />
+  ) : (
+    <PuRadioChoice
+      name="review-assessment-choice"
+      value={value}
+      label={children}
+      checked={selected}
+      onChange={() => undefined}
+    />
   );
 }
 

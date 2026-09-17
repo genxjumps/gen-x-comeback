@@ -183,7 +183,7 @@
     },
     {
       "path": "src/components/app-review-screen.tsx",
-      "sha256": "e7b9304f17f7f27b46632a6f4462bca5408d27389ed46b2b0af100af07f8484c"
+      "sha256": "6f8ed5148c8d3f68f8692f9e9c92435e1e58e1c26bb518607432a4e92383d218"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -218,8 +218,12 @@
       "sha256": "c5190a3ff7f77b40405a19218db110e8d7cfb4461f8a578c61ef0e83e132448e"
     },
     {
+      "path": "src/components/platform-shell-styles.ts",
+      "sha256": "b5d27686b1a1a115cf705e2816dd451b4ae2f0e4bb0bb1058f85c1416c7f7e73"
+    },
+    {
       "path": "src/components/platform-shell.tsx",
-      "sha256": "136e5830a8cee64adddba281e2012046757a1e48085708e9d2bfe1e3fcc516ff"
+      "sha256": "ad7e7b06bf32e74619c84012865512034b8bdc562f34659b558848edc823f0c1"
     },
     {
       "path": "src/components/precision-surfaces.tsx",
@@ -231,7 +235,7 @@
     },
     {
       "path": "src/components/review-shell.tsx",
-      "sha256": "47766e904b9335f015c985e75e75a7a8fbedbee3e32a15eed505da1ba0913cdf"
+      "sha256": "74ba8598fae73b073af49d299f65a767a6b02efbf091cc4c6bdeae21e75107c4"
     },
     {
       "path": "src/components/setup-progress.tsx",
@@ -299,7 +303,7 @@
     },
     {
       "path": "src/design-system/precision/components.tsx",
-      "sha256": "c708a99df6d3e546f53e153611adaf268464a83be9aaa201066551446beb0ca9"
+      "sha256": "05ed896d9a55ff1fb23d6ca37903cc1e476e62df6e4a3513cb64d40720bae974"
     },
     {
       "path": "src/design-system/precision/showcase.tsx",
@@ -402,6 +406,10 @@
       "sha256": "ef531b47c500b074d9df863ceaf55f1e73eddffa5a3200d5c8fa3a3d6159c03c"
     },
     {
+      "path": "src/lib/__tests__/review-system-contract.test.ts",
+      "sha256": "055d5b44b80e77a3d71921691798ccd8aecb59d5308e300fe853ac446dffdb53"
+    },
+    {
       "path": "src/lib/__tests__/safe-supabase-auth-attacher-contract.test.ts",
       "sha256": "67bc23f0f9a9b01f3301cbb67b2a260842f86e8290cbc19be22095760e49287e"
     },
@@ -463,7 +471,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "96ab17ec5fec910dd7f0513204f512ce3942e871f97a6785fec740643fe872a9"
+      "sha256": "410cd38510f4e1851c284fe94571d9adc5c67e2ec7f29dc13dba6024d9ca5151"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -1431,7 +1439,7 @@
     },
     {
       "path": "src/routes/review.tsx",
-      "sha256": "ded893036960762a75fee84bc4f38e17cb8dd8211173f2bf6937861f199eee8a"
+      "sha256": "90e77964df3d1a2f4760634766be5da1001b31be36ce6acd70f9f60cc495b7eb"
     },
     {
       "path": "src/routes/signup.return.ts",
