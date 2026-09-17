@@ -19,7 +19,7 @@ export function SetupProgress({
   labeled?: boolean;
 }) {
   return (
-    <ol className={`grid max-w-3xl grid-cols-3 gap-2 ${labeled ? "" : "max-w-md"}`} aria-label={label}>
+    <ol className={`grid grid-cols-3 gap-2 ${labeled ? "max-w-3xl" : "max-w-md"}`} aria-label={label}>
       {items.map((item) => {
         const state =
           item.number < currentStep
@@ -44,7 +44,11 @@ export function SetupProgress({
                   : "border-2 border-foreground/20 text-foreground/35"
             }`}
           >
-            <span className={`gxj-display-title leading-none tracking-wide ${labeled ? "text-2xl sm:text-3xl" : "text-xl"}`}>
+            <span
+              className={`gxj-display-title leading-none tracking-wide ${
+                labeled ? "text-2xl sm:text-3xl" : "text-xl"
+              }`}
+            >
               {String(item.number).padStart(2, "0")}
             </span>
             {labeled && item.label ? (
