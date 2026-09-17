@@ -5,24 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex min-w-0 items-center justify-center gap-2 whitespace-normal rounded-md text-center text-sm font-semibold cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex min-w-0 items-center justify-center gap-2 whitespace-normal rounded-[var(--pu-radius-control)] border text-center font-semibold cursor-pointer transition-[background-color,border-color,color,box-shadow,transform] duration-[120ms] focus-visible:outline-[3px] focus-visible:outline-[var(--pu-action-primary)] focus-visible:outline-offset-[3px] disabled:pointer-events-none disabled:opacity-45 disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "border border-foreground/35 bg-gxj-orange text-foreground shadow-[2px_2px_0_oklch(0_0_0/16%)] hover:bg-gxj-orange/85 active:translate-x-px active:translate-y-px active:shadow-[1px_1px_0_oklch(0_0_0/12%)]",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "border-[var(--pu-action-primary)] bg-[var(--pu-action-primary)] text-white hover:border-[var(--pu-action-primary-hover)] hover:bg-[var(--pu-action-primary-hover)] active:translate-y-px",
+        destructive:
+          "border-[var(--pu-status-danger)] bg-[var(--pu-status-danger)] text-white hover:brightness-95",
         outline:
-          "border border-foreground/30 bg-transparent text-foreground hover:bg-foreground/[0.05]",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "border-[var(--pu-border-strong)] bg-[var(--pu-surface-contained)] text-[var(--pu-text-primary)] hover:bg-[var(--pu-surface-subtle)]",
+        secondary:
+          "border-[var(--pu-border-strong)] bg-[var(--pu-surface-contained)] text-[var(--pu-text-primary)] hover:bg-[var(--pu-surface-subtle)]",
+        ghost:
+          "border-[var(--pu-border-subtle)] bg-transparent text-[var(--pu-text-primary)] hover:bg-[var(--pu-surface-subtle)]",
+        link: "border-transparent bg-transparent text-[var(--pu-action-primary)] underline-offset-4 hover:underline",
       },
       size: {
-        default: "min-h-9 px-4 py-2",
-        sm: "min-h-8 rounded-md px-3 py-1.5 text-xs",
-        lg: "min-h-10 rounded-md px-8 py-2",
-        icon: "h-9 w-9",
+        default: "min-h-12 px-[1.125rem] py-2 text-[0.9375rem]",
+        sm: "min-h-10 px-3.5 py-1.5 text-sm",
+        lg: "min-h-[3.25rem] px-[1.375rem] py-2 text-base",
+        icon: "h-11 w-11 p-0",
       },
     },
     defaultVariants: {
