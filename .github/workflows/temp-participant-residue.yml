@@ -1,0 +1,51 @@
+name: Temporary participant residue migration
+
+on:
+  push:
+    branches:
+      - agent/precision-participant-residue-final
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    env:
+      VITE_SUPABASE_URL: https://ci-placeholder.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.8
+      - run: bun install --frozen-lockfile
+      - name: Apply participant residue migration
+        run: python .github/temp-participant-residue.py
+      - name: Format participant checkpoint
+        run: >-
+          bunx prettier --write CURRENT_STATE.md
+          src/components/pwa-install.tsx
+          src/components/seven-day-next-step.tsx
+          src/routes/your-plan.index.tsx
+          src/routes/my-programs_.accelerator.runs.tsx
+          src/routes/checkout.accelerator.success.tsx
+          src/components/accelerator-program.tsx
+          src/components/accelerator-completion.tsx
+          src/lib/__tests__/pwa-install-contract.test.ts
+      - name: Remove temporary helpers before manifest generation
+        run: git rm .github/temp-participant-residue.py .github/workflows/temp-participant-residue.yml
+      - name: Regenerate final release manifest
+        run: bun run release:manifest
+      - name: Run complete quality gate
+        run: bun run verify
+      - name: Commit verified participant checkpoint
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Clean remaining member participant surfaces"
+          git push origin HEAD:agent/precision-participant-residue-final
