@@ -24,6 +24,18 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Apply Nutrition migration
         run: python scripts/temp-nutrition-residue.py
+      - name: Repair generated Nutrition assertion
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/lib/__tests__/app-review.test.ts')
+          text = path.read_text()
+          bad = 'expect(nutritionRouteSource).toContain("<AppNotice tone="warning"");'
+          good = "expect(nutritionRouteSource).toContain('<AppNotice tone=\"warning\"');"
+          if bad not in text:
+              raise SystemExit('Expected generated Nutrition assertion was not found')
+          path.write_text(text.replace(bad, good, 1))
+          PY
       - name: Format Nutrition checkpoint
         run: bunx prettier --write CURRENT_STATE.md src/routes/nutrition.tsx src/lib/__tests__/app-review.test.ts
       - name: Regenerate release manifest
