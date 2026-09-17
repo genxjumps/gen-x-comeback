@@ -1,0 +1,56 @@
+.gxj-pu {
+  --pu-surface-page: #f5f2ea;
+  --pu-surface-contained: #ffffff;
+  --pu-surface-subtle: #eae6dd;
+  --pu-text-primary: #171717;
+  --pu-text-secondary: #5c5851;
+  --pu-border-subtle: #cdc7bc;
+  --pu-border-strong: #242321;
+  --pu-action-primary: #c94f16;
+  --pu-action-primary-hover: #b94712;
+  --pu-action-tint: #f8e8df;
+  --pu-accent-program: #167a86;
+  --pu-accent-program-tint: #e2f0f2;
+  --pu-status-success: #2f6f4e;
+  --pu-status-warning: #8a6500;
+  --pu-status-danger: #a43b31;
+  --pu-media-surface-top: #071019;
+  --pu-media-surface-bottom: #10161c;
+  --pu-media-text: #ffffff;
+  --pu-media-text-secondary: #c7ccd1;
+  --pu-media-accent-text: #ff8f57;
+  --pu-media-progress: #71d2ff;
+  --pu-radius-control: 4px;
+  --pu-radius-contained: 8px;
+  --pu-shadow-subtle: 0 1px 2px rgb(23 23 23 / 8%);
+  --pu-shadow-overlay: 0 10px 28px rgb(23 23 23 / 10%);
+  --pu-content-app: 70rem;
+  --pu-content-reading: 45rem;
+
+  min-height: 100%;
+  background: var(--pu-surface-page);
+  color: var(--pu-text-primary);
+  font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
+}
+
+.gxj-pu *,
+.gxj-pu *::before,
+.gxj-pu *::after {
+  box-sizing: border-box;
+}
+
+.gxj-pu :focus-visible {
+  outline: 3px solid var(--pu-action-primary);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gxj-pu *,
+  .gxj-pu *::before,
+  .gxj-pu *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
