@@ -54,6 +54,7 @@ const tokenHashSchema = z.string().regex(/^[a-f0-9]{64}$/, "Invalid token hash")
 
 /** Required client-generated idempotency key for an exact submit replay. */
 const submissionIdSchema = z.string().uuid("Invalid submission id");
+const timeZoneSchema = z.string().trim().min(1).max(100).default("UTC");
 
 export const leadInputSchema = z.object({
   submissionId: submissionIdSchema,
@@ -69,6 +70,28 @@ export const leadInputSchema = z.object({
     .refine((v) => z.string().email().max(254).safeParse(v).success, "Invalid email"),
   consentGranted: z.literal(true),
   assessment: answersSchema,
+  timeZone: timeZoneSchema,
+});
+
+export const handoffLeadInputSchema = z.object({
+  submissionId: submissionIdSchema,
+  sessionTokenHash: tokenHashSchema,
+  assessment: answersSchema,
+  timeZone: timeZoneSchema,
+});
+
+export const onboardingEventInputSchema = z.object({
+  token: optionalTokenSchema,
+  eventName: z.enum([
+    "install_prompt_shown",
+    "install_cta_clicked",
+    "install_prompt_accepted",
+    "install_prompt_dismissed",
+    "install_instructions_shown",
+    "install_not_now",
+    "installed_display_detected",
+  ]),
+  platform: z.enum(["ios", "android", "desktop"]),
 });
 
 export const regenerateInputSchema = z.object({
@@ -93,4 +116,13 @@ export const completeDayInputSchema = z.object({
 export const dayBriefInputSchema = z.object({
   token: optionalTokenSchema,
   day: planDaySchema,
+});
+
+export const restartPlanInputSchema = z.object({
+  token: optionalTokenSchema,
+  retryToken: optionalTokenSchema,
+  expectedVersion: z.string().uuid(),
+  submissionId: submissionIdSchema,
+  sessionTokenHash: tokenHashSchema,
+  timeZone: timeZoneSchema,
 });

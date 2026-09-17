@@ -3,7 +3,7 @@ import { buildPlan, type Answers, type Plan } from "@/lib/plan";
 
 export const CONSENT_VERSION = "v1";
 export const CONSENT_COPY =
-  "I agree to receive my personalized Gen X Jumps 7-Day Plan emails and general Gen X Jumps marketing emails. I can unsubscribe from either at any time.";
+  "By signing up for the free 7-Day Plan, I agree to receive plan-related emails and occasional marketing emails from Gen X Jumps. I can unsubscribe at any time.";
 export const PLAN_LOGIC_VERSION = "plan-engine-v1";
 export const ASSESSMENT_LOGIC_VERSION = "assessment-v1";
 export const PLAN_FAMILY_LOGIC_VERSION = "plan-family-v1";
@@ -52,8 +52,86 @@ export type DayBriefResult =
       completedDays: number[];
       tier: string;
       day: PlanDayView | null;
+      calendar: PlanCalendar;
     }
   | { ok: false };
+
+/** Stable calendar anchor for the seven-day plan. Dates are YYYY-MM-DD values. */
+export type PlanCalendar = {
+  startOn: string;
+  today: string;
+  timeZone: string;
+};
+
+export type PlanDayTiming = {
+  availableOn: string;
+  relation: "past" | "today" | "tomorrow" | "future";
+  available: boolean;
+};
+
+const DAY_MS = 86_400_000;
+
+/** Current YYYY-MM-DD in a validated IANA time zone. */
+export function isoDateInTimeZone(date: Date, timeZone: string): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const value = (type: "year" | "month" | "day") =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  return `${value("year")}-${value("month")}-${value("day")}`;
+}
+
+function dateOrdinal(isoDate: string): number {
+  return Math.floor(Date.parse(`${isoDate}T00:00:00Z`) / DAY_MS);
+}
+
+function isoDateFromOrdinal(ordinal: number): string {
+  return new Date(ordinal * DAY_MS).toISOString().slice(0, 10);
+}
+
+/** Assigns one fixed local calendar date to each plan day. */
+export function planDayTiming(calendar: PlanCalendar, dayNumber: number): PlanDayTiming {
+  const availableOrdinal = dateOrdinal(calendar.startOn) + Math.max(0, dayNumber - 1);
+  const todayOrdinal = dateOrdinal(calendar.today);
+  const delta = availableOrdinal - todayOrdinal;
+  return {
+    availableOn: isoDateFromOrdinal(availableOrdinal),
+    relation: delta < 0 ? "past" : delta === 0 ? "today" : delta === 1 ? "tomorrow" : "future",
+    available: delta <= 0,
+  };
+}
+
+/** Weekday label for an already-local ISO date, independent of the viewer's device zone. */
+export function planWeekday(isoDate: string): string {
+  return new Intl.DateTimeFormat("en-US", { weekday: "long", timeZone: "UTC" }).format(
+    new Date(`${isoDate}T12:00:00Z`),
+  );
+}
+
+function timingNoun(day: PlanDayView | null): string {
+  switch (assignmentType(day)) {
+    case "walk":
+      return "Movement";
+    case "recovery":
+      return "Recovery";
+    case "rest":
+      return "Rest Day";
+    default:
+      return "Workout";
+  }
+}
+
+/** Calendar-aware heading for the earliest unfinished plan day. */
+export function planDayHeading(day: PlanDayView | null, timing: PlanDayTiming): string {
+  const noun = timingNoun(day);
+  if (timing.relation === "today") return `Today’s ${noun}`;
+  if (timing.relation === "tomorrow") return `Tomorrow’s ${noun}`;
+  if (timing.relation === "future") return `Available ${planWeekday(timing.availableOn)}`;
+  return `Your Next ${noun}`;
+}
 
 /** Tier-appropriate easy-movement duration for a saved walk assignment. */
 export function movementDuration(tier: string): string {
@@ -72,18 +150,18 @@ export function ropeLevelFromExperience(q3: string): CardioContext["ropeLevel"] 
 /** Day 1 cardio instruction. Lower-impact guidance overrides all rope guidance. */
 export function cardioGuidance(c: CardioContext): string {
   if (c.impactLimited) {
-    return "During every jump rope interval, march in place or use step-touches instead of jumping. Keep one foot on the floor the entire time and drive the pace with your arms and your breathing.";
+    return "March in place or do step-touches during each 20-second interval. Keep one foot on the floor.";
   }
   if (!c.ownsRope) {
-    return "Use ghost jumps for every cardio interval. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+    return "Do ghost jumps (small hops while turning your hands as if you’re holding a rope), jumping jacks, or jog in place during each 20-second interval.";
   }
   if (c.ropeLevel === "beginner") {
-    return "Try the rope at the start of each interval. When resetting the rope takes over more than the jumping does, put it down and finish the interval with ghost jumps. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+    return "If you trip, reset and jump back in. Don’t get discouraged. Don’t give up.";
   }
   if (c.ropeLevel === "short_bursts") {
-    return "Use the rope while your rhythm is clean, then finish the interval with ghost jumps as needed. Ghost jumps are small two-foot hops while you turn your hands as though you were holding a rope.";
+    return "If you trip, reset and jump back in. Don’t get discouraged. Don’t give up.";
   }
-  return "Use the rope normally for every cardio interval and scale your pace as needed. Slow the turns down before you break your rhythm.";
+  return "Jump rope for each 20-second interval at a pace you can repeat for every round.";
 }
 
 /** Display-safe shape of one stored plan day. */
@@ -105,7 +183,7 @@ export function toPlanDayView(d: Record<string, unknown>, index: number): PlanDa
   return {
     day: typeof d.day === "number" ? d.day : index + 1,
     code: typeof d.code === "string" ? d.code : null,
-    title: typeof d.title === "string" ? d.title : "Assignment",
+    title: typeof d.title === "string" ? d.title : "Workout",
     description: typeof d.description === "string" ? d.description : null,
     minutes: typeof d.minutes === "number" ? d.minutes : null,
     optional: opt
@@ -146,6 +224,7 @@ export function completionLabel(day: PlanDayView | null, dayNumber: number): str
 }
 
 export type PlanHubData = {
+  planVersionId?: string;
   firstName: string;
   tier: string;
   protein: { grams: number | null; fallback: boolean };
@@ -157,6 +236,7 @@ export type PlanHubData = {
   };
   days: PlanDayView[];
   completedDays: number[];
+  calendar: PlanCalendar;
 };
 
 export type PlanHubResult = { ok: true; data: PlanHubData } | { ok: false };
@@ -177,7 +257,7 @@ export function assignmentKind(day: PlanDayView): string {
   if (t.includes("walk")) return "Walk or easy movement";
   if (t.includes("recovery")) return "Recovery";
   if (t.includes("rest")) return "Rest";
-  return "Assignment";
+  return "Workout";
 }
 
 /** The raw access token is generated by the browser, so it is never returned. */

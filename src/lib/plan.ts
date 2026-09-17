@@ -167,8 +167,7 @@ export const WORKOUTS: Record<string, Workout> = {
   W01: {
     code: "W01",
     title: "Jump Rope + Full Body",
-    description:
-      "Short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
+    description: "Jump rope and bodyweight exercises.",
     minutes: 15,
   },
   W02: {

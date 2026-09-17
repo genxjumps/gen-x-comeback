@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { IntakeClosed } from "@/components/intake-closed";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
+import { useNewPlanIntakeAccess } from "@/lib/use-new-plan-intake-access";
 
 export const Route = createFileRoute("/assessment/start")({
   head: () => ({
@@ -34,20 +33,23 @@ const options = [
 ];
 
 const ELIGIBILITY_STORAGE_KEY = "gxj_eligibility_answer_v1";
+const ACTION_CLASS = "gxj-display-title min-h-14 px-6 text-xl uppercase leading-none tracking-wide";
 
 function BeforeYouStart() {
   const navigate = useNavigate();
+  const intakeAccess = useNewPlanIntakeAccess();
   const [answer, setAnswer] = useState("");
   const [ineligible, setIneligible] = useState(false);
 
   useEffect(() => {
+    if (intakeAccess !== "allowed") return;
     try {
       const stored = window.localStorage.getItem(ELIGIBILITY_STORAGE_KEY);
       if (stored && options.some((o) => o.value === stored)) setAnswer(stored);
     } catch {
       // ignore
     }
-  }, []);
+  }, [intakeAccess]);
 
   const onAnswerChange = (value: string) => {
     setAnswer(value);
@@ -67,7 +69,17 @@ function BeforeYouStart() {
     navigate({ to: "/assessment" });
   };
 
-  if (!NEW_PLAN_INTAKE_OPEN) {
+  if (intakeAccess === "checking") {
+    return (
+      <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8">
+        <p className="text-sm text-muted-foreground" role="status">
+          Opening your setup...
+        </p>
+      </div>
+    );
+  }
+
+  if (intakeAccess === "closed") {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
         <IntakeClosed />
@@ -77,17 +89,29 @@ function BeforeYouStart() {
 
   if (ineligible) {
     return (
-      <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-        <h1 className="gxj-display-title text-2xl tracking-tight sm:text-3xl">Before You Start</h1>
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          This plan is not designed for rehabilitation, chair-based exercise, assisted exercise, or
-          people who cannot complete basic exercise independently.
-        </p>
-        <div className="mt-6 flex items-center gap-3">
-          <Button asChild variant="outline">
+      <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+        <header className="py-6 sm:py-8">
+          <div className="max-w-2xl">
+            <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+              I’m Sorry
+            </h1>
+            <p className="mt-3 text-base font-medium leading-relaxed text-foreground/75">
+              This plan is not designed for rehabilitation, chair-based exercise, assisted exercise,
+              or people who cannot complete basic exercise independently.
+            </p>
+          </div>
+        </header>
+
+        <div className="mx-auto mt-1 flex max-w-3xl flex-col-reverse gap-3 border-t border-foreground/20 pt-5 sm:flex-row sm:justify-between">
+          <Button asChild variant="outline" className={ACTION_CLASS}>
             <Link to="/">Back to start</Link>
           </Button>
-          <Button type="button" variant="outline" onClick={() => setIneligible(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            className={ACTION_CLASS}
+            onClick={() => setIneligible(false)}
+          >
             Change my answer
           </Button>
         </div>
@@ -96,42 +120,54 @@ function BeforeYouStart() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-      <h1 className="gxj-display-title text-2xl tracking-tight sm:text-3xl">Before You Start</h1>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        This plan is for adults ranging from deconditioned to fit who can exercise independently.
-      </p>
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="py-6 sm:py-8">
+        <div className="max-w-2xl">
+          <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+            Before You Start
+          </h1>
+          <p className="mt-3 text-base font-medium leading-relaxed text-foreground/75">
+            You don&rsquo;t need to be in great shape. You just need to be able to exercise safely
+            on your own.
+          </p>
+        </div>
+      </header>
 
-      <div className="mt-6">
-        <Card className="border-border">
-          <CardContent className="p-4 sm:p-5">
-            <h2 className="text-sm font-medium leading-snug">
-              Can you safely exercise on your own, including standing, walking, getting down to and
-              up from the floor, and performing simple bodyweight movements?
-            </h2>
-            <div className="mt-3">
-              <RadioGroup value={answer} onValueChange={onAnswerChange} className="gap-2">
-                {options.map((o) => (
-                  <Label
-                    key={o.value}
-                    htmlFor={`eligibility-${o.value}`}
-                    className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
-                  >
-                    <RadioGroupItem id={`eligibility-${o.value}`} value={o.value} />
-                    <span>{o.label}</span>
-                  </Label>
-                ))}
-              </RadioGroup>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-xl font-bold leading-snug sm:text-2xl">
+            Can you safely jump rope, get down to and up from the floor, and do basic bodyweight
+            exercises like push-ups, squats, and lunges on your own?
+          </h2>
+          <RadioGroup value={answer} onValueChange={onAnswerChange} className="mt-5 gap-3">
+            {options.map((o) => (
+              <Label
+                key={o.value}
+                htmlFor={`eligibility-${o.value}`}
+                className="gxj-choice gxj-option-card cursor-pointer text-base font-semibold leading-snug"
+              >
+                <RadioGroupItem
+                  id={`eligibility-${o.value}`}
+                  value={o.value}
+                  className="size-5 shrink-0 border-2 border-foreground/35 text-gxj-orange data-[state=checked]:border-gxj-orange data-[state=checked]:text-gxj-orange [&_svg]:size-2.5"
+                />
+                <span className="gxj-assessment-choice-label">{o.label}</span>
+              </Label>
+            ))}
+          </RadioGroup>
+        </div>
+      </section>
 
-      <div className="mt-6 flex items-center gap-3">
-        <Button asChild variant="outline">
+      <div className="mx-auto mt-1 flex max-w-3xl items-stretch gap-3 border-t border-foreground/20 pt-5">
+        <Button asChild variant="outline" className={ACTION_CLASS}>
           <Link to="/">Back</Link>
         </Button>
-        <Button type="button" className="flex-1" onClick={onContinue} disabled={!answer}>
+        <Button
+          type="button"
+          className={`${ACTION_CLASS} flex-1`}
+          onClick={onContinue}
+          disabled={!answer}
+        >
           Continue
         </Button>
       </div>

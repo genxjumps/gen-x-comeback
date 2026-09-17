@@ -23,10 +23,19 @@ jobs:
     name: Verify locked source
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: https://ci-placeholder.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+      # One-time branch-reconciliation exception. The historical main parent predates the
+      # migration lock, while the release parent already passed the complete gate.
+      MIGRATION_BASE_REF: >-
+        ${{ (github.event_name == 'pull_request' && github.base_ref == 'main' && github.head_ref == 'release/v1.1') && 'origin/release/v1.1' || (github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Merge PR #272: Reconcile main')) && 'HEAD^2' || '' }}
 
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
@@ -40,4 +49,4 @@ jobs:
         run: bun run verify
 
       - name: Confirm protected generated files stayed clean
-        run: git diff --exit-code -- bun.lock src/routeTree.gen.ts
+        run: git diff --exit-code -- bun.lock release-source-manifest.json src/routeTree.gen.ts

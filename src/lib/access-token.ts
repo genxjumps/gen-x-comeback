@@ -9,3 +9,12 @@ export function readStoredToken(): string | null {
     return null;
   }
 }
+
+/** Clearing an unrelated browser credential must not block cookie-based access. */
+export function clearStoredToken(): void {
+  try {
+    window.localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
+  } catch {
+    /* cookie access remains available */
+  }
+}

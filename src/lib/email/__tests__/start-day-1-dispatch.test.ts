@@ -129,7 +129,7 @@ describe("Start Day 1 controlled dispatch", () => {
     expect(summary.outcomes[0]?.outcome).toBe("provider_accepted");
     expect(h.adapter.requests).toHaveLength(1);
     const request = h.adapter.requests[0]!;
-    expect(request.subject).toBe("Todd, Day 1: Full Body Flush & Fire");
+    expect(request.subject).toBe("Todd, Day 1: Jump Rope + Full Body");
     expect(request.text).toContain("Start Day 1:");
     expect(request.html).toContain("Start Day 1</a>");
     expect(request.to).toBe("Reader@Example.com");
@@ -140,7 +140,7 @@ describe("Start Day 1 controlled dispatch", () => {
     await dispatchStartDayOneJobs(h.deps);
 
     const request = h.adapter.requests[0]!;
-    expect(request.subject).toBe("Todd, finish Day 1: Full Body Flush & Fire");
+    expect(request.subject).toBe("Todd, finish Day 1: Jump Rope + Full Body");
     expect(request.text).toContain("Resume Day 1:");
   });
 

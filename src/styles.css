@@ -1,4 +1,8 @@
 @import "@fontsource/anton/400.css";
+@import "@fontsource/barlow/400.css";
+@import "@fontsource/barlow/500.css";
+@import "@fontsource/barlow/600.css";
+@import "@fontsource/barlow/700.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -20,6 +24,7 @@
  */
 
 @theme inline {
+  --font-sans: "Barlow", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -62,6 +67,8 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-gxj-teal: var(--gxj-teal);
   --color-gxj-mint: var(--gxj-mint);
+  --color-gxj-orange: var(--gxj-orange);
+  --color-gxj-aqua: var(--gxj-aqua);
 }
 
 :root {
@@ -98,8 +105,11 @@
   --sidebar-accent-foreground: oklch(0.24 0 0);
   --sidebar-border: oklch(0.9 0 0);
   --sidebar-ring: oklch(0.6 0 0);
-  --gxj-teal: oklch(0.368619 0.069427 227.945);
-  --gxj-mint: oklch(0.930779 0.041868 144.14);
+  /* Legacy names now resolve to the shared orange and warm-neutral app palette. */
+  --gxj-teal: oklch(0.63 0.2 42);
+  --gxj-mint: oklch(0.95 0.025 75);
+  --gxj-orange: oklch(0.63 0.2 42);
+  --gxj-aqua: oklch(0.76 0.12 198);
 }
 
 .dark {
@@ -135,6 +145,8 @@
   --sidebar-accent-foreground: oklch(0.97 0 0);
   --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: oklch(0.55 0 0);
+  --gxj-orange: oklch(0.68 0.18 42);
+  --gxj-aqua: oklch(0.78 0.11 198);
 }
 
 @layer base {
@@ -145,7 +157,75 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: "Barlow", ui-sans-serif, system-ui, sans-serif;
+    font-size: 1rem;
   }
+}
+
+.gxj-app-surface {
+  position: relative;
+  z-index: 1;
+}
+
+.gxj-platform-header [aria-label="Account menu"],
+.gxj-platform-header a[aria-label^="Notifications"] {
+  border-color: color-mix(in oklch, var(--color-foreground) 25%, transparent);
+  color: var(--color-foreground);
+}
+
+.gxj-platform-header [aria-label="Account menu"]:hover,
+.gxj-platform-header a[aria-label^="Notifications"]:hover {
+  background-color: color-mix(in oklch, var(--color-foreground) 5%, transparent);
+}
+
+.gxj-platform-header details > div {
+  color: var(--color-foreground);
+}
+
+.gxj-platform-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.gxj-platform-shell::before {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    radial-gradient(circle at 8% 5%, var(--color-foreground) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 91% 24%, var(--color-foreground) 0 0.8px, transparent 1.2px),
+    repeating-linear-gradient(
+      14deg,
+      transparent 0,
+      transparent 2.8rem,
+      oklch(0.19 0 0 / 8%) 2.85rem,
+      transparent 2.95rem
+    );
+  background-size:
+    0.55rem 0.55rem,
+    0.8rem 0.8rem,
+    auto;
+  content: "";
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0,
+    transparent 25%,
+    transparent 76%,
+    black 100%
+  );
+  mask-image: linear-gradient(to bottom, black 0, transparent 25%, transparent 76%, black 100%);
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.gxj-signal-stripes {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0,
+    transparent 16px,
+    var(--color-gxj-orange) 16px,
+    var(--color-gxj-orange) 29px
+  );
 }
 
 .gxj-display-title {
@@ -158,7 +238,7 @@
   display: block;
   width: fit-content;
   border-radius: 2px;
-  background-color: var(--color-gxj-teal);
+  background-color: var(--color-foreground);
   color: oklch(1 0 0);
   padding: 0.35rem 0.5rem 0.3rem;
   line-height: 1.15;
@@ -173,4 +253,159 @@
 .gxj-choice:has([data-state="checked"]) {
   border-color: var(--color-gxj-teal);
   background-color: var(--color-gxj-mint);
+}
+
+.gxj-page {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--color-background);
+}
+
+.gxj-page .gxj-kicker {
+  background-color: var(--color-foreground);
+  color: var(--color-background);
+}
+
+.gxj-page::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    radial-gradient(circle at 8% 5%, var(--color-foreground) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 91% 24%, var(--color-foreground) 0 0.8px, transparent 1.2px),
+    repeating-linear-gradient(
+      14deg,
+      transparent 0,
+      transparent 2.8rem,
+      oklch(0.19 0 0 / 8%) 2.85rem,
+      transparent 2.95rem
+    );
+  background-position:
+    0 0,
+    0 0,
+    0 0;
+  background-size:
+    0.55rem 0.55rem,
+    0.8rem 0.8rem,
+    auto;
+  content: "";
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0,
+    transparent 25%,
+    transparent 76%,
+    black 100%
+  );
+  mask-image: linear-gradient(to bottom, black 0, transparent 25%, transparent 76%, black 100%);
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.gxj-page-header {
+  position: relative;
+  z-index: 1;
+}
+
+.gxj-page-body {
+  position: relative;
+  z-index: 1;
+}
+
+.gxj-page-section {
+  border-top: 2px solid color-mix(in oklch, var(--color-foreground) 24%, transparent);
+}
+
+.gxj-assessment-options {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+
+.gxj-assessment-options--stacked {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.gxj-option-card {
+  position: relative;
+  display: flex;
+  min-height: 3.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid color-mix(in oklch, var(--color-foreground) 25%, transparent);
+  background: var(--color-background);
+  text-align: left;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.gxj-option-card:hover {
+  border-color: color-mix(in oklch, var(--color-foreground) 55%, transparent);
+  transform: translateY(-1px);
+}
+
+.gxj-option-card:has([data-state="checked"]) {
+  border-color: var(--color-gxj-orange);
+  background-color: var(--color-gxj-mint);
+  box-shadow: 3px 3px 0 color-mix(in oklch, var(--color-foreground) 14%, transparent);
+  transform: translate(-1px, -1px);
+}
+
+.gxj-option-card:has(:focus-visible) {
+  outline: 2px solid color-mix(in oklch, var(--color-gxj-orange) 70%, transparent);
+  outline-offset: 2px;
+}
+
+.gxj-assessment-choice-label {
+  display: block;
+  width: 100%;
+}
+
+.gxj-assessment-weight {
+  display: flex;
+  min-height: 3.75rem;
+  overflow: hidden;
+  border: 2px solid color-mix(in oklch, var(--color-foreground) 32%, transparent);
+  background: var(--color-background);
+}
+
+.gxj-assessment-weight:has(:focus-visible) {
+  outline: 2px solid color-mix(in oklch, var(--color-gxj-orange) 70%, transparent);
+  outline-offset: 2px;
+}
+
+.gxj-assessment-unit {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border-left: 2px solid color-mix(in oklch, var(--color-foreground) 24%, transparent);
+  background: color-mix(in oklch, var(--color-foreground) 6%, transparent);
+}
+
+.gxj-assessment-unit-button {
+  min-width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.55rem;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.gxj-assessment-unit-button[aria-pressed="true"] {
+  background: var(--color-foreground);
+  color: var(--color-background);
+}
+
+@media (min-width: 640px) {
+  .gxj-page-body {
+    padding-inline: 1.25rem;
+  }
+
+  .gxj-assessment-options:not(.gxj-assessment-options--stacked) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

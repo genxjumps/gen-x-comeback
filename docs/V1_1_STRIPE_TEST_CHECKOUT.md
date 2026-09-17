@@ -1,0 +1,153 @@
+# V1.1 Stripe Test Checkout
+
+## Boundary
+
+This source checkpoint connects a controlled Stripe test checkout to the existing Accelerator
+purchase and entitlement transaction, including non-blocking backup access and paid recovery. It
+does not enable live payments, public enrollment, sales-page checkout buttons, refunds, or Day 1.
+
+The integration uses Stripe directly from a dedicated Lovable Cloud Edge Function instead of
+Lovable's generated payments model. The app already has the approved `paid_purchases`,
+`paid_product_entitlements`, and service-role-only
+`provision_accelerator_ownership` boundary. A second generated purchase model would create competing
+ownership records.
+
+## Locked offer
+
+- Product code: `accelerator_28`
+- Program version: `accelerator_28_v1`
+- Price: `$37 USD`
+- Billing: one-time
+- Access: permanent unless explicitly revoked
+- Starting the program: separate customer action
+- Refund-request window: seven days from the recorded paid charge time
+
+## Runtime flow
+
+1. A verified, signed-in customer opens Explore Programs.
+2. The app server authenticates the customer, then calls the dedicated Edge Function through the
+   existing private Lovable Cloud service connection. The Edge Function requires the customer
+   account to be on the controlled test allow-list and confirms that it does not already own the
+   Accelerator.
+3. The Edge Function reads the Stripe credentials from Lovable Cloud Secrets, retrieves the
+   configured Stripe Price, and verifies test mode, one-time billing, `$37 USD`, and the locked
+   product/version metadata before creating Checkout.
+4. Stripe hosts Checkout. Only test cards can be accepted because the runtime rejects live keys and
+   live Stripe objects.
+5. The existing app-domain webhook forwards the raw signed payload through the private service
+   connection. The Edge Function verifies Stripe's signature, retrieves the Checkout Session again,
+   verifies the paid charge, exact line item, customer binding, amount, currency, product, version,
+   and test mode, then calls the existing idempotent ownership transaction.
+6. The signed-in success page asks the Edge Function to perform the same Stripe verification as an immediate
+   backup. The Checkout Session ID is the shared idempotency key, so webhook and return-path retries
+   converge on one purchase.
+7. The purchase creates ownership only. The customer chooses when to start Day 1 from My Programs.
+8. The ownership transaction atomically queues one transactional backup access email. Delivery is
+   non-blocking and uses the existing authenticated scheduler, retry, provider-volume, webhook, and
+   suppression boundaries.
+
+The bounded guest test path uses the same verified payment and ownership transaction with an
+additional browser-binding fence:
+
+1. The responsive Accelerator detail page asks the app server to open guest Checkout.
+2. The server creates a random one-browser claim, stores only its SHA-256 hash in Stripe Session
+   metadata, and places the raw claim in a Secure, HttpOnly, SameSite=Lax app-origin cookie. The
+   app-wide path is required because TanStack sends the success page's confirmation request through
+   its `/_serverFn` endpoint. Stripe collects the buyer's email during Checkout.
+3. After payment, the webhook resolves or creates the matching passwordless platform identity and
+   customer account, then provisions ownership idempotently. It stores the single-use handoff in a
+   service-role-only table and never returns an auth credential to Stripe.
+4. The success browser must present both its cookie claim and the paid test Session ID. Only after
+   both match does the server return a one-time Supabase auth handoff for that customer and clear
+   the temporary claim cookie.
+5. The browser establishes its session and presents **Set Up My Accelerator** for the exact new
+   entitlement. Email confirmation is not a pre-purchase or same-browser access gate, and Day 1 is
+   still a separate action.
+
+## Required backend configuration
+
+No values belong in Git, browser code, build secrets, or the published app's hosting environment.
+All seven values below belong in the project's Lovable Cloud Secrets because only the dedicated Edge
+Function reads them.
+
+| Name                            | Purpose                                                            |
+| ------------------------------- | ------------------------------------------------------------------ |
+| `STRIPE_CHECKOUT_ENABLED`       | Must equal `true` or all checkout behavior stays closed.           |
+| `STRIPE_GUEST_CHECKOUT_ENABLED` | Separately opens only the browser-bound guest test path.           |
+| `STRIPE_SECRET_KEY`             | Stripe test secret or restricted key only. Live keys are rejected. |
+| `STRIPE_WEBHOOK_SECRET`         | Signing secret for the exact app webhook endpoint.                 |
+| `STRIPE_ACCELERATOR_PRICE_ID`   | Test Price ID for the locked one-time offer.                       |
+| `STRIPE_TEST_CUSTOMER_IDS`      | Comma-separated customer UUID allow-list for controlled testing.   |
+| `APP_ORIGIN`                    | Exact HTTPS app origin used for Checkout return URLs.              |
+
+The Stripe test Product must include:
+
+| Metadata key           | Required value      |
+| ---------------------- | ------------------- |
+| `genx_product_code`    | `accelerator_28`    |
+| `genx_program_version` | `accelerator_28_v1` |
+
+The Stripe webhook endpoint is:
+
+`POST https://app.genxjumps.com/api/public/stripe/webhook`
+
+The existing test subscription uses `checkout.session.completed`. The approved refund
+checkpoint adds refund events only after its dependent migration and Edge deployment
+are separately approved; follow [`V1_1_ACCELERATOR_REFUNDS.md`](V1_1_ACCELERATOR_REFUNDS.md).
+No webhook configuration is changed by merging source.
+
+## Remaining before launch
+
+- Configure the test Product, Price, restricted key, signing secret, and controlled account IDs.
+- Publish the exact approved release and run a no-charge test-card purchase with an account that
+  does not already own the Accelerator.
+- Verify one purchase, one permanent entitlement, Not Started state, manual Day 1 start, duplicate
+  webhook replay, canceled Checkout, wrong amount/product rejection, and unauthorized account denial.
+- Connect the approved public website purchase CTA to the implemented guest Checkout path. The
+  app-side path itself requires no pre-purchase login, account creation, or email confirmation and
+  takes the verified success browser directly to setup without starting Day 1.
+- Keep the authenticated in-app purchase path direct. A signed-in customer sees the Accelerator's
+  dedicated responsive compact offer page and does not repeat email verification before Checkout.
+- Apply and verify the approved seven-day manual refund-request implementation and
+  provider reconciliation described in `V1_1_ACCELERATOR_REFUNDS.md`.
+- Keep Explore Programs as a responsive multi-program catalog. The complete Accelerator offer lives
+  on its dedicated detail page rather than consuming the catalog hub.
+- Establish the required staging boundary and run the complete paid-customer journey.
+- Connect sales-page buttons only after that journey passes.
+- Keep live payment credentials and public enrollment disabled until Todd gives separate explicit
+  approval.
+
+## Forward purchase architecture
+
+The controlled test flow above intentionally begins with an allow-listed, signed-in customer so the
+Stripe and ownership transaction can be proven safely. It does not define the public launch funnel.
+
+At launch there are two entry contexts:
+
+- **Public website buyer:** the website sells the program, the CTA opens Stripe Checkout directly,
+  and a verified paid Checkout Session returns the buyer immediately to the post-purchase app
+  experience. Email is collected by Stripe and used for backup access and recovery, not as a
+  pre-purchase gate.
+- **Signed-in app customer:** the customer opens a dedicated compact Accelerator offer/detail page,
+  completes Checkout without another verification step, and returns with ownership attached to the
+  existing account.
+
+Both paths preserve the locked separation between purchase and program start. Neither path starts
+Day 1 automatically.
+
+## Rollback
+
+This part adds one forward-only migration for the service-role-only
+`accelerator_guest_checkout_handoffs` table. It stores no card data and is unreadable by browser
+roles. The migration must be applied before the guest gate is enabled.
+
+Paid access delivery adds service-role-only `paid_access_email_jobs`, `paid_access_tokens`, and
+`paid_access_email_events` tables. The existing provider reservation ledger gains a mutually
+exclusive paid-job owner so free-plan and paid messages share one exact rolling provider ceiling.
+Paid delivery has a separate fail-closed gate, a controlled-customer test boundary, and a separate
+public-admission boundary. Applying the migration does not enable paid email sending.
+
+Disabling `STRIPE_GUEST_CHECKOUT_ENABLED` closes only guest Checkout; disabling
+`STRIPE_CHECKOUT_ENABLED` closes both Checkout paths. Neither action removes existing purchases or
+entitlements. Removing the UI and webhook code later does not revoke ownership already recorded
+through the existing transaction.

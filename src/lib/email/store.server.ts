@@ -104,12 +104,17 @@ export async function createSupabaseEmailStore(options?: {
       const { data, error } = await supabaseAdmin
         .from("lead_plans")
         .select(
-          "id, plan_version_id, first_name, email_original, email_normalized, email_suppressed_at, email_suppression_reason, plan_email_consent_active, plan_email_consent_at",
+          "id, plan_version_id, first_name, email_original, email_normalized, email_suppressed_at, email_suppression_reason, plan_email_consent_active, plan_email_consent_at, lead_plan_day_completions(day_number)",
         )
         .eq("id", leadPlanId)
         .limit(1);
       if (error) throw new Error(error.message);
-      return (data?.[0] as LeadRow | undefined) ?? null;
+      const row = data?.[0];
+      if (!row) return null;
+      return {
+        ...row,
+        completed_days: (row.lead_plan_day_completions ?? []).map((item) => item.day_number),
+      } as LeadRow;
     },
 
     async suppressionReason(emailNormalized) {

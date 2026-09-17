@@ -6,6 +6,14 @@ const MIGRATION = readFileSync(
   join(process.cwd(), "supabase", "migrations", "20260828150000_mailerlite_marketing_sync.sql"),
   "utf8",
 );
+const INTAKE_MIGRATION = readFileSync(
+  join(process.cwd(), "supabase", "migrations", "20260907210000_website_lead_intake_handoff.sql"),
+  "utf8",
+);
+const RUNTIME = readFileSync(
+  join(process.cwd(), "src", "lib", "marketing", "runtime.server.ts"),
+  "utf8",
+);
 const ROUTE = readFileSync(
   join(process.cwd(), "src", "routes", "api", "public", "email", "dispatch.ts"),
   "utf8",
@@ -85,5 +93,14 @@ describe("durable marketing sync contract", () => {
     ]) {
       expect(providerCall.toLowerCase()).not.toContain(forbidden);
     }
+  });
+
+  it("queues website opt-ins independently before an assessment is completed", () => {
+    expect(INTAKE_MIGRATION).toContain("CREATE TABLE public.lead_intake_marketing_sync_jobs");
+    expect(INTAKE_MIGRATION).toContain("enqueue_lead_intake_marketing_sync_job");
+    expect(INTAKE_MIGRATION).toContain("claim_lead_intake_marketing_sync_jobs");
+    expect(INTAKE_MIGRATION).toContain("begin_lead_intake_marketing_sync_attempt");
+    expect(INTAKE_MIGRATION).toContain("finish_lead_intake_marketing_sync_job");
+    expect(RUNTIME).toContain("createSupabaseLeadIntakeMarketingSyncStore");
   });
 });

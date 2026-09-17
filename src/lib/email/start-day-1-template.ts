@@ -13,8 +13,8 @@ export const START_DAY_1_GREETING_FALLBACK = "Hey there,";
 export const START_DAY_1_START_PREVIEW_TEXT = "Your first workout is waiting.";
 export const START_DAY_1_RESUME_PREVIEW_TEXT = "Pick up where you left off.";
 
-export const START_DAY_1_START_FALLBACK_SUBJECT = "Day 1: Full Body Flush & Fire";
-export const START_DAY_1_RESUME_FALLBACK_SUBJECT = "Finish Day 1: Full Body Flush & Fire";
+export const START_DAY_1_START_FALLBACK_SUBJECT = "Day 1: Jump Rope + Full Body";
+export const START_DAY_1_RESUME_FALLBACK_SUBJECT = "Finish Day 1: Jump Rope + Full Body";
 
 export const START_DAY_1_START_CTA_LABEL = "Start Day 1";
 export const START_DAY_1_RESUME_CTA_LABEL = "Resume Day 1";
@@ -58,7 +58,7 @@ export function startDayOneBodyParagraphs(
     return [
       greeting,
       "You already got Day 1 started. Now let\u2019s finish it.",
-      "Day 1: Full Body Flush & Fire",
+      "Day 1: Jump Rope + Full Body",
       "Your jump rope + total-body workout is waiting for you.",
       "You don\u2019t need to start over. Pick up where you left off, work hard, rest when needed, and scale things when you need to.",
       "Finish what you started.",
@@ -68,7 +68,7 @@ export function startDayOneBodyParagraphs(
     greeting,
     "You\u2019ve got your 7-Day Comeback Plan.",
     "Now it\u2019s time to start.",
-    "Day 1: Full Body Flush & Fire",
+    "Day 1: Jump Rope + Full Body",
     "Your first jump rope + total-body workout is ready.",
     "These workouts are supposed to challenge you. Work hard, rest when needed, and scale things when you need to.",
     "Don\u2019t overthink it. Start.",
@@ -80,10 +80,10 @@ const SIGN_OFF = ["Move or Rust.", "Todd", "Gen X Jumps"] as const;
 function subjectFor(variant: StartDayOneRenderVariant, name: string | null): string {
   if (variant === "resume") {
     return name
-      ? `${name}, finish Day 1: Full Body Flush & Fire`
+      ? `${name}, finish Day 1: Jump Rope + Full Body`
       : START_DAY_1_RESUME_FALLBACK_SUBJECT;
   }
-  return name ? `${name}, Day 1: Full Body Flush & Fire` : START_DAY_1_START_FALLBACK_SUBJECT;
+  return name ? `${name}, Day 1: Jump Rope + Full Body` : START_DAY_1_START_FALLBACK_SUBJECT;
 }
 
 /**

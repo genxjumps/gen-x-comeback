@@ -1,6 +1,6 @@
 // Scanner-safe /return handler.
 // GET renders a static page and verifies nothing. Only a deliberate POST
-// exchange verifies the token, creates the session, and redirects.
+// exchange verifies the token, creates the sessions, and redirects.
 import { createFileRoute } from "@tanstack/react-router";
 import { RETURN_SESSION_COOKIE } from "@/lib/email/types";
 import { renderStaticPage } from "@/lib/static-page";
@@ -25,6 +25,19 @@ function escapeAttr(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 }
 
+async function recordReturnCookieIssueProbe(source: string): Promise<void> {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("canonical_events").insert({
+      event_name: "return_cookie_issue_probe",
+      source,
+      occurred_at: new Date().toISOString(),
+    });
+  } catch {
+    // Diagnostic logging must never affect recovery.
+  }
+}
+
 /** One generic response for invalid, expired, revoked, malformed, and replaced tokens. */
 function genericRecovery(): Response {
   return shell(
@@ -37,9 +50,6 @@ function genericRecovery(): Response {
 export const Route = createFileRoute("/return")({
   server: {
     handlers: {
-      // A raw GET, prefetch, email-security scan, or provider click reaches only
-      // this. Nothing is verified here and nothing submits on its own: the
-      // visitor must deliberately press the button.
       GET: async ({ request }) => {
         const token = new URL(request.url).searchParams.get("token") ?? "";
         return shell(
@@ -53,7 +63,6 @@ export const Route = createFileRoute("/return")({
       },
 
       POST: async ({ request }) => {
-        // Best-effort throttle so an exchange endpoint cannot be brute forced.
         const { callerBucketKey, consumeRateLimit } = await import("@/lib/email/rate-limit.server");
         const allowed = await consumeRateLimit(callerBucketKey("return_post", request), 300, 20);
         if (!allowed.allowed) return genericRecovery();
@@ -67,15 +76,34 @@ export const Route = createFileRoute("/return")({
         if (!result.ok) return genericRecovery();
 
         const maxAge = Math.max(0, Math.floor((result.expiresAt.getTime() - Date.now()) / 1000));
-        // 303 to a clean URL so the bearer token is gone before the app loads.
-        // Destination is the trusted closed value from the exchange, never input.
+        const destination = result.platformAuthTokenHash
+          ? `${result.destination}#gxj_auth=${encodeURIComponent(result.platformAuthTokenHash)}`
+          : result.destination;
+        const serializedCookie = `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`;
+
+        try {
+          const { setCookie } = await import("@tanstack/react-start/server");
+          setCookie(RETURN_SESSION_COOKIE, result.sessionToken, {
+            path: "/",
+            maxAge,
+            secure: true,
+            httpOnly: true,
+            sameSite: "lax",
+          });
+          await recordReturnCookieIssueProbe("tanstack_set_cookie_ok");
+        } catch {
+          await recordReturnCookieIssueProbe("tanstack_set_cookie_failed");
+        }
+
+        await recordReturnCookieIssueProbe("raw_set_cookie_header_added");
+
         return new Response(null, {
           status: 303,
           headers: {
-            location: result.destination,
+            location: destination,
             "cache-control": "no-store",
             "referrer-policy": "no-referrer",
-            "set-cookie": `${RETURN_SESSION_COOKIE}=${result.sessionToken}; Path=/; Max-Age=${maxAge}; Secure; HttpOnly; SameSite=Lax`,
+            "set-cookie": serializedCookie,
           },
         });
       },

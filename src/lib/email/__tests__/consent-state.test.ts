@@ -306,7 +306,7 @@ describe("final provider-attempt fence", () => {
 describe("Recovery route surface", () => {
   it("renders the exact consent disclosure beneath the Recovery action", () => {
     expect(RECOVER_CONSENT_DISCLOSURE).toBe(
-      "By recovering your plan, you agree to receive Gen X Jumps 7-Day Plan emails.",
+      "Recovering a free 7-Day Plan restarts its plan emails. Recovering a purchased program does not change your email preferences.",
     );
     const source = readFileSync("src/routes/recover.ts", "utf8");
     const form = source.slice(source.indexOf("Send My Link"));

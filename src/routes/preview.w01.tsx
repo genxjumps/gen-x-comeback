@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { cardioGuidance, ropeLevelFromExperience, type CardioContext } from "@/lib/lead-plan";
 import { answersSchema } from "@/lib/lead-schemas";
-import { readAnswers } from "@/lib/plan";
+import { readAnswers, WORKOUTS } from "@/lib/plan";
 import {
   W01_APPROACH,
-  W01_DURATION,
+  W01_CARDIO_HEADING,
   W01_EQUIPMENT_NOTES,
   W01_EXPECT,
-  W01_IFRAME_SRC,
-  W01_RUNDOWN,
   W01_TITLE,
 } from "@/lib/w01-content";
 
@@ -19,18 +18,18 @@ import {
 export const Route = createFileRoute("/preview/w01")({
   head: () => ({
     meta: [
-      { title: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
+      { title: "Day 1 - Jump Rope + Full Body | Gen X Jumps" },
       {
         name: "description",
         content:
-          "Your Day 1 workout preview: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
+          "Your Day 1 workout preview: about 15 minutes of jump rope and bodyweight exercises.",
       },
       { name: "robots", content: "noindex, nofollow" },
-      { property: "og:title", content: "Day 1 - Full Body Flush & Fire | Gen X Jumps" },
+      { property: "og:title", content: "Day 1 - Jump Rope + Full Body | Gen X Jumps" },
       {
         property: "og:description",
         content:
-          "Your Day 1 workout preview: about 15 minutes of short jump rope intervals mixed with sumo squats, push-ups, and seated core work.",
+          "Your Day 1 workout preview: about 15 minutes of jump rope and bodyweight exercises.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -79,7 +78,7 @@ function DayOnePreviewPage() {
         </p>
         <div className="mt-6 grid gap-3 sm:flex">
           <Button asChild className="w-full sm:w-auto">
-            <Link to="/assessment/start">Build My 7-Day Plan</Link>
+            <Link to="/assessment/start">Create My 7-Day Plan</Link>
           </Button>
           <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link to="/assessment">Continue My Assessment</Link>
@@ -102,9 +101,6 @@ function DayOnePreviewPage() {
       <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {W01_TITLE}
       </h1>
-      <p className="mt-2 text-xs text-muted-foreground">{W01_DURATION}</p>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{W01_RUNDOWN}</p>
-
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
           What to Expect
@@ -116,20 +112,9 @@ function DayOnePreviewPage() {
         </ul>
       </section>
 
-      <div className="mt-6 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-        <iframe
-          src={W01_IFRAME_SRC}
-          loading="lazy"
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-          allowFullScreen
-          className="h-full w-full border-0"
-          title="W01 - Full Body Flush & Fire"
-        />
-      </div>
-
       <section className="mt-6 rounded-lg border border-border bg-card p-4">
         <h2 className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground">
-          Your Cardio Option
+          {W01_CARDIO_HEADING}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {cardioGuidance(cardio)}
@@ -154,12 +139,21 @@ function DayOnePreviewPage() {
         </ul>
       </section>
 
+      <WorkoutMediaCard
+        dayNumber={1}
+        code="W01"
+        title={W01_TITLE}
+        coverTitle={WORKOUTS.W01.title}
+        state={{ type: "ready" }}
+      />
+
       <section className="mt-8 rounded-lg border border-border bg-card p-4">
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Progress tracking is saved after you unlock your full plan.
+          Unlock the rest of your personalized 7-day plan and keep moving toward losing fat,
+          rebuilding your fitness, and proving you’re not done yet.
         </p>
         <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
-          <Link to="/assessment/complete">Unlock and Save My Full Plan</Link>
+          <Link to="/assessment/complete">Unlock My Full 7-Day Plan</Link>
         </Button>
       </section>
     </div>

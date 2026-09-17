@@ -1,0 +1,153 @@
+export type AcceleratorMediaReadiness = "ready_for_cloudflare" | "uploaded" | "pending_recording";
+
+export type AcceleratorMediaPlaceholder = {
+  readiness: AcceleratorMediaReadiness;
+  cloudflareStreamUid: string | null;
+  runtimeSeconds: number | null;
+};
+
+export const ACCELERATOR_ORIENTATION = {
+  title: "Welcome to the 28-Day Fat Loss Accelerator",
+  writtenExplanation: [
+    "For the next four weeks, follow the plan around training, nutrition, and consistency.",
+    "The same core workouts repeat each week on purpose so you can improve execution, pace, control, capacity, and consistency instead of starting over with a different workout every day.",
+    "If you trip while jumping rope, reset and keep moving. If you need more rest, take it. Scale reps or range of motion when needed, and stop if you feel pain rather than normal exercise discomfort.",
+    "The goal is not to destroy yourself every workout. Work hard enough to improve, recover, and come back ready to do it again.",
+    "Use the Protein-First nutrition guidance and your progress tracking alongside the training. Start where you are, do the work, and give yourself four weeks to see what changes.",
+  ],
+  media: {
+    readiness: "pending_recording",
+    cloudflareStreamUid: null,
+    runtimeSeconds: null,
+  },
+} as const;
+
+export const ACCELERATOR_WEEKLY_COACHING = [
+  {
+    week: 1,
+    title: "Set Your Baseline",
+    guidance: [
+      "Week 1 is about establishing an honest baseline.",
+      "Learn the exercises and timing, notice where you need to slow down or can push harder, and figure out how much recovery you actually need.",
+      "Do not worry about crushing every workout yet. Get the work in, learn the program, and give yourself a starting point you can improve over the next three weeks.",
+    ],
+    media: {
+      readiness: "pending_recording",
+      cloudflareStreamUid: null,
+      runtimeSeconds: null,
+    },
+  },
+  {
+    week: 2,
+    title: "Clean It Up",
+    guidance: [
+      "Week 2 is about getting cleaner.",
+      "Make the rope work smoother, recover faster after misses, make transitions quicker, and use better control on the strength movements.",
+      "You do not need to move dramatically faster. Make more of the workout productive with fewer unnecessary stops, cleaner reps, and better rhythm.",
+    ],
+    media: {
+      readiness: "pending_recording",
+      cloudflareStreamUid: null,
+      runtimeSeconds: null,
+    },
+  },
+  {
+    week: 3,
+    title: "Raise Your Output",
+    guidance: [
+      "Week 3 is where you start asking a little more from yourself.",
+      "That may mean a faster rope pace, a few more quality reps, shorter unnecessary breaks, better transitions, or staying in the work a little longer before backing off.",
+      "Harder does not mean reckless. Work hard, stay under control, and make Week 3 stronger than Week 1.",
+    ],
+    media: {
+      readiness: "pending_recording",
+      cloudflareStreamUid: null,
+      runtimeSeconds: null,
+    },
+  },
+  {
+    week: 4,
+    title: "Finish Strong",
+    guidance: [
+      "Week 4 is about finishing strong and looking for proof of progress.",
+      "Compare these workouts with Week 1. Notice whether you are moving faster, doing more quality reps, recovering quicker, handling the rope better, or simply tolerating the same work better.",
+      "Do not coast because you are almost finished. Give the final workouts a real effort, then look at what you can do now that you could not do as well four weeks ago.",
+    ],
+    media: {
+      readiness: "pending_recording",
+      cloudflareStreamUid: null,
+      runtimeSeconds: null,
+    },
+  },
+] as const;
+
+export const ACCELERATOR_ASSIGNMENT_CONTENT = {
+  workout_a: {
+    instructions:
+      "Complete Workout A. Work hard, scale pace, reps, range of motion, and rest when needed, then complete the day when you are finished.",
+    media: {
+      readiness: "uploaded",
+      cloudflareStreamUid: "767c2265f63d67fb5dc3b1c5f3a3e44e",
+      runtimeSeconds: 1543,
+    },
+  },
+  workout_b: {
+    instructions:
+      "Complete Workout B. Stay controlled through each minute, scale reps or rest when needed, then complete the day when you are finished.",
+    media: {
+      readiness: "uploaded",
+      cloudflareStreamUid: "a863bce8634666b5766ff277685b6b83",
+      runtimeSeconds: 1650,
+    },
+  },
+  workout_c: {
+    instructions:
+      "Complete Workout C. Keep the lower-body work controlled, scale reps or range of motion when needed, then complete the day when you are finished.",
+    media: {
+      readiness: "uploaded",
+      cloudflareStreamUid: "bce4346d2ec59177ed09934e26512bb8",
+      runtimeSeconds: 1447,
+    },
+  },
+  workout_d: {
+    instructions:
+      "Complete Workout D using the timed intervals as shown. Scale pace or rest when needed, then complete the day when you are finished.",
+    media: {
+      readiness: "uploaded",
+      cloudflareStreamUid: "b0a32ba5f5f64fb2e8d5829cde007656",
+      runtimeSeconds: 1584,
+    },
+  },
+  workout_e: {
+    instructions:
+      "Complete Workout E. Keep the rope work consistent while the bodyweight work builds through the pyramid, scaling reps or rest when needed.",
+    media: {
+      readiness: "uploaded",
+      cloudflareStreamUid: "9b80d965a884486cf5e38b26d1ff671f",
+      runtimeSeconds: 1507,
+    },
+  },
+  active_recovery_f: {
+    instructions:
+      "Keep this recovery session easy enough to speak in full sentences. Use easy rope, ghost rope, marching, or walking as equal options. The video is optional; this written guide is enough to complete the day.",
+    steps: [
+      "Warm up for 2 minutes: march in place, roll your shoulders forward and backward, add gentle torso turns, and move your calves and ankles.",
+      "Block 1: repeat 3 times - 20 seconds of easy rope, ghost rope, or walking; 20 seconds of marching; then 20 seconds of easy moving rest.",
+      "Mobility reset: take 60 seconds for slow shoulder rolls and relaxed breathing.",
+      "Block 2: repeat 3 times - 20 seconds of easy rope, ghost rope, or walking; 20 seconds of standing torso turns; then 20 seconds of easy moving rest.",
+      "Mobility reset: take 60 seconds for a gentle calf stretch, 30 seconds per side.",
+      "Block 3: repeat 3 times - 20 seconds of easy rope, ghost rope, or walking; 20 seconds of alternating step-back reaches without a deep lunge; then 20 seconds of easy moving rest.",
+      "Cool down for 90 seconds by walking or marching until your breathing feels comfortable. Tomorrow is a full rest day.",
+    ],
+    media: {
+      readiness: "pending_recording",
+      cloudflareStreamUid: null,
+      runtimeSeconds: null,
+    },
+  },
+  rest: {
+    instructions:
+      "Take the rest day. No workout is required. Acknowledge the day when you are ready to continue.",
+    media: null,
+  },
+} as const;

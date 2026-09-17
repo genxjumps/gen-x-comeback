@@ -519,6 +519,7 @@ export async function dispatchPlanReadyJobs(
       firstName: lead.first_name,
       returnUrl: urls.returnUrl,
       preferencesUrl: urls.preferencesUrl,
+      completedDays: lead.completed_days ?? [],
     });
 
     outcomes.push(

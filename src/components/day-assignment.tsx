@@ -3,68 +3,32 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Button } from "@/components/ui/button";
 import { AccessDenied } from "@/components/plan-access";
+import { WorkoutMediaCard } from "@/components/workout-media-card";
+import { WorkoutScreen } from "@/components/workout-screen";
 import { readStoredToken } from "@/lib/access-token";
 import {
   assignmentType,
   cardioGuidance,
   completionLabel,
   movementDuration,
+  planDayHeading,
+  planDayTiming,
+  planWeekday,
   type CardioContext,
+  type PlanCalendar,
   type PlanDayView,
 } from "@/lib/lead-plan";
 import { completePlanDay, getDayBrief } from "@/lib/lead.functions";
-import { W01_APPROACH } from "@/lib/w01-content";
-import { missingVideoNotice, workoutVideoSrc } from "@/lib/workout-videos";
+import { W01_APPROACH, W01_CARDIO_HEADING } from "@/lib/w01-content";
+import { sevenDayWorkoutOverview, sevenDayWorkoutRuntime } from "@/lib/workout-presentation";
 
 type Brief = {
   cardio: CardioContext;
   completedDays: number[];
   tier: string;
   day: PlanDayView | null;
+  calendar: PlanCalendar;
 };
-
-const SECTION = "mt-4 rounded-lg border border-border bg-card p-4";
-const LABEL = "text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground";
-
-function VideoArea({ code, title }: { code: string; title: string }) {
-  const src = workoutVideoSrc(code);
-  return (
-    <div className="mt-6 aspect-video overflow-hidden rounded-lg border border-border bg-muted">
-      {src ? (
-        <iframe
-          src={src}
-          loading="lazy"
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-          allowFullScreen
-          className="h-full w-full border-0"
-          title={`${code} - ${title}`}
-        />
-      ) : (
-        <div className="flex h-full w-full items-center justify-center p-4">
-          <p className="text-center text-sm text-muted-foreground">{missingVideoNotice(code)}</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function CardioSection({ cardio }: { cardio: CardioContext }) {
-  return (
-    <section className={SECTION}>
-      <h2 className={LABEL}>Your Cardio Option</h2>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{cardioGuidance(cardio)}</p>
-    </section>
-  );
-}
-
-function ApproachSection() {
-  return (
-    <section className={SECTION}>
-      <h2 className={LABEL}>How to Approach This Workout</h2>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{W01_APPROACH}</p>
-    </section>
-  );
-}
 
 /**
  * Protected assignment page for Days 2 through 7. Everything rendered comes
@@ -96,6 +60,7 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
             completedDays: result.completedDays,
             tier: result.tier,
             day: result.day,
+            calendar: result.calendar,
           });
           setToken(stored);
           setStatus("allowed");
@@ -117,9 +82,11 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
         brief.completedDays.includes(d),
       )
     : false;
+  const timing = brief ? planDayTiming(brief.calendar, dayNumber) : null;
+  const dayAvailable = completed || (priorDone && timing?.available === true);
 
   async function markComplete() {
-    if (status !== "allowed" || marking || completed || !priorDone) return;
+    if (status !== "allowed" || marking || completed || !dayAvailable) return;
     setMarking(true);
     setMarkError(null);
     try {
@@ -150,19 +117,159 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
 
   const day = brief.day;
   const kind = assignmentType(day);
-  const title = day?.title ?? "Assignment";
+  const title = day?.title ?? "Workout";
   const optional = day?.optional ?? null;
+  const timingHeading = timing ? planDayHeading(day, timing) : "Upcoming";
+  const mediaState = completed
+    ? ({ type: "completed" } as const)
+    : !priorDone
+      ? ({
+          type: "blocked",
+          previousDay: dayNumber - 1,
+          availableLabel: timing ? planWeekday(timing.availableOn) : "on schedule",
+        } as const)
+      : timing && !timing.available
+        ? ({
+            type: "scheduled",
+            availableLabel: planWeekday(timing.availableOn),
+          } as const)
+        : ({ type: "ready" } as const);
+  const hasWorkoutMedia = kind === "workout" || (kind === "recovery" && Boolean(optional));
 
   const duration =
     kind === "workout"
-      ? day?.minutes
-        ? `About ${day.minutes} minutes`
-        : "About 15 minutes"
+      ? day?.code
+        ? `${sevenDayWorkoutRuntime(day.code, day.minutes ?? 15)} total`
+        : "Workout duration unavailable"
       : kind === "walk"
         ? movementDuration(brief.tier)
         : null;
 
   const previousDay = dayNumber - 1;
+
+  if (kind === "workout" && day?.code) {
+    return (
+      <WorkoutScreen
+        kicker={`Day ${dayNumber} of 7`}
+        title={title}
+        description={`${duration ?? "Workout duration unavailable"}. Use the easier option any time you need it.`}
+        media={
+          <WorkoutMediaCard
+            dayNumber={dayNumber}
+            dayLabel={`Day ${dayNumber} of 7`}
+            code={day.code}
+            title={title}
+            state={mediaState}
+          />
+        }
+        overview={sevenDayWorkoutOverview(day.code, day.minutes ?? 15)}
+        notes={
+          <>
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-[0.12em]">
+                {W01_CARDIO_HEADING}
+              </h3>
+              <p className="mt-2 text-foreground/80">{cardioGuidance(brief.cardio)}</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-[0.12em]">Workout Approach</h3>
+              <p className="mt-2 text-foreground/80">{W01_APPROACH}</p>
+            </div>
+          </>
+        }
+      >
+        <section className="pb-8 pt-1">
+          {completed ? (
+            <div className="rounded-lg border border-border bg-gxj-mint p-4">
+              <p className="text-sm font-semibold">Day {dayNumber} Complete</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                Nice work. Your progress is saved.
+              </p>
+              <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
+                <Link to="/your-plan">
+                  {dayNumber === 7 && priorDone ? "See What’s Next" : "Continue to My Plan"}
+                </Link>
+              </Button>
+            </div>
+          ) : priorDone && (!timing || timing.available) ? (
+            <>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled={marking}
+                onClick={markComplete}
+              >
+                {marking ? "Saving..." : completionLabel(day, dayNumber)}
+              </Button>
+              {markError ? (
+                <p role="alert" className="mt-2 text-xs font-medium leading-relaxed">
+                  {markError}
+                </p>
+              ) : null}
+            </>
+          ) : null}
+        </section>
+      </WorkoutScreen>
+    );
+  }
+
+  if (kind === "recovery" && optional) {
+    return (
+      <WorkoutScreen
+        kicker={`Day ${dayNumber} of 7`}
+        title={optional.title}
+        description={`${sevenDayWorkoutRuntime(optional.code, optional.minutes)} total. Keep the movement easy.`}
+        media={
+          <WorkoutMediaCard
+            dayNumber={dayNumber}
+            dayLabel={`Day ${dayNumber} of 7`}
+            code={optional.code}
+            title={optional.title}
+            state={mediaState}
+          />
+        }
+        overview={sevenDayWorkoutOverview(optional.code, optional.minutes)}
+        notes={
+          <p className="text-foreground/80">
+            This session is optional. Keep the effort easy and use it only if moving feels good
+            today.
+          </p>
+        }
+      >
+        <section className="pb-8 pt-1">
+          {completed ? (
+            <div className="rounded-lg border border-border bg-gxj-mint p-4">
+              <p className="text-sm font-semibold">Day {dayNumber} Complete</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                Nice work. Your progress is saved.
+              </p>
+              <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
+                <Link to="/your-plan">
+                  {dayNumber === 7 && priorDone ? "See What’s Next" : "Continue to My Plan"}
+                </Link>
+              </Button>
+            </div>
+          ) : priorDone && (!timing || timing.available) ? (
+            <>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled={marking}
+                onClick={markComplete}
+              >
+                {marking ? "Saving..." : completionLabel(day, dayNumber)}
+              </Button>
+              {markError ? (
+                <p role="alert" className="mt-2 text-xs font-medium leading-relaxed">
+                  {markError}
+                </p>
+              ) : null}
+            </>
+          ) : null}
+        </section>
+      </WorkoutScreen>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-14">
@@ -174,63 +281,33 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
       </Link>
 
       <p className="gxj-kicker mt-6 text-[10px] font-semibold uppercase tracking-[0.16em]">
-        Day {dayNumber}
+        Day {dayNumber} &middot; {timingHeading}
       </p>
       <h1 className="gxj-display-title mt-2 text-2xl leading-tight tracking-tight sm:text-3xl">
         {title}
       </h1>
       {duration ? <p className="mt-2 text-xs text-muted-foreground">{duration}</p> : null}
 
-      {kind === "workout" && day?.description ? (
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{day.description}</p>
-      ) : null}
       {kind === "walk" ? (
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Easy movement is your assigned action for Day {dayNumber}. Walk at a conversational pace,
-          or use any easy movement you enjoy. It counts toward your 7-day plan.
+          Take an easy walk, or choose another form of light movement you enjoy. Today is about
+          helping your body recover so you’re ready for the next workout. You don’t need to push
+          hard - just keep moving.
         </p>
       ) : null}
       {kind === "recovery" ? (
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Recovery is your assigned action for Day {dayNumber}. Keep the day easy: sleep, hydrate,
-          eat to your protein target, and move gently if you feel like it. You can mark this day
-          complete without doing any workout.
+          Today is about helping your body recover so you’re ready for the next workout. Rest,
+          hydrate, eat to your protein target, and keep any movement light. The optional recovery
+          session is there if it feels good, but you don’t need to work out today.
         </p>
       ) : null}
       {kind === "rest" ? (
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          Rest is your assigned action for Day {dayNumber}. Taking the day off is the work here, and
-          it counts toward completing your 7-day plan.
+          Your body needs time to recover from the week’s workouts. Take the day off so you finish
+          the plan rested and ready for what comes next. It still counts toward completing your
+          7-day plan.
         </p>
-      ) : null}
-
-      {kind === "workout" && day?.code ? (
-        <>
-          <VideoArea code={day.code} title={title} />
-          <div className="mt-2" />
-          <CardioSection cardio={brief.cardio} />
-          <ApproachSection />
-        </>
-      ) : null}
-
-      {kind === "recovery" && optional ? (
-        <>
-          <section className="mt-6 rounded-lg border border-dashed border-border p-4">
-            <h2 className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              Optional Active Recovery
-            </h2>
-            <p className="mt-1 text-sm font-medium">{optional.title}</p>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              {optional.description}
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              About {optional.minutes} minutes &middot; optional, not required to complete this day
-            </p>
-          </section>
-          <VideoArea code={optional.code} title={optional.title} />
-          <CardioSection cardio={brief.cardio} />
-          <ApproachSection />
-        </>
       ) : null}
 
       <section className="mt-8">
@@ -241,10 +318,12 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               Nice work. Your progress is saved.
             </p>
             <Button asChild size="lg" className="mt-3 w-full sm:w-auto">
-              <Link to="/your-plan">Continue to My Plan</Link>
+              <Link to="/your-plan">
+                {dayNumber === 7 && priorDone ? "See What’s Next" : "Continue to My Plan"}
+              </Link>
             </Button>
           </div>
-        ) : !priorDone ? (
+        ) : !priorDone && !hasWorkoutMedia ? (
           <div className="rounded-lg border border-border bg-muted/30 p-4">
             <p className="text-sm leading-relaxed text-muted-foreground">
               Day {dayNumber} is upcoming. Complete Day {previousDay} first, then you can mark Day{" "}
@@ -256,7 +335,15 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               </Link>
             </Button>
           </div>
-        ) : (
+        ) : timing && !timing.available && !hasWorkoutMedia ? (
+          <div className="rounded-lg border border-border bg-muted/30 p-4">
+            <p className="text-sm font-semibold">Available {planWeekday(timing.availableOn)}</p>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+              You can review the details now. This day can be completed when its scheduled date
+              arrives.
+            </p>
+          </div>
+        ) : priorDone && (!timing || timing.available) ? (
           <>
             <Button
               size="lg"
@@ -272,14 +359,8 @@ export function DayAssignment({ dayNumber }: { dayNumber: number }) {
               </p>
             ) : null}
           </>
-        )}
+        ) : null}
       </section>
-
-      <div className="mt-6">
-        <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-          <Link to="/your-plan">Back to My Plan</Link>
-        </Button>
-      </div>
     </div>
   );
 }

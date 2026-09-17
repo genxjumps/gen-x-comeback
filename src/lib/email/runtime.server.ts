@@ -1,7 +1,7 @@
 // Wires deployment configuration, the Supabase store, and the chosen provider
 // adapter into dispatcher dependencies. Server-only, fail-closed.
 import { createFakeAdapter, createResendAdapter } from "@/lib/email/adapters.server";
-import { evaluateSendingGate, readEmailConfig, resolveAppOrigin } from "@/lib/email/config.server";
+import { evaluateSendingGate, readEmailConfig } from "@/lib/email/config.server";
 import { createSupabaseEmailStore } from "@/lib/email/store.server";
 import {
   EMAIL_TOKEN_SECRET_ENV,
@@ -11,6 +11,9 @@ import {
 import type { DispatchDeps } from "@/lib/email/dispatch";
 import { hashAccessToken } from "@/lib/lead-plan";
 import type { EmailAdapter } from "@/lib/email/types";
+import { isolatePreparation } from "@/lib/email/queue-isolation";
+
+export const PRODUCTION_APP_ORIGIN = "https://app.genxjumps.com" as const;
 
 export type RuntimeDeps =
   | { enabled: true; deps: DispatchDeps }
@@ -38,12 +41,24 @@ export async function buildDispatchDeps(invocationId?: string): Promise<RuntimeD
   return {
     enabled: true,
     deps: {
-      store: await createSupabaseEmailStore(
-        invocationId ? { productionInvocationId: invocationId } : undefined,
+      store: isolatePreparation(
+        await createSupabaseEmailStore(
+          invocationId ? { productionInvocationId: invocationId } : undefined,
+        ),
+        [
+          "claimJobs",
+          "getLead",
+          "suppressionReason",
+          "insertReturnToken",
+          "upsertPreferenceCredential",
+        ],
       ),
       adapter,
       now: () => new Date(),
-      appOrigin: resolveAppOrigin(config),
+      // Production lifecycle and Recovery links must always stay on the
+      // customer-facing app domain. Preview origins remain configurable only
+      // in the separate staging runtime modules.
+      appOrigin: PRODUCTION_APP_ORIGIN,
       fromEmail: config.fromEmail as string,
       fromName: config.fromName,
       replyTo: config.replyTo as string,

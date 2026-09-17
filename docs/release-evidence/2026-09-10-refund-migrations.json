@@ -1,0 +1,554 @@
+{
+  "release": "0ccfda3e7dff5773f9693ef2f7fd95e4a1daeee7",
+  "qualityGate": 34468435957,
+  "project": "9882f922-c17b-4fca-bd5b-48b9548e5322",
+  "supabaseReference": "wrvjgjvdjjoytjdwntlx",
+  "envelopeSha256": "dcf151de592974393d692285c5a90e90e62badb9ad847390a8c36c6108813c63",
+  "submittedAt": "2026-09-10T11:08:07.523Z",
+  "verifiedAt": "2026-09-10T11:08:40.141Z",
+  "atomicityProbePassed": true,
+  "before": [
+    {
+      "kind": "schema",
+      "value": "8943d0827df5c1211d6bed0cd9da2494b079c7c4af038cd641acf05acec8519c"
+    },
+    {
+      "kind": "defaults",
+      "value": "39f188a5dcf50ec57ced7cabec5e514d177182569d92c8374378e5183c08f1a1"
+    },
+    {
+      "kind": "controls",
+      "value": "8dc3e8d67f893a511f69d2018e4ec240b7d5dc4a7123ba35522b8abf237c126c"
+    },
+    {
+      "kind": "full_controls",
+      "value": "9087d322fd06a4ea12b0a67bbcc736c23d6cddb8951786a4495535fa7a0b481f"
+    }
+  ],
+  "after": [
+    {
+      "kind": "schema",
+      "value": "669eb39064a2dbfdbe52693da5dc3aa04bbc7a39a8cecac5d13f38da43736023"
+    },
+    {
+      "kind": "defaults",
+      "value": "39f188a5dcf50ec57ced7cabec5e514d177182569d92c8374378e5183c08f1a1"
+    },
+    {
+      "kind": "controls",
+      "value": "8dc3e8d67f893a511f69d2018e4ec240b7d5dc4a7123ba35522b8abf237c126c"
+    },
+    {
+      "kind": "full_controls",
+      "value": "9087d322fd06a4ea12b0a67bbcc736c23d6cddb8951786a4495535fa7a0b481f"
+    }
+  ],
+  "beforeLedger": [
+    {
+      "name": "dac1e850-6879-4f24-b504-c6106e595625",
+      "sha256": "96fd737c209b3f577c90ef2ed717fdedfcb1175dab0a9193c907aaa7db385efb",
+      "statement_count": 1,
+      "version": "20260730102818"
+    },
+    {
+      "name": "12fd393b-c5b4-4d27-adaf-cd865c1e64a5",
+      "sha256": "994cc85a8ecafce7080dee92cb77df89b6381106eda3c245e482ccc0de169a47",
+      "statement_count": 1,
+      "version": "20260731104508"
+    },
+    {
+      "name": "a72d192a-58e0-4026-9f92-c5eb04350ee6",
+      "sha256": "4bc2543f2a5cad952e2c0abe5742db1a0d99b25bec6343f023a8e919c7d0ed7f",
+      "statement_count": 1,
+      "version": "20260731111514"
+    },
+    {
+      "name": "a1925d5a-e979-4287-8100-fe6ed8b75a08",
+      "sha256": "f49f889eea06e58f437c997b3c6204c283e82774e137dc5bc6d02f0b65bc10be",
+      "statement_count": 1,
+      "version": "20260731113525"
+    },
+    {
+      "name": "2c598307-293f-497c-9c2a-a00d95aaae6d",
+      "sha256": "8dd87c48f77a169cef2d3b93976b39d84a2bb7e0856d3840d447b882bdffd4a9",
+      "statement_count": 1,
+      "version": "20260803005817"
+    },
+    {
+      "name": "e668ac33-992e-48c2-900c-2c3a6b8eb0b6",
+      "sha256": "a8587455c79030628293139cb28cb0e042adb406305d10b02cb42cf63763c225",
+      "statement_count": 1,
+      "version": "20260803012559"
+    },
+    {
+      "name": "start_day_1_job_foundation",
+      "sha256": "8b81f774dba49ea0869d95f7f78a9cd58c4890d7f30ffa2ba850bd3a9a566332",
+      "statement_count": 1,
+      "version": "20260804000000"
+    },
+    {
+      "name": "day_1_start_state",
+      "sha256": "ea60c39b89268d0fd9b9398b71f9140275a836be8c6f1e6f5f8f9e0099ceca12",
+      "statement_count": 1,
+      "version": "20260804010000"
+    },
+    {
+      "name": "72fcf5d0-0fe2-4135-b1e2-e7c9d3d93792",
+      "sha256": "e3a7740fb892038539e3d3c8d16ef7ac22310413cdc86b5fcbc9da39062c02d2",
+      "statement_count": 1,
+      "version": "20260805222359"
+    },
+    {
+      "name": "08dbb52d-6821-4097-bbbb-871f0cea3038",
+      "sha256": "d0cd43fd19954e3c6688140f8a6ce3141d969d2c749757b14591b7e19e751e29",
+      "statement_count": 1,
+      "version": "20260805223427"
+    },
+    {
+      "name": "ae470c60-e60f-4867-9203-3867538aafb8",
+      "sha256": "76fbcd2b33fe681efae42d84d43b584eb598baf4f88730c619395639642983a6",
+      "statement_count": 1,
+      "version": "20260806002653"
+    },
+    {
+      "name": "bfb6db47-486a-4447-8985-6dfd022d80b6",
+      "sha256": "b38fe2127aedf2306ac14f11d41b34ee961a0eecd85610b5a292ca42cf9e59ef",
+      "statement_count": 1,
+      "version": "20260806103944"
+    },
+    {
+      "name": "e395b63e-208d-4c34-b512-ecdcdd5e1c1c",
+      "sha256": "23ab8d4ccdd443f15716435de2ac55737fa93210e6f227ff49bad854c3a08cc9",
+      "statement_count": 1,
+      "version": "20260806121356"
+    },
+    {
+      "name": "582a324d-47f9-44ac-aec4-1ad8b86eb7d6",
+      "sha256": "7903c2b213fe5b00f8b1798053c0e14923b2a712932eb2d53a07ee9c5099a713",
+      "statement_count": 1,
+      "version": "20260806175920"
+    },
+    {
+      "name": "cd9cb476-5061-494a-a66e-8e10b0f31dd5",
+      "sha256": "ae19c18d69cc248e3a0a04a3d8bc644431cf94540eafbbb630fa5e9617551112",
+      "statement_count": 1,
+      "version": "20260806200433"
+    },
+    {
+      "name": "e52c4b4b-1c81-4e87-828d-81e9e8db23c4",
+      "sha256": "3bef3f2c67bea7674e5b2273e6295e7e1d16eb3d8170c11128b065fff6d73b4d",
+      "statement_count": 1,
+      "version": "20260806215657"
+    },
+    {
+      "name": "0f99de9f-07b7-46cf-909e-1b97a7ff8137",
+      "sha256": "9df4441dce5bd764cbd27b537f8d43e15838235849d04529c1613012926876fe",
+      "statement_count": 1,
+      "version": "20260806224437"
+    },
+    {
+      "name": "0a429511-3eac-46f0-a264-bc1bbbe34551",
+      "sha256": "a23d93f745c29f3d858fde9c74077b90d7ef9d2e9a04157faa1f5c85c74eb63b",
+      "statement_count": 1,
+      "version": "20260806235258"
+    },
+    {
+      "name": "630a998c-8645-4bfa-9f21-e0c0166d673e",
+      "sha256": "8fb45716b82e4fbdcbc66b27316772950e319474e5e3d5f9df7865d6af968b1f",
+      "statement_count": 1,
+      "version": "20260807175301"
+    },
+    {
+      "name": "d05c3c18-8f7e-4fad-8fe9-339088db91b4",
+      "sha256": "fa79821999f2a48a9562f923e1e2c382019266eb43a59879b12f116374a32c8d",
+      "statement_count": 1,
+      "version": "20260807175318"
+    },
+    {
+      "name": "72978a70-fadf-41c5-be5f-4977c645896a",
+      "sha256": "f0ae98a52261d3f826a527a9111ef3590a423c2a38ebfecf2cb854874be6b8ff",
+      "statement_count": 1,
+      "version": "20260807180632"
+    },
+    {
+      "name": "d9ff7846-f2b9-4587-9326-9a5e142a2056",
+      "sha256": "aeed05216c81c55f3ba6a3e3b54e5bbbf430e2e24a3cd00f4fb31583821bb610",
+      "statement_count": 1,
+      "version": "20260807180709"
+    },
+    {
+      "name": "4d5f0f64-0a61-4ee4-bf12-3a1f3d50f92e",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statement_count": 0,
+      "version": "20260807193000"
+    },
+    {
+      "name": "mailerlite_marketing_sync",
+      "sha256": "898976d1448e1c84950171a1a56c4d75b39e54fa5c00f64f5c17a29b32c71527",
+      "statement_count": 1,
+      "version": "20260828150000"
+    },
+    {
+      "name": "customer_account_foundation",
+      "sha256": "f90fee89d873658b498bb84bf4edefac61135bddf6a3f98dc584c7db15c9c660",
+      "statement_count": 1,
+      "version": "20260828170000"
+    },
+    {
+      "name": "accelerator_enrollment_progress",
+      "sha256": "38506c0a1598da9a50d1943e9e42188ba508a8a213240495437ec6c4f7910148",
+      "statement_count": 1,
+      "version": "20260828180000"
+    },
+    {
+      "name": "recovery_transactional_claim_contract",
+      "sha256": "2f0178ba1157754393757a5f2c0b125b09968984244f3866b9545f39238669f2",
+      "statement_count": 1,
+      "version": "20260902183000"
+    },
+    {
+      "name": "program_week_measurement_reminders",
+      "sha256": "fab376fb454f9919b8de28c793211b3bc4c4daf98209dfeb34a5c2bbba4e95c0",
+      "statement_count": 1,
+      "version": "20260904100000"
+    },
+    {
+      "name": "customer_program_reminder_preferences",
+      "sha256": "23203519865ebb0a66461a01d2d1b75a4eab29e28c7b342903539823bed89ebe",
+      "statement_count": 1,
+      "version": "20260904110000"
+    },
+    {
+      "name": "private_customer_progress_admins",
+      "sha256": "4034d44adf35db2b787e2052bb328bac83a7a8156af28282b1981ebedb9b23ea",
+      "statement_count": 1,
+      "version": "20260904120000"
+    },
+    {
+      "name": "customer_nutrition_profiles",
+      "sha256": "5f0bcb8019b823c8540dfd5d0ce48ac2d753a54adbb110ea2cba7ae4d0fbfd93",
+      "statement_count": 1,
+      "version": "20260904140000"
+    },
+    {
+      "name": "fix_accelerator_ownership_lock_separator",
+      "sha256": "33642a2914d615d5ba34cb898888534e6ed0a23308de1db576989a6ee54719b8",
+      "statement_count": 1,
+      "version": "20260905170000"
+    },
+    {
+      "name": "fix_accelerator_run_number_ambiguity",
+      "sha256": "5871f921944cfb8873456c0d3bdf99ee532be3f1a44ce4b5086510970409d365",
+      "statement_count": 1,
+      "version": "20260905180000"
+    },
+    {
+      "name": "accelerator_guest_checkout_handoffs",
+      "sha256": "07fa55662a7548dad225dad9cda735cd77e41a07f307501755f477d917123f4d",
+      "statement_count": 1,
+      "version": "20260905190000"
+    },
+    {
+      "name": "paid_access_email_recovery",
+      "sha256": "9dd097527dd30f84da9b60a62d8429aee98372ae32199f76c33d5e810b3fb8cb",
+      "statement_count": 1,
+      "version": "20260906100000"
+    },
+    {
+      "name": "website_lead_intake_handoff",
+      "sha256": "d3381405528439c97dde7b4d3e8da9dc9779a6ef3e53bd4473c8f53dbbf5817b",
+      "statement_count": 1,
+      "version": "20260907210000"
+    },
+    {
+      "name": "lead_plan_calendar_access",
+      "sha256": "681deb7bd0f1b5e9b526d9ea72f0a524e62bc4cd6eaaa39c49afa846749901a8",
+      "statement_count": 1,
+      "version": "20260909161000"
+    },
+    {
+      "name": "seven_day_signup_recovery",
+      "sha256": "a9a7d6a980875602100a8994deccef406162535976d58804e0f054f34be665e6",
+      "statement_count": 1,
+      "version": "20260909190000"
+    }
+  ],
+  "afterLedger": [
+    {
+      "name": "dac1e850-6879-4f24-b504-c6106e595625",
+      "sha256": "96fd737c209b3f577c90ef2ed717fdedfcb1175dab0a9193c907aaa7db385efb",
+      "statement_count": 1,
+      "version": "20260730102818"
+    },
+    {
+      "name": "12fd393b-c5b4-4d27-adaf-cd865c1e64a5",
+      "sha256": "994cc85a8ecafce7080dee92cb77df89b6381106eda3c245e482ccc0de169a47",
+      "statement_count": 1,
+      "version": "20260731104508"
+    },
+    {
+      "name": "a72d192a-58e0-4026-9f92-c5eb04350ee6",
+      "sha256": "4bc2543f2a5cad952e2c0abe5742db1a0d99b25bec6343f023a8e919c7d0ed7f",
+      "statement_count": 1,
+      "version": "20260731111514"
+    },
+    {
+      "name": "a1925d5a-e979-4287-8100-fe6ed8b75a08",
+      "sha256": "f49f889eea06e58f437c997b3c6204c283e82774e137dc5bc6d02f0b65bc10be",
+      "statement_count": 1,
+      "version": "20260731113525"
+    },
+    {
+      "name": "2c598307-293f-497c-9c2a-a00d95aaae6d",
+      "sha256": "8dd87c48f77a169cef2d3b93976b39d84a2bb7e0856d3840d447b882bdffd4a9",
+      "statement_count": 1,
+      "version": "20260803005817"
+    },
+    {
+      "name": "e668ac33-992e-48c2-900c-2c3a6b8eb0b6",
+      "sha256": "a8587455c79030628293139cb28cb0e042adb406305d10b02cb42cf63763c225",
+      "statement_count": 1,
+      "version": "20260803012559"
+    },
+    {
+      "name": "start_day_1_job_foundation",
+      "sha256": "8b81f774dba49ea0869d95f7f78a9cd58c4890d7f30ffa2ba850bd3a9a566332",
+      "statement_count": 1,
+      "version": "20260804000000"
+    },
+    {
+      "name": "day_1_start_state",
+      "sha256": "ea60c39b89268d0fd9b9398b71f9140275a836be8c6f1e6f5f8f9e0099ceca12",
+      "statement_count": 1,
+      "version": "20260804010000"
+    },
+    {
+      "name": "72fcf5d0-0fe2-4135-b1e2-e7c9d3d93792",
+      "sha256": "e3a7740fb892038539e3d3c8d16ef7ac22310413cdc86b5fcbc9da39062c02d2",
+      "statement_count": 1,
+      "version": "20260805222359"
+    },
+    {
+      "name": "08dbb52d-6821-4097-bbbb-871f0cea3038",
+      "sha256": "d0cd43fd19954e3c6688140f8a6ce3141d969d2c749757b14591b7e19e751e29",
+      "statement_count": 1,
+      "version": "20260805223427"
+    },
+    {
+      "name": "ae470c60-e60f-4867-9203-3867538aafb8",
+      "sha256": "76fbcd2b33fe681efae42d84d43b584eb598baf4f88730c619395639642983a6",
+      "statement_count": 1,
+      "version": "20260806002653"
+    },
+    {
+      "name": "bfb6db47-486a-4447-8985-6dfd022d80b6",
+      "sha256": "b38fe2127aedf2306ac14f11d41b34ee961a0eecd85610b5a292ca42cf9e59ef",
+      "statement_count": 1,
+      "version": "20260806103944"
+    },
+    {
+      "name": "e395b63e-208d-4c34-b512-ecdcdd5e1c1c",
+      "sha256": "23ab8d4ccdd443f15716435de2ac55737fa93210e6f227ff49bad854c3a08cc9",
+      "statement_count": 1,
+      "version": "20260806121356"
+    },
+    {
+      "name": "582a324d-47f9-44ac-aec4-1ad8b86eb7d6",
+      "sha256": "7903c2b213fe5b00f8b1798053c0e14923b2a712932eb2d53a07ee9c5099a713",
+      "statement_count": 1,
+      "version": "20260806175920"
+    },
+    {
+      "name": "cd9cb476-5061-494a-a66e-8e10b0f31dd5",
+      "sha256": "ae19c18d69cc248e3a0a04a3d8bc644431cf94540eafbbb630fa5e9617551112",
+      "statement_count": 1,
+      "version": "20260806200433"
+    },
+    {
+      "name": "e52c4b4b-1c81-4e87-828d-81e9e8db23c4",
+      "sha256": "3bef3f2c67bea7674e5b2273e6295e7e1d16eb3d8170c11128b065fff6d73b4d",
+      "statement_count": 1,
+      "version": "20260806215657"
+    },
+    {
+      "name": "0f99de9f-07b7-46cf-909e-1b97a7ff8137",
+      "sha256": "9df4441dce5bd764cbd27b537f8d43e15838235849d04529c1613012926876fe",
+      "statement_count": 1,
+      "version": "20260806224437"
+    },
+    {
+      "name": "0a429511-3eac-46f0-a264-bc1bbbe34551",
+      "sha256": "a23d93f745c29f3d858fde9c74077b90d7ef9d2e9a04157faa1f5c85c74eb63b",
+      "statement_count": 1,
+      "version": "20260806235258"
+    },
+    {
+      "name": "630a998c-8645-4bfa-9f21-e0c0166d673e",
+      "sha256": "8fb45716b82e4fbdcbc66b27316772950e319474e5e3d5f9df7865d6af968b1f",
+      "statement_count": 1,
+      "version": "20260807175301"
+    },
+    {
+      "name": "d05c3c18-8f7e-4fad-8fe9-339088db91b4",
+      "sha256": "fa79821999f2a48a9562f923e1e2c382019266eb43a59879b12f116374a32c8d",
+      "statement_count": 1,
+      "version": "20260807175318"
+    },
+    {
+      "name": "72978a70-fadf-41c5-be5f-4977c645896a",
+      "sha256": "f0ae98a52261d3f826a527a9111ef3590a423c2a38ebfecf2cb854874be6b8ff",
+      "statement_count": 1,
+      "version": "20260807180632"
+    },
+    {
+      "name": "d9ff7846-f2b9-4587-9326-9a5e142a2056",
+      "sha256": "aeed05216c81c55f3ba6a3e3b54e5bbbf430e2e24a3cd00f4fb31583821bb610",
+      "statement_count": 1,
+      "version": "20260807180709"
+    },
+    {
+      "name": "4d5f0f64-0a61-4ee4-bf12-3a1f3d50f92e",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "statement_count": 0,
+      "version": "20260807193000"
+    },
+    {
+      "name": "mailerlite_marketing_sync",
+      "sha256": "898976d1448e1c84950171a1a56c4d75b39e54fa5c00f64f5c17a29b32c71527",
+      "statement_count": 1,
+      "version": "20260828150000"
+    },
+    {
+      "name": "customer_account_foundation",
+      "sha256": "f90fee89d873658b498bb84bf4edefac61135bddf6a3f98dc584c7db15c9c660",
+      "statement_count": 1,
+      "version": "20260828170000"
+    },
+    {
+      "name": "accelerator_enrollment_progress",
+      "sha256": "38506c0a1598da9a50d1943e9e42188ba508a8a213240495437ec6c4f7910148",
+      "statement_count": 1,
+      "version": "20260828180000"
+    },
+    {
+      "name": "recovery_transactional_claim_contract",
+      "sha256": "2f0178ba1157754393757a5f2c0b125b09968984244f3866b9545f39238669f2",
+      "statement_count": 1,
+      "version": "20260902183000"
+    },
+    {
+      "name": "program_week_measurement_reminders",
+      "sha256": "fab376fb454f9919b8de28c793211b3bc4c4daf98209dfeb34a5c2bbba4e95c0",
+      "statement_count": 1,
+      "version": "20260904100000"
+    },
+    {
+      "name": "customer_program_reminder_preferences",
+      "sha256": "23203519865ebb0a66461a01d2d1b75a4eab29e28c7b342903539823bed89ebe",
+      "statement_count": 1,
+      "version": "20260904110000"
+    },
+    {
+      "name": "private_customer_progress_admins",
+      "sha256": "4034d44adf35db2b787e2052bb328bac83a7a8156af28282b1981ebedb9b23ea",
+      "statement_count": 1,
+      "version": "20260904120000"
+    },
+    {
+      "name": "customer_nutrition_profiles",
+      "sha256": "5f0bcb8019b823c8540dfd5d0ce48ac2d753a54adbb110ea2cba7ae4d0fbfd93",
+      "statement_count": 1,
+      "version": "20260904140000"
+    },
+    {
+      "name": "fix_accelerator_ownership_lock_separator",
+      "sha256": "33642a2914d615d5ba34cb898888534e6ed0a23308de1db576989a6ee54719b8",
+      "statement_count": 1,
+      "version": "20260905170000"
+    },
+    {
+      "name": "fix_accelerator_run_number_ambiguity",
+      "sha256": "5871f921944cfb8873456c0d3bdf99ee532be3f1a44ce4b5086510970409d365",
+      "statement_count": 1,
+      "version": "20260905180000"
+    },
+    {
+      "name": "accelerator_guest_checkout_handoffs",
+      "sha256": "07fa55662a7548dad225dad9cda735cd77e41a07f307501755f477d917123f4d",
+      "statement_count": 1,
+      "version": "20260905190000"
+    },
+    {
+      "name": "paid_access_email_recovery",
+      "sha256": "9dd097527dd30f84da9b60a62d8429aee98372ae32199f76c33d5e810b3fb8cb",
+      "statement_count": 1,
+      "version": "20260906100000"
+    },
+    {
+      "name": "website_lead_intake_handoff",
+      "sha256": "d3381405528439c97dde7b4d3e8da9dc9779a6ef3e53bd4473c8f53dbbf5817b",
+      "statement_count": 1,
+      "version": "20260907210000"
+    },
+    {
+      "name": "lead_plan_calendar_access",
+      "sha256": "681deb7bd0f1b5e9b526d9ea72f0a524e62bc4cd6eaaa39c49afa846749901a8",
+      "statement_count": 1,
+      "version": "20260909161000"
+    },
+    {
+      "name": "seven_day_signup_recovery",
+      "sha256": "a9a7d6a980875602100a8994deccef406162535976d58804e0f054f34be665e6",
+      "statement_count": 1,
+      "version": "20260909190000"
+    },
+    {
+      "name": "accelerator_refund_requests",
+      "sha256": "604ce6c148d5e605f9b74621c2c540b3cdda4deb82c68f8cbdbfcd474dabfa8d",
+      "statement_count": 1,
+      "version": "20260910100000"
+    },
+    {
+      "name": "accelerator_refund_permissions",
+      "sha256": "f44c4a4e09c6ae1919fc9260d677626b3d46d84bbe84dc2224963d0120750e23",
+      "statement_count": 1,
+      "version": "20260910110000"
+    }
+  ],
+  "permissions": [
+    {
+      "permissions_verified": true,
+      "receipts": 0,
+      "requests": 0,
+      "reviewers": 0
+    }
+  ],
+  "rpcArgumentTypes": [
+    {
+      "proargnames": [
+        "p_source_reference",
+        "p_charge_id",
+        "p_amount_cents",
+        "p_currency",
+        "p_refund_ids"
+      ],
+      "proname": "confirm_accelerator_full_refund",
+      "types": [25, 25, 23, 25, 1009]
+    },
+    {
+      "proargnames": ["p_customer_id"],
+      "proname": "get_accelerator_refund_purchases",
+      "types": [2950]
+    },
+    {
+      "proargnames": ["p_reviewer_id"],
+      "proname": "get_accelerator_refund_queue",
+      "types": [2950]
+    },
+    {
+      "proargnames": ["p_customer_id", "p_purchase_id"],
+      "proname": "request_accelerator_refund",
+      "types": [2950, 2950]
+    }
+  ]
+}

@@ -203,12 +203,34 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
         }
 
         try {
+          const { dispatchSignupWelcome } = await import("@/lib/email/signup-welcome.server");
+          const { createQueueRunner } = await import("@/lib/email/queue-isolation");
+          const { reportQueueHealth } = await import("@/lib/email/queue-health.server");
+          const queues = createQueueRunner(reportQueueHealth);
+          const signupWelcome = await queues.run(
+            "signup_welcome",
+            () => dispatchSignupWelcome(authentication.invocationId, gate.providerSubmissionLimit),
+            { claimed: 0, outcomes: [] },
+          );
           const { runDispatchCycle } = await import("@/lib/email/dispatch-cycle.server");
           const cycle = await runDispatchCycle(runtime.deps, {
             limit: gate.providerSubmissionLimit,
             staleAlerts: true,
+            runQueue: queues.run,
           });
+          const { buildPaidAccessDispatchDeps } =
+            await import("@/lib/email/paid-access-runtime.server");
+          const paidRuntime = await buildPaidAccessDispatchDeps(authentication.invocationId);
+          if (!paidRuntime.enabled) throw new Error("missing_paid_access_runtime_configuration");
+          const { dispatchPaidAccessJobs } =
+            await import("@/lib/email/paid-access-dispatch.server");
+          const paidAccess = await dispatchPaidAccessJobs(
+            paidRuntime.deps,
+            gate.providerSubmissionLimit,
+            queues.run,
+          );
           const summaries = [
+            signupWelcome,
             cycle.planReady,
             cycle.recovery,
             cycle.planCompleted,
@@ -216,6 +238,8 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
             cycle.finalRescue,
             cycle.stalled,
             cycle.startDayOne,
+            paidAccess.recovery,
+            paidAccess.purchase,
           ];
           const claimed = summaries.reduce((sum, value) => sum + value.claimed, 0);
           const providerSubmissions = summaries.reduce(
@@ -227,10 +251,13 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
           const eligibleJobsAfter = await countProductionEligibleJobs();
           await finishSchedulerInvocation({
             invocationId: authentication.invocationId,
-            succeeded: true,
+            succeeded: queues.failures.length === 0,
             sendingEnabled: true,
             claimedCount: claimed,
             eligibleJobsAfter,
+            failureCode: queues.failures.length
+              ? "queue_failure:" + [...new Set(queues.failures)].join(",")
+              : null,
           });
           return Response.json(
             {
@@ -249,8 +276,15 @@ export const Route = createFileRoute("/api/public/email/dispatch")({
               stalled: cycle.stalled,
               start_day_1: cycle.startDayOne,
               final_rescue: cycle.finalRescue,
+              paid_access: paidAccess,
+              signup_welcome: signupWelcome,
+              failed_queues: [...new Set(queues.failures)],
+              partial_summary: queues.failures.length > 0,
             },
-            { headers: { "cache-control": "no-store" } },
+            {
+              status: queues.failures.length ? 503 : 200,
+              headers: { "cache-control": "no-store" },
+            },
           );
         } catch {
           const { disableProductionSending } =

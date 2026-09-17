@@ -148,6 +148,8 @@ export type LeadRow = {
    * at or after this instant may ever send.
    */
   plan_email_consent_at: string | null;
+  /** Current saved progress used only to keep time-sensitive email copy accurate. */
+  completed_days?: number[];
 };
 
 /** Proactive lifecycle job types that are gated by Plan-email consent. */

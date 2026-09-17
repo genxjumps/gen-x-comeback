@@ -5,8 +5,17 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { resolveReleaseIdentity } from "./scripts/release-identity";
+
+const releaseIdentity = resolveReleaseIdentity();
 
 export default defineConfig({
+  vite: {
+    define: {
+      __GXJ_RELEASE_SHA__: JSON.stringify(releaseIdentity.commit),
+      __GXJ_RELEASE_SOURCE_FINGERPRINT__: JSON.stringify(releaseIdentity.sourceFingerprint),
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

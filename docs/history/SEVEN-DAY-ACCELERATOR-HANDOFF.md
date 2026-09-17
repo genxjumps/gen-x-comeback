@@ -1,0 +1,114 @@
+# 7-Day completion to Accelerator
+
+**Role:** Historical
+
+This file preserves the implementation checkpoints for the completed 7-Day-to-Accelerator handoff.
+Current customer behavior is governed by `../SEVEN_DAY_ACCELERATOR_HANDOFF_CONTRACT.md`.
+
+This checkpoint connects the completed 7-Day plan to the existing controlled Accelerator purchase and setup path. Real payments remain a separate launch gate: the Stripe integration still rejects live keys and live payment objects.
+
+## Customer path
+
+1. After Day 7 and all prior days are complete, See What's Next opens the saved plan hub.
+2. The completed hub leads with recognition and the 28-Day next step. Restarting the 7-Day remains secondary and still requires the existing explicit confirmation.
+3. A verified nonowner sees the $37 offer. An owner sees setup or access to their existing program instead. Unavailable ownership data shows a neutral program link, not a claim that the customer needs to buy.
+4. The offer page waits for account availability. A recognized customer uses account-bound checkout only; blocked account checkout cannot fall back to guest checkout. The existing guest path remains available for guests under its separate control.
+5. The existing signed Stripe verification and idempotent ownership transaction establish purchase access. The success screen links directly to setup for the returned entitlement and explains nutrition access from the main navigation.
+6. Setup remains an explicit start action. Existing program-switch transactions preserve the completed 7-Day, and nutrition access follows active paid ownership rather than which program is currently being exercised.
+
+The existing completion email links to the completed plan, so it reaches this same next-step screen. Its locked transactional copy and sending/consent rules aren't changed by this checkpoint.
+
+## Verification boundary
+
+Local tests cover account/guest routing, owner suppression, disabled controls, and the existing Stripe identity, provisioning, setup, and nutrition access contracts. Full local and GitHub release gates are required. A live signed-in end-to-end run from a completed 7-Day through a controlled test purchase, setup, and nutrition still requires the customer's authenticated session. Source tests don't establish payment receipt or customer acceptance. Legacy-session-only, mixed-identity, refund, and other scenario work remains separate; public sales aren't declared operational by this checkpoint.
+
+## Member labels and pre-test follow-up
+
+Member navigation and Home cards use **Programs**, **Progress**, and **Nutrition** consistently on
+desktop and mobile. Account and Notifications remain persistent header actions. Conversational guidance keeps second-person language
+(e.g. "Your next step" and "Your programs couldn't be loaded"). Descriptive
+headlines aren't destination labels. Routes, ownership, and checkout behavior
+aren't changed by this copy pass.
+
+Todd reported Home showing Programs unavailable and Progress unavailable while
+nutrition showed Not unlocked. The first two share `getMyPrograms`; they aren't
+proof of missing ownership or erased progress. Read-only inspection confirmed
+the queried measurement/enrollment/active-program/completion fields and
+service-role SELECT grants. The available review browser is signed out, so the
+reported account-specific failure hasn't been reproduced or declared repaired.
+Before the signed-in purchase test, refresh Home in the existing account and
+confirm these cards load. If they still fail, capture the failed request/error
+in that authenticated session before changing account or access logic.
+
+## Post-purchase navigation
+
+The controlled one-account test completed the 7-Day plan, purchased the
+Accelerator in Stripe test mode, preserved all seven free-plan completions,
+created one active entitlement, started the Accelerator only after explicit
+setup, and unlocked account-level nutrition. Home's My Programs and My Progress
+cards also loaded successfully in the previously reported account.
+
+The test exposed one bounded navigation defect: the purchase-success screen is
+outside the protected platform shell while a guest purchase is still being
+confirmed, so its generic brand link returned a newly authenticated buyer to
+the public landing page. On this success route, the brand link now opens Home.
+The completed state uses **You Own It** and **Your New Program Is Ready**. It tells
+the customer, **You can find your 28-Day Fat Loss Accelerator plan under My
+Programs.** The primary action continues into setup, with direct My Programs and
+Nutrition paths available where the existing state supports them.
+
+While ownership is still being confirmed, the same sparse status layout uses
+**Purchase Received** and **We’re Finishing Your Purchase**. It confirms that the
+payment went through, says the 28-Day Fat Loss Accelerator is being added to My
+Programs, sets the expectation that this usually takes only a moment, and offers
+**Check Again**. This state must never imply that the customer needs to pay again.
+
+Both states use the shared compact title, 16px Barlow body copy, open cream page,
+narrow reading width, and standard primary button treatment. They don't add an
+outer card or center the full page. This is the approved simple status-page
+pattern for future short transactional and recovery states. Stripe confirmation,
+account handoff, ownership, setup, program progress, and public-intake controls
+are unchanged.
+
+## Website embedded checkout checkpoint
+
+The website checkout can now request an embedded Stripe test Checkout Session
+without sending a price, product, entitlement, or participant identity from the
+browser. `POST /api/public/checkout/accelerator/session` accepts only the exact
+production website origin plus explicitly configured HTTPS review origins,
+rate-limits requests, and invokes the existing Stripe edge function with the
+service role on the server.
+
+The edge function selects and revalidates the existing locked $37 test Price,
+creates an `embedded_page` Checkout Session, and returns a Checkout client
+secret plus the existing one-time guest claim. The app route places that claim
+in the same secure HttpOnly cookie used by the existing confirmation flow and
+returns only the client secret to website JavaScript. Stripe returns payment to
+the existing app success route, where signed server-side confirmation, webhook
+fulfillment, secure access, setup, and nutrition behavior remain unchanged.
+
+This source checkpoint does not open checkout. The website remains closed by
+default and accepts only a Stripe test publishable key when explicitly enabled.
+The edge function still rejects live keys and live sessions. Deploying the app
+function, adding an exact review origin, enabling a website preview, testing the
+one-account return path, merging, and enabling any public purchase link remain
+separate release approvals.
+
+Todd authorized protected-preview activation on September 11. The exact stable
+Vercel review origin was added to `CHECKOUT_WEBSITE_ORIGINS`, and only the
+reviewed `accelerator-stripe` function was deployed. That cloud operation also
+created an unrelated Lovable source commit affecting `.env` and preview auth
+formatting. The release guard stopped application publication. This checkpoint
+reasserts the reviewed GitHub release tree before publishing; test checkout,
+public intake, and live payments remain closed until their explicit gates are
+completed.
+
+The first deployed session request reached the allowed origin but failed closed
+because the app validated Stripe's opaque test client secret as alphanumeric.
+The adapter now accepts Stripe's opaque characters while still requiring the
+`cs_test_..._secret_...` envelope and rejecting live client secrets.
+
+Protected checkout previews keep the public session throttle intact at 20
+attempts per IP per hour for `genxjumps.com`, while exact configured preview
+origins permit up to 100 attempts per IP per hour so repeated controlled testing
+does not lock the tester out across browsers on the same connection.

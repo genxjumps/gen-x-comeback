@@ -3,7 +3,10 @@ import {
   createMailerLiteEdgeAdapter,
   readMailerLiteEdgeGate,
 } from "@/lib/marketing/mailerlite-edge.server";
-import { createSupabaseMarketingSyncStore } from "@/lib/marketing/store.server";
+import {
+  createSupabaseLeadIntakeMarketingSyncStore,
+  createSupabaseMarketingSyncStore,
+} from "@/lib/marketing/store.server";
 import type { MarketingSyncSummary } from "@/lib/marketing/types";
 
 export type ProductionMarketingSyncResult =
@@ -20,10 +23,11 @@ export async function runProductionMarketingSync(): Promise<ProductionMarketingS
   const gate = await readMailerLiteEdgeGate();
   if (!gate.enabled) return { ...gate, claimed: 0 };
 
-  const summary = await dispatchMarketingSyncJobs(
+  const adapter = createMailerLiteEdgeAdapter();
+  const planSummary = await dispatchMarketingSyncJobs(
     {
       store: await createSupabaseMarketingSyncStore(),
-      adapter: createMailerLiteEdgeAdapter(),
+      adapter,
       // The group ID is resolved only inside the Edge Function. This placeholder
       // is never included in the internal request or the MailerLite payload.
       groupId: "edge-configured",
@@ -31,5 +35,22 @@ export async function runProductionMarketingSync(): Promise<ProductionMarketingS
     },
     { limit: 5 },
   );
-  return { enabled: true, ...summary };
+  const intakeSummary = await dispatchMarketingSyncJobs(
+    {
+      store: await createSupabaseLeadIntakeMarketingSyncStore(),
+      adapter,
+      groupId: "edge-configured",
+      now: () => new Date(),
+    },
+    { limit: 5 },
+  );
+
+  return {
+    enabled: true,
+    claimed: planSummary.claimed + intakeSummary.claimed,
+    accepted: planSummary.accepted + intakeSummary.accepted,
+    retried: planSummary.retried + intakeSummary.retried,
+    failed: planSummary.failed + intakeSummary.failed,
+    suppressed: planSummary.suppressed + intakeSummary.suppressed,
+  };
 }

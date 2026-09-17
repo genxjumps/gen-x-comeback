@@ -1,5 +1,4 @@
-# Environment files
-.env
+# Local environment overrides (the committed .env is required by Lovable Cloud)
 .env.*
 !.env.example
 

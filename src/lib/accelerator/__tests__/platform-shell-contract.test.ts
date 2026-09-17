@@ -1,0 +1,100 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+
+const readSource = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
+
+describe("authenticated platform shell source contract", () => {
+  it("keeps today’s workout first on Home and links every approved platform section", () => {
+    const home = readSource("../../../routes/home.tsx");
+    const shell = readSource("../../../components/platform-shell.tsx");
+    const actions = readSource("../../../components/platform-header-actions.tsx");
+    const renderedHome = home.slice(home.indexOf("function PlatformHome"));
+
+    expect(renderedHome).toContain("{dailyAssignment.title}");
+    expect(renderedHome.indexOf("{dailyAssignment.title}")).toBeLessThan(
+      renderedHome.indexOf('aria-label="Programs, progress, and nutrition"'),
+    );
+    expect(home).toContain('to: "/my-programs"');
+    expect(home).toContain('to: "/progress"');
+    expect(home).toContain('to: "/nutrition"');
+    expect(shell).toContain('{ label: "Programs", to: "/my-programs"');
+    expect(shell).toContain('{ label: "Progress", to: "/progress"');
+    expect(shell).toContain('{ label: "Nutrition", to: "/nutrition"');
+    expect(shell).not.toContain('{ label: "Explore"');
+    expect(shell).toContain("grid-cols-4");
+    expect(actions).toContain('to="/notifications"');
+    expect(home).toMatch(/<h1[^>]*>\s*\{dailyAssignment\.title\}\s*<\/h1>/);
+    expect(home).toContain('["Browse available programs"]');
+    expect(home).toContain('["No measurements yet"]');
+    expect(home).toContain('["Set up your daily targets"]');
+    expect(home).not.toMatch(/Programs unavailable|Progress unavailable|Nutrition unavailable/);
+    expect(home).not.toContain('className="gxj-page ');
+  });
+
+  it("uses one responsive navigation shell for the private platform routes", () => {
+    const root = readSource("../../../routes/__root.tsx");
+    const shell = readSource("../../../components/platform-shell.tsx");
+    const access = readSource("../../../components/platform-access-boundary.tsx");
+
+    for (const route of [
+      "/home",
+      "/my-programs",
+      "/progress",
+      "/nutrition",
+      "/programs",
+      "/notifications",
+      "/accelerator",
+    ]) {
+      expect(root).toContain(`pathname === "${route}"`);
+    }
+    expect(root).toContain("<PlatformShell>");
+    expect(root).toContain("<PlatformAccessBoundary>");
+    expect(shell).toContain('aria-label="Main navigation"');
+    expect(shell).toContain("safe-area-inset-bottom");
+    expect(access).toContain("supabase.auth.getSession()");
+    expect(access).toContain("supabase.auth.onAuthStateChange");
+    expect(access).toContain(
+      "We couldn&rsquo;t confirm a signed-in Gen X Jumps account in this browser.",
+    );
+  });
+
+  it("uses the full app shell for the 7-Day plan and keeps actions on remaining compact screens", () => {
+    const root = readSource("../../../routes/__root.tsx");
+    const shell = readSource("../../../components/platform-shell.tsx");
+    const actions = readSource("../../../components/platform-header-actions.tsx");
+
+    expect(shell).toContain("<PlatformHeaderActions />");
+    expect(root).toContain("const inParticipantPlan = inPlan || inJumpRopes");
+    expect(root).toContain("inPlatform || inAccount || inParticipantPlan");
+    expect(root).toContain("inCheckoutSuccess || inAcceleratorOffer");
+    expect(root).toContain("<PlatformHeaderActions />");
+    expect(actions).toContain("<AccountNavigation />");
+    expect(actions).toContain('to="/notifications"');
+    expect(actions).toContain("aria-label={notificationCount > 0");
+  });
+
+  it("keeps unfinished provider behavior inactive while using real program state", () => {
+    const home = readSource("../../../routes/home.tsx");
+    const nutrition = readSource("../../../routes/nutrition.tsx");
+    const programs = readSource("../../../routes/programs.tsx");
+    const notifications = readSource("../../../routes/notifications.tsx");
+
+    expect(home).toContain("getAcceleratorHub");
+    const assignment = readSource("../home-snapshot.ts");
+    expect(home).toContain("homeAssignment(programs, acceleratorHub)");
+    expect(assignment).toContain("acceleratorHub.progress.currentDay");
+    expect(assignment).toContain("acceleratorHub.progress.canCompleteCurrent");
+    expect(assignment).toContain("programs.activeProgram");
+    expect(assignment).toContain('to: "/accelerator"');
+    expect(assignment).toContain('to: "/your-plan"');
+    expect(nutrition).toContain("getNutritionProfile");
+    expect(nutrition).toContain("saveNutritionProfile");
+    expect(nutrition).not.toMatch(/checkout|stripe|sendEmail/);
+    expect(programs).toContain('to: "/my-programs"');
+    expect(programs).toContain('hash: "available"');
+    expect(notifications).toContain("getPlatformNotifications");
+    expect(notifications).toContain("dismissMeasurementReminder");
+    expect(notifications).toContain('to="/progress"');
+    expect(notifications).not.toMatch(/email|push notification/i);
+  });
+});

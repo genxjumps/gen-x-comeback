@@ -34,7 +34,7 @@ const START_BODY = [
   "Hey Dana,",
   "You\u2019ve got your 7-Day Comeback Plan.",
   "Now it\u2019s time to start.",
-  "Day 1: Full Body Flush & Fire",
+  "Day 1: Jump Rope + Full Body",
   "Your first jump rope + total-body workout is ready.",
   "These workouts are supposed to challenge you. Work hard, rest when needed, and scale things when you need to.",
   "Don\u2019t overthink it. Start.",
@@ -43,7 +43,7 @@ const START_BODY = [
 const RESUME_BODY = [
   "Hey Dana,",
   "You already got Day 1 started. Now let\u2019s finish it.",
-  "Day 1: Full Body Flush & Fire",
+  "Day 1: Jump Rope + Full Body",
   "Your jump rope + total-body workout is waiting for you.",
   "You don\u2019t need to start over. Pick up where you left off, work hard, rest when needed, and scale things when you need to.",
   "Finish what you started.",
@@ -64,7 +64,7 @@ function isAscending(values: number[]): boolean {
 describe("Start Day 1 template - START variant", () => {
   it("renders the exact personalized subject, preview, ordered body, and CTA", () => {
     const rendered = renderStartDayOne(START, input())!;
-    expect(rendered.subject).toBe("Dana, Day 1: Full Body Flush & Fire");
+    expect(rendered.subject).toBe("Dana, Day 1: Jump Rope + Full Body");
     expect(rendered.previewText).toBe(START_DAY_1_START_PREVIEW_TEXT);
     expect(rendered.previewText).toBe("Your first workout is waiting.");
     expect(rendered.renderVariant).toBe("start");
@@ -76,7 +76,7 @@ describe("Start Day 1 template - START variant", () => {
   it("uses the fallback subject when the name is unusable", () => {
     const rendered = renderStartDayOne(START, input(null))!;
     expect(rendered.subject).toBe(START_DAY_1_START_FALLBACK_SUBJECT);
-    expect(rendered.subject).toBe("Day 1: Full Body Flush & Fire");
+    expect(rendered.subject).toBe("Day 1: Jump Rope + Full Body");
     expect(rendered.personalizedName).toBeNull();
     expect(rendered.text.startsWith(`${START_DAY_1_GREETING_FALLBACK}\n`)).toBe(true);
     expect(rendered.html).toContain("Hey there,");
@@ -99,7 +99,7 @@ describe("Start Day 1 template - START variant", () => {
 describe("Start Day 1 template - RESUME variant", () => {
   it("renders the exact personalized subject, preview, ordered body, and CTA", () => {
     const rendered = renderStartDayOne(RESUME, input())!;
-    expect(rendered.subject).toBe("Dana, finish Day 1: Full Body Flush & Fire");
+    expect(rendered.subject).toBe("Dana, finish Day 1: Jump Rope + Full Body");
     expect(rendered.previewText).toBe(START_DAY_1_RESUME_PREVIEW_TEXT);
     expect(rendered.previewText).toBe("Pick up where you left off.");
     expect(rendered.renderVariant).toBe("resume");
@@ -111,7 +111,7 @@ describe("Start Day 1 template - RESUME variant", () => {
   it("uses the fallback subject and greeting when the name is unusable", () => {
     const rendered = renderStartDayOne(RESUME, input("   \u0007\u0001 "))!;
     expect(rendered.subject).toBe(START_DAY_1_RESUME_FALLBACK_SUBJECT);
-    expect(rendered.subject).toBe("Finish Day 1: Full Body Flush & Fire");
+    expect(rendered.subject).toBe("Finish Day 1: Jump Rope + Full Body");
     expect(rendered.personalizedName).toBeNull();
     expect(rendered.html).toContain("Hey there,");
   });

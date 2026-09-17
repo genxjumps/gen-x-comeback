@@ -4,3 +4,10 @@ project_id = "wrvjgjvdjjoytjdwntlx"
 # The function performs its own constant-time service-role authentication so
 # opaque sb_secret service keys work as well as legacy JWT service-role keys.
 verify_jwt = false
+
+[functions.accelerator-stripe]
+# The published app proxies trusted checkout and webhook requests here because
+# Lovable Cloud Secrets are available to Edge Functions, not the hosting SSR runtime.
+# The function performs constant-time service-role authentication itself so opaque
+# sb_secret service keys work as well as legacy JWT service-role keys.
+verify_jwt = false

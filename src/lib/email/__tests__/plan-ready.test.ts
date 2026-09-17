@@ -182,6 +182,26 @@ describe("Plan Ready acceptance gates", () => {
     expect(fallback.text).toContain("Hey there,");
   });
 
+  it("renders the closing line from saved progress at dispatch time", () => {
+    const inProgress = renderPlanReady({
+      firstName: "Todd",
+      returnUrl: "https://app.genxjumps.com/return?token=abc",
+      preferencesUrl: "https://app.genxjumps.com/email-preferences?c=def",
+      completedDays: [1],
+    });
+    expect(inProgress.text).toContain("Continue with Day 2 when it's scheduled.");
+    expect(inProgress.html).toContain("Continue with Day 2 when it&#39;s scheduled.");
+    expect(inProgress.text).not.toContain("Start Day 1 when you're ready.");
+
+    const complete = renderPlanReady({
+      firstName: "Todd",
+      returnUrl: "https://app.genxjumps.com/return?token=abc",
+      preferencesUrl: "https://app.genxjumps.com/email-preferences?c=def",
+      completedDays: [1, 2, 3, 4, 5, 6, 7],
+    });
+    expect(complete.text).toContain("Your completed plan and saved progress");
+  });
+
   it("Acceptance 5: each transient retry uses the approved delay and a permanent failure does not loop", async () => {
     const store = seed();
     const { adapter } = scriptedAdapter([{ outcome: "transient", errorCode: "provider_5xx" }]);

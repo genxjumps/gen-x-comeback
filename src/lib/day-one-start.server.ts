@@ -23,7 +23,7 @@ export async function recordDayOneStart(
     data: Array<{ started_at: string; newly_started: boolean }> | null;
     error: { message: string } | null;
   };
-  const markDayOneStarted = supabaseAdmin.rpc as unknown as (
+  const markDayOneStarted = supabaseAdmin.rpc.bind(supabaseAdmin) as unknown as (
     name: "mark_day_1_started",
     args: { p_lead_plan_id: string; p_plan_version_id: string },
   ) => Promise<RpcResult>;

@@ -10,7 +10,14 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import { AuthSessionBootstrap } from "@/components/auth-session-bootstrap";
+import { PwaInstallCapture } from "@/components/pwa-install";
 import { Button } from "@/components/ui/button";
+import { PlatformAccessBoundary } from "@/components/platform-access-boundary";
+import { PlatformShell } from "@/components/platform-shell";
+import { AccountNavigation } from "@/components/account-navigation";
+import { PlatformHeaderActions } from "@/components/platform-header-actions";
+import { AccountSessionSync } from "@/components/account-session-sync";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -79,6 +86,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#faf8f3" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "Gen X Jumps" },
       { title: "Free Personalized 7-Day Fitness Plan for Gen X" },
       {
         name: "description",
@@ -93,7 +103,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
       { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
@@ -111,6 +122,7 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <PwaInstallCapture />
         {children}
         <Scripts />
       </body>
@@ -122,42 +134,84 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const inAssessment = pathname === "/assessment" || pathname.startsWith("/assessment/");
+  const inOnboarding = pathname === "/welcome" || pathname === "/plan-ready";
   const inPlan = pathname === "/your-plan" || pathname.startsWith("/your-plan/");
   const inJumpRopes = pathname === "/jump-ropes";
+  const inCheckoutSuccess = pathname === "/checkout/accelerator/success";
+  const inAcceleratorOffer = pathname === "/programs/accelerator";
+  const inAccount = pathname === "/account" || pathname === "/account/";
+  const inReview = pathname === "/review" || pathname.startsWith("/review/");
+  const useParticipantHeaderActions = inCheckoutSuccess || inAcceleratorOffer;
+  const inParticipantPlan = inPlan || inJumpRopes;
+  const inPlatform =
+    pathname === "/home" ||
+    pathname === "/my-programs" ||
+    pathname === "/my-programs/accelerator/setup" ||
+    pathname === "/my-programs/accelerator/runs" ||
+    pathname === "/progress" ||
+    pathname === "/nutrition" ||
+    pathname === "/programs" ||
+    pathname === "/notifications" ||
+    pathname === "/accelerator" ||
+    pathname === "/admin/customers" ||
+    pathname === "/admin/refunds" ||
+    pathname === "/account/purchases" ||
+    pathname === "/my-programs/accelerator/refund";
+
+  if (inReview) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
+    );
+  }
+
+  if (inPlatform || inAccount || inParticipantPlan) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <AccountSessionSync />
+        <PlatformShell>
+          {inAccount || inParticipantPlan ? (
+            <>
+              <AuthSessionBootstrap />
+              <Outlet />
+            </>
+          ) : (
+            <PlatformAccessBoundary>
+              <Outlet />
+            </PlatformAccessBoundary>
+          )}
+        </PlatformShell>
+      </QueryClientProvider>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <AccountSessionSync />
+      <AuthSessionBootstrap />
+      <div className="gxj-platform-shell flex min-h-screen flex-col bg-background text-foreground">
         <header className="border-b border-border">
           <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-5 py-4">
-            {inPlan || inJumpRopes ? (
-              <>
-                <Link to="/your-plan" className="truncate text-sm font-semibold tracking-tight">
-                  My Plan
-                </Link>
-                <Link
-                  to="/jump-ropes"
-                  className="shrink-0 text-sm text-muted-foreground hover:text-foreground"
-                >
-                  Jump Ropes
-                </Link>
-              </>
-            ) : inAssessment ? (
+            {inAssessment || inOnboarding ? (
               <span className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]">
                 Gen X Jumps
               </span>
             ) : (
               <Link
-                to="/"
+                to={inCheckoutSuccess ? "/home" : "/"}
                 className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]"
               >
                 Gen X Jumps
               </Link>
             )}
+            <div className="ml-auto shrink-0">
+              {useParticipantHeaderActions ? <PlatformHeaderActions /> : <AccountNavigation />}
+            </div>
           </div>
         </header>
 
-        <main className="flex-1">
+        <main className="gxj-app-surface flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>

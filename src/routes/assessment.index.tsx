@@ -1,20 +1,13 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IntakeClosed } from "@/components/intake-closed";
-import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { firstUnfinishedAssessmentStep } from "@/lib/signup-draft";
+import { useNewPlanIntakeAccess } from "@/lib/use-new-plan-intake-access";
 import {
   ASSESSMENT_STORAGE_KEY,
   EQUIPMENT_VALUES,
@@ -56,17 +49,17 @@ const q1Options = [
 ];
 
 const q2Options = [
-  { label: "I\u2019m coming back after a long break", value: Q2_VALUES[0] },
-  { label: "I\u2019ve been active, but inconsistent", value: Q2_VALUES[1] },
-  { label: "I\u2019m already active and need a clear plan", value: Q2_VALUES[2] },
+  { label: "Not at all", value: Q2_VALUES[0] },
+  { label: "1-2 times per week", value: Q2_VALUES[1] },
+  { label: "3 or more times per week", value: Q2_VALUES[2] },
 ];
 
 // Legacy Q3_VALUES[1] ("no_rope") is accepted in saved drafts but never rendered.
 const q3Options = [
   { label: "I\u2019ve never jumped rope", value: Q3_VALUES[0] },
-  { label: "I\u2019m new to jumping rope", value: Q3_VALUES[2] },
-  { label: "I can jump for short periods", value: Q3_VALUES[3] },
-  { label: "I\u2019m comfortable jumping rope", value: Q3_VALUES[4] },
+  { label: "I can only do a few jumps before stopping", value: Q3_VALUES[2] },
+  { label: "I can complete up to 10 rounds of 30-60 seconds", value: Q3_VALUES[3] },
+  { label: "I can complete more than 10 rounds of 30-60 seconds", value: Q3_VALUES[4] },
 ];
 
 const q4Options = [
@@ -114,16 +107,16 @@ function Question({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="border-border">
-      <CardContent className="p-4 sm:p-5">
-        <h2 className="text-sm font-medium leading-snug">{heading}</h2>
-        {hint ? <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{hint}</p> : null}
-        <div className="mt-3">{children}</div>
-        <div aria-live="polite" role="status">
-          {error ? <p className="mt-2 text-xs font-medium text-foreground">{error}</p> : null}
-        </div>
-      </CardContent>
-    </Card>
+    <section className="gxj-page-section py-6 sm:py-8">
+      <h2 className="text-xl font-bold leading-snug sm:text-2xl">{heading}</h2>
+      {hint ? (
+        <p className="mt-1.5 text-sm font-normal leading-relaxed text-muted-foreground">{hint}</p>
+      ) : null}
+      <div className="mt-4">{children}</div>
+      <div aria-live="polite" role="status">
+        {error ? <p className="mt-3 text-sm font-bold text-foreground">{error}</p> : null}
+      </div>
+    </section>
   );
 }
 
@@ -132,22 +125,32 @@ function SingleSelect({
   onChange,
   options,
   name,
+  stacked = false,
 }: {
   value: string;
   onChange: (v: string) => void;
   options: { label: string; value: string }[];
   name: string;
+  stacked?: boolean;
 }) {
   return (
-    <RadioGroup value={value} onValueChange={onChange} className="gap-2">
+    <RadioGroup
+      value={value}
+      onValueChange={onChange}
+      className={`gxj-assessment-options ${stacked ? "gxj-assessment-options--stacked" : ""}`}
+    >
       {options.map((o) => (
         <Label
           key={o.value}
           htmlFor={`${name}-${o.value}`}
-          className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
+          className="gxj-choice gxj-option-card cursor-pointer text-base font-semibold leading-snug"
         >
-          <RadioGroupItem id={`${name}-${o.value}`} value={o.value} />
-          <span>{o.label}</span>
+          <RadioGroupItem
+            id={`${name}-${o.value}`}
+            value={o.value}
+            className="size-5 shrink-0 border-2 border-foreground/35 text-gxj-orange data-[state=checked]:border-gxj-orange data-[state=checked]:text-gxj-orange [&_svg]:size-2.5"
+          />
+          <span className="gxj-assessment-choice-label">{o.label}</span>
         </Label>
       ))}
     </RadioGroup>
@@ -156,12 +159,14 @@ function SingleSelect({
 
 function Assessment() {
   const navigate = useNavigate();
+  const intakeAccess = useNewPlanIntakeAccess();
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState<Answers>(emptyAnswers);
   const [loaded, setLoaded] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
+    if (intakeAccess !== "allowed") return;
     try {
       const raw = window.localStorage.getItem(ASSESSMENT_STORAGE_KEY);
       if (raw) {
@@ -175,14 +180,13 @@ function Assessment() {
           q4,
           equipment: parsed.equipment ?? [],
         });
-        // Prefilled answers are restored, but the flow always begins at Step 1 and
-        // advances one stage per Continue press. The saved step is intentionally ignored.
+        setStep(firstUnfinishedAssessmentStep({ ...savedAnswers, q4 }));
       }
     } catch {
       /* ignore malformed draft */
     }
     setLoaded(true);
-  }, []);
+  }, [intakeAccess]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -263,7 +267,17 @@ function Assessment() {
     }
   };
 
-  if (!NEW_PLAN_INTAKE_OPEN) {
+  if (intakeAccess === "checking") {
+    return (
+      <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8">
+        <p className="text-sm text-muted-foreground" role="status">
+          Opening your setup...
+        </p>
+      </div>
+    );
+  }
+
+  if (intakeAccess === "closed") {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
         <IntakeClosed />
@@ -272,35 +286,50 @@ function Assessment() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-      <p className="gxj-kicker text-xs font-semibold uppercase tracking-[0.16em]">
-        Step {step} of 3
-      </p>
-      <div className="mt-3 flex gap-1.5" aria-hidden="true">
-        {[1, 2, 3].map((s) => (
-          <span
-            key={s}
-            className={`h-1 flex-1 rounded-[2px] ${s <= step ? "bg-gxj-teal" : "bg-muted"}`}
-          />
-        ))}
-      </div>
+    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
+      <header className="gxj-page-header py-6 sm:py-8">
+        <div className="w-full max-w-2xl">
+          <div className="grid max-w-md grid-cols-3 gap-2" aria-label={`Step ${step} of 3`}>
+            {[1, 2, 3].map((segment) => {
+              const state = segment < step ? "complete" : segment === step ? "current" : "upcoming";
+              return (
+                <div
+                  key={segment}
+                  aria-current={state === "current" ? "step" : undefined}
+                  className={`flex min-h-11 items-center px-3 ${
+                    state === "complete"
+                      ? "bg-foreground text-background"
+                      : state === "current"
+                        ? "bg-gxj-orange text-white shadow-[2px_2px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
+                        : "border-2 border-foreground/20 text-foreground/35"
+                  }`}
+                >
+                  <span className="gxj-display-title text-xl leading-none tracking-wide">
+                    {String(segment).padStart(2, "0")}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
 
-      <h1 className="gxj-display-title mt-5 text-2xl tracking-tight sm:text-3xl">
-        {step === 1
-          ? "Your Starting Point"
-          : step === 2
-            ? "Jump Rope and Impact"
-            : "Your Workout Schedule and Protein Target"}
-      </h1>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-        {step === 1
-          ? "Your answers will help me choose the best starting level for your personalized 7-day fitness plan."
-          : step === 2
-            ? "Your answers will help me choose the right jump rope guidance and impact level for your personalized 7-day fitness plan."
-            : "Your answers will help me build a realistic weekly workout schedule and calculate a practical daily protein target."}
-      </p>
+          <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+            {step === 1
+              ? "Your Starting Point"
+              : step === 2
+                ? "Jump Rope and Impact"
+                : "Finish Your Plan"}
+          </h1>
+          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+            {step === 1
+              ? "Your answers will help me build a personalized 7-day plan based on what you can do right now."
+              : step === 2
+                ? "Your answers will help me adjust the jump rope workouts to your experience and comfort level."
+                : "Tell me what equipment you have and how often you can work out. You can also get a daily protein recommendation for maintaining lean muscle mass while losing body fat."}
+          </p>
+        </div>
+      </header>
 
-      <div className="mt-6 space-y-4">
+      <div className="mx-auto max-w-3xl">
         {step === 1 ? (
           <>
             <Question
@@ -315,7 +344,7 @@ function Assessment() {
               />
             </Question>
             <Question
-              heading="Which statement best describes where you are with exercise right now?"
+              heading="Over the past few months, how often have you usually exercised?"
               error={showErrors && !answers.q2 ? "Select one option to continue." : null}
             >
               <SingleSelect
@@ -339,6 +368,7 @@ function Assessment() {
                 value={answers.q3}
                 onChange={(v) => set("q3", v)}
                 options={q3Options}
+                stacked
               />
             </Question>
             <Question
@@ -368,19 +398,20 @@ function Assessment() {
                   : null
               }
             >
-              <div className="grid gap-2">
+              <div className="gxj-assessment-options">
                 {equipmentOptions.map((o) => (
                   <Label
                     key={o.value}
                     htmlFor={`equipment-${o.value}`}
-                    className="gxj-choice flex cursor-pointer items-center gap-3 rounded-md border border-border px-3 py-3 text-sm font-normal leading-snug"
+                    className="gxj-choice gxj-option-card cursor-pointer text-base font-semibold leading-snug"
                   >
                     <Checkbox
                       id={`equipment-${o.value}`}
                       checked={answers.equipment.includes(o.value)}
                       onCheckedChange={(c) => toggleEquipment(o.value, c === true)}
+                      className="size-5 shrink-0 rounded-[2px] border-2 border-foreground/35 data-[state=checked]:border-gxj-orange data-[state=checked]:bg-transparent data-[state=checked]:text-transparent [&>span]:size-2.5 [&>span]:bg-gxj-orange [&>span_svg]:hidden"
                     />
-                    <span>{o.label}</span>
+                    <span className="gxj-assessment-choice-label">{o.label}</span>
                   </Label>
                 ))}
               </div>
@@ -399,11 +430,11 @@ function Assessment() {
             <Question
               heading="Current weight"
               hint={
-                "Optional. I\u2019ll use this only to calculate a more accurate daily protein target. It will not change your workout plan."
+                "Optional. I\u2019ll use your weight to estimate how much protein to eat each day to help maintain muscle while you lose fat. It won\u2019t change your workouts."
               }
               error={wError}
             >
-              <div className="flex gap-2">
+              <div className="gxj-assessment-weight">
                 <Input
                   id="weight"
                   inputMode="decimal"
@@ -412,41 +443,49 @@ function Assessment() {
                   aria-label="Current weight"
                   value={answers.weight}
                   onChange={(e) => set("weight", e.target.value)}
-                  className="flex-1"
+                  className="h-14 min-w-0 flex-1 rounded-none border-0 bg-transparent px-4 text-lg font-semibold shadow-none focus-visible:ring-0 md:text-lg"
                 />
-                <Select value={answers.unit} onValueChange={(v) => set("unit", v as "lb" | "kg")}>
-                  <SelectTrigger className="w-24" aria-label="Weight unit">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="lb">lb</SelectItem>
-                    <SelectItem value="kg">kg</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="gxj-assessment-unit" role="group" aria-label="Weight unit">
+                  {(["lb", "kg"] as const).map((unit) => (
+                    <button
+                      key={unit}
+                      type="button"
+                      aria-pressed={answers.unit === unit}
+                      className="gxj-assessment-unit-button"
+                      onClick={() => set("unit", unit)}
+                    >
+                      {unit}
+                    </button>
+                  ))}
+                </div>
               </div>
             </Question>
           </>
         ) : null}
       </div>
 
-      <div className="mt-6 flex items-center gap-3">
+      <div className="mx-auto mt-1 flex max-w-3xl items-stretch gap-3 border-t border-foreground/20 pt-5">
         {step > 1 ? (
-          <Button type="button" variant="outline" onClick={onBack}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onBack}
+            className="min-h-13 px-5 text-base"
+          >
             Back
           </Button>
         ) : (
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" className="min-h-13 px-5 text-base">
             <Link to="/">Back</Link>
           </Button>
         )}
-        <Button type="button" className="flex-1" onClick={onContinue}>
+        <Button type="button" className="min-h-13 flex-1 px-4 text-base" onClick={onContinue}>
           {step === 3 ? "Get My 7-Day Fitness Plan" : "Continue"}
         </Button>
       </div>
 
-      <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
-        Your answers are saved in this browser while you complete the assessment. After you submit
-        your name and email, your plan and progress are saved so you can return to them.
+      <p className="mt-4 text-center text-sm font-medium leading-relaxed text-muted-foreground">
+        Your answers are saved as you go.
       </p>
     </div>
   );
