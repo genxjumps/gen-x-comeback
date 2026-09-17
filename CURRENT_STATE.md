@@ -99,17 +99,15 @@ second integration line.
   enrollment.
 - Reconcile the review catalog with real live components so review scenarios cannot silently drift.
 - Complete the remaining Precision Utility route-specific residue after the shared primitives are in
-  place. Nutrition and smaller participant history/completion/install surfaces remain after the core
-  participant-route cleanup checkpoint.
+  place. Smaller participant history, completion, and install surfaces remain after Nutrition.
 
 ## Active checkpoint
 
 Precision Utility route-specific residue cleanup is the active design checkpoint. The current
-bounded checkpoint removes legacy one-off presentation from Home, Progress, and Notifications while
-preserving their product behavior. Home now follows the approved heading and row hierarchy, Progress
-uses compact shared linear progress and lighter structure, and Notifications uses shared list/state
-surfaces instead of card-by-default presentation. Nutrition remains the next bounded residue surface
-because its setup and results views are materially larger and should not be mixed into this commit.
+bounded checkpoint migrates Nutrition setup and results presentation onto the approved system while
+preserving calculator logic, saved drafts, target math, access gating, sliders, and server behavior.
+Nutrition now uses shared states/notices/choices, restrained heading hierarchy, thin structural rules,
+and direct target stats. Smaller participant history, completion, and install surfaces remain next.
 
 ## Updating this file
 
