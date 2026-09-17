@@ -98,16 +98,18 @@ second integration line.
 - Complete staging and full paid-customer journey verification before live payments or public paid
   enrollment.
 - Reconcile the review catalog with real live components so review scenarios cannot silently drift.
-- Complete Precision Utility migration of genuinely route-specific visual residue after the shared
-  primitives are migrated and verified.
+- Complete the remaining Precision Utility route-specific residue after the shared primitives are in
+  place. Nutrition and smaller participant history/completion/install surfaces remain after the core
+  participant-route cleanup checkpoint.
 
 ## Active checkpoint
 
-Precision Utility shared-surface migration is the active design checkpoint. The current bounded
-checkpoint migrates shared loading, empty, locked, error, notice, list/row, and workout-media
-surfaces while preserving route behavior and product contracts. Programs, Purchases, secure-access
-states, workout detail media, and next-workout launch surfaces inherit the approved shared system.
-Route-specific visual cleanup comes only after this shared layer is verified.
+Precision Utility route-specific residue cleanup is the active design checkpoint. The current
+bounded checkpoint removes legacy one-off presentation from Home, Progress, and Notifications while
+preserving their product behavior. Home now follows the approved heading and row hierarchy, Progress
+uses compact shared linear progress and lighter structure, and Notifications uses shared list/state
+surfaces instead of card-by-default presentation. Nutrition remains the next bounded residue surface
+because its setup and results views are materially larger and should not be mixed into this commit.
 
 ## Updating this file
 

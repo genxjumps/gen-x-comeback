@@ -295,14 +295,16 @@ describe("app review catalog", () => {
     expect(progressRouteSource).toContain('titleSize="compact"');
     expect(progressRouteSource).toContain('title="Your Progress"');
     expect(progressRouteSource).not.toContain('kicker="Progress"');
-    expect(progressRouteSource).toContain("border-y-2 border-foreground");
+    expect(progressRouteSource).toContain("border-y border-[var(--pu-border-strong)]");
+    expect(progressRouteSource).not.toContain("border-y-2 border-foreground");
     expect(progressRouteSource).toContain("Latest Measurements");
     expect(progressRouteSource).toContain('currentProgram.accent === "aqua"');
+    expect(progressRouteSource).toContain("<AppLinearProgress");
     expect(progressRouteSource).toContain(
-      "gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl",
+      'className="text-sm font-bold text-[var(--pu-text-secondary)]"',
     );
     expect(progressRouteSource).not.toContain("gxj-display-title text-4xl sm:text-5xl");
-    expect(progressRouteSource).toContain("h-3 overflow-hidden bg-foreground/15");
+    expect(progressRouteSource).not.toContain("h-3 overflow-hidden bg-foreground/15");
     expect(progressRouteSource).not.toContain(
       'className="rounded-lg border border-border bg-card p-5"',
     );

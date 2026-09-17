@@ -4,7 +4,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { Bell } from "lucide-react";
 
 import { PlatformPage } from "@/components/platform-page";
+import {
+  AppList,
+  AppListRow,
+  AppLoadingState,
+  AppNotice,
+  AppStatePanel,
+} from "@/components/precision-surfaces";
 import { Button } from "@/components/ui/button";
+import type { MeasurementReminder } from "@/lib/notifications/measurement-reminder";
 import {
   dismissMeasurementReminder,
   getProgramReminderPreference,
@@ -12,7 +20,6 @@ import {
   setProgramReminderPreference,
 } from "@/lib/notifications/functions";
 import type { PlatformNotification } from "@/lib/notifications/types";
-import type { MeasurementReminder } from "@/lib/notifications/measurement-reminder";
 
 export const Route = createFileRoute("/notifications")({
   head: () => ({
@@ -122,100 +129,110 @@ function Notifications() {
 
   return (
     <PlatformPage
-      kicker="Notifications"
-      title="Your Inbox"
+      title="Notifications"
       description="Optional program check-ins appear here without changing your place or blocking progress."
+      titleSize="compact"
     >
-      <section className="mb-4 rounded-lg border border-border bg-card p-5">
-        <h2 className="text-base font-semibold">Program reminders</h2>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-          Optional check-ins appear here when there&rsquo;s something useful to do. Turning them off
-          never changes your program, progress, or access.
-        </p>
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <p className="text-sm font-medium" aria-live="polite">
-            {programRemindersEnabled === null
-              ? "Loading preference..."
-              : programRemindersEnabled
-                ? "Program reminders are on"
-                : "Program reminders are off"}
-          </p>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            disabled={programRemindersEnabled === null || updatingPreference}
-            onClick={() => void toggleProgramReminders()}
-          >
-            {updatingPreference ? "Saving..." : programRemindersEnabled ? "Turn Off" : "Turn On"}
-          </Button>
+      <section className="border-y border-[var(--pu-border-strong)] py-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="max-w-xl">
+            <h2 className="text-xl font-bold">Program reminders</h2>
+            <p className="mt-1 text-sm leading-5 text-[var(--pu-text-secondary)]">
+              Optional check-ins appear here when there’s something useful to do. Turning them off
+              never changes your program, progress, or access.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm font-medium" aria-live="polite">
+              {programRemindersEnabled === null
+                ? "Loading preference..."
+                : programRemindersEnabled
+                  ? "Program reminders are on"
+                  : "Program reminders are off"}
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={programRemindersEnabled === null || updatingPreference}
+              onClick={() => void toggleProgramReminders()}
+            >
+              {updatingPreference ? "Saving..." : programRemindersEnabled ? "Turn Off" : "Turn On"}
+            </Button>
+          </div>
         </div>
       </section>
+
       {error ? (
-        <p role="alert" className="mb-4 text-sm text-destructive">
+        <AppNotice tone="danger" className="mt-5" role="alert">
           {error}
-        </p>
+        </AppNotice>
       ) : null}
-      {notifications === null && !error ? (
-        <p className="text-sm text-muted-foreground">Loading your notifications...</p>
-      ) : notifications?.length ? (
-        <div className="space-y-4">
-          {notifications.map((notification) => (
-            <section
-              key={
-                notification.code === "weekly_measurement"
-                  ? `${notification.enrollmentId}-${notification.programWeek}`
-                  : notification.code
-              }
-              className="rounded-lg border border-border bg-card p-5"
-            >
-              <div className="flex items-start gap-3">
-                <Bell aria-hidden="true" className="mt-0.5 size-5 shrink-0" />
-                <div>
-                  <h2 className="text-base font-semibold">{notification.title}</h2>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {notification.message}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-5 flex flex-wrap gap-3">
-                {notification.code === "weekly_measurement" ? (
-                  <>
-                    <Button asChild size="sm">
-                      <Link to="/progress">Add a Measurement</Link>
-                    </Button>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="outline"
-                      disabled={dismissing}
-                      onClick={() => void dismiss(notification)}
-                    >
-                      {dismissing ? "Dismissing..." : "Dismiss for This Week"}
-                    </Button>
-                  </>
-                ) : notification.code === "nutrition_target_review" ? (
-                  <Button asChild size="sm">
-                    <Link to="/nutrition">Review Targets</Link>
-                  </Button>
-                ) : (
-                  <Button asChild size="sm">
-                    <Link to={notification.target}>Open Today&rsquo;s Workout</Link>
-                  </Button>
-                )}
-              </div>
-            </section>
-          ))}
-        </div>
-      ) : (
-        <section className="rounded-lg border border-dashed border-border bg-muted/35 p-8 text-center">
-          <Bell aria-hidden="true" className="mx-auto size-6 text-muted-foreground" />
-          <p className="mt-4 text-sm font-semibold">You’re all caught up</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Optional program reminders will appear here when there’s something useful to do.
-          </p>
-        </section>
-      )}
+
+      <section className="mt-8" aria-label="Notification inbox">
+        {notifications === null && !error ? (
+          <AppLoadingState label="Loading your notifications" />
+        ) : notifications?.length ? (
+          <AppList>
+            {notifications.map((notification) => (
+              <AppListRow
+                key={
+                  notification.code === "weekly_measurement"
+                    ? `${notification.enrollmentId}-${notification.programWeek}`
+                    : notification.code
+                }
+                title={
+                  <div className="flex items-center gap-3">
+                    <Bell
+                      aria-hidden="true"
+                      className="size-5 shrink-0 text-[var(--pu-text-secondary)]"
+                      strokeWidth={1.8}
+                    />
+                    <span>{notification.title}</span>
+                  </div>
+                }
+                detail={
+                  <div className="pl-8">
+                    <p>{notification.message}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {notification.code === "weekly_measurement" ? (
+                        <>
+                          <Button asChild size="sm">
+                            <Link to="/progress">Add a Measurement</Link>
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            disabled={dismissing}
+                            onClick={() => void dismiss(notification)}
+                          >
+                            {dismissing ? "Dismissing..." : "Dismiss for This Week"}
+                          </Button>
+                        </>
+                      ) : notification.code === "nutrition_target_review" ? (
+                        <Button asChild size="sm">
+                          <Link to="/nutrition">Review Targets</Link>
+                        </Button>
+                      ) : (
+                        <Button asChild size="sm">
+                          <Link to={notification.target}>Open Today&rsquo;s Workout</Link>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                }
+              />
+            ))}
+          </AppList>
+        ) : (
+          <AppStatePanel
+            state="empty"
+            title="You’re all caught up"
+            description="Optional program reminders will appear here when there’s something useful to do."
+          />
+        )}
+      </section>
     </PlatformPage>
   );
 }
