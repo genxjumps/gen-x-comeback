@@ -300,7 +300,7 @@ export function PuListRow({
   end,
   className,
   ...props
-}: HTMLAttributes<HTMLDivElement> & {
+}: Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   title: ReactNode;
   detail?: ReactNode;
   end?: ReactNode;
