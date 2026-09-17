@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouterState } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQueryClient } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
+
+import { AppList, AppListButton, AppListLink } from "@/components/app-list";
+import { AppLoading, AppNotice } from "@/components/app-state";
 import { supabase } from "@/integrations/supabase/client";
-import { readStoredToken } from "@/lib/access-token";
 import { getAccountIdentity, type AccountIdentityResult } from "@/lib/account/functions";
 import {
   clearBrowserAccountData,
   logoutThisBrowser,
   LOGOUT_EVENT_KEY,
 } from "@/lib/account/browser-session";
+import { readStoredToken } from "@/lib/access-token";
 
 export function AccountNavigation() {
   const load = useServerFn(getAccountIdentity);
@@ -84,7 +87,6 @@ export function AccountNavigation() {
     setIdentity({ ok: true, accountEmail: null, planEmail: null });
     if (ok) window.location.replace("/account");
     else {
-      // Keep a failed cleanup visible and retryable, even if Auth already signed out.
       loggingOut.current = false;
       setBusy(false);
       setError(true);
@@ -96,7 +98,7 @@ export function AccountNavigation() {
     return (
       <a
         href="/recover"
-        className="inline-flex min-h-11 items-center rounded-md px-3 text-sm font-medium hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2"
+        className="inline-flex min-h-11 items-center rounded-[var(--pu-radius-control)] px-3 text-sm font-medium hover:bg-[var(--pu-surface-subtle)] focus-visible:outline-[3px] focus-visible:outline-[var(--pu-action-primary)] focus-visible:outline-offset-[3px]"
       >
         Sign In
       </a>
@@ -125,11 +127,11 @@ export function AccountNavigation() {
     >
       <summary
         aria-label="Account menu"
-        className="grid size-10 cursor-pointer list-none place-items-center rounded-full border border-border hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 [&::-webkit-details-marker]:hidden"
+        className="grid size-11 cursor-pointer list-none place-items-center rounded-[var(--pu-radius-control)] border border-[var(--pu-border-subtle)] hover:bg-[var(--pu-surface-subtle)] focus-visible:outline-[3px] focus-visible:outline-[var(--pu-action-primary)] focus-visible:outline-offset-[3px] [&::-webkit-details-marker]:hidden"
       >
         <UserRound aria-hidden="true" className="size-5" />
       </summary>
-      <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2.5rem)] rounded-lg border border-border bg-background p-4 text-foreground shadow-lg">
+      <div className="absolute right-0 top-full z-50 mt-2 w-72 max-w-[calc(100vw-2.5rem)] rounded-[var(--pu-radius-contained)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] p-4 text-[var(--pu-text-primary)] shadow-[var(--pu-shadow-overlay)]">
         <AccountNavigationContent
           identity={identity}
           busy={busy}
@@ -153,54 +155,41 @@ export function AccountNavigationContent({
   onLogOut: () => void;
 }) {
   const email = identity?.ok ? (identity.accountEmail ?? identity.planEmail) : null;
+
   return (
     <>
       {busy ? (
-        <p role="status" className="text-sm">
+        <AppNotice tone="info" role="status">
           Logging Out...
-        </p>
+        </AppNotice>
       ) : error ? (
-        <p role="alert" className="text-sm">
+        <AppNotice tone="danger" role="alert">
           We couldn’t finish logging out. Check your connection and try again.
-        </p>
+        </AppNotice>
       ) : identity === null ? (
-        <p role="status" className="text-sm">
-          Loading your account...
-        </p>
+        <AppLoading lines={2} />
       ) : email ? (
         <div className="text-sm">
-          <p className="text-muted-foreground">Signed in as</p>
+          <p className="text-[var(--pu-text-secondary)]">Signed in as</p>
           <p className="mt-1 break-all font-semibold">{email}</p>
         </div>
       ) : (
-        <p role="alert" className="text-sm">
+        <AppNotice tone="danger" role="alert">
           We couldn’t load your account details.
-        </p>
+        </AppNotice>
       )}
-      <nav aria-label="Account navigation" className="mt-3 grid gap-1 border-t border-border pt-2">
-        <a
-          href="/account"
-          className="flex min-h-11 items-center rounded-md px-2 text-sm font-medium hover:bg-muted"
-        >
-          My Account
-        </a>
-        <a
-          href="/recover"
-          className="flex min-h-11 items-center rounded-md px-2 text-sm font-medium hover:bg-muted"
-        >
-          Get a Magic Access Link
-        </a>
+
+      <AppList className="mt-4">
+        <AppListLink href="/account" title="My Account" />
+        <AppListLink href="/recover" title="Get a Magic Access Link" />
         {identity !== null || error || busy ? (
-          <button
-            type="button"
+          <AppListButton
             disabled={busy}
             onClick={onLogOut}
-            className="min-h-11 rounded-md px-2 text-left text-sm font-medium hover:bg-muted disabled:opacity-50"
-          >
-            {busy ? "Logging Out..." : error ? "Try Logging Out Again" : "Log Out"}
-          </button>
+            title={busy ? "Logging Out..." : error ? "Try Logging Out Again" : "Log Out"}
+          />
         ) : null}
-      </nav>
+      </AppList>
     </>
   );
 }
