@@ -43,7 +43,9 @@ export function PlatformPage({
           ) : null}
         </div>
       </header>
-      <div className="gxj-page-body mx-auto w-full max-w-[var(--pu-content-reading)]">{children}</div>
+      <div className="gxj-page-body mx-auto w-full max-w-[var(--pu-content-reading)]">
+        {children}
+      </div>
     </div>
   );
 }
