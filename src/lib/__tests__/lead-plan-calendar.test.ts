@@ -111,14 +111,18 @@ describe("7-Day Plan calendar access", () => {
     expect(recoveryMarkup).not.toContain("<ApproachSection");
   });
 
-  it("provides one numbered cover for every plan day while keeping workout names dynamic", () => {
+  it("uses the photo-free shared workout media system while keeping workout names dynamic", () => {
     const media = source("../../components/workout-media-card.tsx");
-    for (let day = 1; day <= 7; day += 1) {
-      expect(media).toContain(`${day}: "/workout-covers/day-0${day}.webp"`);
-    }
+    expect(media).toContain("<PuWorkoutMedia");
     expect(media).toContain("coverTitle = title");
     expect(media).toContain("dayLabel?: string");
-    expect(media).toContain("{dayLabel ?? `Day ${dayNumber} / Workout`}");
+    expect(media).toContain("subtitle={dayLabel ?? `Day ${dayNumber}`}");
+    expect(media).not.toContain("WORKOUT_COVERS");
+    expect(media).not.toContain("/workout-covers/day-");
+
+    const launch = source("../../components/workout-launch-panel.tsx");
+    expect(launch).toContain("<PuWorkoutMedia");
+    expect(launch).not.toContain("<img");
 
     const review = source("../../components/app-review-screen.tsx");
     expect(review).toContain("dayLabel={`Day ${day} of 7`}");
