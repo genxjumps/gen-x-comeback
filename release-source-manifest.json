@@ -219,7 +219,7 @@
     },
     {
       "path": "src/components/platform-primitives.tsx",
-      "sha256": "d7b384d9c2c252723fca25a6f58e970cb56252122b64b67c097e0debabd34c6a"
+      "sha256": "7e32e8c4461018e0079385a86a8f50fef144c62ccf6126c2522968126e99ad64"
     },
     {
       "path": "src/components/platform-shell.tsx",
@@ -235,7 +235,7 @@
     },
     {
       "path": "src/components/setup-progress.tsx",
-      "sha256": "fa94546f57f0b9f8134d2f1176a0fc05a057066c5f26c660857aae56d8889d0a"
+      "sha256": "eeb26cbee18539c28a609641ba8ce511d6c87d4274bd252b99313b0467630994"
     },
     {
       "path": "src/components/seven-day-next-step.tsx",
