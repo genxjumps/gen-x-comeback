@@ -149,7 +149,8 @@ export function AccountPurchases() {
                   ) : p.canRequest ? (
                     <div className="mt-3">
                       <p>
-                        7-day guarantee. Request a refund by {deadline(p.deadline)} (your local time).
+                        7-day guarantee. Request a refund by {deadline(p.deadline)} (your local
+                        time).
                       </p>
                       {confirm === p.purchaseId ? (
                         <div className="mt-3 border-l-4 border-[var(--pu-status-warning)] pl-4">
@@ -157,8 +158,8 @@ export function AccountPurchases() {
                             Send a refund request for this purchase?
                           </p>
                           <p className="mt-1">
-                            Todd reviews requests. Your access stays available until a full refund is
-                            confirmed.
+                            Todd reviews requests. Your access stays available until a full refund
+                            is confirmed.
                           </p>
                           <div className="mt-3 flex flex-wrap gap-3">
                             <Button disabled={busy} onClick={() => void request(p.purchaseId)}>

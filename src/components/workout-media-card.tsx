@@ -93,7 +93,9 @@ export function WorkoutMediaCard({
 
       {state.type === "blocked" ? (
         <div className="mt-3 flex min-h-12 items-center justify-between gap-4 border-t border-[var(--pu-border-subtle)] pt-3">
-          <span className="text-sm text-[var(--pu-text-secondary)]">Available {state.availableLabel}</span>
+          <span className="text-sm text-[var(--pu-text-secondary)]">
+            Available {state.availableLabel}
+          </span>
           <Link
             to="/your-plan/day/$day"
             params={{ day: String(state.previousDay) }}

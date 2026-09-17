@@ -175,7 +175,7 @@
     },
     {
       "path": "src/components/account-purchases.tsx",
-      "sha256": "443be83346ba61b29702450689a602a3d29844430a8a4d8e506eff8805c493c7"
+      "sha256": "127e4397a9baea71b8fbd1a6d9f7a243d000ce7ade90afec48bcca421c8669dd"
     },
     {
       "path": "src/components/account-session-sync.tsx",
@@ -203,11 +203,11 @@
     },
     {
       "path": "src/components/plan-access.tsx",
-      "sha256": "2bf593e99a6cab51bf9263bdf1a325061f1d3d45deae47522ebf97ba6a19583b"
+      "sha256": "b250cadf6f47f24cf02cc35e69a839a1c7f71a3074a9e6536c1af61b8802183b"
     },
     {
       "path": "src/components/platform-access-boundary.tsx",
-      "sha256": "0c0be02fb13f6c677cdb27ba1c83faee8645009e2981bab88b28acd5342bf2e6"
+      "sha256": "c058b111794c0e23120a365f4852e603fd2fe68971b93be79f46550a790e43e7"
     },
     {
       "path": "src/components/platform-header-actions.tsx",
@@ -220,6 +220,10 @@
     {
       "path": "src/components/platform-shell.tsx",
       "sha256": "136e5830a8cee64adddba281e2012046757a1e48085708e9d2bfe1e3fcc516ff"
+    },
+    {
+      "path": "src/components/precision-surfaces.tsx",
+      "sha256": "d70f006b4ce05c8b0d3cb9534c518be87c4d3f29c33b90d618faa7c871d8065b"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -275,11 +279,11 @@
     },
     {
       "path": "src/components/workout-launch-panel.tsx",
-      "sha256": "e81633fbefd7dfb8c1a41371a2bffae267f8de81b2ea03bff730edb9c96927fd"
+      "sha256": "0fe1b39cc40f607afe6999eb5313527b4683a59b56a8b6faeb1e7b794937e48c"
     },
     {
       "path": "src/components/workout-media-card.tsx",
-      "sha256": "84f83c2fc575a672a2e675338ed21b1b98e41c17dc2d827d238d405aa22a9eed"
+      "sha256": "1f559f41725c98316278396a2b3ca86cf0c91860aba8b353a72d473b957978ae"
     },
     {
       "path": "src/components/workout-screen.tsx",
@@ -287,7 +291,7 @@
     },
     {
       "path": "src/design-system/precision/app-migration.css",
-      "sha256": "ec3f9b8bc3d58061248b674d1a87063c2b4799d43c97604cfbe3b5efbb6a491b"
+      "sha256": "30442f927ef15f5c0292cbc86a08c7680648ce07ef31cf5320fbf56d927f9191"
     },
     {
       "path": "src/design-system/precision/components.css",
@@ -295,7 +299,7 @@
     },
     {
       "path": "src/design-system/precision/components.tsx",
-      "sha256": "ac0cb05a987af9b5251d75ddf1dd695bf8620641097719962eebc03f59f1a9ff"
+      "sha256": "c708a99df6d3e546f53e153611adaf268464a83be9aaa201066551446beb0ca9"
     },
     {
       "path": "src/design-system/precision/showcase.tsx",
@@ -367,7 +371,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
-      "sha256": "d84fe018d0c0c24fcf22639c45ee957e723bc1461b129877775283d343dc94e8"
+      "sha256": "6a98a396e40030fb8a91ac288da521c32c78b64072bb2239fc7dda0197de75d3"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
@@ -455,11 +459,11 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/my-programs-setup-contract.test.ts",
-      "sha256": "1da7b286ea4bcfb6f4eb3b3f4d0f7a7249a3871f99f62e81bc128db3de4ead12"
+      "sha256": "1b3eaa04b1af736d0db14235d07778fcb6044d2ba832c124a9e6448051f4912d"
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "d1ebe7fd9ac771f50446395d99542c3412850f1f12aa262b9b645197b202f470"
+      "sha256": "96ab17ec5fec910dd7f0513204f512ce3942e871f97a6785fec740643fe872a9"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -1359,7 +1363,7 @@
     },
     {
       "path": "src/routes/my-programs.tsx",
-      "sha256": "4dfe98ca984afc3cfde64ac376760253a545d7c923788485f154de5ce404e8a9"
+      "sha256": "c21b6e978768a16166d2c78343886333219215dce90b8795e8764f440cc15156"
     },
     {
       "path": "src/routes/my-programs_.accelerator.refund.tsx",

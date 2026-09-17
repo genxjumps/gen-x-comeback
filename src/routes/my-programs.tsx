@@ -224,8 +224,8 @@ function MyPrograms() {
                           Resume your Accelerator?
                         </p>
                         <p className="mt-1">
-                          If another structured program is active, it will be paused. Neither program
-                          loses progress.
+                          If another structured program is active, it will be paused. Neither
+                          program loses progress.
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
                           <Button
@@ -270,7 +270,9 @@ function MyPrograms() {
                         <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-text-secondary)]">
                           {statusLabels[plan.status]}
                         </p>
-                        <h2 className="mt-1 text-2xl font-extrabold leading-tight">Comeback Plan</h2>
+                        <h2 className="mt-1 text-2xl font-extrabold leading-tight">
+                          Comeback Plan
+                        </h2>
                       </div>
                     </div>
                   }
@@ -300,8 +302,8 @@ function MyPrograms() {
                             Switch to your 7-Day Plan?
                           </p>
                           <p className="mt-1">
-                            Your current structured program will be paused. Progress in both programs
-                            stays saved.
+                            Your current structured program will be paused. Progress in both
+                            programs stays saved.
                           </p>
                           <div className="mt-3 flex flex-wrap gap-2">
                             <Button
