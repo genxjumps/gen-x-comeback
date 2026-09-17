@@ -345,26 +345,21 @@ function LandingReview() {
         </button>
       </div>
 
-      <section className="py-10 sm:py-14 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-14">
+      <section className="py-8 sm:py-12 lg:grid lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-gxj-orange">
+          <p className="text-[11px] font-bold uppercase leading-snug tracking-[0.08em] text-gxj-orange sm:text-xs">
             Free Personalized 7-Day Fitness Plan for Adults 50+
           </p>
-          <h1 className="gxj-display-title mt-5 max-w-3xl text-5xl uppercase leading-[0.92] tracking-wide sm:text-7xl">
-            Start Losing Fat. Get Back in Shape. This Week.
+          <h1 className="gxj-display-title mt-3 max-w-3xl text-[2.75rem] uppercase leading-[0.9] tracking-[-0.025em] sm:text-6xl lg:text-7xl">
+            Lose Fat. Get Back in Shape.
           </h1>
         </div>
-        <div className="mt-7 border-t-2 border-foreground pt-6 lg:mt-0">
-          <p className="text-lg font-bold leading-snug sm:text-xl">
-            Stop trying to figure out what to do every day - then wondering whether any of it will
-            work.
+        <div className="mt-6 lg:mt-0 lg:border-l lg:border-foreground/20 lg:pl-10">
+          <p className="max-w-xl text-lg leading-relaxed text-foreground/75">
+            Get seven days of workouts, recovery, and simple nutrition targets personalized to your
+            fitness, schedule, equipment, and limitations.
           </p>
-          <p className="mt-4 text-base leading-relaxed text-foreground/75">
-            Your free Comeback Plan gives you seven days of workouts, recovery, calorie guidance,
-            and a protein target built around your current fitness, schedule, equipment, and
-            physical limitations.
-          </p>
-          <div className="mt-6">
+          <div className="mt-5">
             <Action>
               Build My Free 7-Day Plan <ArrowRight className="size-4" />
             </Action>
