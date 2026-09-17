@@ -1,0 +1,44 @@
+name: Temporary Precision route residue verification
+
+on:
+  push:
+    branches:
+      - agent/precision-route-residue
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    env:
+      VITE_SUPABASE_URL: https://ci-placeholder.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.8
+      - run: bun install --frozen-lockfile
+      - name: Format route residue checkpoint
+        run: >-
+          bunx prettier --write CURRENT_STATE.md
+          src/components/precision-surfaces.tsx
+          src/routes/home.tsx
+          src/routes/notifications.tsx
+          src/routes/progress.tsx
+      - name: Regenerate release manifest
+        run: bun run release:manifest
+      - name: Run complete quality gate
+        run: bun run verify
+      - name: Commit verified formatting and manifest, then remove helper
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/temp-precision-route-residue-verify.yml
+          git add CURRENT_STATE.md release-source-manifest.json src/components/precision-surfaces.tsx src/routes/home.tsx src/routes/notifications.tsx src/routes/progress.tsx
+          git commit -m "Verify Precision Utility route residue checkpoint"
+          git push origin HEAD:agent/precision-route-residue
