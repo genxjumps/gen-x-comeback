@@ -1,3 +1,6 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
 # Gen X Jumps App - Current State
 
 **Role:** Current
@@ -10,14 +13,16 @@ not define current status.
 
 ## Source and deployment identity
 
-| Surface                        | Revision                                                                     | Meaning                                                             |
-| ------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Active integration source      | Resolve the live `release/v1.1` ref                                          | Do not freeze a self-expiring branch-head SHA in this file          |
-| Last audited app-code baseline | `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                                   | Application behavior reviewed before the reset documentation merged |
-| Authority checkpoint           | PR #268, merge `a7a2c05216ed5a4ef67d312021ddc643ef993f01`                    | Established current-state and document-authority rules              |
-| Preservation branch            | `archive/pre-reset-2026-09-17` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61` | Exact pre-reset recovery point                                      |
-| GitHub default branch          | `main` at `42c548a966c0e57fc25cff53a22849783169dc60`                         | Stale baseline pending reconciliation                               |
-| Published app during audit     | `e5fd50e5d767bdacdc3a843948748f6ca8d546ac`                                   | Live source reported by `/api/public/release` on September 17, 2026 |
+| Surface                        | Revision                                                                                          | Meaning                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Active integration source      | Resolve the live `release/v1.1` ref                                                               | Do not freeze a self-expiring branch-head SHA in this file          |
+| Last audited app-code baseline | `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                                                        | Application behavior reviewed before the reset documentation merged |
+| Authority checkpoint           | PR #268, merge `a7a2c05216ed5a4ef67d312021ddc643ef993f01`                                         | Established current-state and document-authority rules              |
+| Documentation checkpoint       | PR #269, merge `1200421deec2ca3b7bedac2811fa0e9fe03d6b7d`                                         | Separated current contracts from project history                    |
+| Repository cleanup checkpoint  | Workflow run [#35213638821](https://github.com/genxjumps/gen-x-comeback/actions/runs/35213638821) | Retired 257 stale working branches after exact preservation         |
+| Preservation branch            | `archive/pre-reset-2026-09-17` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                      | Exact pre-reset recovery point                                      |
+| GitHub default branch          | `main` at `42c548a966c0e57fc25cff53a22849783169dc60`                                              | Stale baseline pending reconciliation                               |
+| Published app during audit     | `e5fd50e5d767bdacdc3a843948748f6ca8d546ac`                                                        | Live source reported by `/api/public/release` on September 17, 2026 |
 
 The release branch and published app are deliberately distinct until an approved publication.
 The default branch must not be treated as current source until it is reconciled.
@@ -72,6 +77,16 @@ The default branch must not be treated as current source until it is reconciled.
 - App-wide background, typography, buttons, spacing, navigation, and component decisions apply
   across routes rather than being reinvented page by page.
 
+## Repository cleanup status
+
+- The preservation-first repository reset is complete.
+- Exactly 257 stale working branches were retired after a fresh comparison.
+- Twelve branches remain: `main`, `release/v1.1`, the pre-reset preservation branch, PR #35's
+  unresolved branch, and eight exact archive branches.
+- PRs #26, #72, #81, and #90 were closed without merging. PR #35 remains open and untouched.
+- Exact retained refs and verification evidence are recorded in
+  [the branch-retirement completion](docs/release-evidence/2026-09-17-branch-retirement-completion.md).
+
 ## Known release work still open
 
 - Reconcile `main` and `release/v1.1` without rewriting history.
@@ -81,15 +96,14 @@ The default branch must not be treated as current source until it is reconciled.
   enrollment.
 - Reconcile the review catalog with real live components so review scenarios cannot silently drift.
 - Resolve the production email-origin decision preserved in PR #35 against current source.
-- Review the exact branch-retirement list and create archival references before any branch deletion
-  or stale-PR closure.
 
 ## Active checkpoint
 
-The active checkpoint is documentation authority cleanup only. It restores missing release
-evidence, separates current contracts from historical checkpoints, and records exact retirement
-candidates. It must not change app behavior, database state, providers, email gates, payment gates,
-public intake, production, branches, or pull-request state.
+The preservation-first repository reset is complete. No product-code checkpoint is active. The next
+recommended bounded decision is whether the production email-origin safeguard preserved in PR #35
+is still required and, if approved, how to rebuild it on current source. Reconciliation of `main`
+and the long-term default branch remains a separate later checkpoint because it can affect release
+and deployment workflow.
 
 ## Updating this file
 
