@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 
 import {
   PuLoadingLines,
@@ -44,13 +44,13 @@ export function AppNotice({
   tone = "info",
   children,
   className,
-}: {
+  ...props
+}: HTMLAttributes<HTMLDivElement> & {
   tone?: "info" | "success" | "warning" | "danger";
   children: ReactNode;
-  className?: string;
 }) {
   return (
-    <PuNotice tone={tone} className={className}>
+    <PuNotice tone={tone} className={className} {...props}>
       {children}
     </PuNotice>
   );
