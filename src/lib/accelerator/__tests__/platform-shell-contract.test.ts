@@ -10,8 +10,8 @@ describe("authenticated platform shell source contract", () => {
     const actions = readSource("../../../components/platform-header-actions.tsx");
     const renderedHome = home.slice(home.indexOf("function PlatformHome"));
 
-    expect(renderedHome).toContain("{dailyAssignment.title}");
-    expect(renderedHome.indexOf("{dailyAssignment.title}")).toBeLessThan(
+    expect(renderedHome).toContain("title={dailyAssignment.title}");
+    expect(renderedHome.indexOf("title={dailyAssignment.title}")).toBeLessThan(
       renderedHome.indexOf('aria-label="Programs, progress, and nutrition"'),
     );
     expect(home).toContain('to: "/my-programs"');
@@ -23,7 +23,8 @@ describe("authenticated platform shell source contract", () => {
     expect(shell).not.toContain('{ label: "Explore"');
     expect(shell).toContain("grid-cols-4");
     expect(actions).toContain('to="/notifications"');
-    expect(home).toMatch(/<h1[^>]*>\s*\{dailyAssignment\.title\}\s*<\/h1>/);
+    expect(home).toContain('import { PlatformPage } from "@/components/platform-page"');
+    expect(home).toContain('titleSize="hero"');
     expect(home).toContain('["Browse available programs"]');
     expect(home).toContain('["No measurements yet"]');
     expect(home).toContain('["Set up your daily targets"]');
