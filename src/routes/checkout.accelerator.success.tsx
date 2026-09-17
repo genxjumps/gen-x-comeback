@@ -96,7 +96,7 @@ function AcceleratorCheckoutSuccess() {
               : "Your payment went through. We’re adding your 28-Day Fat Loss Accelerator to My Programs."
         }
       >
-        <section className="rounded-lg border border-border bg-card p-6">
+        <section className="border-y border-[var(--pu-border-strong)] py-6">
           {status === "checking" ? (
             <div>
               <div className="flex gap-4">
@@ -120,7 +120,7 @@ function AcceleratorCheckoutSuccess() {
             </div>
           ) : status === "complete" ? (
             <div>
-              <div className="grid size-11 place-items-center rounded-full bg-muted">
+              <div className="grid size-11 place-items-center rounded-full bg-[var(--pu-status-success)] text-white">
                 <Check className="size-5" />
               </div>
               <p className="mt-4 font-bold">No email check needed</p>

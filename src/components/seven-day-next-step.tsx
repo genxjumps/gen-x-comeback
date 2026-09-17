@@ -24,11 +24,13 @@ export function SevenDayNextStep() {
   }, [loadPrograms]);
   const owned = programs?.ok ? programs.accelerator : null;
   return (
-    <section className="mt-6 rounded-lg border border-border bg-card p-5 sm:p-7">
-      <p className="text-xs font-semibold uppercase tracking-widest text-gxj-teal">
+    <section className="mt-6 border-y border-[var(--pu-border-strong)] py-6">
+      <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-action-primary)]">
         7 of 7 days complete
       </p>
-      <h2 className="mt-3 text-2xl font-semibold">You Finished Your 7-Day Comeback</h2>
+      <h2 className="mt-3 text-2xl font-extrabold leading-tight">
+        You Finished Your 7-Day Comeback
+      </h2>
       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
         You showed up, did the work, and finished. Your completed plan stays saved.
       </p>

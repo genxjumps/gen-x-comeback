@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, Check, LockKeyhole, Play, RotateCcw } from "lucide-react";
 
 import { AcceleratorCompletion } from "@/components/accelerator-completion";
+import { AppLinearProgress, AppNotice } from "@/components/precision-surfaces";
 import { Button } from "@/components/ui/button";
 import { WorkoutMediaCard } from "@/components/workout-media-card";
 import { WorkoutNotes, WorkoutOverview } from "@/components/workout-screen";
@@ -347,29 +348,23 @@ export function AcceleratorProgram() {
         <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
           28-Day Fat Loss Accelerator
         </p>
-        <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight sm:text-4xl">
-          {pageTitle}
-        </h1>
+        <h1 className="mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">{pageTitle}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {hub.firstName}, you&rsquo;ve completed {completedCount} of 28 days. A missed workout is
           never skipped.
         </p>
-        <div
-          className="mt-4 h-2.5 overflow-hidden rounded-[2px] bg-muted"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={28}
-          aria-valuenow={completedCount}
-          aria-label="Accelerator progress"
-        >
-          <div className="h-full bg-gxj-teal" style={{ width: `${progressPercent}%` }} />
-        </div>
+        <AppLinearProgress
+          value={progressPercent}
+          label="Accelerator progress"
+          accent="aqua"
+          className="mt-4"
+        />
       </header>
 
       {returnMessage && actionableDay ? (
-        <p className="mt-5 rounded-lg border border-border bg-gxj-mint p-4 text-sm leading-relaxed">
+        <AppNotice tone="info" className="mt-5">
           {returnMessage}
-        </p>
+        </AppNotice>
       ) : null}
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem]">
@@ -383,8 +378,8 @@ export function AcceleratorProgram() {
               onMeasurementSaved={addSavedMeasurement}
             />
           ) : justCompletedDay ? (
-            <section className="rounded-lg border border-border bg-gxj-mint p-6">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-gxj-teal">
+            <section className="border-y border-[var(--pu-border-strong)] py-6">
+              <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
                 Progress saved
               </p>
               <h2 className="mt-2 text-xl font-semibold">Day {justCompletedDay} Complete</h2>
@@ -410,7 +405,7 @@ export function AcceleratorProgram() {
               </div>
             </section>
           ) : hub.runStatus === "paused" ? (
-            <section className="rounded-lg border border-border bg-card p-6">
+            <section className="border-y border-[var(--pu-border-strong)] py-6">
               <h2 className="text-xl font-semibold">Your Accelerator is paused</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 Your progress is safe. Resume it from Programs when you want this to become your
