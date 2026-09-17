@@ -99,7 +99,7 @@ second integration line.
   enrollment.
 - Reconcile the review catalog with real live components so review scenarios cannot silently drift.
 - Complete the remaining Precision Utility route-specific residue after the shared primitives are in
-  place. Smaller participant history/completion/install surfaces remain after Nutrition is migrated.
+  place. Smaller participant history, completion, and install surfaces remain after Nutrition.
 
 ## Active checkpoint
 
@@ -107,7 +107,7 @@ Precision Utility route-specific residue cleanup is the active design checkpoint
 bounded checkpoint migrates Nutrition setup and results presentation onto the approved system while
 preserving calculator logic, saved drafts, target math, access gating, sliders, and server behavior.
 Nutrition now uses shared states/notices/choices, restrained heading hierarchy, thin structural rules,
-and direct target stats. Smaller participant history/completion/install surfaces remain next.
+and direct target stats. Smaller participant history, completion, and install surfaces remain next.
 
 ## Updating this file
 
