@@ -223,7 +223,7 @@
     },
     {
       "path": "src/components/precision-surfaces.tsx",
-      "sha256": "d70f006b4ce05c8b0d3cb9534c518be87c4d3f29c33b90d618faa7c871d8065b"
+      "sha256": "56bfcd2aac463c647f41e3c4ccbf9a371265de387d5825fb5b11fc5ffee18173"
     },
     {
       "path": "src/components/pwa-install.tsx",
@@ -343,7 +343,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "f8e9eb934870542671bfaf6f13b8badb8e3568563f6daabe56476d6b65b98ee1"
+      "sha256": "5c7ee1847fbde0ce606137bad9eec542932b3d7ff71414f36a579ee2af6bb019"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -1343,7 +1343,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "555f648966c297adbe47dd7a3900abc4b788c1c8f2bc99032a439a44ae8144fd"
+      "sha256": "16171e9e7cd984fa68703a59fbce04fefd9bfee61f3a5df1ead754be50c7763a"
     },
     {
       "path": "src/routes/index.tsx",
@@ -1379,7 +1379,7 @@
     },
     {
       "path": "src/routes/notifications.tsx",
-      "sha256": "07d083030cbb2f29fc4d1ee491b21f5d8c6cc04bf6fb4c2da3e90be5fb0b6f7b"
+      "sha256": "c55e05c6234a95db68c5ef6b8379c2bf0a1bf789a9cd3848680a583b61f6ce8e"
     },
     {
       "path": "src/routes/nutrition.tsx",
@@ -1407,7 +1407,7 @@
     },
     {
       "path": "src/routes/progress.tsx",
-      "sha256": "8f3c78387fe44441193a90ce07907e9897ffcecd40470414f1ca736dca47fead"
+      "sha256": "fff973d2801c5d389ea4a4a334db60cae030aa1b54ff52e32a831bf74ad65a74"
     },
     {
       "path": "src/routes/recover.ts",

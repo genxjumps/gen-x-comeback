@@ -108,8 +108,7 @@ export function AppLinearProgress({
   const normalized = Math.max(0, Math.min(100, Math.round(value)));
   const style = {
     width: `${normalized}%`,
-    backgroundColor:
-      accent === "aqua" ? "var(--pu-accent-program)" : "var(--pu-action-primary)",
+    backgroundColor: accent === "aqua" ? "var(--pu-accent-program)" : "var(--pu-action-primary)",
   } as CSSProperties;
 
   return (

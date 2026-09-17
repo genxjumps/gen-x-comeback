@@ -407,7 +407,8 @@ function Progress() {
     }
   }
 
-  const messageTone = message?.includes("couldn’t") || message?.includes("Try again") ? "danger" : "success";
+  const messageTone =
+    message?.includes("couldn’t") || message?.includes("Try again") ? "danger" : "success";
 
   return (
     <PlatformPage
