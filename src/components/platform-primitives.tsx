@@ -19,7 +19,9 @@ export function BodyText({ className, ...props }: HTMLAttributes<HTMLParagraphEl
 }
 
 export function SupportingText({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("text-sm leading-relaxed text-muted-foreground", className)} {...props} />;
+  return (
+    <p className={cn("text-sm leading-relaxed text-muted-foreground", className)} {...props} />
+  );
 }
 
 export function MetaText({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
@@ -40,10 +42,7 @@ export function PageSection({
   ...props
 }: HTMLAttributes<HTMLElement> & { children: ReactNode }) {
   return (
-    <section
-      className={cn("border-t-2 border-foreground/20 py-6 sm:py-8", className)}
-      {...props}
-    >
+    <section className={cn("border-t-2 border-foreground/20 py-6 sm:py-8", className)} {...props}>
       {children}
     </section>
   );
