@@ -113,4 +113,5 @@ changing unrelated screens opportunistically.
 
 Review routes are fixed fake-data scenarios, not product states. They must reuse real shared
 components and remain hidden from customer navigation and search indexing. A review-only rendering
-must not become a second implementation of the customer interface.
+must not become a second implementation of the customer interface. Each visual checkpoint migrates
+only the routes explicitly included in its approved scope.
