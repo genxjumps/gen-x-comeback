@@ -1,5 +1,10 @@
 # 7-Day signup recovery checkpoint
 
+**Role:** Historical
+
+This file preserves the source and verification checkpoint. Current recovery behavior is governed
+by `../RECOVERY_ACCESS_CONTRACT.md`; migration and publication results are dated release evidence.
+
 ## Scope and approval
 
 Base: GitHub `release/v1.1` at `9086c4ee3760b32ec415502553ecc7bdded2329f`.

@@ -89,6 +89,7 @@ Automated tests must protect these invariants where deterministic automation is 
 8. Account recovery must reject expired, revoked or mismatched credentials without revealing which
    boundary failed. Entitlement-bound credentials must also reject inactive ownership.
 9. Refunded-only customers can recover account access, read refund history and remain unable to
-   access refunded workouts. See ACCOUNT-IDENTITY-LOGOUT.md for scope and release sequencing.
+   access refunded workouts. See `ACCOUNT_ACCESS_CONTRACT.md` for current account behavior and
+   `history/ACCOUNT-IDENTITY-LOGOUT.md` for implementation history.
 
 The cross-device matrix remains a required manual production acceptance pass because browser cookie behavior and deployment adapters are part of the behavior being verified.

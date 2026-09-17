@@ -15,7 +15,7 @@ Move a visitor from the website hero opt-in into the app without asking for thei
 7. A dismissed install prompt can reappear as a compact plan-page nudge after 24 hours.
 
 The eligibility screen and three assessment steps use the approved focused 7-Day intake design
-recorded in `APP_MAP_AND_DESIGN_SYSTEM.md`. That visual contract applies only to the free 7-Day
+recorded in `DESIGN_SYSTEM.md`. That visual contract applies only to the free 7-Day
 intake. It does not alter or share setup data with the separate 28-Day Accelerator onboarding flow.
 The assessment uses numbered completed, current, and upcoming progress segments plus the approved
 raised selected-answer state.
@@ -130,7 +130,7 @@ and opening public intake remain separate approvals.
   signup with the same email. They never instruct the participant to use a different
   email or replace saved progress to work around an error.
 
-See [checkpoint verification](SIGNUP-RECOVERY-CHECKPOINT.md) for test evidence,
+See [checkpoint verification](history/SIGNUP-RECOVERY-CHECKPOINT.md) for historical test evidence,
 release dependencies, and the remaining controlled live tests.
 
 ## Home Screen behavior

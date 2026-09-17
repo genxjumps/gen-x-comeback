@@ -81,14 +81,14 @@ If a future audit disputes this reconciliation, stop. Reverse only the history-r
 
 ## Normal forward migration workflow
 
-Todd adopted the narrowly scoped [refund Cloud procedure](REFUND-CLOUD-MIGRATION-PROCEDURE.md)
+Todd adopted the narrowly scoped [refund Cloud procedure](history/REFUND-CLOUD-MIGRATION-PROCEDURE.md)
 with PR #94. The two named refund migrations were applied under separate approval;
 their [execution evidence](release-evidence/2026-09-10-refund-migrations.md) records
 the exact 40-row ledger and independently verified resulting schema. That completed
 transport and pre-launch test exception doesn't authorize future migrations.
 All other migrations retain the normal workflow below.
 
-The [account recovery Cloud procedure](ACCOUNT-RECOVERY-CLOUD-PROCEDURE.md) is a
+The [account recovery Cloud procedure](history/ACCOUNT-RECOVERY-CLOUD-PROCEDURE.md) is a
 proposed, separately adopted exception for migration 20260910170000 only. It
 becomes operative only after Todd explicitly approves adopting and merging it.
 Migration/deployment approval alone doesn't silently adopt this process change.

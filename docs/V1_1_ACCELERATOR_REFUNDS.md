@@ -142,7 +142,7 @@ browser success confirmation refuses to grant access from them.
   the original permission gap occurs, and checks actual role denials after the
   fix. `supabase/accelerator-refunds.permissions.sql` provides catalog-only
   post-application assertions. It doesn't create fixtures or contact a provider.
-- The proposed [refund Cloud procedure](REFUND-CLOUD-MIGRATION-PROCEDURE.md)
+- The adopted historical [refund Cloud procedure](history/REFUND-CLOUD-MIGRATION-PROCEDURE.md)
   requires explicit adoption and merge, then separately approved application.
 - Public paid launch still requires separate staging and production-mode work.
 

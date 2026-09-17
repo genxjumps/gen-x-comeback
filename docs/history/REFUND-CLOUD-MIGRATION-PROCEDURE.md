@@ -1,8 +1,13 @@
 # Controlled refund Cloud migration procedure
 
+**Role:** Historical
+
+This file records the one-time refund migration procedure and completed verification. It does not
+authorize another database operation.
+
 Status: Todd explicitly adopted this scoped procedure with PR #94. Both named
 migrations were then applied under separate approval on September 10, 2026;
-see the [execution evidence](release-evidence/2026-09-10-refund-migrations.md).
+see the [execution evidence](../release-evidence/2026-09-10-refund-migrations.md).
 This completed exception doesn't authorize new migrations, configuration changes,
 or publication. The procedure below records the requirements used for this pair.
 

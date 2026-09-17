@@ -1,5 +1,10 @@
 # V1.1 Accelerator program-content readiness audit
 
+**Role:** Historical
+
+This August 28 source audit predates the current Cloudflare integration for Workouts A-E. Current
+open content work is recorded in `../../CURRENT_STATE.md` and the production brief.
+
 Date: 2026-08-28
 
 Status: Read-only source audit complete. Checkpoint 5 is not complete and no launch requirement is

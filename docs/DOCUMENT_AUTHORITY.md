@@ -9,7 +9,7 @@ When two sources disagree, use this order:
 1. **`AGENTS.md`** - development, safety, migration, and release rules.
 2. **`CURRENT_STATE.md`** - what is implemented, live, closed, active, and next today.
 3. **Durable product contracts** - approved customer behavior that remains true across checkpoints.
-4. **`APP-INFORMATION-ARCHITECTURE.md` and the approved design-system rules** - navigation,
+4. **`APP-INFORMATION-ARCHITECTURE.md` and `DESIGN_SYSTEM.md`** - navigation,
    shared components, terminology, and app-wide presentation.
 5. **Operational runbooks** - exact procedures for releases, migrations, recovery, staging, email,
    and refunds.
@@ -67,6 +67,9 @@ Do not use the generic word “state” when one of these more precise terms is 
 Historical material remains available through Git history and the preservation branch
 `archive/pre-reset-2026-09-17`. Moving material into a historical location does not authorize
 deleting its branch, closing its PR, or discarding unique commits.
+
+Superseded repository documents live under `docs/history/`. Dated operational proof lives under
+`docs/release-evidence/`. Neither directory defines current status.
 
 ## Change discipline
 

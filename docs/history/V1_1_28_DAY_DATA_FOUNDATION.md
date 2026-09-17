@@ -1,5 +1,10 @@
 # V1.1 28-Day Data Foundation
 
+**Role:** Historical
+
+This file preserves the foundation checkpoint before later migration, checkout, media, Nutrition,
+and customer-interface work. Its unapplied-migration and closed-feature statements are not current.
+
 ## Current status
 
 The customer-account, purchase, entitlement, program-run, program-progress, and measurement-history

@@ -1,5 +1,10 @@
 # Account identity and local logout
 
+**Role:** Historical
+
+This file preserves the implementation checkpoints that established account identity, local
+logout, recovery, purchase navigation, and header behavior. It does not define current status.
+
 Todd approved this bounded checkpoint on September 10, 2026, from GitHub
 `release/v1.1` at `4d8aff69d7d8aa28abb25f77044dd5d4a3c4a85c`.
 It addresses the account-switching difficulty observed during the controlled refund test.

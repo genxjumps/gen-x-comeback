@@ -1,5 +1,10 @@
 # Checkpoint 6 - Your Nutrition approval brief
 
+**Role:** Historical
+
+This file preserves the approved Nutrition checkpoint and its then-current implementation status.
+Current durable behavior is governed by `../NUTRITION_CONTRACT.md`.
+
 **Status:** Product behavior, calorie direction, safety boundary, calibrated muscle-first protein
 method, and meal-allocation behavior were approved by Todd on 2026-09-04. The bounded V1
 implementation is complete in draft PR #63. Final My Normal Day source verification, migration
@@ -329,7 +334,7 @@ This item remains open before release:
 ## Formula guardrail
 
 The approved numerical behavior is defined in
-`docs/V1_1_YOUR_NUTRITION_FORMULA_RESEARCH.md` and must be implemented with deterministic tests.
+`V1_1_YOUR_NUTRITION_FORMULA_RESEARCH.md` and was implemented with deterministic tests.
 
 The eventual calorie method must use a **responsible starting deficit**: enough to create a
 meaningful fat-loss trend, but not so aggressive that it treats rapid scale loss as the goal or
