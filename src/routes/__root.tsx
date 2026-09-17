@@ -18,6 +18,7 @@ import { PlatformShell } from "@/components/platform-shell";
 import { AccountNavigation } from "@/components/account-navigation";
 import { PlatformHeaderActions } from "@/components/platform-header-actions";
 import { AccountSessionSync } from "@/components/account-session-sync";
+import precisionMigrationCss from "../design-system/precision/app-migration.css?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -85,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#faf8f3" },
+      { name: "theme-color", content: "#f5f2ea" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "apple-mobile-web-app-title", content: "Gen X Jumps" },
@@ -102,6 +103,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "stylesheet",
+        href: precisionMigrationCss,
       },
       { rel: "icon", href: "/icon-192.png", type: "image/png", sizes: "192x192" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
@@ -191,16 +196,16 @@ function RootComponent() {
       <AccountSessionSync />
       <AuthSessionBootstrap />
       <div className="gxj-platform-shell flex min-h-screen flex-col bg-background text-foreground">
-        <header className="border-b border-border">
+        <header className="border-b border-border bg-[var(--pu-surface-contained)]">
           <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-5 py-4">
             {inAssessment || inOnboarding ? (
-              <span className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]">
+              <span className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--pu-radius-control)] border border-[var(--pu-border-strong)] px-3 text-xs font-bold uppercase leading-none tracking-[0.12em]">
                 Gen X Jumps
               </span>
             ) : (
               <Link
                 to={inCheckoutSuccess ? "/home" : "/"}
-                className="inline-block shrink-0 rounded-[2px] border border-solid border-foreground px-2.5 py-1.5 text-[11px] font-bold uppercase leading-none tracking-[0.16em]"
+                className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--pu-radius-control)] border border-[var(--pu-border-strong)] px-3 text-xs font-bold uppercase leading-none tracking-[0.12em] focus-visible:outline-[3px] focus-visible:outline-[var(--pu-action-primary)] focus-visible:outline-offset-[3px]"
               >
                 Gen X Jumps
               </Link>

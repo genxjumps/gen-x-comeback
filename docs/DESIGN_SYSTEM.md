@@ -7,8 +7,8 @@
 The approved visual direction is **Precision Utility**.
 
 The existing customer-facing routes remain the functional product reference, but their current
-visual implementation is **not** the design authority. They will be migrated only after the new
-production component layer is verified.
+visual implementation is **not** the design authority. Precision Utility migration is active and
+must proceed by shared primitive across the app rather than by redesigning routes one at a time.
 
 Historical route-specific design decisions and prior visual experiments remain preserved in
 [`history/APP_MAP_AND_DESIGN_SYSTEM.md`](history/APP_MAP_AND_DESIGN_SYSTEM.md) for reference only.
@@ -174,8 +174,7 @@ Do not add a box solely to make a section look designed.
 Workout media is a specialized branded content surface. It is not a generic card and does not
 require photography.
 
-The production component is `PuWorkoutMedia` while the Precision Utility layer is isolated under
-`src/design-system/precision/`.
+The production component is `PuWorkoutMedia` in `src/design-system/precision/`.
 
 ### Visual rules
 
@@ -234,8 +233,7 @@ route-specific boxes.
 
 ## Approved production primitives
 
-The isolated Precision Utility layer contains the approved production primitives before route
-migration begins:
+The approved Precision Utility layer contains these production primitives:
 
 - `PuShell`, `PuContainer`, `PuReadingWidth`
 - `PuEyebrow`, `PuHeading`, `PuText`
@@ -251,16 +249,29 @@ migration begins:
 
 Route code must use the semantic primitive when one exists rather than reproduce its CSS locally.
 
-## Implementation boundary
+## Migration boundary
 
-The new implementation lives under `src/design-system/precision/` until the production component
-layer is verified and approved for migration.
+The production component layer is approved. Migration is now active.
 
-The current app components and customer-facing routes must not be restyled opportunistically during
-this phase. The hidden `/design-system` route is a noindex component showcase only. It exists to
-review the real new components before any customer-facing route migration begins.
+Migration order is system-first:
 
-After the production component layer is approved, migration will happen by design-system primitive
-across the app, not by redesigning pages one at a time.
+1. expose the approved semantic tokens to the full app;
+2. migrate existing shared UI primitives while preserving their public APIs;
+3. migrate shared page hierarchy, progress, shell, and navigation;
+4. migrate shared status, list, and workout-media surfaces;
+5. clean up only the route-specific visual residue that cannot be solved by a shared primitive.
+
+A shared primitive should be changed once and inherited everywhere it is used. Do not edit routes
+individually just to make one screen resemble another. Route-specific visual work is appropriate
+only after the relevant shared primitive has been migrated and the remaining difference is genuinely
+specific to that product surface.
+
+The legacy shared class bridge may temporarily map old semantic names to Precision Utility tokens so
+existing routes cannot reintroduce the superseded palette or typography during migration. Remove
+bridge rules only after their callers have moved to the approved primitives.
+
+The hidden `/design-system` route remains a noindex reference for the real production components. It
+is not a parallel visual system and must not drift from the components used by customer-facing
+routes.
 
 Customer-facing copy continues to use **workout**, not **assignment**.

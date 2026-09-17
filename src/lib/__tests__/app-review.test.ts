@@ -474,8 +474,9 @@ describe("app review catalog", () => {
     expect(nutritionRouteSource).toContain(
       '<SetupProgress currentStep={setupStep} label="Nutrition setup progress" />',
     );
-    expect(setupProgressSource).toContain("bg-foreground text-background");
-    expect(setupProgressSource).toContain("bg-gxj-orange text-white");
-    expect(setupProgressSource).toContain("border-2 border-foreground/20 text-foreground/35");
+    expect(setupProgressSource).toContain("bg-[var(--pu-text-primary)]");
+    expect(setupProgressSource).toContain("bg-[var(--pu-action-primary)]");
+    expect(setupProgressSource).toContain("bg-[var(--pu-surface-subtle)]");
+    expect(setupProgressSource).toContain('role="progressbar"');
   });
 });

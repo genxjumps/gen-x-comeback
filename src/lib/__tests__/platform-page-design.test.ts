@@ -7,14 +7,17 @@ const platformPageSource = readFileSync(
 );
 
 describe("shared platform page typography", () => {
-  it("uses the compact app title and 16px introduction as the safe defaults", () => {
+  it("uses the Precision Utility page hierarchy and 16px introduction as the safe defaults", () => {
     expect(platformPageSource).toContain('titleSize = "compact"');
     expect(platformPageSource).toContain('titleSize?: "compact" | "hero"');
     expect(platformPageSource).toContain(
-      'titleSize === "hero" ? "text-5xl sm:text-7xl" : "text-3xl sm:text-4xl"',
+      '"text-[2.75rem] leading-[0.96] tracking-[-0.03em] sm:text-[3.5rem]"',
     );
     expect(platformPageSource).toContain(
-      'className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80"',
+      '"text-[2rem] leading-[1.05] tracking-[-0.025em] sm:text-[2.5rem]"',
+    );
+    expect(platformPageSource).toContain(
+      'className="mt-3 max-w-xl text-base font-normal leading-6 text-[var(--pu-text-secondary)]"',
     );
     expect(platformPageSource).not.toContain("sm:text-lg");
   });
