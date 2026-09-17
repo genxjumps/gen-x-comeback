@@ -23,6 +23,9 @@ export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
     async function confirmSession() {
       const tokenHash = platformAuthTokenHash();
       if (tokenHash) {
+        // The recovery-link handoff lands on a private route with its one-time
+        // token in the fragment. Redeem it before checking the browser session
+        // so this boundary cannot deny access during that brief race.
         const cleanUrl = `${window.location.pathname}${window.location.search}`;
         window.history.replaceState(window.history.state, "", cleanUrl);
         const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "email" });
