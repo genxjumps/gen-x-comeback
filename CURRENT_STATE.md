@@ -10,13 +10,13 @@ not define current status.
 
 ## Source and deployment identity
 
-| Surface | Revision | Meaning |
-| --- | --- | --- |
-| Active integration source | `release/v1.1` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61` | Current reviewed source baseline |
-| Preservation branch | `archive/pre-reset-2026-09-17` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61` | Exact pre-reset recovery point |
-| Reset working branch | `agent/project-reset-inventory` created from `9edba783553d87dc0cc76e4aca5774e4e9b63b61` | Documentation-only cleanup |
-| GitHub default branch | `main` at `42c548a966c0e57fc25cff53a22849783169dc60` | Stale baseline pending reconciliation |
-| Published app | `e5fd50e5d767bdacdc3a843948748f6ca8d546ac` | Live source reported by `/api/public/release` during the audit |
+| Surface                   | Revision                                                                                | Meaning                                                        |
+| ------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Active integration source | `release/v1.1` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                            | Current reviewed source baseline                               |
+| Preservation branch       | `archive/pre-reset-2026-09-17` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61`            | Exact pre-reset recovery point                                 |
+| Reset working branch      | `agent/project-reset-inventory` created from `9edba783553d87dc0cc76e4aca5774e4e9b63b61` | Documentation-only cleanup                                     |
+| GitHub default branch     | `main` at `42c548a966c0e57fc25cff53a22849783169dc60`                                    | Stale baseline pending reconciliation                          |
+| Published app             | `e5fd50e5d767bdacdc3a843948748f6ca8d546ac`                                              | Live source reported by `/api/public/release` during the audit |
 
 The release branch and published app are deliberately distinct until an approved publication.
 The default branch must not be treated as current source until it is reconciled.

@@ -25,15 +25,15 @@ conflict must be reported and reconciled before behavior is changed.
 
 Every new or materially revised project document must identify one of these roles near its title:
 
-| Role | Meaning |
-| --- | --- |
-| Current | Describes the project's present condition. Only `CURRENT_STATE.md` receives this role. |
-| Contract | Durable approved product behavior. |
-| Design system | Shared interface rules and reusable presentation decisions. |
-| Runbook | Procedure for a controlled operational action. |
-| Proposal | Unapproved or partially approved recommendation. |
-| Historical | Completed checkpoint, investigation, handoff, or superseded plan. |
-| Evidence | Immutable record of a test, migration, deployment, or incident. |
+| Role          | Meaning                                                                                |
+| ------------- | -------------------------------------------------------------------------------------- |
+| Current       | Describes the project's present condition. Only `CURRENT_STATE.md` receives this role. |
+| Contract      | Durable approved product behavior.                                                     |
+| Design system | Shared interface rules and reusable presentation decisions.                            |
+| Runbook       | Procedure for a controlled operational action.                                         |
+| Proposal      | Unapproved or partially approved recommendation.                                       |
+| Historical    | Completed checkpoint, investigation, handoff, or superseded plan.                      |
+| Evidence      | Immutable record of a test, migration, deployment, or incident.                        |
 
 A document labeled Proposal, Historical, or Evidence cannot silently become a current instruction.
 
