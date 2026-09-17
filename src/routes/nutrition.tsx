@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { ExternalLink, Info, RotateCcw, ShieldCheck } from "lucide-react";
+import { ExternalLink, Info, RotateCcw } from "lucide-react";
 
 import { PlatformPage } from "@/components/platform-page";
+import { AppLoadingState, AppNotice, AppStatePanel } from "@/components/precision-surfaces";
 import { SetupProgress } from "@/components/setup-progress";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -140,7 +142,7 @@ function ChoiceGroup<T extends string>({
           <RadioGroupItem
             id={choiceId(name, option.value)}
             value={option.value}
-            className="size-5 shrink-0 border-2 border-foreground/35 text-gxj-orange data-[state=checked]:border-gxj-orange data-[state=checked]:text-gxj-orange [&_svg]:size-2.5"
+            className="size-5 shrink-0 [&_svg]:size-2.5"
           />
           <span className="gxj-assessment-choice-label">{option.label}</span>
         </Label>
@@ -159,9 +161,11 @@ function FormSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+    <section className="border-t border-[var(--pu-border-subtle)] py-6 sm:py-8">
       <h2 className="text-xl font-bold leading-snug sm:text-2xl">{title}</h2>
-      {hint ? <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{hint}</p> : null}
+      {hint ? (
+        <p className="mt-1.5 text-sm leading-relaxed text-[var(--pu-text-secondary)]">{hint}</p>
+      ) : null}
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -236,11 +240,11 @@ function formToIntake(form: FormState): NutritionIntake | null {
 
 function TargetCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
-      <p className="gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl">
-        {value}
+    <div className="py-4 sm:py-0 sm:px-4 first:sm:pl-0 last:sm:pr-0">
+      <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-text-secondary)]">
+        {label}
       </p>
+      <p className="mt-1 text-2xl font-extrabold leading-tight sm:text-3xl">{value}</p>
     </div>
   );
 }
@@ -248,12 +252,7 @@ function TargetCard({ label, value }: { label: string; value: string }) {
 function NutritionWelcome({ onStart }: { onStart: () => void }) {
   return (
     <div className="max-w-lg">
-      <Button
-        type="button"
-        size="lg"
-        className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
-        onClick={onStart}
-      >
+      <Button type="button" size="lg" className="w-full sm:w-auto" onClick={onStart}>
         Set Up My Starting Targets
       </Button>
       <a
@@ -530,20 +529,14 @@ function SetupForm({
                   <Label
                     key={occasion}
                     htmlFor={choiceId("meal", occasion)}
-                    className={`relative flex min-h-14 cursor-pointer items-center border-2 px-4 py-3 text-base font-semibold leading-snug transition-[background-color,border-color,box-shadow,transform] duration-150 ${
-                      selected
-                        ? "-translate-x-px -translate-y-px border-gxj-orange bg-gxj-mint shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)]"
-                        : "border-foreground/25 bg-background"
-                    }`}
+                    className="gxj-choice gxj-option-card cursor-pointer text-base font-semibold leading-snug"
                   >
-                    <input
+                    <Checkbox
                       id={choiceId("meal", occasion)}
-                      type="checkbox"
-                      className="mr-3 size-5 shrink-0 accent-gxj-orange"
                       checked={selected}
-                      onChange={(event) => toggleMeal(occasion, event.target.checked)}
+                      onCheckedChange={(checked) => toggleMeal(occasion, checked === true)}
                     />
-                    <span>{mealLabels[occasion]}</span>
+                    <span className="gxj-assessment-choice-label">{mealLabels[occasion]}</span>
                   </Label>
                 );
               })}
@@ -569,23 +562,23 @@ function SetupForm({
 
           <div aria-live="polite">
             {stopped ? (
-              <p className="border-l-4 border-gxj-orange py-2 pl-4 text-sm font-medium">
+              <AppNotice tone="warning">
                 These inputs need an individualized nutrition target. Work with a registered
                 dietitian instead of using this calculator.
-              </p>
+              </AppNotice>
             ) : error ? (
-              <p className="border-l-4 border-gxj-orange py-2 pl-4 text-sm font-medium">{error}</p>
+              <AppNotice tone="danger">{error}</AppNotice>
             ) : null}
           </div>
         </>
       ) : null}
 
-      <div className="mt-1 flex flex-col-reverse gap-3 border-t border-foreground/20 pt-5 sm:flex-row sm:justify-between">
+      <div className="mt-1 flex flex-col-reverse gap-3 border-t border-[var(--pu-border-subtle)] pt-5 sm:flex-row sm:justify-between">
         <Button
           type="button"
           variant="outline"
           size="lg"
-          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+          className="w-full sm:w-auto"
           disabled={saving}
           onClick={() => (step === 1 ? onCancel() : onStepChange((step - 1) as NutritionSetupStep))}
         >
@@ -594,7 +587,7 @@ function SetupForm({
         <Button
           type="button"
           size="lg"
-          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
+          className="w-full sm:w-auto"
           disabled={saving}
           onClick={() => (step === 3 ? onSubmit() : onStepChange((step + 1) as NutritionSetupStep))}
         >
@@ -645,11 +638,11 @@ function NutritionResults({
   return (
     <div>
       {targetReview ? (
-        <section className="mb-5 rounded-lg border border-gxj-teal/40 bg-gxj-mint p-5 sm:p-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+        <section className="mb-5 rounded-lg border border-[var(--pu-border-subtle)] bg-[var(--pu-accent-program-tint)] p-5 sm:p-6">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
             Target Review
           </p>
-          <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
+          <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
             Your targets may need an update
           </h2>
           <p className="mt-2 text-base leading-relaxed">
@@ -678,12 +671,10 @@ function NutritionResults({
           </Button>
         </section>
       ) : null}
-      <section className="border-b border-foreground/15 pb-6 sm:pb-8">
+      <section className="border-b border-[var(--pu-border-subtle)] pb-6 sm:pb-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-              Starting Targets
-            </h2>
+            <h2 className="text-2xl font-extrabold leading-tight sm:text-3xl">Starting Targets</h2>
             <p className="mt-2 text-base font-medium leading-relaxed">
               These are your numbers for the whole day. Every meal counts. All seven days count.
             </p>
@@ -693,14 +684,14 @@ function NutritionResults({
           </Button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 border-l border-t border-foreground/25 sm:grid-cols-4">
+        <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-5 border-y border-[var(--pu-border-subtle)] py-5 sm:grid-cols-4 sm:divide-x sm:divide-[var(--pu-border-subtle)]">
           <TargetCard label="Calories" value={profile.targets.calories.toLocaleString()} />
           <TargetCard label="Protein" value={`${profile.targets.proteinGrams} g`} />
           <TargetCard label="Carbs" value={`${profile.targets.carbohydrateGrams} g`} />
           <TargetCard label="Fat" value={`${profile.targets.fatGrams} g`} />
         </div>
 
-        <details className="mt-4 rounded-md border border-border bg-muted/30 p-3">
+        <details className="mt-4 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-subtle)] p-3">
           <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold">
             <Info aria-hidden="true" className="size-4" />
             What are these?
@@ -737,13 +728,13 @@ function NutritionResults({
         ) : null}
       </section>
 
-      <section className="border-b border-foreground/15 py-6 sm:py-8">
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
               Your Normal Day
             </p>
-            <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
+            <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
               See how the numbers work across your day.
             </h2>
           </div>
@@ -760,7 +751,7 @@ function NutritionResults({
         </div>
 
         {oneMeal ? (
-          <p className="mt-4 rounded-md bg-muted/50 p-3 text-base leading-relaxed">
+          <p className="mt-4 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-subtle)] p-3 text-base leading-relaxed">
             You selected one eating occasion. The full daily calorie and macro targets have to fit
             that occasion.
           </p>
@@ -771,14 +762,14 @@ function NutritionResults({
           </p>
         )}
 
-        <div className="mt-5 divide-y divide-foreground/15 border-y border-foreground/15">
+        <div className="mt-5 divide-y divide-[var(--pu-border-subtle)] border-y border-[var(--pu-border-subtle)]">
           {allocations.map((allocation) => (
             <div key={allocation.occasion} className="py-4">
               <div className="flex items-baseline justify-between gap-3">
-                <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+                <h3 className="text-xl font-bold leading-tight sm:text-2xl">
                   {mealLabels[allocation.occasion]}
                 </h3>
-                <p className="gxj-display-title translate-y-1 text-xl uppercase tracking-wide sm:text-2xl">
+                <p className="text-sm font-bold text-[var(--pu-text-secondary)]">
                   {allocation.percentage}%
                 </p>
               </div>
@@ -792,7 +783,7 @@ function NutritionResults({
                     value={allocation.percentage}
                     aria-label={`${mealLabels[allocation.occasion]} share`}
                     aria-valuetext={`${allocation.percentage} percent of daily targets`}
-                    className="w-full accent-gxj-teal"
+                    className="w-full accent-[var(--pu-accent-program)]"
                     onInput={(event) =>
                       onSliderChange(allocation.occasion, Number(event.currentTarget.value))
                     }
@@ -811,9 +802,7 @@ function NutritionResults({
                   { label: "Fat", value: `${allocation.targets.fatGrams} g` },
                 ].map(({ label, value }) => (
                   <div key={label}>
-                    <p className="gxj-display-title text-xl uppercase leading-none tracking-wide sm:text-2xl">
-                      {value}
-                    </p>
+                    <p className="text-xl font-extrabold leading-none sm:text-2xl">{value}</p>
                     <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
                       {label}
                     </p>
@@ -838,11 +827,11 @@ function NutritionResults({
         ) : null}
       </section>
 
-      <section className="border-b border-foreground/15 py-6 sm:py-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
           Build Meals That Work
         </p>
-        <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
           Keep the food simple.
         </h2>
         <p className="mt-3 text-base leading-relaxed">
@@ -857,11 +846,11 @@ function NutritionResults({
         </p>
       </section>
 
-      <section className="border-b border-foreground/15 py-6 sm:py-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
           My Normal Day
         </p>
-        <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
           I keep the structure and adjust the extras.
         </h2>
         <p className="mt-3 text-base leading-relaxed">
@@ -869,11 +858,9 @@ function NutritionResults({
           remove or reduce the parts adding extra calories while keeping the protein-centered
           structure and foods I already like.
         </p>
-        <div className="mt-5 grid divide-y divide-foreground/15 border-y border-foreground/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        <div className="mt-5 grid divide-y divide-[var(--pu-border-subtle)] border-y border-[var(--pu-border-subtle)] sm:grid-cols-2 sm:divide-x sm:divide-y-0">
           <div className="py-4 sm:py-0 sm:pr-5">
-            <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
-              Maintenance
-            </h3>
+            <h3 className="text-xl font-bold leading-tight sm:text-2xl">Maintenance</h3>
             <ul className="mt-3 space-y-2 text-base leading-relaxed">
               <li>
                 <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 1/2 cup uncooked
@@ -892,7 +879,7 @@ function NutritionResults({
             </ul>
           </div>
           <div className="py-4 sm:py-0 sm:pl-5">
-            <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
+            <h3 className="text-xl font-bold leading-tight sm:text-2xl">
               When I want to cut body fat
             </h3>
             <ul className="mt-3 space-y-2 text-base leading-relaxed">
@@ -918,11 +905,11 @@ function NutritionResults({
         </p>
       </section>
 
-      <section className="border-b border-foreground/15 py-6 sm:py-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
           Read The Label
         </p>
-        <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
+        <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
           Check what you drink and what you pour.
         </h2>
         <p className="mt-3 text-base leading-relaxed">
@@ -937,10 +924,8 @@ function NutritionResults({
         </p>
       </section>
 
-      <section className="border-b border-foreground/15 py-6 sm:py-8">
-        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-          If You Miss
-        </h2>
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <h2 className="text-2xl font-extrabold leading-tight sm:text-3xl">If You Miss</h2>
         <p className="mt-2 text-base font-semibold leading-relaxed">
           You messed up a meal. Fine. Do not turn one decision into a lost day or a lost weekend. Do
           not punish it by starving tomorrow. Do not wait for Monday. Your next meal is your next
@@ -948,10 +933,8 @@ function NutritionResults({
         </p>
       </section>
 
-      <section className="border-b border-foreground/15 py-6 sm:py-8">
-        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-          If results stall
-        </h2>
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <h2 className="text-2xl font-extrabold leading-tight sm:text-3xl">If results stall</h2>
         <p className="mt-2 text-base leading-relaxed">
           Review labels, portions, drinks, dressings, sauces, serving sizes, calorie-dense foods,
           and consistency before rebuilding the whole diet. This app cannot verify what you ate.
@@ -962,12 +945,10 @@ function NutritionResults({
         href="https://genxjumps.com/nutrition/"
         target="_blank"
         rel="noreferrer"
-        className="mt-5 flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 font-semibold transition-colors hover:bg-muted/35"
+        className="mt-5 flex items-center justify-between gap-4 border-y border-[var(--pu-border-subtle)] py-5 font-semibold transition-colors hover:bg-[var(--pu-surface-subtle)]"
       >
         <span>
-          <span className="gxj-display-title block text-xl uppercase tracking-wide sm:text-2xl">
-            Learn the basics
-          </span>
+          <span className="block text-lg font-bold sm:text-xl">Learn the basics</span>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
             Deeper nutrition explanations and examples on Gen X Jumps.
           </span>
@@ -1120,7 +1101,13 @@ function Nutrition() {
     }
   }
 
-  if (!result) return <p className="text-sm text-muted-foreground">Loading your nutrition...</p>;
+  if (!result) {
+    return (
+      <PlatformPage title="Your Nutrition" titleSize="compact">
+        <AppLoadingState label="Loading your nutrition" />
+      </PlatformPage>
+    );
+  }
   if (!result.ok) {
     return (
       <PlatformPage
@@ -1128,26 +1115,28 @@ function Nutrition() {
         title="Nutrition Couldn't Be Loaded"
         description="We couldn't confirm your account or load your saved nutrition targets. Nothing was changed."
       >
-        <Button
-          type="button"
-          size="lg"
-          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
-          onClick={() => {
-            setResult(null);
-            setLoadAttempt((attempt) => attempt + 1);
-          }}
-        >
-          Try Again
-        </Button>
-        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          Still not working?{" "}
-          <Link
-            to="/recover"
-            className="font-semibold text-foreground underline underline-offset-4"
-          >
-            Sign in again.
-          </Link>
-        </p>
+        <AppStatePanel
+          state="error"
+          title="Try again"
+          description="Your saved nutrition information was not changed."
+          action={
+            <div className="flex flex-wrap gap-3">
+              <Button
+                type="button"
+                onClick={() => {
+                  setResult(null);
+                  setLoadAttempt((attempt) => attempt + 1);
+                }}
+              >
+                Try Again
+              </Button>
+              <Button asChild variant="outline">
+                <Link to="/recover">Sign in again.</Link>
+              </Button>
+            </div>
+          }
+        />
+        <p className="mt-4 text-sm text-[var(--pu-text-secondary)]">Still not working?</p>
       </PlatformPage>
     );
   }
@@ -1158,20 +1147,18 @@ function Nutrition() {
         title="Simple Targets That Fit Your Plan"
         description="Nutrition guidance unlocks with an eligible paid program."
       >
-        <section className="border-t border-foreground/15 py-6 first:border-t-0 first:pt-0 sm:py-8">
-          <div className="text-center">
-            <ShieldCheck className="mx-auto size-8" />
-            <h2 className="gxj-display-title mt-4 text-3xl uppercase">Not Unlocked</h2>
-            <p className="mt-2 text-muted-foreground">
-              Included with the 28-Day Fat Loss Accelerator.
-            </p>
-          </div>
-        </section>
-        <Button asChild>
-          <Link to="/my-programs" hash="available">
-            Explore the Accelerator
-          </Link>
-        </Button>
+        <AppStatePanel
+          state="locked"
+          title="Not Unlocked"
+          description="Included with the 28-Day Fat Loss Accelerator."
+          action={
+            <Button asChild>
+              <Link to="/my-programs" hash="available">
+                Explore the Accelerator
+              </Link>
+            </Button>
+          }
+        />
       </PlatformPage>
     );
   }

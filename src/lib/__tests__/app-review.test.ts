@@ -337,7 +337,7 @@ describe("app review catalog", () => {
       expect(nutritionRouteSource).toContain(content);
     }
     expect(activeNutritionReviewSource).not.toContain('Section title="Build your day"');
-    for (const source of [activeNutritionReviewSource, nutritionResultsSource]) {
+    for (const source of [activeNutritionReviewSource]) {
       expect(source).toContain("border-b border-foreground/15 pb-6 sm:pb-8");
       expect(source).toContain("border-b border-foreground/15 py-6 sm:py-8");
       expect(source).toContain("divide-y divide-foreground/15 border-y");
@@ -379,7 +379,7 @@ describe("app review catalog", () => {
     expect(nutritionResultsSource).not.toContain(
       '<p className="text-sm font-semibold">{allocation.percentage}%</p>',
     );
-    for (const source of [activeNutritionReviewSource, nutritionRouteSource]) {
+    for (const source of [activeNutritionReviewSource]) {
       expect(source).toContain(
         "grid grid-cols-2 border-l border-t border-foreground/25 sm:grid-cols-4",
       );
@@ -393,6 +393,16 @@ describe("app review catalog", () => {
         "gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl",
       );
     }
+    expect(nutritionResultsSource).toContain("text-2xl font-extrabold leading-tight sm:text-3xl");
+    expect(nutritionResultsSource).toContain("border-b border-[var(--pu-border-subtle)]");
+    expect(nutritionResultsSource).toContain("grid grid-cols-2 gap-x-6 gap-y-5 border-y");
+    expect(nutritionResultsSource).toContain("text-sm font-bold text-[var(--pu-text-secondary)]");
+    expect(nutritionResultsSource).not.toContain("gxj-display-title");
+    expect(nutritionRouteSource).toContain('<AppNotice tone="warning"');
+    expect(nutritionRouteSource).toContain("<AppStatePanel");
+    expect(nutritionRouteSource).toContain("<AppLoadingState");
+    expect(nutritionRouteSource).toContain("<Checkbox");
+    expect(nutritionRouteSource).not.toContain("ShieldCheck");
     expect(nutritionRouteSource).toContain('? "Your Nutrition"');
     expect(nutritionRouteSource).toContain('? "Set Up Your Daily Targets"');
     expect(nutritionRouteSource).toContain(
@@ -423,16 +433,15 @@ describe("app review catalog", () => {
     expect(nutritionReviewSource).toContain('titleSize="compact"');
   });
 
-  it("centers only the Nutrition locked-status block", () => {
-    for (const source of [nutritionReviewSource, nutritionRouteSource]) {
-      expect(source).toContain("Simple Targets That Fit Your Plan");
-      expect(source).toContain("Included with the 28-Day Fat Loss Accelerator.");
-      expect(source).toContain('<div className="text-center">');
-      expect(source).toContain('className="mx-auto size-8"');
-      expect(source).toContain("Explore the Accelerator");
-    }
-    expect(nutritionReviewSource).not.toContain('<Page className="text-center"');
-    expect(nutritionRouteSource).not.toContain('<PlatformPage className="text-center"');
+  it("uses the approved Nutrition locked state", () => {
+    expect(nutritionReviewSource).toContain("Simple Targets That Fit Your Plan");
+    expect(nutritionReviewSource).toContain("Included with the 28-Day Fat Loss Accelerator.");
+    expect(nutritionRouteSource).toContain("Simple Targets That Fit Your Plan");
+    expect(nutritionRouteSource).toContain("Included with the 28-Day Fat Loss Accelerator.");
+    expect(nutritionRouteSource).toContain("<AppStatePanel");
+    expect(nutritionRouteSource).toContain('state="locked"');
+    expect(nutritionRouteSource).toContain("Explore the Accelerator");
+    expect(nutritionRouteSource).not.toContain("ShieldCheck");
   });
 
   it("explains the Nutrition unavailable state and gives both recovery steps", () => {
@@ -468,7 +477,9 @@ describe("app review catalog", () => {
       expect(source).not.toContain("rounded-lg border border-border bg-card");
     }
     expect(nutritionSetupReviewSource).toContain("border-t-2 border-foreground/20 py-6 sm:py-8");
-    expect(nutritionRouteSource).toContain("border-t-2 border-foreground/20 py-6 sm:py-8");
+    expect(nutritionRouteSource).toContain(
+      "border-t border-[var(--pu-border-subtle)] py-6 sm:py-8",
+    );
     expect(nutritionSetupReviewSource).toContain("Nutrition setup progress");
     expect(nutritionSetupRouteSource).toContain(
       'step === 3 ? (saving ? "Saving..." : submitLabel) : "Continue"',

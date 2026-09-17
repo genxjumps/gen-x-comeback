@@ -126,6 +126,10 @@
       "sha256": "1f9f4c648e0050322415d0be49bf1bff1c51b20956576563f4be9573d6d70ddb"
     },
     {
+      "path": "scripts/temp-nutrition-residue.py",
+      "sha256": "c46b7b8145b5ac4d9990cb6e3cf525e538b21a37d625eefa411d9775fa39f307"
+    },
+    {
       "path": "scripts/test-accelerator-refunds-db.mjs",
       "sha256": "a4d874d0af99fdfd1f9def25e5ea4c7e9d509d5b4e3f88f96fb8fa8da500c6d3"
     },
@@ -343,7 +347,7 @@
     },
     {
       "path": "src/lib/__tests__/app-review.test.ts",
-      "sha256": "5c7ee1847fbde0ce606137bad9eec542932b3d7ff71414f36a579ee2af6bb019"
+      "sha256": "ba9e99cdf6196ff29bb88ac61a073ccca5d1a3c236b7cfab05a15cf0e3551ad8"
     },
     {
       "path": "src/lib/__tests__/controlled-release.test.ts",
@@ -1383,7 +1387,7 @@
     },
     {
       "path": "src/routes/nutrition.tsx",
-      "sha256": "49cf4d36460b2ee820fcf804ce4e456a994513ed01da0145d358d258b34475dc"
+      "sha256": "e133f0840a48aca762de9efcc97706dde0e39d284dacdee61018a42b6bcff87d"
     },
     {
       "path": "src/routes/plan-ready.tsx",
