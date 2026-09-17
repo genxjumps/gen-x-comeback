@@ -98,18 +98,17 @@ second integration line.
 - Verify final Accelerator media, program-content readiness, and remaining launch requirements.
 - Complete staging and full paid-customer journey verification before live payments or public paid
   enrollment.
-- Continue reducing review-catalog drift in route-specific synthetic scenario compositions. Review
-  shell, navigation, buttons, sections, choices, and typography now inherit governed production
-  styles/primitives instead of maintaining parallel lookalikes.
+- Finish reconciling specialized synthetic review scenarios after the core Home, onboarding,
+  Progress, Nutrition, and Notifications review states are aligned with production patterns.
 
 ## Active checkpoint
 
-The Precision Utility participant-facing production-route migration is complete. The active internal
-checkpoint is review-catalog reconciliation: production PlatformShell and ReviewShell now share one
-visual style source, and review-only section/action/choice/status helpers delegate to governed
-Precision Utility or shared production primitives. Review scenarios keep fake data for state review,
-but production routes remain visual authority. Route-specific synthetic compositions, preview/admin
-surfaces, and the public sales page remain separate follow-up work.
+The Precision Utility participant-facing production-route migration is complete. Review-catalog
+reconciliation is now the active internal design checkpoint. Core synthetic Home, onboarding,
+Progress, Nutrition, and Notifications scenarios are being rebuilt with the same shared state, list,
+progress, button, typography, and structural patterns used by production. Review remains fake-data
+only and cannot redefine participant-facing design. Customer routes and behavior are outside this
+checkpoint.
 
 ## Updating this file
 

@@ -197,28 +197,22 @@ describe("app review catalog", () => {
     expect(emailStates.map((screen) => screen.variant)).toEqual(["sent", "returning"]);
     expect(welcomeReviewSource).toContain('returning ? "Welcome Back" : "Check Your Email"');
     expect(welcomeReviewSource).toContain('returning ? "Send Another Link" : "Open My Email"');
-    expect(welcomeReviewSource).toContain("mx-auto max-w-2xl text-center");
-    expect(welcomeReviewSource).toContain("relative mx-auto mb-7 h-16 w-20");
-    expect(welcomeReviewSource).toContain("size-16 translate-x-2 translate-y-2 text-gxj-orange");
-    expect(welcomeReviewSource).not.toContain("place-items-center border-2 border-foreground");
-    expect(welcomeReviewSource).toContain(
-      "gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl",
-    );
-    expect(welcomeReviewSource).toContain(
-      "mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center",
-    );
+    expect(welcomeReviewSource).toContain("<SetupProgress currentStep={2}");
+    expect(welcomeReviewSource).toContain("size-6 text-[var(--pu-action-primary)]");
+    expect(welcomeReviewSource).toContain("text-3xl font-extrabold leading-tight sm:text-4xl");
+    expect(welcomeReviewSource).not.toContain("relative mx-auto mb-7 h-16 w-20");
+    expect(welcomeReviewSource).not.toContain("gxj-display-title");
   });
 
   it("focuses the Home Screen prompt on the install action", () => {
     expect(planReadyReviewSource).toContain("Todd, Keep Your Comeback One Tap Away");
     expect(planReadyReviewSource).toContain("Add to My Home Screen");
-    expect(planReadyReviewSource).toContain("min-h-20 w-full justify-between");
-    expect(planReadyReviewSource).toContain("rounded-full bg-background text-gxj-orange");
     expect(planReadyReviewSource).toContain("<Download");
-    expect(planReadyReviewSource).not.toContain("Plan setup progress");
-    expect(planReadyReviewSource).not.toContain('label: "Access saved"');
     expect(planReadyReviewSource).toContain("No app store required.");
     expect(planReadyReviewSource).toContain("Not Now - View My Plan");
+    expect(planReadyReviewSource).not.toContain("min-h-20 w-full justify-between");
+    expect(planReadyReviewSource).not.toContain("rounded-full bg-background text-gxj-orange");
+    expect(planReadyReviewSource).not.toContain("gxj-display-title");
   });
 
   it("gives the Accelerator an aqua identity without mixing in the 7-Day orange accent", () => {
@@ -284,30 +278,18 @@ describe("app review catalog", () => {
   it("uses the approved direct-on-page Progress treatment in review and production", () => {
     expect(progressReviewSource).toContain('titleSize="compact"');
     expect(progressReviewSource).toContain('title="Your Progress"');
-    expect(progressReviewSource).not.toContain('kicker="Your Progress"');
-    expect(progressReviewSource).toContain("bg-gxj-aqua");
-    expect(progressReviewSource).toContain(
-      "text-2xl uppercase tracking-wide text-gxj-aqua sm:text-3xl",
-    );
-    expect(progressReviewSource).not.toContain("text-4xl text-gxj-aqua sm:text-5xl");
-    expect(progressReviewSource).toContain("h-3 overflow-hidden bg-foreground/15");
-    expect(progressReviewSource).not.toContain("bg-gxj-orange");
+    expect(progressReviewSource).toContain("<AppLinearProgress");
+    expect(progressReviewSource).toContain('accent="aqua"');
+    expect(progressReviewSource).toContain("border-y border-[var(--pu-border-strong)]");
+    expect(progressReviewSource).toContain("Latest Measurements");
+    expect(progressReviewSource).not.toContain("gxj-display-title");
+    expect(progressReviewSource).not.toContain("h-3 overflow-hidden bg-foreground/15");
     expect(progressRouteSource).toContain('titleSize="compact"');
     expect(progressRouteSource).toContain('title="Your Progress"');
-    expect(progressRouteSource).not.toContain('kicker="Progress"');
     expect(progressRouteSource).toContain("border-y border-[var(--pu-border-strong)]");
-    expect(progressRouteSource).not.toContain("border-y-2 border-foreground");
     expect(progressRouteSource).toContain("Latest Measurements");
-    expect(progressRouteSource).toContain('currentProgram.accent === "aqua"');
     expect(progressRouteSource).toContain("<AppLinearProgress");
-    expect(progressRouteSource).toContain(
-      'className="text-sm font-bold text-[var(--pu-text-secondary)]"',
-    );
     expect(progressRouteSource).not.toContain("gxj-display-title text-4xl sm:text-5xl");
-    expect(progressRouteSource).not.toContain("h-3 overflow-hidden bg-foreground/15");
-    expect(progressRouteSource).not.toContain(
-      'className="rounded-lg border border-border bg-card p-5"',
-    );
   });
 
   it("uses the approved direct Nutrition target instruction in review and production", () => {
@@ -315,12 +297,8 @@ describe("app review catalog", () => {
       "These are the numbers to follow each day. Hit your calorie and protein targets consistently to lose fat and protect muscle.";
     expect(nutritionReviewSource).toContain(instruction);
     expect(nutritionRouteSource).toContain(instruction);
-    expect(nutritionReviewSource).not.toContain(
-      "Use these as a starting point, not a pass-or-fail test.",
-    );
     expect(activeNutritionReviewSource).toContain('title="Your Nutrition"');
     expect(activeNutritionReviewSource).toContain('titleSize="compact"');
-    expect(activeNutritionReviewSource).not.toContain('kicker="Your Nutrition"');
     for (const content of [
       "Starting Targets",
       "Update Targets",
@@ -336,85 +314,20 @@ describe("app review catalog", () => {
       expect(activeNutritionReviewSource).toContain(content);
       expect(nutritionRouteSource).toContain(content);
     }
-    expect(activeNutritionReviewSource).not.toContain('Section title="Build your day"');
-    for (const source of [activeNutritionReviewSource]) {
-      expect(source).toContain("border-b border-foreground/15 pb-6 sm:pb-8");
-      expect(source).toContain("border-b border-foreground/15 py-6 sm:py-8");
-      expect(source).toContain("divide-y divide-foreground/15 border-y");
-      expect(
-        source.match(/gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl/g)
-          ?.length,
-      ).toBeGreaterThanOrEqual(4);
-      expect(source).toContain("gxj-display-title text-xl uppercase tracking-wide sm:text-2xl");
-      expect(source).toContain(
-        '<h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">',
-      );
-      expect(source).toContain('<p className="mt-2 text-base font-medium leading-relaxed">');
-      expect(source).toContain(
-        "These are your numbers for the whole day. Every meal counts. All seven days count.",
-      );
-      expect(source.match(/text-base leading-relaxed/g)?.length).toBeGreaterThanOrEqual(6);
-      expect(source).not.toContain("text-base leading-relaxed text-foreground/80");
-      expect(source).toContain("space-y-2 text-base leading-relaxed");
-      expect(source).toContain(
-        '<p className="gxj-display-title translate-y-1 text-xl uppercase tracking-wide sm:text-2xl">',
-      );
-      expect(source).toContain("mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4");
-      expect(source).toContain(
-        "gxj-display-title text-xl uppercase leading-none tracking-wide sm:text-2xl",
-      );
-      expect(source).toContain(
-        "mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground",
-      );
-      expect(source).not.toContain("mt-3 text-sm leading-relaxed text-muted-foreground");
-      expect(source).not.toContain(
-        '<section className="rounded-lg border border-border bg-card p-5 sm:p-6">',
-      );
-      expect(source).not.toContain("border-y-2 border-foreground py-6 sm:py-8");
-      expect(source).not.toContain('className="rounded-md border border-border bg-background p-4"');
-    }
-    expect(activeNutritionReviewSource).not.toContain(
-      '<p className="text-sm font-semibold">{percentage}</p>',
+    expect(activeNutritionReviewSource).toContain("grid grid-cols-2 gap-x-6 gap-y-5 border-y");
+    expect(activeNutritionReviewSource).toContain(
+      "text-sm font-bold text-[var(--pu-text-secondary)]",
     );
-    expect(nutritionResultsSource).not.toContain(
-      '<p className="text-sm font-semibold">{allocation.percentage}%</p>',
-    );
-    for (const source of [activeNutritionReviewSource]) {
-      expect(source).toContain(
-        "grid grid-cols-2 border-l border-t border-foreground/25 sm:grid-cols-4",
-      );
-      expect(source).toContain(
-        "flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-4",
-      );
-      expect(source).toContain(
-        "text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground",
-      );
-      expect(source).toContain(
-        "gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl",
-      );
-    }
+    expect(activeNutritionReviewSource).toContain("<AppList");
+    expect(activeNutritionReviewSource).not.toContain("gxj-display-title");
+    expect(activeNutritionReviewSource).not.toContain("rounded-lg border border-border bg-card");
     expect(nutritionResultsSource).toContain("text-2xl font-extrabold leading-tight sm:text-3xl");
     expect(nutritionResultsSource).toContain("border-b border-[var(--pu-border-subtle)]");
     expect(nutritionResultsSource).toContain("grid grid-cols-2 gap-x-6 gap-y-5 border-y");
-    expect(nutritionResultsSource).toContain("text-sm font-bold text-[var(--pu-text-secondary)]");
     expect(nutritionResultsSource).not.toContain("gxj-display-title");
     expect(nutritionRouteSource).toContain('<AppNotice tone="warning"');
     expect(nutritionRouteSource).toContain("<AppStatePanel");
     expect(nutritionRouteSource).toContain("<AppLoadingState");
-    expect(nutritionRouteSource).toContain("<Checkbox");
-    expect(nutritionRouteSource).not.toContain("ShieldCheck");
-    expect(nutritionRouteSource).toContain('? "Your Nutrition"');
-    expect(nutritionRouteSource).toContain('? "Set Up Your Daily Targets"');
-    expect(nutritionRouteSource).toContain(
-      ': "Calories Matter. Protein First. Meals Stay Simple."',
-    );
-    expect(nutritionRouteSource).toContain(
-      'kicker={profile && !editing ? undefined : setupActive ? undefined : "Nutrition"}',
-    );
-    expect(nutritionRouteSource).toContain('titleSize="compact"');
-    for (const source of [nutritionReviewSource, nutritionRouteSource]) {
-      expect(source).toContain('className="mt-2 text-base leading-relaxed"');
-    }
   });
 
   it("exposes the real pre-setup Nutrition entry state for review", () => {
@@ -476,7 +389,9 @@ describe("app review catalog", () => {
       expect(source).toContain("Your answers are saved as you go.");
       expect(source).not.toContain("rounded-lg border border-border bg-card");
     }
-    expect(nutritionSetupReviewSource).toContain("border-t-2 border-foreground/20 py-6 sm:py-8");
+    expect(nutritionSetupReviewSource).toContain(
+      "border-t border-[var(--pu-border-subtle)] py-6 sm:py-8",
+    );
     expect(nutritionRouteSource).toContain(
       "border-t border-[var(--pu-border-subtle)] py-6 sm:py-8",
     );

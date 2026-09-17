@@ -18,6 +18,14 @@ import type { ReactNode } from "react";
 import { AcceleratorOfferPage } from "@/components/accelerator-offer-page";
 import { PlatformPage } from "@/components/platform-page";
 import {
+  AppLinearProgress,
+  AppList,
+  AppListRow,
+  AppLoadingState,
+  AppNotice,
+  AppStatePanel,
+} from "@/components/precision-surfaces";
+import {
   PuCheckboxChoice,
   PuEyebrow,
   PuHeading,
@@ -136,146 +144,101 @@ function Page({
 }
 
 function HomeReview({ variant }: { variant: string }) {
-  const daily =
-    variant === "accelerator"
-      ? {
-          kicker: "Day 9 of 28",
-          title: "Upper Body B",
-          description: "Your strength workout is ready.",
-          button: "Open Today's Workout",
-        }
-      : variant === "empty"
-        ? {
-            kicker: "Your Next Step",
-            title: "Choose What Comes Next",
-            description: "Your programs and progress are saved here.",
-            button: "Open My Programs",
-          }
-        : variant === "loading"
-          ? {
-              kicker: "Your Next Step",
-              title: "Loading Today's Workout",
-              description: "We're getting your plan ready.",
-              button: "",
-            }
-          : variant === "error"
-            ? {
-                kicker: "Your Next Step",
-                title: "Your Programs Couldn't Be Loaded",
-                description: "Open My Programs to try again.",
-                button: "Open My Programs",
-              }
-            : {
-                kicker: "Day 3 of 7",
-                title: "Jump + Strength",
-                description: "Your next workout is ready.",
-                button: "Open Day 3",
-              };
   const summary =
-    variant === "loading"
-      ? ["Loading...", "Loading...", "Loading..."]
-      : variant === "error"
-        ? ["Open to try again", "Open to try again", "Not unlocked"]
-        : variant === "empty"
-          ? ["1 program", "No measurements yet", "Set up your daily targets"]
-          : ["2 programs", "Weight: 175 lb", "2,100 calories per day"];
+    variant === "empty"
+      ? ["1 program", "No measurements yet", "Set up your daily targets"]
+      : ["2 programs", "Weight: 175 lb", "2,100 calories per day"];
   const rows = [
-    { title: "Programs", line: summary[0], icon: Dumbbell, href: "/review/programs-active" },
-    {
-      title: "Progress",
-      line: summary[1],
-      icon: ChartNoAxesColumnIncreasing,
-      href: "/review/progress-active",
-    },
-    { title: "Nutrition", line: summary[2], icon: Apple, href: "/review/nutrition-active" },
+    { title: "Programs", line: summary[0], icon: Dumbbell },
+    { title: "Progress", line: summary[1], icon: ChartNoAxesColumnIncreasing },
+    { title: "Nutrition", line: summary[2], icon: Apple },
   ];
 
-  if (variant === "seven-day") {
+  if (variant === "loading") {
     return (
-      <div className="mx-auto min-h-full w-full max-w-5xl pb-10 pt-4 sm:pb-14 sm:pt-6">
-        <div className="mx-auto max-w-3xl">
-          <p className="gxj-display-title text-3xl uppercase tracking-wide sm:text-4xl">
-            Today&rsquo;s Workout
-          </p>
-          <WorkoutLaunchPanel
-            day={3}
-            title={WORKOUTS.W03.title}
-            actionLabel="Open Today’s Workout"
-            href="/review/workout-day-3-ready"
-          />
-        </div>
-
-        <section className="mx-auto mt-8 max-w-3xl" aria-labelledby="fitness-hub">
-          <h2
-            id="fitness-hub"
-            className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl"
-          >
-            Your Gen X Jumps Fitness Hub
-          </h2>
-          <div className="mt-3 divide-y divide-foreground/15 border-t-2 border-foreground">
-            {rows.map(({ title, line, icon: Icon, href }) => (
-              <a
-                href={href}
-                aria-label={`Open ${title}`}
-                key={title}
-                className="group -mx-3 grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-4 px-3 py-5 transition-colors hover:bg-foreground/[0.035] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gxj-orange focus-visible:ring-offset-2"
-              >
-                <Icon className="size-5" aria-hidden="true" />
-                <div>
-                  <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
-                    {title}
-                  </h3>
-                  <p className="mt-1 text-sm font-medium">{line}</p>
-                </div>
-                <ArrowRight
-                  className="size-5 transition-transform group-hover:translate-x-1"
-                  aria-hidden="true"
-                />
-              </a>
-            ))}
-          </div>
-        </section>
-      </div>
+      <Page title="Home" description="We’re getting your plan ready." titleSize="compact">
+        <AppLoadingState label="Loading Home" />
+      </Page>
     );
   }
 
+  if (variant === "error") {
+    return (
+      <Page title="Home" description="Your saved work hasn’t changed." titleSize="compact">
+        <AppStatePanel
+          state="error"
+          title="Your Programs Couldn't Be Loaded"
+          description="Open My Programs to try again."
+          action={<Action>Open My Programs</Action>}
+        />
+      </Page>
+    );
+  }
+
+  const sevenDay = variant === "seven-day";
+  const accelerator = variant === "accelerator";
+  const empty = variant === "empty";
+  const kicker = sevenDay ? "Day 3 of 7" : accelerator ? "Day 9 of 28" : "Your Next Step";
+  const title = sevenDay
+    ? WORKOUTS.W03.title
+    : accelerator
+      ? "Upper Body B"
+      : "Choose What Comes Next";
+  const description = sevenDay
+    ? "Your next workout is ready."
+    : accelerator
+      ? "Your strength workout is ready."
+      : "Your programs and progress are saved here.";
+  const action = accelerator ? "Open Today's Workout" : empty ? "Open My Programs" : null;
+
   return (
-    <div className="mx-auto min-h-full w-full max-w-5xl pb-10 sm:pb-14">
-      <header className="pb-6 pt-4 sm:pb-8 sm:pt-6">
-        <div className="max-w-2xl">
-          <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">{daily.kicker}</p>
-          <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
-            {daily.title}
-          </h1>
-          <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80 sm:text-lg">
-            {daily.description}
-          </p>
-          {daily.button ? (
-            <div className="mt-6">
-              <Action>
-                {daily.button}
-                <ArrowRight className="size-4" />
-              </Action>
-            </div>
-          ) : null}
+    <Page
+      kicker={kicker}
+      title={title}
+      description={description}
+      titleSize="compact"
+      contentGap="tight"
+    >
+      {sevenDay ? (
+        <WorkoutLaunchPanel
+          day={3}
+          title={WORKOUTS.W03.title}
+          actionLabel="Open Today’s Workout"
+          href="/review/workout-day-3-ready"
+        />
+      ) : action ? (
+        <div>
+          <Action>
+            {action}
+            <ArrowRight className="size-4" />
+          </Action>
         </div>
-      </header>
-      <div className="mx-auto max-w-3xl divide-y divide-foreground/15 py-2">
-        {rows.map(({ title, line, icon: Icon }) => (
-          <div
-            key={title}
-            className="grid min-h-24 grid-cols-[auto_1fr_auto] items-center gap-4 py-5"
-          >
-            <Icon className="size-5" aria-hidden="true" />
-            <div>
-              <h2 className="gxj-display-title text-2xl uppercase tracking-wide">{title}</h2>
-              <p className="mt-1 text-sm font-medium">{line}</p>
-            </div>
-            <ArrowRight className="size-5" aria-hidden="true" />
-          </div>
-        ))}
-      </div>
-    </div>
+      ) : null}
+
+      <section
+        className="mt-8 border-t border-[var(--pu-border-strong)] pt-6"
+        aria-labelledby="fitness-hub"
+      >
+        <h2 id="fitness-hub" className="text-2xl font-extrabold leading-tight sm:text-3xl">
+          Your Gen X Jumps Fitness Hub
+        </h2>
+        <AppList className="mt-4">
+          {rows.map(({ title: rowTitle, line, icon: Icon }) => (
+            <AppListRow
+              key={rowTitle}
+              title={
+                <span className="flex items-center gap-3">
+                  <Icon className="size-5" aria-hidden="true" />
+                  {rowTitle}
+                </span>
+              }
+              detail={line}
+              end={<ArrowRight className="size-5" aria-hidden="true" />}
+            />
+          ))}
+        </AppList>
+      </section>
+    </Page>
   );
 }
 
@@ -635,32 +598,8 @@ function AssessmentReview({ step }: { step: string }) {
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
       <header className="py-6 sm:py-8">
         <div className="max-w-2xl">
-          <div className="grid max-w-md grid-cols-3 gap-2" aria-label={`Step ${step} of 3`}>
-            {[1, 2, 3].map((segment) => {
-              const state =
-                segment < stepNumber ? "complete" : segment === stepNumber ? "current" : "upcoming";
-              return (
-                <div
-                  key={segment}
-                  aria-current={state === "current" ? "step" : undefined}
-                  className={`flex min-h-11 items-center px-3 ${
-                    state === "complete"
-                      ? "bg-foreground text-background"
-                      : state === "current"
-                        ? "bg-gxj-orange text-white shadow-[2px_2px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
-                        : "border-2 border-foreground/20 text-foreground/35"
-                  }`}
-                >
-                  <span className="gxj-display-title text-xl leading-none tracking-wide">
-                    {String(segment).padStart(2, "0")}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-          <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
-            {title}
-          </h1>
+          <SetupProgress currentStep={stepNumber} label={`Step ${step} of 3`} />
+          <h1 className="mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">{title}</h1>
           <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
             {description}
           </p>
@@ -672,7 +611,7 @@ function AssessmentReview({ step }: { step: string }) {
           ? questions.map((question, questionIndex) => (
               <section
                 key={question.heading}
-                className="border-t-2 border-foreground/20 py-6 sm:py-8"
+                className="border-t border-[var(--pu-border-subtle)] py-6 sm:py-8"
               >
                 <h2 className="text-xl font-bold leading-snug sm:text-2xl">{question.heading}</h2>
                 <div
@@ -701,7 +640,7 @@ function AssessmentReview({ step }: { step: string }) {
 
         {step === "3" ? (
           <>
-            <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+            <section className="border-t border-[var(--pu-border-subtle)] py-6 sm:py-8">
               <h2 className="text-xl font-bold leading-snug sm:text-2xl">
                 Which of these do you regularly have access to for your workouts?
               </h2>
@@ -723,7 +662,7 @@ function AssessmentReview({ step }: { step: string }) {
               </div>
             </section>
 
-            <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+            <section className="border-t border-[var(--pu-border-subtle)] py-6 sm:py-8">
               <h2 className="text-xl font-bold leading-snug sm:text-2xl">
                 How many days per week can you realistically and consistently complete a short
                 workout?
@@ -737,21 +676,21 @@ function AssessmentReview({ step }: { step: string }) {
               </div>
             </section>
 
-            <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+            <section className="border-t border-[var(--pu-border-subtle)] py-6 sm:py-8">
               <h2 className="text-xl font-bold leading-snug sm:text-2xl">Current weight</h2>
               <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
                 Optional. I’ll use your weight to estimate how much protein to eat each day to help
                 maintain muscle while you lose fat. It won’t change your workouts.
               </p>
-              <div className="mt-4 flex min-h-14 max-w-md overflow-hidden border-2 border-foreground/25 bg-background">
+              <div className="mt-4 flex min-h-14 max-w-md overflow-hidden border border-[var(--pu-border-strong)] bg-[var(--pu-surface-contained)]">
                 <Input
                   aria-label="Current weight"
                   className="h-14 min-w-0 flex-1 rounded-none border-0 bg-transparent px-4 text-lg font-semibold shadow-none"
                   placeholder="Optional"
                   readOnly
                 />
-                <div className="flex items-center gap-1 border-l-2 border-foreground/20 bg-foreground/5 p-1">
-                  <span className="grid size-11 place-items-center bg-foreground font-bold text-background">
+                <div className="flex items-center gap-1 border-l border-[var(--pu-border-subtle)] bg-[var(--pu-surface-subtle)] p-1">
+                  <span className="grid size-11 place-items-center bg-[var(--pu-text-primary)] font-bold text-white">
                     lb
                   </span>
                   <span className="grid size-11 place-items-center font-bold">kg</span>
@@ -762,7 +701,7 @@ function AssessmentReview({ step }: { step: string }) {
         ) : null}
       </div>
 
-      <div className="mx-auto mt-1 flex max-w-3xl flex-col-reverse gap-3 border-t border-foreground/20 pt-5 sm:flex-row sm:justify-between">
+      <div className="mx-auto mt-1 flex max-w-3xl flex-col-reverse gap-3 border-t border-[var(--pu-border-subtle)] pt-5 sm:flex-row sm:justify-between">
         <Action outline>Back</Action>
         <Action>{step === "3" ? "Get My 7-Day Fitness Plan" : "Continue"}</Action>
       </div>
@@ -775,94 +714,75 @@ function AssessmentReview({ step }: { step: string }) {
 
 function AssessmentResultReview({ replace }: { replace: boolean }) {
   return (
-    <div className="mx-auto w-full max-w-2xl px-5 py-8 sm:py-12">
-      <Status>{replace ? "Plan Update" : "Your Plan Is Ready"}</Status>
-      <h1 className="gxj-display-title mt-4 text-5xl uppercase leading-none sm:text-6xl">
-        {replace ? "Review Your New Starting Point" : "Your 7-Day Comeback Starts Here"}
-      </h1>
-      <p className="mt-4 text-lg leading-relaxed">
-        Four short jump rope and strength days, two easier movement days, and one full recovery day.
-      </p>
-      <Section title="Your plan at a glance">
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <strong className="gxj-display-title text-4xl">7</strong>
-            <p className="text-sm">days</p>
-          </div>
-          <div>
-            <strong className="gxj-display-title text-4xl">4</strong>
-            <p className="text-sm">workouts</p>
-          </div>
-          <div>
-            <strong className="gxj-display-title text-4xl">15</strong>
-            <p className="text-sm">minutes</p>
-          </div>
+    <Page
+      kicker={replace ? "Plan Update" : "Your Plan Is Ready"}
+      title={
+        replace ? "Review Your New Starting Point" : "Your Personalized 7-Day Fitness Plan Is Ready"
+      }
+      description="Four short jump rope and strength days, two easier movement days, and one full recovery day."
+      titleSize="compact"
+    >
+      <section className="border-y border-[var(--pu-border-strong)] py-5">
+        <h2 className="text-2xl font-extrabold leading-tight">Your plan at a glance</h2>
+        <div className="mt-5 grid grid-cols-3 gap-4">
+          {[
+            ["7", "days"],
+            ["4", "workouts"],
+            ["15", "minutes"],
+          ].map(([value, label]) => (
+            <div key={label}>
+              <strong className="text-3xl font-extrabold leading-none">{value}</strong>
+              <p className="mt-1 text-sm text-[var(--pu-text-secondary)]">{label}</p>
+            </div>
+          ))}
         </div>
-      </Section>
+      </section>
       {replace ? (
-        <div className="mb-6 border-l-4 border-gxj-orange pl-4">
-          <p className="font-bold">Replacing this plan clears its current progress.</p>
-          <p className="mt-1 text-sm text-muted-foreground">
+        <AppNotice tone="warning">
+          <strong className="text-[var(--pu-text-primary)]">
+            Replacing this plan clears its current progress.
+          </strong>
+          <span className="mt-1 block">
             Your paid programs and completed program history stay in your account.
-          </p>
-        </div>
+          </span>
+        </AppNotice>
       ) : null}
       <Action>{replace ? "Replace My 7-Day Plan" : "Save My Plan"}</Action>
-    </div>
+    </Page>
   );
 }
 
 function WelcomeReview({ variant }: { variant: string }) {
   if (variant === "setup") {
-    const steps = [
-      { number: 1, label: "Access saved", state: "complete" },
-      { number: 2, label: "Quick setup", state: "current" },
-      { number: 3, label: "Plan ready", state: "upcoming" },
-    ] as const;
-
     return (
       <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
         <header className="py-6 sm:py-8">
           <div className="max-w-2xl">
-            <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-action-primary)]">
               Congratulations
             </p>
-            <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+            <h1 className="mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
               Todd, Let&rsquo;s Build Your Comeback Plan
             </h1>
-            <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--pu-text-secondary)]">
               Answer a few quick questions about your fitness, schedule, equipment, and any
               limitations. Then we&rsquo;ll build your personalized 7-day plan immediately.
             </p>
           </div>
         </header>
 
-        <ol className="grid max-w-3xl grid-cols-3 gap-2" aria-label="Plan setup progress">
-          {steps.map((item) => (
-            <li
-              key={item.label}
-              aria-current={item.state === "current" ? "step" : undefined}
-              className={`flex min-h-24 flex-col justify-between gap-4 p-3 sm:min-h-28 sm:p-4 ${
-                item.state === "complete"
-                  ? "bg-foreground text-background"
-                  : item.state === "current"
-                    ? "bg-gxj-orange text-white shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
-                    : "border-2 border-foreground/20 text-foreground/35"
-              }`}
-            >
-              <span className="gxj-display-title text-2xl leading-none tracking-wide sm:text-3xl">
-                {String(item.number).padStart(2, "0")}
-              </span>
-              <span className="text-xs font-bold uppercase leading-tight tracking-[0.08em] sm:text-sm">
-                {item.label}
-              </span>
-            </li>
-          ))}
-        </ol>
+        <div className="max-w-3xl">
+          <SetupProgress currentStep={2} label="Plan setup progress" />
+          <div className="mt-2 grid grid-cols-3 gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--pu-text-secondary)]">
+            <span>Access saved</span>
+            <span className="text-[var(--pu-action-primary)]">Quick setup</span>
+            <span>Plan ready</span>
+          </div>
+        </div>
 
-        <div className="mt-7 max-w-3xl border-t border-foreground/20 pt-5">
+        <div className="mt-7 max-w-3xl border-t border-[var(--pu-border-subtle)] pt-5">
           <Action>Create My 7-Day Plan</Action>
-          <p className="mt-3 text-sm font-medium text-muted-foreground">
+          <p className="mt-3 text-sm text-[var(--pu-text-secondary)]">
             About 2 minutes. No password required.
           </p>
         </div>
@@ -875,17 +795,16 @@ function WelcomeReview({ variant }: { variant: string }) {
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
       <header className="py-6 sm:py-8">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="relative mx-auto mb-7 h-16 w-20" aria-hidden="true">
-            <Mail
-              className="absolute inset-0 size-16 translate-x-2 translate-y-2 text-gxj-orange"
-              strokeWidth={2.2}
-            />
-            <Mail className="absolute inset-0 size-16 text-foreground" strokeWidth={2.2} />
+          <div
+            className="mx-auto mb-6 grid size-12 place-items-center rounded-[var(--pu-radius-contained)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)]"
+            aria-hidden="true"
+          >
+            <Mail className="size-6 text-[var(--pu-action-primary)]" strokeWidth={2} />
           </div>
-          <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+          <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
             {returning ? "Welcome Back" : "Check Your Email"}
           </h1>
-          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+          <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-[var(--pu-text-secondary)]">
             {returning
               ? "We found an existing Gen X Jumps account. Use the secure link we sent to get back in."
               : "Your secure access link is on its way. Open it on the device where you want to use your plan."}
@@ -893,7 +812,7 @@ function WelcomeReview({ variant }: { variant: string }) {
         </div>
       </header>
 
-      <div className="mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center">
+      <div className="mx-auto max-w-3xl border-t border-[var(--pu-border-subtle)] pt-5 text-center">
         <Action>{returning ? "Send Another Link" : "Open My Email"}</Action>
       </div>
     </div>
@@ -902,42 +821,26 @@ function WelcomeReview({ variant }: { variant: string }) {
 
 function PlanReadyReview() {
   return (
-    <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
-      <header className="py-6 sm:py-8">
-        <div className="max-w-2xl">
-          <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
-            Your Plan Is Ready
-          </p>
-          <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
-            Todd, Keep Your Comeback One Tap Away
-          </h1>
-          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
-            Add Gen X Jumps to your Home Screen for quick access to your workouts, nutrition
-            targets, and progress.
-          </p>
-        </div>
-      </header>
-
-      <div className="max-w-2xl">
-        <Button
-          type="button"
-          size="lg"
-          className="gxj-display-title min-h-20 w-full justify-between gap-5 bg-foreground px-5 text-left text-2xl uppercase leading-none tracking-wide text-background shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_14%,transparent)] hover:bg-foreground/90 sm:px-7 sm:text-3xl"
-        >
+    <Page
+      kicker="Your Plan Is Ready"
+      title="Todd, Keep Your Comeback One Tap Away"
+      description="Add Gen X Jumps to your Home Screen for quick access to your workouts, nutrition targets, and progress."
+      titleSize="compact"
+    >
+      <div className="max-w-lg">
+        <Action>
+          <Download aria-hidden="true" className="size-4" />
           Add to My Home Screen
-          <span className="grid size-11 shrink-0 place-items-center rounded-full bg-background text-gxj-orange sm:size-12">
-            <Download aria-hidden="true" className="size-5" strokeWidth={2.5} />
-          </span>
-        </Button>
-        <p className="mt-3 text-sm font-medium text-muted-foreground">No app store required.</p>
+        </Action>
+        <p className="mt-3 text-sm text-[var(--pu-text-secondary)]">No app store required.</p>
         <button
           type="button"
-          className="mt-5 block min-h-11 text-sm font-medium text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          className="mt-5 block min-h-11 text-sm font-medium text-[var(--pu-text-secondary)] underline-offset-4 hover:text-[var(--pu-text-primary)] hover:underline"
         >
           Not Now - View My Plan
         </button>
       </div>
-    </div>
+    </Page>
   );
 }
 
@@ -1572,18 +1475,24 @@ function HistoryReview() {
 }
 
 function ProgressReview({ variant }: { variant: string }) {
-  if (variant === "error")
+  if (variant === "error") {
     return (
       <Page
         title="Your Progress"
         description="Your saved work hasn't been changed."
         titleSize="compact"
       >
-        <Section title="Progress Couldn't Be Loaded">
-          <Action>Try Again</Action>
-        </Section>
+        <AppStatePanel
+          state="error"
+          title="Progress Couldn't Be Loaded"
+          description="Try again without leaving the app."
+          action={<Action>Try Again</Action>}
+        />
       </Page>
     );
+  }
+
+  const percent = variant === "empty" ? 0 : 32;
   return (
     <Page
       title="Your Progress"
@@ -1594,50 +1503,54 @@ function ProgressReview({ variant }: { variant: string }) {
       }
       titleSize="compact"
     >
-      <Section title="Current program">
+      <section className="border-y border-[var(--pu-border-strong)] py-5">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.14em]">
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
               28-Day Fat Loss Accelerator
             </p>
-            <p className="gxj-display-title mt-1 text-2xl uppercase tracking-wide sm:text-3xl">
+            <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
               {variant === "empty" ? "0" : "9"} of 28 Days Complete
-            </p>
+            </h2>
           </div>
-          <p className="gxj-display-title text-2xl uppercase tracking-wide text-gxj-aqua sm:text-3xl">
-            {variant === "empty" ? "0%" : "32%"}
-          </p>
+          <p className="text-sm font-bold text-[var(--pu-text-secondary)]">{percent}%</p>
         </div>
-        <div className="mt-4 h-3 overflow-hidden bg-foreground/15">
-          <div
-            className="h-full bg-gxj-aqua"
-            style={{ width: variant === "empty" ? "0%" : "32%" }}
-          />
-        </div>
-      </Section>
+        <AppLinearProgress
+          value={percent}
+          label="Accelerator progress"
+          accent="aqua"
+          className="mt-4"
+        />
+      </section>
+
       {variant !== "empty" ? (
-        <Section title="Measurements">
-          <div className="grid gap-6 sm:grid-cols-2">
+        <section className="border-b border-[var(--pu-border-subtle)] py-6">
+          <h2 className="text-2xl font-extrabold leading-tight">Latest Measurements</h2>
+          <div className="mt-5 grid gap-6 sm:grid-cols-2">
             <div>
-              <p className="text-sm text-muted-foreground">Weight</p>
-              <p className="gxj-display-title mt-1 text-4xl">175 lb</p>
+              <p className="text-sm text-[var(--pu-text-secondary)]">Weight</p>
+              <p className="mt-1 text-3xl font-extrabold">175 lb</p>
               <p className="text-sm">Down 4 lb</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Waist</p>
-              <p className="gxj-display-title mt-1 text-4xl">34 in</p>
+              <p className="text-sm text-[var(--pu-text-secondary)]">Waist</p>
+              <p className="mt-1 text-3xl font-extrabold">34 in</p>
               <p className="text-sm">Down 1 in</p>
             </div>
           </div>
-        </Section>
+        </section>
       ) : (
-        <Action>Add Starting Measurements</Action>
+        <div className="pt-5">
+          <Action>Add Starting Measurements</Action>
+        </div>
       )}
+
       {variant === "history" ? (
-        <Section title="Completed programs">
-          <p className="font-bold">28-Day Accelerator</p>
-          <p className="text-sm text-muted-foreground">Completed August 28, 2026</p>
-        </Section>
+        <section className="border-b border-[var(--pu-border-subtle)] py-6">
+          <h2 className="text-2xl font-extrabold leading-tight">Completed Programs</h2>
+          <p className="mt-4 font-bold">28-Day Accelerator</p>
+          <p className="text-sm text-[var(--pu-text-secondary)]">Completed August 28, 2026</p>
+        </section>
       ) : null}
     </Page>
   );
@@ -1653,7 +1566,7 @@ function NutritionSetupSection({
   children: ReactNode;
 }) {
   return (
-    <section className="border-t-2 border-foreground/20 py-6 sm:py-8">
+    <section className="border-t border-[var(--pu-border-subtle)] py-6 sm:py-8">
       <h2 className="text-xl font-bold leading-snug sm:text-2xl">{title}</h2>
       {hint ? <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{hint}</p> : null}
       <div className="mt-4">{children}</div>
@@ -1791,42 +1704,44 @@ function NutritionSetupReview({ step }: { step: 1 | 2 | 3 }) {
 }
 
 function NutritionReview({ variant }: { variant: string }) {
-  if (variant === "error")
+  if (variant === "error") {
     return (
-      <Page
-        kicker="Your Nutrition"
-        title="Nutrition Couldn't Be Loaded"
-        description="We couldn't confirm your account or load your saved nutrition targets. Nothing was changed."
-      >
-        <Action>Try Again</Action>
-        <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+      <Page title="Your Nutrition" titleSize="compact">
+        <AppStatePanel
+          state="error"
+          title="Nutrition Couldn't Be Loaded"
+          description="We couldn't confirm your account or load your saved nutrition targets. Nothing was changed."
+          action={<Action>Try Again</Action>}
+        />
+        <p className="mt-4 text-sm text-[var(--pu-text-secondary)]">
           Still not working?{" "}
-          <span className="font-semibold text-foreground underline underline-offset-4">
+          <span className="font-semibold text-[var(--pu-text-primary)] underline underline-offset-4">
             Sign in again.
           </span>
         </p>
       </Page>
     );
-  if (variant === "locked")
+  }
+
+  if (variant === "locked") {
     return (
       <Page
         kicker="Your Nutrition"
         title="Simple Targets That Fit Your Plan"
         description="Nutrition guidance unlocks with an eligible paid program."
+        titleSize="compact"
       >
-        <Section>
-          <div className="text-center">
-            <ShieldCheck className="mx-auto size-8" />
-            <h2 className="gxj-display-title mt-4 text-3xl uppercase">Not Unlocked</h2>
-            <p className="mt-2 text-muted-foreground">
-              Included with the 28-Day Fat Loss Accelerator.
-            </p>
-          </div>
-        </Section>
-        <Action>Explore the Accelerator</Action>
+        <AppStatePanel
+          state="locked"
+          title="Not Unlocked"
+          description="Included with the 28-Day Fat Loss Accelerator."
+          action={<Action>Explore the Accelerator</Action>}
+        />
       </Page>
     );
-  if (variant === "welcome")
+  }
+
+  if (variant === "welcome") {
     return (
       <Page
         kicker="Nutrition"
@@ -1846,10 +1761,25 @@ function NutritionReview({ variant }: { variant: string }) {
         </div>
       </Page>
     );
+  }
+
   if (variant.startsWith("setup")) {
     const step = variant === "setup-2" ? 2 : variant === "setup-3" ? 3 : 1;
     return <NutritionSetupReview step={step} />;
   }
+
+  const targets = [
+    ["Calories", "2,100"],
+    ["Protein", "175 g"],
+    ["Carbs", "210 g"],
+    ["Fat", "62 g"],
+  ] as const;
+  const meals = [
+    ["Breakfast", "25%", "525 cal · 44 g protein"],
+    ["Lunch", "25%", "525 cal · 44 g protein"],
+    ["Dinner", "50%", "1,050 cal · 87 g protein"],
+  ] as const;
+
   return (
     <Page
       title="Your Nutrition"
@@ -1857,292 +1787,133 @@ function NutritionReview({ variant }: { variant: string }) {
       titleSize="compact"
     >
       {variant === "review" ? (
-        <Section>
-          <Status>Target Review</Status>
-          <h2 className="gxj-display-title mt-4 text-3xl uppercase">Your Weight Changed</h2>
-          <p className="mt-2 text-base leading-relaxed">
-            Review the proposed update before anything changes.
-          </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <p>
-              <strong>Calories</strong>
-              <br />
-              2,100 to 2,040
-            </p>
-            <p>
-              <strong>Protein</strong>
-              <br />
-              175 g to 170 g
-            </p>
-          </div>
-          <div className="mt-5">
-            <Action>Review Updated Targets</Action>
-          </div>
-        </Section>
+        <AppNotice tone="warning">
+          <strong className="text-[var(--pu-text-primary)]">Your Weight Changed</strong>
+          <span className="mt-1 block">Review the proposed update before anything changes.</span>
+          <span className="mt-2 block">Calories: 2,100 to 2,040 · Protein: 175 g to 170 g</span>
+        </AppNotice>
       ) : null}
-      <div>
-        <section className="border-b border-foreground/15 pb-6 sm:pb-8">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-                Starting Targets
-              </h2>
-              <p className="mt-2 text-base font-medium leading-relaxed">
-                These are your numbers for the whole day. Every meal counts. All seven days count.
-              </p>
-            </div>
-            <Button type="button" variant="outline">
-              Update Targets
-            </Button>
-          </div>
 
-          <div className="mt-5 grid grid-cols-2 border-l border-t border-foreground/25 sm:grid-cols-4">
-            {[
-              ["Calories", "2,100"],
-              ["Protein", "175 g"],
-              ["Carbs", "210 g"],
-              ["Fat", "62 g"],
-            ].map(([label, value]) => (
-              <div
-                key={label}
-                className="flex min-h-32 flex-col justify-center border-b border-r border-foreground/25 p-4"
-              >
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">
-                  {label}
-                </p>
-                <p className="gxj-display-title mt-3 text-xl uppercase leading-[0.95] tracking-wide sm:text-2xl">
-                  {value}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <details className="mt-4 rounded-md border border-border bg-muted/30 p-3">
-            <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold">
-              <Info aria-hidden="true" className="size-4" />
-              What are these?
-            </summary>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-              Starting estimate, not medical nutrition advice. If you follow a medical diet or have
-              been told to limit protein, work with a registered dietitian.
+      <section className="border-b border-[var(--pu-border-subtle)] pb-6 sm:pb-8">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-extrabold leading-tight sm:text-3xl">Starting Targets</h2>
+            <p className="mt-2 text-base leading-relaxed">
+              These are your numbers for the whole day. Every meal counts. All seven days count.
             </p>
-          </details>
-        </section>
-
-        <section className="border-b border-foreground/15 py-6 sm:py-8">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
-                Your Normal Day
-              </p>
-              <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
-                See how the numbers work across your day.
-              </h2>
-            </div>
-            <Button type="button" variant="outline" size="sm">
-              Adjust Your Day
-            </Button>
           </div>
-          <p className="mt-3 text-base leading-relaxed">
-            Adjust the sliders to match how you actually eat. This changes the split, not your daily
-            totals.
-          </p>
-          <div className="mt-5 divide-y divide-foreground/15 border-y border-foreground/15">
-            {[
-              {
-                meal: "Breakfast",
-                percentage: "25%",
-                targets: [
-                  { label: "Calories", value: "525" },
-                  { label: "Protein", value: "44 g" },
-                  { label: "Carbs", value: "53 g" },
-                  { label: "Fat", value: "16 g" },
-                ],
-              },
-              {
-                meal: "Lunch",
-                percentage: "25%",
-                targets: [
-                  { label: "Calories", value: "525" },
-                  { label: "Protein", value: "44 g" },
-                  { label: "Carbs", value: "53 g" },
-                  { label: "Fat", value: "16 g" },
-                ],
-              },
-              {
-                meal: "Dinner",
-                percentage: "50%",
-                targets: [
-                  { label: "Calories", value: "1,050" },
-                  { label: "Protein", value: "87 g" },
-                  { label: "Carbs", value: "104 g" },
-                  { label: "Fat", value: "30 g" },
-                ],
-              },
-            ].map(({ meal, percentage, targets }) => (
-              <div key={meal} className="py-4">
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
-                    {meal}
-                  </h3>
-                  <p className="gxj-display-title translate-y-1 text-xl uppercase tracking-wide sm:text-2xl">
-                    {percentage}
-                  </p>
-                </div>
-                <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-4">
-                  {targets.map(({ label, value }) => (
-                    <div key={label}>
-                      <p className="gxj-display-title text-xl uppercase leading-none tracking-wide sm:text-2xl">
-                        {value}
-                      </p>
-                      <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                        {label}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="border-b border-foreground/15 py-6 sm:py-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
-            Build Meals That Work
-          </p>
-          <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
-            Keep the food simple.
-          </h2>
-          <p className="mt-3 text-base leading-relaxed">
-            Start with protein. Use labels, serving sizes, and standard nutrition information to fit
-            the rest of each meal to its numbers. A small rotation is enough: one or two breakfasts,
-            one or two lunches, up to three dinners, and a few smart snack options.
-          </p>
-          <p className="mt-3 text-base leading-relaxed">
-            Lean meat, eggs, potatoes, rice, beans, vegetables, fruit, yogurt, and other foods with
-            predictable numbers make this easier. Plenty of filling, enjoyable food fits the plan.
-            You do not have to go hungry.
-          </p>
-        </section>
-
-        <section className="border-b border-foreground/15 py-6 sm:py-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
-            My Normal Day
-          </p>
-          <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
-            I keep the structure and adjust the extras.
-          </h2>
-          <p className="mt-3 text-base leading-relaxed">
-            Most of my meals stay the same when I want to lean out. I do not rebuild my whole diet.
-            I remove or reduce the parts adding extra calories while keeping the protein-centered
-            structure and foods I already like.
-          </p>
-          <div className="mt-5 grid divide-y divide-foreground/15 border-y border-foreground/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-            <div className="py-4 sm:py-0 sm:pr-5">
-              <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
-                Maintenance
-              </h3>
-              <ul className="mt-3 space-y-2 text-base leading-relaxed">
-                <li>
-                  <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 1/2 cup uncooked
-                  oatmeal, 5 g creatine
-                </li>
-                <li>
-                  <strong>Lunch:</strong> 1 banana and 25 g protein powder
-                </li>
-                <li>
-                  <strong>Dinner:</strong> 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato,
-                  1/2 can black beans, 1/2 can sweet peas, hot sauce
-                </li>
-                <li>
-                  <strong>Dessert:</strong> 50 g protein powder
-                </li>
-              </ul>
+          <Button type="button" variant="outline">
+            Update Targets
+          </Button>
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-x-6 gap-y-5 border-y border-[var(--pu-border-subtle)] py-5 sm:grid-cols-4">
+          {targets.map(([label, value]) => (
+            <div key={label}>
+              <p className="text-2xl font-extrabold leading-tight sm:text-3xl">{value}</p>
+              <p className="mt-1 text-sm font-bold text-[var(--pu-text-secondary)]">{label}</p>
             </div>
-            <div className="py-4 sm:py-0 sm:pl-5">
-              <h3 className="gxj-display-title text-xl uppercase tracking-wide sm:text-2xl">
-                When I want to cut body fat
-              </h3>
-              <ul className="mt-3 space-y-2 text-base leading-relaxed">
-                <li>
-                  <strong>Breakfast:</strong> 1 cup egg whites, 3 whole eggs, 5 g creatine
-                </li>
-                <li>
-                  <strong>Lunch:</strong> 1 banana and 25 g protein powder
-                </li>
-                <li>
-                  <strong>Dinner:</strong> 1 lb 99% lean ground chicken, 1/2 Japanese sweet potato,
-                  1/2 can black beans, hot sauce
-                </li>
-                <li>
-                  <strong>Dessert:</strong> 50 g protein powder
-                </li>
-              </ul>
-            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
+              Your Normal Day
+            </p>
+            <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
+              See how the numbers work across your day.
+            </h2>
           </div>
-          <p className="mt-4 text-base leading-relaxed">
-            This is how I use the method. It is not a command for you to eat the same foods I eat.
-            Find foods you like, check the labels and serving sizes, and make them fit your targets.
-          </p>
-        </section>
+          <Button type="button" variant="outline" size="sm">
+            Adjust Your Day
+          </Button>
+        </div>
+        <p className="mt-3 text-base leading-relaxed">
+          Adjust the split to match how you actually eat. This changes the split, not your daily
+          totals.
+        </p>
+        <AppList className="mt-5">
+          {meals.map(([meal, percentage, detail]) => (
+            <AppListRow
+              key={meal}
+              title={meal}
+              detail={detail}
+              end={<span className="font-bold">{percentage}</span>}
+            />
+          ))}
+        </AppList>
+      </section>
 
-        <section className="border-b border-foreground/15 py-6 sm:py-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gxj-teal">
-            Read The Label
-          </p>
-          <h2 className="gxj-display-title mt-2 text-2xl uppercase tracking-wide sm:text-3xl">
-            Check what you drink and what you pour.
-          </h2>
-          <p className="mt-3 text-base leading-relaxed">
-            Regular soda, juice, sweetened coffee or tea, calorie-containing flavored drinks,
-            dressing, mayo, oils, butter, cheese, ketchup, and barbecue sauce can add up fast. Read
-            the label. Check the serving size. Measure it when needed.
-          </p>
-          <p className="mt-3 text-base leading-relaxed">
-            Sugar can appear as cane sugar, high-fructose corn syrup, corn syrup, glucose, dextrose,
-            fructose, honey, molasses, syrup, or fruit-juice concentrate. Turn the package over.
-            Check calories, total carbohydrate, added sugars, fiber, and serving size.
-          </p>
-        </section>
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
+          Build Meals That Work
+        </p>
+        <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
+          Keep the food simple.
+        </h2>
+        <p className="mt-3 text-base leading-relaxed">
+          Start with protein. Use labels, serving sizes, and standard nutrition information to fit
+          the rest of each meal to its numbers.
+        </p>
+      </section>
 
-        <section className="border-b border-foreground/15 py-6 sm:py-8">
-          <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-            If You Miss
-          </h2>
-          <p className="mt-2 text-base font-semibold leading-relaxed">
-            You messed up a meal. Fine. Do not turn one decision into a lost day or a lost weekend.
-            Do not punish it by starving tomorrow. Do not wait for Monday. Your next meal is your
-            next chance to get back on target. Make the next choice better and keep going.
-          </p>
-        </section>
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
+          My Normal Day
+        </p>
+        <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
+          I keep the structure and adjust the extras.
+        </h2>
+        <p className="mt-3 text-base leading-relaxed">
+          Most meals can stay familiar. Reduce the extras that push calories up while keeping the
+          protein-centered structure.
+        </p>
+      </section>
 
-        <section className="border-b border-foreground/15 py-6 sm:py-8">
-          <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-            If results stall
-          </h2>
-          <p className="mt-2 text-base leading-relaxed">
-            Review labels, portions, drinks, dressings, sauces, serving sizes, calorie-dense foods,
-            and consistency before rebuilding the whole diet. This app cannot verify what you ate.
-          </p>
-        </section>
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-accent-program)]">
+          Read The Label
+        </p>
+        <h2 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
+          Check what you drink and what you pour.
+        </h2>
+        <p className="mt-3 text-base leading-relaxed">
+          Drinks, dressings, oils, cheese, sauces, and serving sizes can add up fast. Check the
+          label and measure when needed.
+        </p>
+      </section>
 
-        <a
-          href="https://genxjumps.com/nutrition/"
-          target="_blank"
-          rel="noreferrer"
-          className="mt-5 flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-5 font-semibold transition-colors hover:bg-muted/35"
-        >
-          <span>
-            <span className="gxj-display-title block text-xl uppercase tracking-wide sm:text-2xl">
-              Learn the basics
-            </span>
-            <span className="mt-1 block text-xs font-normal text-muted-foreground">
-              Deeper nutrition explanations and examples on Gen X Jumps.
-            </span>
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <h2 className="text-2xl font-extrabold leading-tight sm:text-3xl">If You Miss</h2>
+        <p className="mt-2 text-base leading-relaxed">
+          One meal does not need to become a lost day. Make the next choice better and keep going.
+        </p>
+      </section>
+
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <h2 className="text-2xl font-extrabold leading-tight sm:text-3xl">If results stall</h2>
+        <p className="mt-2 text-base leading-relaxed">
+          Review labels, portions, drinks, sauces, serving sizes, calorie-dense foods, and
+          consistency before rebuilding the whole diet.
+        </p>
+      </section>
+
+      <a
+        href="https://genxjumps.com/nutrition/"
+        target="_blank"
+        rel="noreferrer"
+        className="mt-5 flex items-center justify-between gap-4 border-y border-[var(--pu-border-subtle)] py-5 font-semibold"
+      >
+        <span>
+          <span className="block text-xl font-extrabold leading-tight">Learn the basics</span>
+          <span className="mt-1 block text-xs font-normal text-[var(--pu-text-secondary)]">
+            Deeper nutrition explanations and examples on Gen X Jumps.
           </span>
-          <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
-        </a>
-      </div>
+        </span>
+        <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
+      </a>
     </Page>
   );
 }
@@ -2153,14 +1924,16 @@ function NotificationsReview({ empty }: { empty: boolean }) {
       kicker="Account"
       title="Notifications"
       description="Program reminders and important account updates live here."
+      titleSize="compact"
     >
       {empty ? (
-        <Section>
-          <h2 className="gxj-display-title text-3xl uppercase">You're All Caught Up</h2>
-          <p className="mt-2 text-muted-foreground">New reminders will show here.</p>
-        </Section>
+        <AppStatePanel
+          state="empty"
+          title="You're All Caught Up"
+          description="New reminders will show here."
+        />
       ) : (
-        <div className="divide-y divide-foreground/15">
+        <AppList>
           {[
             { title: "Your next workout is ready", body: "Day 3 - Jump + Strength", time: "Today" },
             {
@@ -2168,15 +1941,27 @@ function NotificationsReview({ empty }: { empty: boolean }) {
               body: "Your latest weight may change your daily numbers.",
               time: "Yesterday",
             },
-          ].map((x) => (
-            <div className="relative py-5 pl-5" key={x.title}>
-              <span className="absolute left-0 top-7 size-2 rounded-full bg-gxj-orange" />
-              <p className="font-bold">{x.title}</p>
-              <p className="mt-1 text-sm text-muted-foreground">{x.body}</p>
-              <p className="mt-2 text-xs font-bold uppercase tracking-wider">{x.time}</p>
-            </div>
+          ].map((item) => (
+            <AppListRow
+              key={item.title}
+              title={
+                <span className="flex items-center gap-2">
+                  <span
+                    className="size-2 rounded-full bg-[var(--pu-action-primary)]"
+                    aria-hidden="true"
+                  />
+                  {item.title}
+                </span>
+              }
+              detail={item.body}
+              end={
+                <span className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--pu-text-secondary)]">
+                  {item.time}
+                </span>
+              }
+            />
           ))}
-        </div>
+        </AppList>
       )}
     </Page>
   );
