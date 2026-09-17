@@ -126,10 +126,6 @@
       "sha256": "1f9f4c648e0050322415d0be49bf1bff1c51b20956576563f4be9573d6d70ddb"
     },
     {
-      "path": "scripts/temp-nutrition-residue.py",
-      "sha256": "c46b7b8145b5ac4d9990cb6e3cf525e538b21a37d625eefa411d9775fa39f307"
-    },
-    {
       "path": "scripts/test-accelerator-refunds-db.mjs",
       "sha256": "a4d874d0af99fdfd1f9def25e5ea4c7e9d509d5b4e3f88f96fb8fa8da500c6d3"
     },
