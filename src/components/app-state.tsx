@@ -1,18 +1,8 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-import {
-  PuLoadingLines,
-  PuNotice,
-  PuStatePanel,
-} from "@/design-system/precision/components";
+import { PuLoadingLines, PuNotice, PuStatePanel } from "@/design-system/precision/components";
 
-export function AppLoading({
-  className,
-  lines = 3,
-}: {
-  className?: string;
-  lines?: number;
-}) {
+export function AppLoading({ className, lines = 3 }: { className?: string; lines?: number }) {
   return <PuLoadingLines className={className} lines={lines} />;
 }
 

@@ -66,10 +66,14 @@ export function AccountPurchases() {
         setConfirm(null);
         setResult(await load());
       } else {
-        setMessage("We couldn’t confirm your request. Try again - retrying won’t create a duplicate.");
+        setMessage(
+          "We couldn’t confirm your request. Try again - retrying won’t create a duplicate.",
+        );
       }
     } catch {
-      setMessage("We couldn’t confirm your request. Try again - retrying won’t create a duplicate.");
+      setMessage(
+        "We couldn’t confirm your request. Try again - retrying won’t create a duplicate.",
+      );
     } finally {
       setBusy(false);
     }
@@ -150,7 +154,11 @@ export function AccountPurchases() {
                           <Button disabled={busy} onClick={() => void request(p.purchaseId)}>
                             {busy ? "Sending..." : "Send Request"}
                           </Button>
-                          <Button variant="outline" disabled={busy} onClick={() => setConfirm(null)}>
+                          <Button
+                            variant="outline"
+                            disabled={busy}
+                            onClick={() => setConfirm(null)}
+                          >
                             Keep My Purchase
                           </Button>
                         </div>
@@ -176,11 +184,7 @@ export function AccountPurchases() {
             );
 
             return (
-              <AppListRow
-                key={p.purchaseId}
-                title="28-Day Fat Loss Accelerator"
-                detail={detail}
-              />
+              <AppListRow key={p.purchaseId} title="28-Day Fat Loss Accelerator" detail={detail} />
             );
           })}
         </AppList>

@@ -171,19 +171,27 @@
     },
     {
       "path": "src/components/account-navigation.tsx",
-      "sha256": "ed91e3803b23328c5e04b91591dbef7562e816caacc5ff8752f9a2e809879f7a"
+      "sha256": "c4148ee2db37cda6b443f303ab0902b16d258cc7f2b0d72cab16c74d302b5d22"
     },
     {
       "path": "src/components/account-purchases.tsx",
-      "sha256": "443be83346ba61b29702450689a602a3d29844430a8a4d8e506eff8805c493c7"
+      "sha256": "43958a05aaea003b18bf52735a28838b44f445d1b92ddbe854f973d14e07a255"
     },
     {
       "path": "src/components/account-session-sync.tsx",
       "sha256": "03b599bdc2494568504d0ec73c07f33828c59cf28493b5abc8679ee8af4bdaf7"
     },
     {
+      "path": "src/components/app-list.tsx",
+      "sha256": "2346b71a04ebb64386cb5fbdf83c6d13fdf7b29e8cd3678b845ec44b4a9c63df"
+    },
+    {
       "path": "src/components/app-review-screen.tsx",
       "sha256": "e7b9304f17f7f27b46632a6f4462bca5408d27389ed46b2b0af100af07f8484c"
+    },
+    {
+      "path": "src/components/app-state.tsx",
+      "sha256": "a6409587f1b45362d6c0a0c889f99151655e5ef896316fbf97428420c7d3e7d2"
     },
     {
       "path": "src/components/auth-session-bootstrap.tsx",
@@ -207,7 +215,7 @@
     },
     {
       "path": "src/components/platform-access-boundary.tsx",
-      "sha256": "0c0be02fb13f6c677cdb27ba1c83faee8645009e2981bab88b28acd5342bf2e6"
+      "sha256": "a8d1e9e2e69373262fb54794f27ad17278717fe6295b0fa2e97063bf0e53a162"
     },
     {
       "path": "src/components/platform-header-actions.tsx",
@@ -235,7 +243,7 @@
     },
     {
       "path": "src/components/seven-day-next-step.tsx",
-      "sha256": "fb523480ab4f82169ea4ecf1a43ac5eb7514e65bb52f7d22d2d6be4f53c9c0cb"
+      "sha256": "aed2a2d728f2ff99cdbeed2c4491432302bbff39ca404e58752774dc550a65f2"
     },
     {
       "path": "src/components/seven-day-schedule-row.tsx",
@@ -275,11 +283,11 @@
     },
     {
       "path": "src/components/workout-launch-panel.tsx",
-      "sha256": "e81633fbefd7dfb8c1a41371a2bffae267f8de81b2ea03bff730edb9c96927fd"
+      "sha256": "34dc7329f36b8026ecfa3de01df36e3b3c281cc83c2aa0053ced62eef37f6a84"
     },
     {
       "path": "src/components/workout-media-card.tsx",
-      "sha256": "84f83c2fc575a672a2e675338ed21b1b98e41c17dc2d827d238d405aa22a9eed"
+      "sha256": "14d043eaa534b62854fec511c95d26ad044e1183d9c3d8e8217ee7b88f56e239"
     },
     {
       "path": "src/components/workout-screen.tsx",
@@ -287,7 +295,7 @@
     },
     {
       "path": "src/design-system/precision/app-migration.css",
-      "sha256": "ec3f9b8bc3d58061248b674d1a87063c2b4799d43c97604cfbe3b5efbb6a491b"
+      "sha256": "e1232d33245df711a14453fcd7cc89893c88164efc3cd1cc552281069dfff361"
     },
     {
       "path": "src/design-system/precision/components.css",
@@ -295,7 +303,7 @@
     },
     {
       "path": "src/design-system/precision/components.tsx",
-      "sha256": "ac0cb05a987af9b5251d75ddf1dd695bf8620641097719962eebc03f59f1a9ff"
+      "sha256": "c708a99df6d3e546f53e153611adaf268464a83be9aaa201066551446beb0ca9"
     },
     {
       "path": "src/design-system/precision/showcase.tsx",
@@ -367,7 +375,7 @@
     },
     {
       "path": "src/lib/__tests__/lead-plan-calendar.test.ts",
-      "sha256": "d84fe018d0c0c24fcf22639c45ee957e723bc1461b129877775283d343dc94e8"
+      "sha256": "5b2c3714408401457f0befa8d19e86361f4ad7244890e3824d69dac8d4b95ad0"
     },
     {
       "path": "src/lib/__tests__/migration-integrity.test.ts",
@@ -459,7 +467,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "d1ebe7fd9ac771f50446395d99542c3412850f1f12aa262b9b645197b202f470"
+      "sha256": "20a38ef28545cb6091dde9fa700dd4271c747d742ea8ba955a85b65357f8482f"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -1263,7 +1271,7 @@
     },
     {
       "path": "src/routes/__root.tsx",
-      "sha256": "33313edb06628fc256139d286c50434af74cf7fcf7c1a489dc01e1dad0d77197"
+      "sha256": "da9630ca39175d5151455a64550ebf9bf78adc2fa6a74d3396ca8d87e1ae6d50"
     },
     {
       "path": "src/routes/accelerator.tsx",
