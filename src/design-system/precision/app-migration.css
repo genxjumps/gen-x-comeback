@@ -173,6 +173,12 @@ body {
   background-color: var(--pu-surface-subtle);
 }
 
+.gxj-pu .gxj-workout-media--aqua {
+  box-shadow:
+    inset 0 3px 0 var(--pu-accent-program),
+    var(--pu-shadow-overlay);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .gxj-platform-shell *,
   .gxj-platform-shell *::before,
