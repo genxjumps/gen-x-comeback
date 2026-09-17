@@ -186,25 +186,24 @@ describe("website lead intake handoff", () => {
     expect(welcomeRoute).toContain("Congratulations");
     expect(welcomeRoute).toContain("Create My 7-Day Plan");
     expect(welcomeRoute).toContain("About 2 minutes. No password required.");
-    expect(welcomeRoute).toContain('number: 1, label: "Access saved", state: "complete"');
-    expect(welcomeRoute).toContain('number: 2, label: "Quick setup", state: "current"');
-    expect(welcomeRoute).toContain('number: 3, label: "Plan ready", state: "upcoming"');
-    expect(welcomeRoute).toContain("grid max-w-3xl grid-cols-3 gap-2");
-    expect(welcomeRoute).toContain("bg-foreground text-background");
-    expect(welcomeRoute).toContain("bg-gxj-orange text-white shadow-");
-    expect(welcomeRoute).toContain("border-2 border-foreground/20 text-foreground/35");
-    expect(welcomeRoute).toContain("gxj-display-title min-h-14");
+    expect(welcomeRoute).toContain('<SetupProgress currentStep={2} label="Plan setup progress" />');
+    expect(welcomeRoute).toContain("Access saved");
+    expect(welcomeRoute).toContain("Quick setup");
+    expect(welcomeRoute).toContain("Plan ready");
+    expect(welcomeRoute).toContain("text-[var(--pu-action-primary)]");
+    expect(welcomeRoute).not.toContain("bg-gxj-orange text-white shadow-");
+    expect(welcomeRoute).not.toContain("gxj-display-title min-h-14");
   });
 
   it("uses the approved email-access treatment without changing its recovery action", () => {
     expect(welcomeRoute).toContain("Check Your Email");
     expect(welcomeRoute).toContain("Request Another Link");
-    expect(welcomeRoute).toContain("relative mx-auto mb-7 h-16 w-20");
-    expect(welcomeRoute).toContain("size-16 translate-x-2 translate-y-2 text-gxj-orange");
+    expect(welcomeRoute).toContain("mx-auto mb-6 grid size-12 place-items-center");
+    expect(welcomeRoute).toContain("text-[var(--pu-action-primary)]");
     expect(welcomeRoute).toContain(
-      "mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center",
+      "mx-auto max-w-3xl border-t border-[var(--pu-border-subtle)] pt-5 text-center",
     );
-    expect(welcomeRoute).not.toContain("place-items-center border-2 border-foreground");
+    expect(welcomeRoute).not.toContain("size-16 translate-x-2 translate-y-2 text-gxj-orange");
   });
 
   it("finishes without a second identity form and sends new participants to plan-ready", () => {

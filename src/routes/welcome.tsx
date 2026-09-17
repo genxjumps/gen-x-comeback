@@ -3,6 +3,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Mail } from "lucide-react";
 
+import { AppLoadingState, AppStatePanel } from "@/components/precision-surfaces";
+import { SetupProgress } from "@/components/setup-progress";
 import { Button } from "@/components/ui/button";
 import { getLeadIntakeWelcome } from "@/lib/lead-intake.functions";
 import type { LeadIntakeWelcomeResult } from "@/lib/lead-intake.functions";
@@ -23,12 +25,6 @@ export const Route = createFileRoute("/welcome")({
   }),
   component: LeadWelcome,
 });
-
-const steps = [
-  { number: 1, label: "Access saved", state: "complete" },
-  { number: 2, label: "Quick setup", state: "current" },
-  { number: 3, label: "Plan ready", state: "upcoming" },
-] as const;
 
 function LeadWelcome() {
   const navigate = useNavigate();
@@ -71,9 +67,7 @@ function LeadWelcome() {
   if (!result) {
     return (
       <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-2xl place-items-center px-5 py-8">
-        <p className="text-sm text-muted-foreground" role="status">
-          Opening your setup...
-        </p>
+        <AppLoadingState label="Opening your setup" className="w-full max-w-md" />
       </div>
     );
   }
@@ -81,21 +75,17 @@ function LeadWelcome() {
   if (!result.ok) {
     return (
       <div className="mx-auto grid min-h-[calc(100svh-9rem)] w-full max-w-xl place-items-center px-5 py-8">
-        <section className="w-full rounded-lg border border-border bg-card p-5 sm:p-7">
-          <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
-            Let&rsquo;s Try That Again
-          </p>
-          <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight">
-            We Couldn&rsquo;t Find Your Signup
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            Your secure setup may have expired or this browser may have blocked it. Return to the
-            website and submit the short form again.
-          </p>
-          <Button asChild size="lg" className="mt-6 w-full sm:w-auto">
-            <a href="https://genxjumps.com/start-here/">Return to My Signup</a>
-          </Button>
-        </section>
+        <AppStatePanel
+          state="error"
+          title="We Couldn't Find Your Signup"
+          description="Your secure setup may have expired or this browser may have blocked it. Return to the website and submit the short form again."
+          action={
+            <Button asChild>
+              <a href="https://genxjumps.com/start-here/">Return to My Signup</a>
+            </Button>
+          }
+          className="w-full"
+        />
       </div>
     );
   }
@@ -105,32 +95,25 @@ function LeadWelcome() {
       <div className="gxj-page mx-auto min-h-[calc(100svh-9rem)] w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
         <header className="py-6 sm:py-8">
           <div className="mx-auto max-w-2xl text-center">
-            <div className="relative mx-auto mb-7 h-16 w-20" aria-hidden="true">
-              <Mail
-                className="absolute inset-0 size-16 translate-x-2 translate-y-2 text-gxj-orange"
-                strokeWidth={2.2}
-              />
-              <Mail className="absolute inset-0 size-16 text-foreground" strokeWidth={2.2} />
+            <div
+              className="mx-auto mb-6 grid size-12 place-items-center rounded-[var(--pu-radius-contained)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)]"
+              aria-hidden="true"
+            >
+              <Mail className="size-6 text-[var(--pu-action-primary)]" strokeWidth={2} />
             </div>
-            <h1 className="gxj-display-title text-3xl uppercase leading-none tracking-wide sm:text-4xl">
-              Check Your Email
-            </h1>
-            <p className="mx-auto mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+            <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">Check Your Email</h1>
+            <p className="mx-auto mt-3 max-w-xl text-base leading-relaxed text-[var(--pu-text-secondary)]">
               Use your secure welcome link to continue with your saved plan. Your progress stays
               saved.
             </p>
-            <p className="mt-3 text-sm font-medium text-muted-foreground">
+            <p className="mt-3 text-sm text-[var(--pu-text-secondary)]">
               If it hasn't arrived, check spam or request another link.
             </p>
           </div>
         </header>
 
-        <div className="mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center">
-          <Button
-            asChild
-            size="lg"
-            className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
-          >
+        <div className="mx-auto max-w-3xl border-t border-[var(--pu-border-subtle)] pt-5 text-center">
+          <Button asChild size="lg" className="w-full sm:w-auto">
             <a href="https://genxjumps.com/start-here/#seven-day-optin">Request Another Link</a>
           </Button>
         </div>
@@ -141,51 +124,33 @@ function LeadWelcome() {
     <div className="gxj-page mx-auto min-h-[calc(100svh-9rem)] w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
       <header className="py-6 sm:py-8">
         <div className="max-w-2xl">
-          <p className="gxj-kicker text-xs font-bold uppercase tracking-[0.16em]">
+          <p className="text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-action-primary)]">
             Congratulations
           </p>
-          <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
+          <h1 className="mt-3 text-3xl font-extrabold leading-tight sm:text-4xl">
             {result.firstName}, Let&rsquo;s Build Your Comeback Plan
           </h1>
-          <p className="mt-3 max-w-xl text-base font-medium leading-relaxed text-foreground/75">
+          <p className="mt-3 max-w-xl text-base leading-relaxed text-[var(--pu-text-secondary)]">
             Answer a few quick questions about your fitness, schedule, equipment, and any
             limitations. Then we&rsquo;ll build your personalized 7-day plan immediately.
           </p>
         </div>
       </header>
 
-      <ol className="grid max-w-3xl grid-cols-3 gap-2" aria-label="Plan setup progress">
-        {steps.map((step) => (
-          <li
-            key={step.label}
-            aria-current={step.state === "current" ? "step" : undefined}
-            className={`flex min-h-24 flex-col justify-between gap-4 p-3 sm:min-h-28 sm:p-4 ${
-              step.state === "complete"
-                ? "bg-foreground text-background"
-                : step.state === "current"
-                  ? "bg-gxj-orange text-white shadow-[3px_3px_0_color-mix(in_oklch,var(--color-foreground)_18%,transparent)]"
-                  : "border-2 border-foreground/20 text-foreground/35"
-            }`}
-          >
-            <span className="gxj-display-title text-2xl leading-none tracking-wide sm:text-3xl">
-              {String(step.number).padStart(2, "0")}
-            </span>
-            <span className="text-xs font-bold uppercase leading-tight tracking-[0.08em] sm:text-sm">
-              {step.label}
-            </span>
-          </li>
-        ))}
-      </ol>
+      <div className="max-w-3xl">
+        <SetupProgress currentStep={2} label="Plan setup progress" />
+        <div className="mt-2 grid grid-cols-3 gap-2 text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--pu-text-secondary)]">
+          <span>Access saved</span>
+          <span className="text-[var(--pu-action-primary)]">Quick setup</span>
+          <span>Plan ready</span>
+        </div>
+      </div>
 
-      <div className="mt-7 max-w-3xl border-t border-foreground/20 pt-5">
-        <Button
-          asChild
-          size="lg"
-          className="gxj-display-title min-h-14 w-full px-6 text-xl uppercase leading-none tracking-wide sm:w-auto"
-        >
+      <div className="mt-7 max-w-3xl border-t border-[var(--pu-border-subtle)] pt-5">
+        <Button asChild size="lg" className="w-full sm:w-auto">
           <Link to={destination}>Create My 7-Day Plan</Link>
         </Button>
-        <p className="mt-3 text-sm font-medium text-muted-foreground">
+        <p className="mt-3 text-sm text-[var(--pu-text-secondary)]">
           About 2 minutes. No password required.
         </p>
       </div>

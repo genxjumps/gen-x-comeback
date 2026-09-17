@@ -53,9 +53,10 @@ second integration line.
   progress.
 - Precision Utility production design system with semantic tokens, shared production primitives,
   photo-free branded workout media, and a hidden noindex component showcase.
-- Shared legacy UI primitives are being migrated system-first to Precision Utility so button, form,
-  page hierarchy, progress, shell, navigation, status, list/row, and workout-media changes inherit
-  across routes instead of being rebuilt page by page.
+- Shared legacy UI primitives and participant-facing production routes have been migrated system-first
+  to Precision Utility so button, form, page hierarchy, progress, shell, navigation, status,
+  list/row, workout-media, Nutrition, member-platform, Welcome, and assessment-completion surfaces
+  inherit one governed visual system instead of being rebuilt page by page.
 - A review catalog for controlled visual and copy review.
 - Production lifecycle and Recovery email links are pinned to `https://app.genxjumps.com`; staging
   email runtimes remain separately configurable.
@@ -97,17 +98,18 @@ second integration line.
 - Verify final Accelerator media, program-content readiness, and remaining launch requirements.
 - Complete staging and full paid-customer journey verification before live payments or public paid
   enrollment.
-- Reconcile the review catalog with real live components so review scenarios cannot silently drift.
-- Complete the remaining Precision Utility route-specific residue after the shared primitives are in
-  place. Welcome and assessment-completion onboarding surfaces remain after the member-platform cleanup.
+- Reconcile the review catalog with the real Precision Utility production components so review
+  scenarios cannot silently drift from participant-facing routes.
 
 ## Active checkpoint
 
-Precision Utility route-specific residue cleanup is the active design checkpoint. The current
-bounded checkpoint removes the remaining member-platform residue from 7-Day completion/repeat and
-install surfaces, Accelerator history/completion/paused states, and checkout success while preserving
-all progression, purchase, measurement, install, and restart behavior. Welcome and assessment
-completion remain as the next onboarding-specific cleanup.
+The Precision Utility participant-facing production-route migration is complete at this checkpoint.
+Welcome and assessment completion now use shared loading/state treatment, compact setup progress,
+restrained Barlow hierarchy, direct page structure, and bounded notices instead of the superseded
+display-title, large progress-tile, and card-by-default presentation. Signup handoff, assessment,
+plan generation, save, replacement, recovery, and token behavior remain unchanged. Internal
+review/preview/admin surfaces and the public sales page are separate follow-up surfaces rather than
+participant design authority.
 
 ## Updating this file
 
