@@ -124,14 +124,15 @@ describe("app review catalog", () => {
   });
 
   it("presents the free plan as a complete conversion page", () => {
-    expect(landingReviewSource).toContain("Lose Fat. Get Back in Shape.");
+    expect(landingReviewSource).toContain("Get Back in Shape. Start Here.");
     expect(landingReviewSource).toContain("Build My Free 7-Day Plan");
-    expect(landingReviewSource).toContain("A Real Starting Point Built Around You");
-    expect(landingReviewSource).toContain("I Am Not Teaching This From the Sidelines.");
-    expect(landingReviewSource).toContain("A Few Things You Might Be Wondering");
-    expect(landingReviewSource).toContain("Your Next Seven Days Can Start Today.");
+    expect(landingReviewSource).toContain("Stop Guessing. Start Moving.");
+    expect(landingReviewSource).toContain("One Week. Clear Direction.");
+    expect(landingReviewSource).toContain("I Know What Starting Over Feels Like.");
+    expect(landingReviewSource).toContain("You Are Not Done. Start Proving It.");
     expect(landingReviewSource).not.toContain("Your Week at a Glance");
     expect(landingReviewSource).not.toContain("landingSteps");
+    expect(landingReviewSource).not.toContain("01");
     expect(landingReviewSource).not.toContain("Opening Soon");
   });
 
