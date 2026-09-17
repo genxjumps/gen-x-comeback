@@ -1,3 +1,10 @@
+> [!WARNING]
+> **Historical incident record - not an active project plan.**
+>
+> This file preserves the September 2, 2026 production-recovery investigation. Current work is
+> governed by `CURRENT_STATE.md`, `docs/DOCUMENT_AUTHORITY.md`, and the active bounded
+> checkpoint. Do not execute the recommendation below without fresh evidence and approval.
+
 # Production Recovery Handoff: Root Cause Found (investigation only)
 
 ## Verdict

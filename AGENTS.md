@@ -11,9 +11,23 @@
 
 <!-- LOVABLE:END -->
 
+## Authority before work
+
+- Read `CURRENT_STATE.md` and `docs/DOCUMENT_AUTHORITY.md` before selecting or implementing a
+  checkpoint.
+- `release/v1.1` is the current V1.1 integration source. Always pass that ref explicitly when
+  reading repository files or searching current code until the branch reconciliation is complete.
+- The GitHub default branch `main` is a protected historical baseline pending reconciliation. Do
+  not assume default-branch results describe current V1.1 behavior.
+- Historical checkpoints, handoffs, investigations, proposals, and release evidence do not govern
+  new work unless `CURRENT_STATE.md` explicitly names them as active.
+- Distinguish product state, access state, view condition, review scenario, and release state.
+- The preservation branch `archive/pre-reset-2026-09-17` must not be changed or deleted during the
+  project reset.
+
 ## GitHub-first development contract
 
-- `main` is the current accepted app baseline. Do not develop directly on it.
+- `main` is the protected historical baseline pending reconciliation. Do not develop directly on it.
 - `release/v1.1` is the V1.1 integration branch. Merge bounded task branches into it through pull requests.
 - Create work from the current target branch with names such as `agent/<checkpoint>`.
 - Lock the checkpoint scope and acceptance criteria before editing. Implement the complete bounded checkpoint, run the quality gate, and present one final review. Stop mid-checkpoint only for a real conflict, an unsafe live action, or a product decision that changes the approved scope.
