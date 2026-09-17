@@ -1,5 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
+import { AppLoading, AppState } from "@/components/app-state";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 const PLATFORM_AUTH_FRAGMENT_KEY = "gxj_auth";
@@ -52,35 +54,30 @@ export function PlatformAccessBoundary({ children }: { children: ReactNode }) {
 
   if (status === "checking") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-5 text-foreground">
-        <p className="text-sm text-muted-foreground">Loading your Gen X Jumps account...</p>
+      <div className="mx-auto w-full max-w-xl px-5 py-16">
+        <AppLoading />
       </div>
     );
   }
 
   if (status === "denied") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-5 text-foreground">
-        <div className="w-full max-w-md rounded-lg border border-border bg-card p-6 sm:p-8">
-          <p className="gxj-kicker text-[10px] font-semibold uppercase tracking-[0.16em]">
-            Private Access
-          </p>
-          <h1 className="gxj-display-title mt-3 text-3xl leading-tight tracking-tight">
-            Open Your Secure Access Link
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            We couldn&rsquo;t confirm a signed-in Gen X Jumps account in this browser.
-          </p>
-          <a
-            href="/recover"
-            className="mt-5 inline-block rounded-md bg-foreground px-4 py-3 text-sm font-semibold text-background"
-          >
-            Get a Magic Access Link
-          </a>
-          <a href="/account" className="mt-3 block text-sm underline">
-            Account and Log Out
-          </a>
-        </div>
+      <div className="mx-auto w-full max-w-xl px-5 py-16">
+        <AppState
+          state="locked"
+          title="Open Your Secure Access Link"
+          description="We couldn’t confirm a signed-in Gen X Jumps account in this browser."
+          action={
+            <div className="grid gap-3 sm:flex">
+              <Button asChild>
+                <a href="/recover">Get a Magic Access Link</a>
+              </Button>
+              <Button asChild variant="outline">
+                <a href="/account">Account and Log Out</a>
+              </Button>
+            </div>
+          }
+        />
       </div>
     );
   }
