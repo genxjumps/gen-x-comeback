@@ -1,4 +1,4 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
 
 import {
   PuList,
@@ -92,4 +92,36 @@ export function AppListRow({
   className?: string;
 }) {
   return <PuListRow title={title} detail={detail} end={end} className={className} />;
+}
+
+export function AppLinearProgress({
+  value,
+  label,
+  accent = "orange",
+  className = "",
+}: {
+  value: number;
+  label: string;
+  accent?: "orange" | "aqua";
+  className?: string;
+}) {
+  const normalized = Math.max(0, Math.min(100, Math.round(value)));
+  const style = {
+    width: `${normalized}%`,
+    backgroundColor:
+      accent === "aqua" ? "var(--pu-accent-program)" : "var(--pu-action-primary)",
+  } as CSSProperties;
+
+  return (
+    <div
+      className={`h-2 overflow-hidden rounded-full bg-[var(--pu-surface-subtle)] ${className}`}
+      role="progressbar"
+      aria-label={label}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={normalized}
+    >
+      <div className="h-full rounded-full transition-[width] duration-[180ms]" style={style} />
+    </div>
+  );
 }
