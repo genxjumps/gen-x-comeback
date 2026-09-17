@@ -10,37 +10,33 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
+import { AccountNavigation } from "@/components/account-navigation";
+import { AccountSessionSync } from "@/components/account-session-sync";
+import { AppState } from "@/components/app-state";
 import { AuthSessionBootstrap } from "@/components/auth-session-bootstrap";
+import { PlatformAccessBoundary } from "@/components/platform-access-boundary";
+import { PlatformHeaderActions } from "@/components/platform-header-actions";
+import { PlatformShell } from "@/components/platform-shell";
 import { PwaInstallCapture } from "@/components/pwa-install";
 import { Button } from "@/components/ui/button";
-import { PlatformAccessBoundary } from "@/components/platform-access-boundary";
-import { PlatformShell } from "@/components/platform-shell";
-import { AccountNavigation } from "@/components/account-navigation";
-import { PlatformHeaderActions } from "@/components/platform-header-actions";
-import { AccountSessionSync } from "@/components/account-session-sync";
+import precisionComponentsCss from "../design-system/precision/components.css?url";
 import precisionMigrationCss from "../design-system/precision/app-migration.css?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <p className="gxj-kicker mx-auto text-[10px] font-semibold uppercase tracking-[0.16em]">
-          404
-        </p>
-        <h1 className="gxj-display-title mt-3 text-2xl leading-tight tracking-tight sm:text-3xl">
-          Page Not Found
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
-        <div className="mt-6">
+    <div className="mx-auto flex min-h-screen w-full max-w-xl items-center px-5">
+      <AppState
+        state="empty"
+        title="Page Not Found"
+        description="The page you're looking for doesn't exist or has been moved."
+        action={
           <Button asChild className="w-full sm:w-auto">
             <Link to="/">Go home</Link>
           </Button>
-        </div>
-      </div>
+        }
+      />
     </div>
   );
 }
@@ -53,30 +49,29 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="gxj-display-title text-2xl leading-tight tracking-tight sm:text-3xl">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
-        <div className="mt-6 grid gap-3 sm:flex sm:justify-center">
-          <Button
-            type="button"
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="w-full sm:w-auto"
-          >
-            Try again
-          </Button>
-          <Button asChild variant="outline" className="w-full sm:w-auto">
-            <a href="/">Go home</a>
-          </Button>
-        </div>
-      </div>
+    <div className="mx-auto flex min-h-screen w-full max-w-xl items-center px-5">
+      <AppState
+        state="error"
+        title="This Page Didn't Load"
+        description="Something went wrong on our end. You can try refreshing or head back home."
+        action={
+          <div className="grid gap-3 sm:flex">
+            <Button
+              type="button"
+              onClick={() => {
+                router.invalidate();
+                reset();
+              }}
+              className="w-full sm:w-auto"
+            >
+              Try again
+            </Button>
+            <Button asChild variant="outline" className="w-full sm:w-auto">
+              <a href="/">Go home</a>
+            </Button>
+          </div>
+        }
+      />
     </div>
   );
 }
@@ -108,6 +103,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: precisionMigrationCss,
       },
+      {
+        rel: "stylesheet",
+        href: precisionComponentsCss,
+      },
       { rel: "icon", href: "/icon-192.png", type: "image/png", sizes: "192x192" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
       { rel: "manifest", href: "/manifest.webmanifest" },
@@ -126,7 +125,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="gxj-pu">
         <PwaInstallCapture />
         {children}
         <Scripts />
