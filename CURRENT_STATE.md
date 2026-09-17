@@ -10,19 +10,19 @@ not define current status.
 
 ## Source and deployment identity
 
-| Surface                        | Revision                                                                                          | Meaning                                                             |
-| ------------------------------ | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Active integration source      | Resolve the live `release/v1.1` ref                                                               | Do not freeze a self-expiring branch-head SHA in this file          |
-| Last audited app-code baseline | `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                                                        | Application behavior reviewed before the reset documentation merged |
-| Authority checkpoint           | PR #268, merge `a7a2c05216ed5a4ef67d312021ddc643ef993f01`                                         | Established current-state and document-authority rules              |
-| Documentation checkpoint       | PR #269, merge `1200421deec2ca3b7bedac2811fa0e9fe03d6b7d`                                         | Separated current contracts from project history                    |
-| Repository cleanup checkpoint  | Workflow run [#35213638821](https://github.com/genxjumps/gen-x-comeback/actions/runs/35213638821) | Retired 257 stale working branches after exact preservation         |
-| Preservation branch            | `archive/pre-reset-2026-09-17` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                      | Exact pre-reset recovery point                                      |
-| GitHub default branch          | `main` at `42c548a966c0e57fc25cff53a22849783169dc60`                                              | Stale baseline pending reconciliation                               |
-| Published app during audit     | `e5fd50e5d767bdacdc3a843948748f6ca8d546ac`                                                        | Live source reported by `/api/public/release` on September 17, 2026 |
+| Surface                       | Revision                                                                                          | Meaning                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Active integration source     | Resolve the live `release/v1.1` ref                                                               | GitHub default and Lovable-connected branch                    |
+| Production app identity       | `102a853cb58e1ece6dc518152e305a5590325079`                                                        | Verified live at `app.genxjumps.com` on September 17, 2026     |
+| Repository reconciliation     | PR #272, merge `cbfb16360d83d62bc63d42f682e4eaea1d714ce5`                                         | Preserved both histories and matched the release tree          |
+| Reconciliation quality gate   | Workflow run [#35221295820](https://github.com/genxjumps/gen-x-comeback/actions/runs/35221295820) | Passed against the reconciled `main` merge                     |
+| Preserved historical branch   | `main`                                                                                            | Reconciled record; not a current development or release target |
+| Preservation branch           | `archive/pre-reset-2026-09-17` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                      | Exact pre-reset recovery point                                 |
+| Repository cleanup checkpoint | Workflow run [#35213638821](https://github.com/genxjumps/gen-x-comeback/actions/runs/35213638821) | Retired 257 stale working branches after exact preservation    |
 
-The release branch and published app are deliberately distinct until an approved publication.
-The default branch must not be treated as current source until it is reconciled.
+`release/v1.1` is the single active branch for current work. Create bounded task branches from it
+and merge them back through pull requests. `main` remains preserved and must not be used as a
+second integration line.
 
 ## Current operating boundary
 
@@ -80,29 +80,25 @@ The default branch must not be treated as current source until it is reconciled.
 
 - The preservation-first repository reset is complete.
 - Exactly 257 stale working branches were retired after a fresh comparison.
-- Twelve branches remain: `main`, `release/v1.1`, the pre-reset preservation branch, PR #35's
-  unresolved branch, and eight exact archive branches.
-- PRs #26, #72, #81, and #90 were closed without merging. PR #35 remains open and untouched.
+- Retained preservation, archive, and superseded task branches remain available. They are not
+  active development sources and were not deleted during reconciliation.
+- PRs #26, #35, #72, #81, and #90 were closed without merging. PR #35's production email-origin
+  safeguard was rebuilt on current source through PR #271.
 - Exact retained refs and verification evidence are recorded in
   [the branch-retirement completion](docs/release-evidence/2026-09-17-branch-retirement-completion.md).
 
 ## Known release work still open
 
-- Reconcile `main` and `release/v1.1` without rewriting history.
-- Decide the long-term single development baseline and GitHub default branch.
 - Verify final Accelerator media, program-content readiness, and remaining launch requirements.
 - Complete staging and full paid-customer journey verification before live payments or public paid
   enrollment.
 - Reconcile the review catalog with real live components so review scenarios cannot silently drift.
-- Publish the current reviewed release to replace the older live build at `app.genxjumps.com`.
 
 ## Active checkpoint
 
-The production email-origin safeguard preserved in PR #35 has been rebuilt on current source. The
-approved operational checkpoint is one controlled publication of the current reviewed release to
-`app.genxjumps.com`, without changing database state, public intake, payment mode, or email-delivery
-gates. Reconciliation of `main` and the long-term default branch remains a separate later
-checkpoint because it can affect release and deployment workflow.
+Repository recovery, publication, branch reconciliation, and default-branch alignment are complete.
+No repository-cleanup checkpoint remains active. Continue product work from a bounded task branch
+created from `release/v1.1`; the next product area is the free 7-Day Plan landing page.
 
 ## Updating this file
 

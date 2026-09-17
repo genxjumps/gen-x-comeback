@@ -30,8 +30,9 @@ The September 17 preservation inventory is recorded in
 ## Current source boundary
 
 - GitHub is authoritative.
-- `release/v1.1` is the active V1.1 integration source.
-- `main` is protected but stale and pending reconciliation.
+- `release/v1.1` is the GitHub default branch, active V1.1 integration source, and
+  Lovable-connected branch.
+- `main` is preserved reconciliation history and is not used for current development.
 - New work begins from the exact current `release/v1.1` head on one bounded `agent/<checkpoint>`
   branch.
 - Run `bun run verify` before requesting merge. GitHub CI must pass.

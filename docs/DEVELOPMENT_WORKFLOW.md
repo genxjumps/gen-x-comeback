@@ -12,12 +12,14 @@ A separate staging backend is not required just to continue controlled V1.1 deve
 
 ## Branch roles
 
-- `main` - protected historical baseline pending non-destructive reconciliation. It is not current
-  V1.1 source.
-- `release/v1.1` - active V1.1 integration source and controlled review candidate.
+- `release/v1.1` - GitHub default branch, active V1.1 integration source, Lovable-connected branch,
+  and controlled review candidate.
+- `main` - preserved historical branch reconciled through PR #272. It is not a development or
+  release target.
 - `agent/<checkpoint>` - one bounded implementation checkpoint. Do not select these branches for routine Lovable development.
 
-`main` and `release/v1.1` are integration boundaries, not development workspaces. Changes reach them through pull requests.
+`release/v1.1` is an integration boundary, not a development workspace. Changes reach it through
+pull requests. Do not make routine changes directly on `release/v1.1` or `main`.
 
 ## One-checkpoint loop
 
@@ -63,21 +65,21 @@ This keeps routine development from consuming Lovable effort/credits unnecessari
 Before the first real public release:
 
 1. Freeze the accepted release candidate and run the complete quality gate.
-2. Review the full `main...release/v1.1` diff and reconcile current repository contracts and
-   release evidence. Historical external documents do not overrule current repository authority.
+2. Reconcile current repository contracts and release evidence on the candidate task branch.
+   Historical external documents do not overrule current repository authority.
 3. Verify database migrations, test-data cleanup, secrets, email controls, payment controls, analytics boundaries, and rollback/forward-repair procedures.
 4. Confirm the separate staging boundary required by `docs/STAGING-AND-ROLLBACK.md` is operational.
-5. Create one release pull request from `release/v1.1` into `main`.
-6. Merge without rewriting published history.
-7. Confirm GitHub `main` and Lovable show the same source revision and no Lovable-generated drift.
-8. Get Todd's explicit launch approval.
-9. Publish once through Lovable.
-10. Run a bounded smoke test and record the release evidence.
+5. Merge the accepted release checkpoint into `release/v1.1` without rewriting published history.
+6. Confirm GitHub `release/v1.1` and Lovable show the same source revision and no Lovable-generated
+   drift.
+7. Get Todd's explicit launch approval.
+8. Publish once through Lovable.
+9. Run a bounded smoke test and record the release evidence.
 
 ## Hard rules
 
 - GitHub is the source of truth. Lovable is visual review and publication, not the routine development environment.
-- No direct development on `main` or `release/v1.1`.
+- No direct development on `main` or `release/v1.1`; use a bounded task branch and pull request.
 - No force push, rebase, amend, or squash of pushed Lovable-synced history.
 - No hidden migration, provider send, scheduler change, secret change, or publication inside another checkpoint.
 - Documentation changes travel with the behavior/process they govern.
