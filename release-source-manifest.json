@@ -215,7 +215,11 @@
     },
     {
       "path": "src/components/platform-page.tsx",
-      "sha256": "39a4f94a454b3fd5ab9a23a0bce66250ac62d6116987a09e1b74a292a8142dd9"
+      "sha256": "50e0e90a4490815ee3b464460fbfb7f02978ed1fee1104f49812b1262a283164"
+    },
+    {
+      "path": "src/components/platform-primitives.tsx",
+      "sha256": "d7b384d9c2c252723fca25a6f58e970cb56252122b64b67c097e0debabd34c6a"
     },
     {
       "path": "src/components/platform-shell.tsx",
@@ -231,7 +235,7 @@
     },
     {
       "path": "src/components/setup-progress.tsx",
-      "sha256": "11fd19c282a3e5224329cf81e3de2bebbbd3314545b587c5bf48e4c16994524c"
+      "sha256": "fa94546f57f0b9f8134d2f1176a0fc05a057066c5f26c660857aae56d8889d0a"
     },
     {
       "path": "src/components/seven-day-next-step.tsx",
@@ -243,7 +247,7 @@
     },
     {
       "path": "src/components/ui/button.tsx",
-      "sha256": "8964c82fbafd4f6727ba47ee100a81013c15f4ba30ffe96de864d24c359c05e5"
+      "sha256": "d6b09346b69217a106f64e18f399c030e9fbccfd1e8e76e21a0e3204310ccbbd"
     },
     {
       "path": "src/components/ui/card.tsx",
@@ -439,7 +443,7 @@
     },
     {
       "path": "src/lib/accelerator/__tests__/platform-shell-contract.test.ts",
-      "sha256": "d1ebe7fd9ac771f50446395d99542c3412850f1f12aa262b9b645197b202f470"
+      "sha256": "ab0a0d584f937cc85cbcae497242bc98ec0a3f8d167d13b30419acd10f2fbb23"
     },
     {
       "path": "src/lib/accelerator/__tests__/preview-shell-contract.test.ts",
@@ -1251,7 +1255,7 @@
     },
     {
       "path": "src/routes/account.index.tsx",
-      "sha256": "80e26dc802fa45d13b709b85a084fee89f83a160634d3310b11e8c6cf05be409"
+      "sha256": "e19c11ab3ccb6844c54763a3e93a49e2b974d5a653f8c67b10ec56518bc8d5f9"
     },
     {
       "path": "src/routes/account.purchases.tsx",
@@ -1315,7 +1319,7 @@
     },
     {
       "path": "src/routes/home.tsx",
-      "sha256": "555f648966c297adbe47dd7a3900abc4b788c1c8f2bc99032a439a44ae8144fd"
+      "sha256": "8333a2d0d1f9f131c15d1489e7fb918ab57818d8597d705b553897df91605493"
     },
     {
       "path": "src/routes/index.tsx",
