@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   getRefundPurchases,
   requestAcceleratorRefund,
+  type RefundPurchase,
   type RefundPurchasesResult,
 } from "@/lib/commerce/refund.functions";
 
@@ -14,11 +15,7 @@ const date = (value: string) =>
 const deadline = (value: string) =>
   new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 
-function purchaseStatusLabel(purchase: RefundPurchasesResult extends { ok: true; purchases: infer P }
-  ? P extends readonly (infer Item)[]
-    ? Item
-    : never
-  : never) {
+function purchaseStatusLabel(purchase: RefundPurchase) {
   return purchase.purchaseStatus === "refunded"
     ? "Refunded"
     : purchase.requestedAt
