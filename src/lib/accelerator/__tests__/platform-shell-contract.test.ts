@@ -53,8 +53,9 @@ describe("authenticated platform shell source contract", () => {
     expect(shell).toContain("safe-area-inset-bottom");
     expect(access).toContain("supabase.auth.getSession()");
     expect(access).toContain("supabase.auth.onAuthStateChange");
+    expect(access).toContain("<AppStatePanel");
     expect(access).toContain(
-      "We couldn&rsquo;t confirm a signed-in Gen X Jumps account in this browser.",
+      "We couldn’t confirm a signed-in Gen X Jumps account in this browser.",
     );
   });
 
