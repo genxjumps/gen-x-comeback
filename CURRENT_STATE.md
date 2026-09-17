@@ -53,9 +53,12 @@ second integration line.
   progress.
 - Precision Utility production design system with semantic tokens, shared production primitives,
   photo-free branded workout media, and a hidden noindex component showcase.
-- Shared legacy UI primitives are being migrated system-first to Precision Utility so button, form,
-  page hierarchy, progress, shell, and navigation changes inherit across routes instead of being
-  rebuilt page by page.
+- Shared controls, form controls, page hierarchy, setup progress, shell/navigation, and global
+  compatibility styling are migrated to Precision Utility so those decisions inherit across routes.
+- Shared app-facing state and list adapters provide loading, empty, locked, error, notice, static-row,
+  link-row, and button-row treatments backed by the approved Precision Utility primitives.
+- Shared workout launch and workout video-card surfaces use the photo-free `PuWorkoutMedia` system;
+  legacy image cover props may remain temporarily for caller compatibility but are not required or rendered.
 - A review catalog for controlled visual and copy review.
 - Production lifecycle and Recovery email links are pinned to `https://app.genxjumps.com`; staging
   email runtimes remain separately configurable.
@@ -98,15 +101,15 @@ second integration line.
 - Complete staging and full paid-customer journey verification before live payments or public paid
   enrollment.
 - Reconcile the review catalog with real live components so review scenarios cannot silently drift.
-- Complete Precision Utility migration of genuinely route-specific visual residue after the shared
-  primitives are migrated and verified.
+- Complete Precision Utility cleanup of genuinely route-specific visual residue after shared
+  state/list/media surfaces are migrated and verified.
 
 ## Active checkpoint
 
-Precision Utility shared-primitive migration is the active design checkpoint. The current bounded
-checkpoint migrates the shared controls, form controls, page hierarchy, setup progress, persistent
-shell/navigation, and global compatibility bridge while preserving route behavior and product
-contracts. Route-specific visual cleanup comes only after this shared layer is verified.
+Precision Utility shared-surface migration is the active design checkpoint. The current bounded
+checkpoint migrates shared loading/empty/locked/error/notice treatments, reusable list/row patterns,
+and the two shared workout-media entry points while preserving route behavior and product contracts.
+Route-specific visual cleanup follows only after this shared layer is verified.
 
 ## Updating this file
 
