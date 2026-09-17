@@ -1,12 +1,16 @@
-import { Check, Dumbbell, Info, TriangleAlert, X } from "lucide-react";
+import { Check, ChevronRight, Info, TriangleAlert, X } from "lucide-react";
 import { useState } from "react";
 
 import {
   PuButton,
+  PuCheckboxChoice,
   PuContainer,
   PuEyebrow,
   PuField,
   PuHeading,
+  PuList,
+  PuListRow,
+  PuLoadingLines,
   PuNav,
   PuNotice,
   PuPanel,
@@ -14,14 +18,18 @@ import {
   PuRadioChoice,
   PuReadingWidth,
   PuSection,
+  PuSelect,
   PuShell,
+  PuStatePanel,
   PuText,
+  PuWorkoutMedia,
 } from "./components";
 
 const navItems = ["Home", "Programs", "Progress", "Nutrition"] as const;
 
 export function PrecisionUtilityShowcase() {
   const [days, setDays] = useState("4");
+  const [dumbbells, setDumbbells] = useState(true);
 
   return (
     <PuShell>
@@ -44,7 +52,7 @@ export function PrecisionUtilityShowcase() {
             <div>
               <PuText tone="meta">Typography</PuText>
               <PuText tone="support" className="mt-2">
-                Barlow carries the interface. Anton is reserved for later brand-impact moments.
+                Barlow carries the interface. Anton is reserved for rare brand-impact moments.
               </PuText>
             </div>
             <PuPanel strong className="space-y-6">
@@ -72,7 +80,7 @@ export function PrecisionUtilityShowcase() {
             <div>
               <PuText tone="meta">Actions</PuText>
               <PuText tone="support" className="mt-2">
-                One system for major, standard and compact controls.
+                One system for major, standard, and compact controls.
               </PuText>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -97,13 +105,18 @@ export function PrecisionUtilityShowcase() {
               </PuText>
             </div>
             <div className="grid gap-5 md:grid-cols-2">
-              <PuPanel>
+              <PuPanel className="space-y-5">
                 <PuField
                   id="showcase-weight"
                   label="Current weight"
                   help="Use your current weight, not your goal weight."
                   inputProps={{ inputMode: "decimal", placeholder: "180 lb" }}
                 />
+                <PuSelect id="showcase-goal" label="Primary goal" selectProps={{ defaultValue: "fat" }}>
+                  <option value="fat">Lose fat</option>
+                  <option value="recomp">Add lean muscle and lose fat</option>
+                  <option value="maintain">Maintain</option>
+                </PuSelect>
               </PuPanel>
               <PuPanel>
                 <PuHeading level={3}>How many days can you train?</PuHeading>
@@ -118,6 +131,13 @@ export function PrecisionUtilityShowcase() {
                       onChange={() => setDays(value)}
                     />
                   ))}
+                  <PuCheckboxChoice
+                    name="equipment"
+                    value="dumbbells"
+                    label="I have dumbbells"
+                    checked={dumbbells}
+                    onChange={() => setDumbbells((value) => !value)}
+                  />
                 </div>
               </PuPanel>
             </div>
@@ -142,7 +162,31 @@ export function PrecisionUtilityShowcase() {
                 </div>
                 <PuText tone="support">50%</PuText>
               </div>
-              <PuProgress currentStep={2} steps={4} label="Setup progress: step 2 of 4" className="mt-4" />
+              <PuProgress
+                currentStep={2}
+                steps={4}
+                label="Setup progress: step 2 of 4"
+                className="mt-4"
+              />
+            </PuPanel>
+          </div>
+        </PuSection>
+
+        <PuSection>
+          <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
+            <div>
+              <PuText tone="meta">Navigation + rows</PuText>
+              <PuText tone="support" className="mt-2">
+                Persistent destinations and summaries use shared restrained treatments.
+              </PuText>
+            </div>
+            <PuPanel>
+              <PuNav items={navItems} current="Programs" label="Showcase primary navigation" />
+              <PuList className="mt-6">
+                <PuListRow title="Programs" detail="2 programs owned" end={<ChevronRight />} />
+                <PuListRow title="Progress" detail="Waist: 34 in · Weight: 176 lb" end={<ChevronRight />} />
+                <PuListRow title="Nutrition" detail="1,900 calories · 195 g protein" end={<ChevronRight />} />
+              </PuList>
             </PuPanel>
           </div>
         </PuSection>
@@ -207,36 +251,129 @@ export function PrecisionUtilityShowcase() {
         <PuSection>
           <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
             <div>
-              <PuText tone="meta">Navigation</PuText>
+              <PuText tone="meta">Photo-free workout media</PuText>
               <PuText tone="support" className="mt-2">
-                Persistent destinations use one restrained utility treatment.
+                A branded graphic system that does not depend on photography or one-off artwork.
               </PuText>
             </div>
-            <PuPanel>
-              <PuNav items={navItems} current="Programs" label="Showcase primary navigation" />
-              <div className="mt-6 grid gap-3 md:grid-cols-3">
-                {[
-                  ["Programs", "2 programs"],
-                  ["Progress", "Waist: 34 in"],
-                  ["Nutrition", "195 g protein"],
-                ].map(([title, detail]) => (
-                  <div key={title} className="border-t border-[var(--pu-border-strong)] py-4">
-                    <div className="flex items-center gap-2">
-                      <Dumbbell className="size-4" aria-hidden="true" />
-                      <PuHeading level={3}>{title}</PuHeading>
-                    </div>
-                    <PuText tone="support" className="mt-1">
-                      {detail}
-                    </PuText>
-                  </div>
-                ))}
+            <div className="space-y-5">
+              <PuWorkoutMedia
+                program="28-Day Accelerator"
+                week={1}
+                workoutNumber={1}
+                title="Classic Intervals"
+                subtitle="Get your reps in."
+                duration="25 min"
+                level="All levels"
+                equipment="Rope + DB"
+                state="ready"
+                size="hero"
+              />
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <PuWorkoutMedia
+                  week={1}
+                  workoutNumber={1}
+                  title="Classic Intervals"
+                  duration="25 min"
+                  level="All levels"
+                  state="completed"
+                />
+                <PuWorkoutMedia
+                  week={2}
+                  workoutNumber={3}
+                  title="Power Blocks"
+                  duration="28 min"
+                  level="Intermediate"
+                  state="locked"
+                />
+                <PuWorkoutMedia
+                  week={1}
+                  workoutNumber={4}
+                  title="Core Control"
+                  duration="22 min"
+                  level="All levels"
+                  state="in-progress"
+                  progress={50}
+                />
+                <PuWorkoutMedia
+                  week={3}
+                  workoutNumber={6}
+                  title="Recovery"
+                  duration="18 min"
+                  level="Mobility"
+                  state="scheduled"
+                />
               </div>
-            </PuPanel>
+              <div className="grid gap-3 md:grid-cols-3">
+                <PuWorkoutMedia
+                  week={1}
+                  workoutNumber={1}
+                  title="Classic Intervals"
+                  duration="25 min"
+                  level="All levels"
+                  state="ready"
+                  size="row"
+                />
+                <PuWorkoutMedia
+                  week={2}
+                  workoutNumber={3}
+                  title="Power Blocks"
+                  duration="28 min"
+                  level="Intermediate"
+                  state="ready"
+                  size="row"
+                />
+                <PuWorkoutMedia
+                  week={3}
+                  workoutNumber={5}
+                  title="EMOM Builder"
+                  duration="26 min"
+                  level="All levels"
+                  state="ready"
+                  size="row"
+                />
+              </div>
+            </div>
+          </div>
+        </PuSection>
+
+        <PuSection>
+          <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
+            <div>
+              <PuText tone="meta">Empty + loading + locked + error</PuText>
+              <PuText tone="support" className="mt-2">
+                Reusable states, not route-specific boxes.
+              </PuText>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <PuStatePanel
+                state="empty"
+                title="No measurements yet"
+                description="Weight and waist are optional. Add them when useful."
+                action={<PuButton variant="secondary">Add Measurement</PuButton>}
+              />
+              <PuLoadingLines />
+              <PuStatePanel
+                state="locked"
+                title="Nutrition not unlocked"
+                description="Included with an eligible paid program."
+              />
+              <PuStatePanel
+                state="error"
+                title="Programs unavailable"
+                description="Open Programs to try again."
+                action={
+                  <PuButton variant="secondary" size="compact">
+                    Open Programs
+                  </PuButton>
+                }
+              />
+            </div>
           </div>
         </PuSection>
 
         <footer className="border-t border-[var(--pu-border-strong)] py-8">
-          <PuText tone="meta">Component-system review only · no production route migration</PuText>
+          <PuText tone="meta">Component-system review only · no customer route migration</PuText>
         </footer>
       </PuContainer>
     </PuShell>
