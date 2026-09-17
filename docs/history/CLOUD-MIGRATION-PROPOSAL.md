@@ -1,5 +1,10 @@
 # Proposed controlled Cloud migration procedure
 
+**Role:** Historical
+
+This proposal was adopted for the September 9 signup-recovery migration only. Its completed
+execution is recorded in `../release-evidence/2026-09-09-signup-recovery-migration.md`.
+
 Status: proposal only. This file does not authorize execution or override the
 current migration rules. Todd must explicitly adopt this procedure and approve
 its PR merge before it can be used. His existing approval to apply the signup

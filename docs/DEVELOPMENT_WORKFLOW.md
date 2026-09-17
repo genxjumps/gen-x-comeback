@@ -1,5 +1,7 @@
 # Gen X Jumps App Development Workflow
 
+**Role:** Runbook
+
 This is the required workflow for V1.1 and later development. It keeps changes bounded and reviewable while GitHub remains the source of truth and Lovable stays later in the loop.
 
 ## Current environment status
@@ -10,8 +12,9 @@ A separate staging backend is not required just to continue controlled V1.1 deve
 
 ## Branch roles
 
-- `main` - current accepted app baseline and normal Lovable-synced branch.
-- `release/v1.1` - integrated V1.1 candidate used for controlled visual review after CI passes.
+- `main` - protected historical baseline pending non-destructive reconciliation. It is not current
+  V1.1 source.
+- `release/v1.1` - active V1.1 integration source and controlled review candidate.
 - `agent/<checkpoint>` - one bounded implementation checkpoint. Do not select these branches for routine Lovable development.
 
 `main` and `release/v1.1` are integration boundaries, not development workspaces. Changes reach them through pull requests.
@@ -60,7 +63,8 @@ This keeps routine development from consuming Lovable effort/credits unnecessari
 Before the first real public release:
 
 1. Freeze the accepted release candidate and run the complete quality gate.
-2. Review the full `main...release/v1.1` diff and reconcile Product Blueprint, Technical Specification, Decision Log, and repository documentation.
+2. Review the full `main...release/v1.1` diff and reconcile current repository contracts and
+   release evidence. Historical external documents do not overrule current repository authority.
 3. Verify database migrations, test-data cleanup, secrets, email controls, payment controls, analytics boundaries, and rollback/forward-repair procedures.
 4. Confirm the separate staging boundary required by `docs/STAGING-AND-ROLLBACK.md` is operational.
 5. Create one release pull request from `release/v1.1` into `main`.

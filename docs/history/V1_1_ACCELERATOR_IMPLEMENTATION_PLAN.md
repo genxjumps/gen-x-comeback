@@ -1,10 +1,15 @@
 # V1.1 Accelerator Implementation Plan
 
+**Role:** Historical
+
+This file preserves the original checkpoint sequence and later appended implementation notes. It
+does not define current work or release status.
+
 ## Purpose and authority
 
 This plan turns the approved Accelerator product requirements into a dependency-based implementation
 sequence. The canonical product requirements remain
-[`V1_1_28_DAY_PRODUCT_CONTRACT.md`](V1_1_28_DAY_PRODUCT_CONTRACT.md). This document governs build
+[`V1_1_28_DAY_PRODUCT_CONTRACT.md`](../V1_1_28_DAY_PRODUCT_CONTRACT.md). This document governed build
 order and checkpoint boundaries; it does not replace the product contract.
 
 Update this plan only when a material product, architecture, schema, integration, release-boundary,
@@ -90,7 +95,7 @@ The read-only source-video audit is recorded in
 usable A-E foundations, a mislabeled Workout D source, customer-visible cue inconsistencies, no
 final Accelerator-specific Active Recovery F, and no orientation or weekly coaching videos.
 The recording scripts, Workout F outline, and practical daily instructions are maintained in
-[`V1_1_ACCELERATOR_CONTENT_PRODUCTION_BRIEF.md`](V1_1_ACCELERATOR_CONTENT_PRODUCTION_BRIEF.md).
+[`V1_1_ACCELERATOR_CONTENT_PRODUCTION_BRIEF.md`](../V1_1_ACCELERATOR_CONTENT_PRODUCTION_BRIEF.md).
 
 Checkpoint 5 therefore proceeds in three bounded parts before one final media gate:
 
@@ -137,7 +142,7 @@ without opening public enrollment or silently activating customer email:
    browser that completed Checkout.
 5. Seven-day refund-request handling and correct purchase/entitlement state changes.
    The approved manual-review implementation and verification boundary are recorded
-   in [`V1_1_ACCELERATOR_REFUNDS.md`](V1_1_ACCELERATOR_REFUNDS.md). Source and isolated
+   in [`V1_1_ACCELERATOR_REFUNDS.md`](../V1_1_ACCELERATOR_REFUNDS.md). Source and isolated
    verification do not authorize migration application, provider refunds, or release.
 6. The 7-Day-to-Accelerator bridge: one completion-screen recommendation, matching completion-email
    destination, and ownership-aware Explore, Set Up, Continue, or Start the Accelerator Again

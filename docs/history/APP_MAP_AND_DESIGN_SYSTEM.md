@@ -1,5 +1,12 @@
 # Gen X Jumps App Map and Design-System Starting Point
 
+**Role:** Historical
+
+This file preserves the accumulated route map, review scenarios, design approvals, and checkpoint
+rationale through September 16, 2026. Current navigation is governed by
+`../APP-INFORMATION-ARCHITECTURE.md`; current shared presentation rules are governed by
+`../DESIGN_SYSTEM.md`.
+
 Status: structural design reference. The participant-shell recommendation is implemented in the
 first Home visual checkpoint.
 

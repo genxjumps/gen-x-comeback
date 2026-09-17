@@ -12,7 +12,8 @@ foundation was built.
 These are approved product requirements, not a claim that the current code or unapplied migration
 already supports every behavior. Before implementation continues, the repository, tests, and
 unapplied migration must be audited against this document. See
-[`V1_1_28_DAY_DATA_FOUNDATION.md`](V1_1_28_DAY_DATA_FOUNDATION.md).
+the tested current source. The earlier foundation checkpoint is preserved in
+[`history/V1_1_28_DAY_DATA_FOUNDATION.md`](history/V1_1_28_DAY_DATA_FOUNDATION.md).
 
 Public enrollment remains closed. This document does not authorize checkout, real payment calls,
 public publishing, customer migration, production Accelerator email, or applying the current
@@ -255,7 +256,7 @@ same ownership-aware destination and action rules above.
   other devices' independent sessions. The next sign-in uses a secure email link.
 - Contact updates and billing self-service remain separately scoped follow-ups. No editable email,
   payment details, or sign-out-everywhere action is added by the identity/logout checkpoint.
-  See [the checkpoint contract](ACCOUNT-IDENTITY-LOGOUT.md) and
+  See [the account contract](ACCOUNT_ACCESS_CONTRACT.md) and
   [account-management backlog #97](https://github.com/genxjumps/gen-x-comeback/issues/97).
 - One customer account must work across supported devices.
 - Access is passwordless by secure email link or code.

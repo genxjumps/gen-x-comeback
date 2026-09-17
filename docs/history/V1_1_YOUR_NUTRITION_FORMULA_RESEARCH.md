@@ -1,5 +1,10 @@
 # Checkpoint 6 - Nutrition formula and evidence
 
+**Role:** Historical
+
+This file preserves the research and calibration evidence used for the implemented V1 Nutrition
+formula. Current durable behavior is governed by `../NUTRITION_CONTRACT.md` and the tested source.
+
 **Status:** Calorie direction, safety boundary, tested muscle-first protein method, customer copy,
 and interaction rules were approved by Todd on 2026-09-04. The bounded implementation and
 deterministic tests are complete in draft PR #63. Migration application, merge, and release remain

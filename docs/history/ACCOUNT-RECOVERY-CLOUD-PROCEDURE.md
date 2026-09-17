@@ -1,5 +1,10 @@
 # Controlled account recovery migration
 
+**Role:** Historical
+
+This one-time procedure records the approved account-recovery migration checkpoint. It is not the
+general migration runbook and does not authorize another migration.
+
 Status: proposed for Todd's explicit adoption. His migration and deployment approval
 is already recorded in the session; adopting this procedure supplies the missing
 execution method. It doesn't authorize future migrations or opening intake.
@@ -45,10 +50,10 @@ plan admission was false and paid-customer admission was true. No non-test Strip
 purchase references were found. These are historical observations; recheck them
 before execution. No live database or operational setting was changed.
 
-The [reviewed transaction](release-evidence/account-recovery-application.sql)
+The [reviewed transaction](../release-evidence/account-recovery-application.sql)
 contains the exact Git migration bytes and a plain canonical history INSERT.
 Its SHA-256 is `42c04e7e682a4c8cb7b6afe8d499cacf36841deb8fecfe887ab80b62051c2d0c`.
-The [rehearsal evidence](release-evidence/account-recovery-preflight.json) records:
+The [rehearsal evidence](../release-evidence/account-recovery-preflight.json) records:
 
 - Canonical baseline and hosted defaults matched.
 - A forced failure after the DDL and history INSERT rolled back all changes,

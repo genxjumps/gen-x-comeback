@@ -1,8 +1,8 @@
 # Gen X Jumps App - Current State
 
-**Snapshot date:** September 17, 2026  
-**Current integration branch:** `release/v1.1`  
-**Current integration SHA at this checkpoint:** `9edba783553d87dc0cc76e4aca5774e4e9b63b61`
+**Role:** Current
+**Snapshot date:** September 17, 2026
+**Current integration branch:** `release/v1.1`
 
 This is the only repository document allowed to describe what is true **now**. Product contracts
 define durable behavior. Runbooks define procedures. Historical checkpoints and release evidence do
@@ -10,13 +10,14 @@ not define current status.
 
 ## Source and deployment identity
 
-| Surface                   | Revision                                                                                | Meaning                                                        |
-| ------------------------- | --------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Active integration source | `release/v1.1` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                            | Current reviewed source baseline                               |
-| Preservation branch       | `archive/pre-reset-2026-09-17` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61`            | Exact pre-reset recovery point                                 |
-| Reset working branch      | `agent/project-reset-inventory` created from `9edba783553d87dc0cc76e4aca5774e4e9b63b61` | Documentation-only cleanup                                     |
-| GitHub default branch     | `main` at `42c548a966c0e57fc25cff53a22849783169dc60`                                    | Stale baseline pending reconciliation                          |
-| Published app             | `e5fd50e5d767bdacdc3a843948748f6ca8d546ac`                                              | Live source reported by `/api/public/release` during the audit |
+| Surface                        | Revision                                                                     | Meaning                                                             |
+| ------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Active integration source      | Resolve the live `release/v1.1` ref                                          | Do not freeze a self-expiring branch-head SHA in this file          |
+| Last audited app-code baseline | `9edba783553d87dc0cc76e4aca5774e4e9b63b61`                                   | Application behavior reviewed before the reset documentation merged |
+| Authority checkpoint           | PR #268, merge `a7a2c05216ed5a4ef67d312021ddc643ef993f01`                    | Established current-state and document-authority rules              |
+| Preservation branch            | `archive/pre-reset-2026-09-17` at `9edba783553d87dc0cc76e4aca5774e4e9b63b61` | Exact pre-reset recovery point                                      |
+| GitHub default branch          | `main` at `42c548a966c0e57fc25cff53a22849783169dc60`                         | Stale baseline pending reconciliation                               |
+| Published app during audit     | `e5fd50e5d767bdacdc3a843948748f6ca8d546ac`                                   | Live source reported by `/api/public/release` on September 17, 2026 |
 
 The release branch and published app are deliberately distinct until an approved publication.
 The default branch must not be treated as current source until it is reconciled.
@@ -43,7 +44,7 @@ The default branch must not be treated as current source until it is reconciled.
 - Sequential 28-day progression, missed-day persistence, safe switching, completed-day reopening,
   bounded Undo, and video viewing separate from completion.
 - Optional weight and waist history.
-- My Programs, Progress, Nutrition, Notifications, Account, and purchase/refund surfaces.
+- Programs, Progress, Nutrition, Notifications, Account, and purchase/refund surfaces.
 - Controlled Stripe test checkout, guest purchase handoff, signed verification, and test refund
   reconciliation.
 - Account-level Nutrition access for qualifying paid ownership, independent of active program
@@ -79,16 +80,20 @@ The default branch must not be treated as current source until it is reconciled.
 - Complete staging and full paid-customer journey verification before live payments or public paid
   enrollment.
 - Reconcile the review catalog with real live components so review scenarios cannot silently drift.
-- Complete the documentation and repository-hygiene reset described in the September 17 inventory.
+- Resolve the production email-origin decision preserved in PR #35 against current source.
+- Review the exact branch-retirement list and create archival references before any branch deletion
+  or stale-PR closure.
 
 ## Active checkpoint
 
-The active checkpoint is documentation and repository inventory only. It may clarify authority and
-preserve evidence. It must not change app behavior, database state, providers, email gates, payment
-gates, public intake, or production.
+The active checkpoint is documentation authority cleanup only. It restores missing release
+evidence, separates current contracts from historical checkpoints, and records exact retirement
+candidates. It must not change app behavior, database state, providers, email gates, payment gates,
+public intake, production, branches, or pull-request state.
 
 ## Updating this file
 
 Update this file in the same pull request whenever a change alters implemented scope, active gates,
-the governing branch, deployment identity, or the next approved checkpoint. Do not append historical
-narrative. Move completed evidence into `docs/release-evidence/` or a dated historical record.
+the governing branch, deployment identity, or the next approved checkpoint. Record immutable SHAs
+as audited checkpoints, not as a claim that a mutable branch will remain at that SHA. Do not append
+historical narrative. Move completed evidence into `docs/release-evidence/` or `docs/history/`.

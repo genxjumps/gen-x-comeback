@@ -1,8 +1,11 @@
 # V1.1 Accelerator content production brief
 
+**Role:** Proposal
 Date: 2026-08-28
 
-Status: Working production package for Checkpoint 5. Nothing in this brief is published or live.
+Status: Workouts A-E are connected to their verified Cloudflare Stream media in current source.
+Workout F, the orientation, and the four weekly coaching recordings remain production work. This
+brief does not claim that the complete program-content package is launch-ready or published.
 
 ## Practical V1 default
 
@@ -12,8 +15,8 @@ the canonical A-E labels. Workout B needs a short pre-video warm-up instruction 
 recording starts the EMOM immediately.
 
 Record one new Active Recovery F. Also record the short orientation and four weekly coaching
-primers required by the product contract. After those six recordings are approved, transfer the
-final package to Cloudflare once.
+primers required by the product contract. Upload and verify each approved final recording without
+replacing the current A-E identifiers unless a separate content change is approved.
 
 This is the recommended functional-first path. A later editorial pass may replace any A-E video
 without changing the V1 program sequence or an active customer's stored history.
@@ -204,7 +207,8 @@ ready to continue; no video or exercise is required.
 ## Final handoff checklist
 
 - Six missing recordings exported at their final resolution and frame rate.
-- A-E source files available for direct Cloudflare upload or owner-authorized download.
+- Existing A-E Cloudflare identifiers and runtimes remain unchanged unless replacements are
+  separately approved.
 - D labeled correctly in the final asset package.
 - No temporary promotions, incorrect contact details, or unsupported claims in the six new files.
 - Exact final filenames mapped to A-F, orientation, and Week 1-4.

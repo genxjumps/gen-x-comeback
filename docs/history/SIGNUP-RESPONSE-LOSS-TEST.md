@@ -1,5 +1,9 @@
 # Signup response-loss test
 
+**Role:** Historical
+
+This file preserves a completed test checkpoint and does not define current release status.
+
 ## Approved scope
 
 Todd approved an isolated fault-injection harness for the signup save recovery

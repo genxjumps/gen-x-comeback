@@ -16,6 +16,14 @@ Read these before changing the project:
    sources disagree.
 4. The durable product contract or runbook relevant to the bounded checkpoint.
 
+Current cross-cutting records:
+
+- [`docs/APP-INFORMATION-ARCHITECTURE.md`](docs/APP-INFORMATION-ARCHITECTURE.md)
+- [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
+- [`docs/ACCOUNT_ACCESS_CONTRACT.md`](docs/ACCOUNT_ACCESS_CONTRACT.md)
+- [`docs/NUTRITION_CONTRACT.md`](docs/NUTRITION_CONTRACT.md)
+- [`docs/SEVEN_DAY_ACCELERATOR_HANDOFF_CONTRACT.md`](docs/SEVEN_DAY_ACCELERATOR_HANDOFF_CONTRACT.md)
+
 The September 17 preservation inventory is recorded in
 [`docs/release-evidence/2026-09-17-project-reset-inventory.md`](docs/release-evidence/2026-09-17-project-reset-inventory.md).
 
@@ -30,7 +38,7 @@ The September 17 preservation inventory is recorded in
 - Lovable is used for controlled review and explicitly approved publication, not routine source
   editing.
 
-See [`CURRENT_STATE.md`](CURRENT_STATE.md) for current SHAs, live-vs-source identity, implemented
+See [`CURRENT_STATE.md`](CURRENT_STATE.md) for audited SHAs, live-vs-source identity, implemented
 scope, operating gates, and the active checkpoint.
 
 ## Locked product foundation

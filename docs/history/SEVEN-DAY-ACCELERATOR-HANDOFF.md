@@ -1,5 +1,10 @@
 # 7-Day completion to Accelerator
 
+**Role:** Historical
+
+This file preserves the implementation checkpoints for the completed 7-Day-to-Accelerator handoff.
+Current customer behavior is governed by `../SEVEN_DAY_ACCELERATOR_HANDOFF_CONTRACT.md`.
+
 This checkpoint connects the completed 7-Day plan to the existing controlled Accelerator purchase and setup path. Real payments remain a separate launch gate: the Stripe integration still rejects live keys and live payment objects.
 
 ## Customer path
