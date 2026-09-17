@@ -5,6 +5,7 @@ export function PlatformPage({
   kicker,
   title,
   description,
+  headerActions,
   titleSize = "compact",
   contentGap = "default",
   children,
@@ -13,6 +14,7 @@ export function PlatformPage({
   kicker?: string;
   title: string;
   description?: string;
+  headerActions?: ReactNode;
   titleSize?: "compact" | "hero";
   contentGap?: "default" | "tight";
   children: ReactNode;
@@ -37,10 +39,11 @@ export function PlatformPage({
             {title}
           </h1>
           {description ? (
-            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/80">
+            <p className="mt-3 max-w-lg text-base font-medium leading-relaxed text-foreground/75">
               {description}
             </p>
           ) : null}
+          {headerActions ? <div className="mt-6">{headerActions}</div> : null}
         </div>
       </header>
       <div className="gxj-page-body mx-auto max-w-3xl">{children}</div>
