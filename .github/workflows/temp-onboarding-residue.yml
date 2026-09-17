@@ -24,11 +24,52 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Apply onboarding residue migration
         run: python .github/temp-onboarding-residue.py
+      - name: Update stale Welcome visual contracts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/lib/__tests__/lead-intake-flow.test.ts')
+          text = path.read_text()
+          old = '''    expect(welcomeRoute).toContain('number: 1, label: "Access saved", state: "complete"');
+              expect(welcomeRoute).toContain('number: 2, label: "Quick setup", state: "current"');
+              expect(welcomeRoute).toContain('number: 3, label: "Plan ready", state: "upcoming"');
+              expect(welcomeRoute).toContain("grid max-w-3xl grid-cols-3 gap-2");
+              expect(welcomeRoute).toContain("bg-foreground text-background");
+              expect(welcomeRoute).toContain("bg-gxj-orange text-white shadow-");
+              expect(welcomeRoute).toContain("border-2 border-foreground/20 text-foreground/35");
+              expect(welcomeRoute).toContain("gxj-display-title min-h-14");'''
+          new = '''    expect(welcomeRoute).toContain('<SetupProgress currentStep={2} label="Plan setup progress" />');
+              expect(welcomeRoute).toContain("Access saved");
+              expect(welcomeRoute).toContain("Quick setup");
+              expect(welcomeRoute).toContain("Plan ready");
+              expect(welcomeRoute).toContain("text-[var(--pu-action-primary)]");
+              expect(welcomeRoute).not.toContain("bg-gxj-orange text-white shadow-");
+              expect(welcomeRoute).not.toContain("gxj-display-title min-h-14");'''
+          if old not in text:
+              raise SystemExit('Missing old Welcome progress visual contract')
+          text = text.replace(old, new, 1)
+          old2 = '''    expect(welcomeRoute).toContain("relative mx-auto mb-7 h-16 w-20");
+              expect(welcomeRoute).toContain("size-16 translate-x-2 translate-y-2 text-gxj-orange");
+              expect(welcomeRoute).toContain(
+                "mx-auto max-w-3xl border-t border-foreground/20 pt-5 text-center",
+              );
+              expect(welcomeRoute).not.toContain("place-items-center border-2 border-foreground");'''
+          new2 = '''    expect(welcomeRoute).toContain("mx-auto mb-6 grid size-12 place-items-center");
+              expect(welcomeRoute).toContain("text-[var(--pu-action-primary)]");
+              expect(welcomeRoute).toContain(
+                "mx-auto max-w-3xl border-t border-[var(--pu-border-subtle)] pt-5 text-center",
+              );
+              expect(welcomeRoute).not.toContain("size-16 translate-x-2 translate-y-2 text-gxj-orange");'''
+          if old2 not in text:
+              raise SystemExit('Missing old Welcome email visual contract')
+          path.write_text(text.replace(old2, new2, 1))
+          PY
       - name: Format onboarding checkpoint
         run: >-
           bunx prettier --write CURRENT_STATE.md
           src/routes/welcome.tsx
           src/routes/assessment.complete.tsx
+          src/lib/__tests__/lead-intake-flow.test.ts
       - name: Remove temporary helpers before manifest generation
         run: git rm .github/temp-onboarding-residue.py .github/workflows/temp-onboarding-residue.yml
       - name: Regenerate final release manifest
