@@ -4,6 +4,12 @@ import { useServerFn } from "@tanstack/react-start";
 import { ChevronDown, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { PlatformPage } from "@/components/platform-page";
+import {
+  AppLinearProgress,
+  AppLoadingState,
+  AppNotice,
+  AppStatePanel,
+} from "@/components/precision-surfaces";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,7 +96,7 @@ function MeasurementForm({
         />
         <select
           aria-label={`${label} unit`}
-          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+          className="min-h-12 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-strong)] bg-[var(--pu-surface-contained)] px-3 text-base text-[var(--pu-text-primary)]"
           value={selectedUnit}
           disabled={disabled}
           onChange={(event) => setSelectedUnit(event.target.value as MeasurementUnit)}
@@ -140,7 +146,7 @@ function MeasurementHistoryRow({
           <p className="text-sm font-semibold capitalize">
             {measurement.kind} - {formatMeasurement(measurement)}
           </p>
-          <p className="mt-1 text-xs capitalize text-muted-foreground">
+          <p className="mt-1 text-xs capitalize text-[var(--pu-text-secondary)]">
             {formatDate(measurement.measuredAt)} - {measurement.context}
           </p>
         </div>
@@ -168,7 +174,7 @@ function MeasurementHistoryRow({
         </div>
       </div>
       {editing ? (
-        <div className="mt-3 grid gap-2 rounded-md bg-muted/50 p-3 sm:grid-cols-[1fr_6rem_auto]">
+        <div className="mt-3 grid gap-2 rounded-[var(--pu-radius-contained)] border border-[var(--pu-border-subtle)] bg-[var(--pu-surface-contained)] p-3 sm:grid-cols-[1fr_6rem_auto]">
           <Input
             aria-label={`Correct ${measurement.kind}`}
             type="number"
@@ -180,7 +186,7 @@ function MeasurementHistoryRow({
           />
           <select
             aria-label={`Correct ${measurement.kind} unit`}
-            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
+            className="min-h-12 rounded-[var(--pu-radius-control)] border border-[var(--pu-border-strong)] bg-[var(--pu-surface-contained)] px-3 text-base text-[var(--pu-text-primary)]"
             value={unit}
             disabled={disabled}
             onChange={(event) => setUnit(event.target.value as MeasurementUnit)}
@@ -248,9 +254,25 @@ function Progress() {
       ? programs.latestMeasurements
       : { weight: null, waist: null };
 
-  if (loading) return <p className="text-sm text-muted-foreground">Loading your progress...</p>;
-  if (!programs?.ok && !hub)
-    return <p className="text-sm text-muted-foreground">Your progress couldn&rsquo;t be loaded.</p>;
+  if (loading) {
+    return (
+      <PlatformPage title="Your Progress" titleSize="compact">
+        <AppLoadingState label="Loading your progress" />
+      </PlatformPage>
+    );
+  }
+
+  if (!programs?.ok && !hub) {
+    return (
+      <PlatformPage title="Your Progress" titleSize="compact">
+        <AppStatePanel
+          state="error"
+          title="Your progress couldn’t be loaded"
+          description="Open Progress again to retry."
+        />
+      </PlatformPage>
+    );
+  }
 
   const accelerator = programs?.ok ? programs.accelerator : null;
   const activeLeadPlan = programs?.ok
@@ -385,67 +407,53 @@ function Progress() {
     }
   }
 
+  const messageTone = message?.includes("couldn’t") || message?.includes("Try again") ? "danger" : "success";
+
   return (
     <PlatformPage
       title="Your Progress"
       description="Your current program and latest optional measurements stay simple here. Open the details only when you want the full history."
       titleSize="compact"
     >
-      <section className="border-y-2 border-foreground py-6 sm:py-8">
-        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-          Current Program
-        </h2>
-        <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
+      <section className="border-y border-[var(--pu-border-strong)] py-6 sm:py-8">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.14em]">{currentProgram.name}</p>
-            <p className="gxj-display-title mt-1 text-2xl uppercase tracking-wide sm:text-3xl">
+            <h2 className="text-2xl font-extrabold leading-tight">Current Program</h2>
+            <p className="mt-3 text-xs font-bold uppercase tracking-[0.1em] text-[var(--pu-text-secondary)]">
+              {currentProgram.name}
+            </p>
+            <p className="mt-1 text-base font-semibold text-[var(--pu-text-primary)]">
               {currentProgram.progress}
             </p>
           </div>
           {currentProgressPercent !== null ? (
-            <p
-              className={`gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl ${
-                currentProgram.accent === "aqua" ? "text-gxj-aqua" : "text-gxj-orange"
-              }`}
-              aria-hidden="true"
-            >
-              {currentProgressPercent}%
+            <p className="text-sm font-bold text-[var(--pu-text-secondary)]" aria-hidden="true">
+              {currentProgressPercent}% complete
             </p>
           ) : null}
         </div>
         {currentProgressPercent !== null ? (
-          <div
-            className="mt-4 h-3 overflow-hidden bg-foreground/15"
-            role="progressbar"
-            aria-label={`${currentProgram.name} progress`}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={currentProgressPercent}
-          >
-            <div
-              className={`h-full ${
-                currentProgram.accent === "aqua" ? "bg-gxj-aqua" : "bg-gxj-orange"
-              }`}
-              style={{ width: `${currentProgressPercent}%` }}
-            />
-          </div>
+          <AppLinearProgress
+            value={currentProgressPercent}
+            label={`${currentProgram.name} progress`}
+            accent={currentProgram.accent === "aqua" ? "aqua" : "orange"}
+            className="mt-4"
+          />
         ) : null}
       </section>
 
-      <section className="border-b border-foreground/15 py-6 sm:py-8">
-        <h2 className="gxj-display-title text-2xl uppercase tracking-wide sm:text-3xl">
-          Latest Measurements
-        </h2>
-        <dl className="mt-5 grid grid-cols-2 divide-x divide-foreground/15">
+      <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
+        <h2 className="text-2xl font-extrabold leading-tight">Latest Measurements</h2>
+        <dl className="mt-5 grid grid-cols-2 divide-x divide-[var(--pu-border-subtle)]">
           <div className="pr-5">
-            <dt className="text-sm text-muted-foreground">Latest Weight</dt>
-            <dd className="gxj-display-title mt-1 text-3xl sm:text-4xl">
+            <dt className="text-sm text-[var(--pu-text-secondary)]">Latest Weight</dt>
+            <dd className="mt-1 text-2xl font-extrabold sm:text-3xl">
               {formatMeasurement(latest.weight)}
             </dd>
           </div>
           <div className="pl-5">
-            <dt className="text-sm text-muted-foreground">Latest Waist</dt>
-            <dd className="gxj-display-title mt-1 text-3xl sm:text-4xl">
+            <dt className="text-sm text-[var(--pu-text-secondary)]">Latest Waist</dt>
+            <dd className="mt-1 text-2xl font-extrabold sm:text-3xl">
               {formatMeasurement(latest.waist)}
             </dd>
           </div>
@@ -453,11 +461,11 @@ function Progress() {
       </section>
 
       {hub ? (
-        <section className="border-b border-foreground/15 py-6 sm:py-8">
+        <section className="border-b border-[var(--pu-border-subtle)] py-6 sm:py-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-xl font-semibold">Measurements</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <h2 className="text-xl font-bold">Measurements</h2>
+              <p className="mt-1 text-sm text-[var(--pu-text-secondary)]">
                 Weight and waist are always independent and optional.
               </p>
             </div>
@@ -477,7 +485,7 @@ function Progress() {
 
           {detailsOpen ? (
             <div className="mt-6">
-              <div className="grid divide-y divide-foreground/15 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+              <div className="grid divide-y divide-[var(--pu-border-subtle)] sm:grid-cols-2 sm:divide-x sm:divide-y-0">
                 <MeasurementForm
                   kind="weight"
                   unit={summary?.globalLatest.weight?.unit ?? "lb"}
@@ -493,11 +501,15 @@ function Progress() {
                   onSave={(value, unit) => saveNew("waist", value, unit)}
                 />
               </div>
-              {message ? <p className="mt-3 text-sm font-medium">{message}</p> : null}
+              {message ? (
+                <AppNotice tone={messageTone} className="mt-4" role="status">
+                  {message}
+                </AppNotice>
+              ) : null}
               <div className="mt-6">
-                <h3 className="font-semibold">Full History</h3>
+                <h3 className="font-bold">Full History</h3>
                 {hub.measurements.length ? (
-                  <ol className="mt-3 divide-y divide-border">
+                  <ol className="mt-3 divide-y divide-[var(--pu-border-subtle)]">
                     {hub.measurements.map((measurement) => (
                       <MeasurementHistoryRow
                         key={measurement.id}
@@ -509,9 +521,12 @@ function Progress() {
                     ))}
                   </ol>
                 ) : (
-                  <p className="mt-3 text-sm text-muted-foreground">
-                    No measurements recorded yet.
-                  </p>
+                  <AppStatePanel
+                    state="empty"
+                    title="No measurements recorded yet"
+                    description="Weight and waist are optional. Add either one when it becomes useful."
+                    className="mt-3"
+                  />
                 )}
               </div>
             </div>
