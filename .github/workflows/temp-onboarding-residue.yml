@@ -1,0 +1,45 @@
+name: Temporary onboarding residue migration
+
+on:
+  push:
+    branches:
+      - agent/precision-onboarding-residue-final
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    env:
+      VITE_SUPABASE_URL: https://ci-placeholder.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.8
+      - run: bun install --frozen-lockfile
+      - name: Apply onboarding residue migration
+        run: python .github/temp-onboarding-residue.py
+      - name: Format onboarding checkpoint
+        run: >-
+          bunx prettier --write CURRENT_STATE.md
+          src/routes/welcome.tsx
+          src/routes/assessment.complete.tsx
+      - name: Remove temporary helpers before manifest generation
+        run: git rm .github/temp-onboarding-residue.py .github/workflows/temp-onboarding-residue.yml
+      - name: Regenerate final release manifest
+        run: bun run release:manifest
+      - name: Run complete quality gate
+        run: bun run verify
+      - name: Commit verified onboarding checkpoint
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Clean final onboarding participant surfaces"
+          git push origin HEAD:agent/precision-onboarding-residue-final
