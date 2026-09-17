@@ -37,7 +37,9 @@ export function SetupProgress({
                   : "border-2 border-foreground/20 text-foreground/35"
             }`}
           >
-            <span className={`gxj-display-title leading-none tracking-wide ${spacious ? "text-2xl sm:text-3xl" : "text-xl"}`}>
+            <span
+              className={`gxj-display-title leading-none tracking-wide ${spacious ? "text-2xl sm:text-3xl" : "text-xl"}`}
+            >
               {String(step).padStart(2, "0")}
             </span>
             {labels?.[step - 1] ? (
