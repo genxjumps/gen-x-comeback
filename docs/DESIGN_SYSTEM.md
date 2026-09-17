@@ -36,6 +36,8 @@ Shared visual decisions live in reusable code before they are repeated on routes
 
 A route may compose these primitives, but it should not paste a local copy of their class list.
 When a shared visual decision changes, update the primitive so every real use can inherit it.
+Existing routes are migrated to these primitives in bounded design checkpoints rather than by
+changing unrelated screens opportunistically.
 
 ## Shared page structure
 
