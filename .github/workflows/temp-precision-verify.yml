@@ -22,6 +22,8 @@ jobs:
         with:
           bun-version: 1.3.8
       - run: bun install --frozen-lockfile
+      - name: Refresh manifest before Vite starts
+        run: bun run release:manifest
       - name: Generate route metadata
         run: |
           bun run dev -- --host 127.0.0.1 > /tmp/gxj-vite.log 2>&1 &
@@ -35,7 +37,7 @@ jobs:
           done
           cat /tmp/gxj-vite.log
           exit 1
-      - name: Regenerate release manifest
+      - name: Refresh manifest after generated route metadata
         run: bun run release:manifest
       - name: Run complete quality gate
         run: bun run verify
