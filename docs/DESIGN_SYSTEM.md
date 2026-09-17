@@ -8,7 +8,7 @@ The approved visual direction is **Precision Utility**.
 
 The existing customer-facing routes remain the functional product reference, but their current
 visual implementation is **not** the design authority. They will be migrated only after the new
-component system is approved.
+production component layer is verified.
 
 Historical route-specific design decisions and prior visual experiments remain preserved in
 [`history/APP_MAP_AND_DESIGN_SYSTEM.md`](history/APP_MAP_AND_DESIGN_SYSTEM.md) for reference only.
@@ -21,8 +21,8 @@ competent, and physically active without drifting into senior-fitness styling, d
 or generic sports-tech gloss.
 
 The interface gets personality from strong type hierarchy, disciplined spacing, useful contrast,
-Gen X Jumps copy, photography, and selected high-impact brand moments. Ordinary app screens should
-not compete with their content.
+Gen X Jumps copy, the photo-free branded workout-media system, and selected high-impact brand
+moments. Ordinary app screens should not compete with their content.
 
 ## Color foundation
 
@@ -45,6 +45,11 @@ Use semantic color roles instead of arbitrary route-level colors or opacity valu
 | Success | `#2F6F4E` | Actual successful outcome only |
 | Warning | `#8A6500` | Actual warning state only |
 | Danger | `#A43B31` | Actual error/destructive state only |
+| Workout media dark top | `#071019` | Photo-free workout media base |
+| Workout media dark bottom | `#10161C` | Photo-free workout media base |
+| Workout media secondary text | `#C7CCD1` | Supporting metadata on dark media |
+| Workout media accent text | `#FF8F57` | Program/week/workout label on dark media |
+| Workout progress accent | `#71D2FF` | In-progress ring only |
 
 Orange is functional, not decorative. Aqua is a bounded program accent and never competes with the
 primary CTA. Green, amber, and red are reserved for their semantic meanings.
@@ -95,7 +100,7 @@ Structure comes primarily from alignment, spacing, contrast, and rules.
 - Control radius: 4 px.
 - Contained panel radius: 8 px.
 - Subtle elevation: `0 1px 2px rgb(23 23 23 / 8%)`.
-- Overlay elevation: `0 10px 28px rgb(23 23 23 / 10%)`, reserved for overlays.
+- Overlay elevation: `0 10px 28px rgb(23 23 23 / 10%)`, reserved for overlays and branded workout media.
 - Default icon size: 20 px.
 - Navigation icon size: 24 px.
 - Default icon stroke: approximately 1.8 px.
@@ -123,8 +128,8 @@ Do not create route-specific button systems.
 Questions and explanatory copy sit directly on the page when they do not require containment.
 Interactive controls receive boundaries because they are interactive.
 
-- Inputs use the standard 48 px control height.
-- Selected choices use an orange boundary, light orange tint, and restrained shadow.
+- Inputs and selects use the standard 48 px control height.
+- Selected radio and checkbox choices use an orange boundary, light orange tint, and restrained shadow.
 - Form help text uses the approved supporting hierarchy.
 - Do not wrap every question in a card.
 
@@ -138,13 +143,16 @@ Progress is compact, obvious, and subordinate to the task.
 - Progress numbers stay at the information hierarchy appropriate to their content.
 - Do not enlarge a percentage merely because it summarizes progress.
 
-## Navigation
+## Navigation and rows
 
 Permanent member navigation remains Home, Programs, Progress, and Nutrition. Account and
 Notifications remain persistent utilities.
 
 Navigation uses a restrained utility treatment with clear active state, adequate touch targets, and
 visible focus treatment. Different routes do not invent their own navigation styling.
+
+Summary and navigation lists use shared direct-on-page rows with strong outer rules and restrained
+row dividers. Do not convert ordinary lists into collections of cards.
 
 ## Containment
 
@@ -155,18 +163,53 @@ Use contained panels when containment improves meaning or interaction, including
 - forms
 - warnings and errors
 - confirmation states
-- video/media
+- workout media
 - interactive tools
 - grouped settings that genuinely belong together
 
 Do not add a box solely to make a section look designed.
 
-## Status states
+## Photo-free branded workout media
+
+Workout media is a specialized branded content surface. It is not a generic card and does not
+require photography.
+
+The production component is `PuWorkoutMedia` while the Precision Utility layer is isolated under
+`src/design-system/precision/`.
+
+### Visual rules
+
+- Use a charcoal/navy dark base with restrained texture.
+- Use consistent orange geometric rails to provide energy and Gen X Jumps identity.
+- Workout title is the dominant visual element.
+- Program, week, workout number, duration, level, and equipment occupy fixed metadata zones.
+- Ready, completed, locked, in-progress, and scheduled states are variations of the same component.
+- In-progress may use the bounded light-blue progress ring because it communicates workout state,
+  not a competing app-wide action color.
+- The same graphic system scales to hero, card, row, mobile, library, and workout-detail contexts.
+- 7-Day and Accelerator may vary through program labels or small program accents, but they do not
+  become separate visual systems.
+
+### Production rules
+
+- No photography is required.
+- Do not create one-off artwork for individual workouts by default.
+- Artwork and graphic structure are generated from shared component rules and workout metadata.
+- Dynamic state and data remain live application UI when the value can change.
+- Locked, completed, scheduled, and in-progress meaning must remain readable in text, not color or
+  icon alone.
+- Specialized circular play treatment is permitted inside workout media; ordinary app actions still
+  use the shared Precision Utility button system.
+
+## Status and system states
 
 Color supports meaning. Text carries meaning.
 
-Success, warning, error, locked, loading, empty, and completed states must communicate their meaning
-in clear language and not rely on color alone.
+Success, warning, error, locked, loading, empty, scheduled, in-progress, and completed states must
+communicate their meaning in clear language and not rely on color alone.
+
+Empty, locked, error, and loading presentations come from shared state primitives rather than
+route-specific boxes.
 
 ## Motion and accessibility
 
@@ -186,18 +229,38 @@ in clear language and not rely on color alone.
 - Pill-shaped treatment on ordinary controls.
 - Oversized progress numbers without information value.
 - Decorative gradients, glass effects, or soft senior-wellness visual language.
-- Different button, heading, form, or spacing systems for different routes.
+- Different button, heading, form, spacing, list, status, or workout-media systems for different routes.
+- Dependence on premium photography to make workout content look finished.
+
+## Approved production primitives
+
+The isolated Precision Utility layer contains the approved production primitives before route
+migration begins:
+
+- `PuShell`, `PuContainer`, `PuReadingWidth`
+- `PuEyebrow`, `PuHeading`, `PuText`
+- `PuButton`
+- `PuPanel`, `PuSection`
+- `PuField`, `PuSelect`, `PuRadioChoice`, `PuCheckboxChoice`
+- `PuProgress`
+- `PuNotice`
+- `PuNav`
+- `PuList`, `PuListRow`
+- `PuStatePanel`, `PuLoadingLines`
+- `PuWorkoutMedia`
+
+Route code must use the semantic primitive when one exists rather than reproduce its CSS locally.
 
 ## Implementation boundary
 
-The new implementation lives under `src/design-system/precision/` until the component system is
-approved.
+The new implementation lives under `src/design-system/precision/` until the production component
+layer is verified and approved for migration.
 
-The current app components and routes must not be restyled opportunistically during this phase.
-The hidden `/design-system` route is a noindex component showcase only. It exists to review the real
-new components before any customer-facing route migration begins.
+The current app components and customer-facing routes must not be restyled opportunistically during
+this phase. The hidden `/design-system` route is a noindex component showcase only. It exists to
+review the real new components before any customer-facing route migration begins.
 
-After the production component showcase is approved, migration will happen by design-system
-primitive across the app, not by redesigning pages one at a time.
+After the production component layer is approved, migration will happen by design-system primitive
+across the app, not by redesigning pages one at a time.
 
 Customer-facing copy continues to use **workout**, not **assignment**.
