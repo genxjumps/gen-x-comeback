@@ -1,10 +1,9 @@
-import type { ReactNode } from "react";
+import type { HTMLAttributes, ReactNode } from "react";
 
 import {
   PuList,
   PuListRow,
   PuLoadingLines,
-  PuNotice,
   PuStatePanel,
 } from "@/design-system/precision/components";
 
@@ -49,19 +48,31 @@ export function AppLoadingState({
   );
 }
 
+const noticeBorder = {
+  info: "var(--pu-accent-program)",
+  success: "var(--pu-status-success)",
+  warning: "var(--pu-status-warning)",
+  danger: "var(--pu-status-danger)",
+} as const;
+
 export function AppNotice({
   tone = "info",
   children,
-  className,
-}: {
-  tone?: "info" | "success" | "warning" | "danger";
+  className = "",
+  style,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & {
+  tone?: keyof typeof noticeBorder;
   children: ReactNode;
-  className?: string;
 }) {
   return (
-    <PuNotice tone={tone} className={className}>
+    <div
+      className={`rounded-[var(--pu-radius-control)] border border-[var(--pu-border-subtle)] border-l-4 bg-[var(--pu-surface-contained)] px-4 py-3.5 text-sm leading-relaxed text-[var(--pu-text-secondary)] ${className}`}
+      style={{ borderLeftColor: noticeBorder[tone], ...style }}
+      {...props}
+    >
       {children}
-    </PuNotice>
+    </div>
   );
 }
 
