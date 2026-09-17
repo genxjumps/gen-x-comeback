@@ -1,6 +1,3 @@
-npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
-npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
-
 # Branch Retirement Completion - September 17, 2026
 
 **Role:** Evidence  

@@ -707,7 +707,7 @@
     },
     {
       "path": "src/lib/email/__tests__/immediate-recovery-dispatch-contract.test.ts",
-      "sha256": "df8e52f9c2becbaa92f953b646494b35df03685a9c4709635d6ed536a1026738"
+      "sha256": "d2952dcd6adb13ad9445c8357e19d5179d0bd72c91b5364844a2f94a865ffc4d"
     },
     {
       "path": "src/lib/email/__tests__/lifecycle-deferral-horizon.test.ts",
@@ -947,7 +947,7 @@
     },
     {
       "path": "src/lib/email/runtime.server.ts",
-      "sha256": "a34abb3d66cebb8b0ae373b660ce2fd0e1065cabccd0c106c0e041faaa0b6eb0"
+      "sha256": "13f8558f097afec9db57013c21a58d349b664ccf18cab7abc7b3f483f780901d"
     },
     {
       "path": "src/lib/email/signup-welcome.server.ts",

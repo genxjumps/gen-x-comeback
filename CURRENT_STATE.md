@@ -1,6 +1,3 @@
-npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
-npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
-
 # Gen X Jumps App - Current State
 
 **Role:** Current
@@ -55,6 +52,8 @@ The default branch must not be treated as current source until it is reconciled.
 - Account-level Nutrition access for qualifying paid ownership, independent of active program
   progress.
 - A review catalog for controlled visual and copy review.
+- Production lifecycle and Recovery email links are pinned to `https://app.genxjumps.com`; staging
+  email runtimes remain separately configurable.
 
 ## Locked product decisions to preserve
 
@@ -95,15 +94,15 @@ The default branch must not be treated as current source until it is reconciled.
 - Complete staging and full paid-customer journey verification before live payments or public paid
   enrollment.
 - Reconcile the review catalog with real live components so review scenarios cannot silently drift.
-- Resolve the production email-origin decision preserved in PR #35 against current source.
+- Publish the current reviewed release to replace the older live build at `app.genxjumps.com`.
 
 ## Active checkpoint
 
-The preservation-first repository reset is complete. No product-code checkpoint is active. The next
-recommended bounded decision is whether the production email-origin safeguard preserved in PR #35
-is still required and, if approved, how to rebuild it on current source. Reconciliation of `main`
-and the long-term default branch remains a separate later checkpoint because it can affect release
-and deployment workflow.
+The production email-origin safeguard preserved in PR #35 has been rebuilt on current source. The
+approved operational checkpoint is one controlled publication of the current reviewed release to
+`app.genxjumps.com`, without changing database state, public intake, payment mode, or email-delivery
+gates. Reconciliation of `main` and the long-term default branch remains a separate later
+checkpoint because it can affect release and deployment workflow.
 
 ## Updating this file
 
