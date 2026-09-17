@@ -35,6 +35,21 @@ jobs:
           src/components/accelerator-program.tsx
           src/components/accelerator-completion.tsx
           src/lib/__tests__/pwa-install-contract.test.ts
+      - name: Repair formatted PWA visual contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/lib/__tests__/pwa-install-contract.test.ts')
+          text = path.read_text()
+          old = '''    expect(component).toContain('compact\\n            ? "mt-5 w-full sm:w-auto"');'''
+          new = '''    expect(component).toContain(
+              'className={compact ? "mt-5 w-full sm:w-auto" : "mt-7 w-full sm:w-auto"}',
+            );'''
+          if old not in text:
+              raise SystemExit('Expected stale compact PWA assertion was not found')
+          path.write_text(text.replace(old, new, 1))
+          PY
+          bunx prettier --write src/lib/__tests__/pwa-install-contract.test.ts
       - name: Remove temporary helpers before manifest generation
         run: git rm .github/temp-participant-residue.py .github/workflows/temp-participant-residue.yml
       - name: Regenerate final release manifest
