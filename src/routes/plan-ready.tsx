@@ -8,6 +8,7 @@ import { readStoredToken } from "@/lib/access-token";
 import { getPlanHub, recordOnboardingEvent } from "@/lib/lead.functions";
 import type { PlanHubData } from "@/lib/lead-plan";
 import { installPlatform, isStandaloneDisplay, type InstallPlatform } from "@/lib/pwa-install";
+import { isVisualReviewMode } from "@/lib/visual-review";
 
 export const Route = createFileRoute("/plan-ready")({
   head: () => ({
@@ -29,9 +30,11 @@ function PlanReady() {
   const saveEvent = useServerFn(recordOnboardingEvent);
   const [status, setStatus] = useState<"loading" | "ready" | "denied">("loading");
   const [plan, setPlan] = useState<PlanHubData | null>(null);
+  const [visualReview, setVisualReview] = useState(false);
 
   const track = useCallback(
     (eventName: InstallEventName, platform: InstallPlatform) => {
+      if (isVisualReviewMode()) return;
       void saveEvent({
         data: { token: readStoredToken(), eventName, platform },
       }).catch(() => undefined);
@@ -41,6 +44,11 @@ function PlanReady() {
 
   useEffect(() => {
     let active = true;
+    if (isVisualReviewMode()) {
+      setVisualReview(true);
+      setStatus("ready");
+      return;
+    }
     if (isStandaloneDisplay()) {
       track("installed_display_detected", installPlatform());
       navigate({ to: "/your-plan", replace: true });
@@ -71,7 +79,7 @@ function PlanReady() {
       </div>
     );
   }
-  if (status === "denied" || !plan) return <AccessDenied />;
+  if (status === "denied" || (!plan && !visualReview)) return <AccessDenied />;
 
   return (
     <div className="gxj-page mx-auto min-h-full w-full max-w-5xl px-4 pb-10 sm:px-8 sm:pb-14">
@@ -80,12 +88,14 @@ function PlanReady() {
           Your Plan Is Ready
         </p>
         <h1 className="gxj-display-title mt-4 text-3xl uppercase leading-none tracking-wide sm:text-4xl">
-          {plan.firstName}, Keep Your Comeback One Tap Away
+          {visualReview ? "Todd" : plan!.firstName}, Keep Your Comeback One Tap Away
         </h1>
         <div className="mt-3">
           <InstallExperience
             track={track}
-            onContinue={() => navigate({ to: "/your-plan", replace: true })}
+            onContinue={() =>
+              navigate({ to: visualReview ? "/preview/w01" : "/your-plan", replace: true })
+            }
           />
         </div>
       </section>
