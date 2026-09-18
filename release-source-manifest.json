@@ -391,7 +391,7 @@
     },
     {
       "path": "src/lib/__tests__/prelaunch-intake-gate.test.ts",
-      "sha256": "c4aeb16b8b636f8abe2e29aa1913cd8f42395c719077b68a984d9953c78778c6"
+      "sha256": "14ecb552197549ec4c6408f8c9072b10c25e75ddecde2f8f3264d15b35ff9463"
     },
     {
       "path": "src/lib/__tests__/pwa-install-contract.test.ts",
@@ -1239,11 +1239,15 @@
     },
     {
       "path": "src/lib/use-new-plan-intake-access.ts",
-      "sha256": "d517611cc44e3d82a0d0a58afb938289e9524cc64318b2baa0486fc6abfc3533"
+      "sha256": "f96716349c0d231280fd0ab39ef9e8cac2b96feddf56a6e18e680dae98206ca3"
     },
     {
       "path": "src/lib/utils.ts",
       "sha256": "d1f1e0d62cb8d8d1e04c26e14de842d8a151f75812d81b046c65b5d1fe8e4b27"
+    },
+    {
+      "path": "src/lib/visual-review.ts",
+      "sha256": "566b3d95faca087ce3b126b684854f9eb719b3ff0ef11c02a66416d9983efd06"
     },
     {
       "path": "src/lib/w01-content.ts",
@@ -1327,7 +1331,7 @@
     },
     {
       "path": "src/routes/assessment.complete.tsx",
-      "sha256": "b1f3cba6476cad1ee6aed759dc007b1f9305bf74969bb7aad01b352f49444864"
+      "sha256": "95a74e68328c506fee05d9e7ee39825dccfc3f37816be9429b02d2461c7f77c8"
     },
     {
       "path": "src/routes/assessment.index.tsx",
@@ -1355,7 +1359,7 @@
     },
     {
       "path": "src/routes/index.tsx",
-      "sha256": "839a2533ade98e6710adf8eb0e2f74c2141fbe9fa7c8afcb38ff6767c8b1d755"
+      "sha256": "3f4d6060eb92c00f5ff4c2913048337c3c2224f3f9475dee20e184d11903d236"
     },
     {
       "path": "src/routes/intake.7-day.ts",
@@ -1395,7 +1399,7 @@
     },
     {
       "path": "src/routes/plan-ready.tsx",
-      "sha256": "8878b82a6a16999d0eb72620e17d995738b368d9daff3c459120ea4ec0102940"
+      "sha256": "6926ed3c8cdbdc753e5a0baf0bdfdae425bd193474aedaeff5f0fad51f88c121"
     },
     {
       "path": "src/routes/preview.accelerator.tsx",
@@ -1451,11 +1455,11 @@
     },
     {
       "path": "src/routes/start.7-day.tsx",
-      "sha256": "c1a95e03eb05a7ed6fc93b7260f6d3eface86f97a999e10274e9983a2eb7b831"
+      "sha256": "011b2c1308d18246612b0652bef6c00b94e60ca32bb9d18d591d434a49a14437"
     },
     {
       "path": "src/routes/welcome.tsx",
-      "sha256": "5b4bf1cd26fbd35fdc71ad51dd21ae006b211b27021fc9f32cd66266ecc0d7d8"
+      "sha256": "7993c1d910530d3a5a56ace35386b14094f8fe8108c8e24f1b6e974ed2a7b5d2"
     },
     {
       "path": "src/routes/your-plan.day.$day.tsx",
