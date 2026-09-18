@@ -1,8 +1,9 @@
-import { useEffect } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { IntakeClosed } from "@/components/intake-closed";
 import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
+import { beginVisualReview, isVisualReviewHost } from "@/lib/visual-review";
 
 export const Route = createFileRoute("/start/7-day")({
   head: () => ({
@@ -19,17 +20,27 @@ export const Route = createFileRoute("/start/7-day")({
 });
 
 function SevenDayStart() {
+  const navigate = useNavigate();
+  const [visualReviewHost, setVisualReviewHost] = useState(false);
+
   useEffect(() => {
+    const preview = isVisualReviewHost();
+    setVisualReviewHost(preview);
+    if (preview) {
+      beginVisualReview();
+      navigate({ to: "/welcome", replace: true });
+      return;
+    }
     if (NEW_PLAN_INTAKE_OPEN) {
       window.location.replace("https://genxjumps.com/start-here/");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="mx-auto w-full max-w-lg px-5 py-10 sm:py-16">
-      {NEW_PLAN_INTAKE_OPEN ? (
+      {visualReviewHost || NEW_PLAN_INTAKE_OPEN ? (
         <p className="text-sm text-muted-foreground" role="status">
-          Opening the signup form...
+          Opening the new-user flow...
         </p>
       ) : (
         <IntakeClosed />
