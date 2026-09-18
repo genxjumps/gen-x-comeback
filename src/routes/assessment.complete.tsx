@@ -20,6 +20,7 @@ import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
 import { clearLeadIntakeDraft, readLeadIntakeDraft } from "@/lib/lead-intake-draft";
 import type { LeadIntakeDraft } from "@/lib/lead-intake-draft";
 import { getLeadIntakeWelcome } from "@/lib/lead-intake.functions";
+import { isVisualReviewMode } from "@/lib/visual-review";
 
 export const Route = createFileRoute("/assessment/complete")({
   head: () => ({
@@ -81,6 +82,7 @@ function ResultsPage() {
   const [unlocked, setUnlocked] = useState(false);
   const [recognized, setRecognized] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+  const [visualReview, setVisualReview] = useState(false);
   const [handoffStatus, setHandoffStatus] = useState<"checking" | "available" | "missing">(
     "checking",
   );
@@ -94,6 +96,13 @@ function ResultsPage() {
       return;
     }
     setAnswers(a);
+    if (isVisualReviewMode()) {
+      setVisualReview(true);
+      setCheckingAccess(false);
+      setHandoffStatus("missing");
+      setUnlocked(true);
+      return;
+    }
     const draft = readLeadIntakeDraft();
     if (draft) {
       setIntakeDraft(draft);
@@ -315,7 +324,7 @@ function ResultsPage() {
             </div>
             <Button asChild size="sm" variant="default" className="mt-2 w-full sm:w-auto">
               <Link
-                {...(unlocked
+                {...(unlocked && !visualReview
                   ? { to: "/your-plan/day/$day" as const, params: { day: "1" } }
                   : { to: "/preview/w01" as const })}
               >
@@ -388,15 +397,22 @@ function ResultsPage() {
           ) : null}
         </section>
       ) : unlocked ? (
-        <AppNotice tone="success">
-          <strong className="block text-[var(--pu-text-primary)]">
-            Your Full 7-Day Workout Plan Is Unlocked
-          </strong>
-          <span className="mt-1 block">
-            Your complete workout and recovery schedule is now available. Start with Day 1 and
-            follow the plan in order.
-          </span>
-        </AppNotice>
+        <>
+          <AppNotice tone="success">
+            <strong className="block text-[var(--pu-text-primary)]">
+              Your Full 7-Day Workout Plan Is Unlocked
+            </strong>
+            <span className="mt-1 block">
+              Your complete workout and recovery schedule is now available. Start with Day 1 and
+              follow the plan in order.
+            </span>
+          </AppNotice>
+          {visualReview ? (
+            <Button asChild className="mt-4 w-full sm:w-auto">
+              <Link to="/plan-ready">Continue to Home Screen Setup</Link>
+            </Button>
+          ) : null}
+        </>
       ) : checkingAccess ||
         handoffStatus === "checking" ||
         handoffStatus === "available" ||

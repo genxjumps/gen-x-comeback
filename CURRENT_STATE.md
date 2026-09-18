@@ -103,12 +103,13 @@ second integration line.
 
 ## Active checkpoint
 
-The Precision Utility participant-facing production-route migration is complete. Review-catalog
-reconciliation is now the active internal design checkpoint. Core synthetic Home, onboarding,
-Progress, Nutrition, and Notifications scenarios are being rebuilt with the same shared state, list,
-progress, button, typography, and structural patterns used by production. Review remains fake-data
-only and cannot redefine participant-facing design. Customer routes and behavior are outside this
-checkpoint.
+The Precision Utility participant-facing production-route migration and core review-scenario
+reconciliation are complete. The active checkpoint is visual QA of the actual release app before any
+production publication. Lovable's `id-preview--*.lovable.app` host may enter a client-only visual
+onboarding mode so the new-user CTA, Welcome, assessment, results, and Home Screen setup can be
+reviewed without opening public intake or creating a real customer plan. `NEW_PLAN_INTAKE_OPEN`
+remains false, and the preview mode does not bypass server intake, plan-save, or onboarding-event
+controls.
 
 ## Updating this file
 

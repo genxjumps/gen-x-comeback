@@ -7,6 +7,7 @@ import { IntakeClosed } from "@/components/intake-closed";
 import { Separator } from "@/components/ui/separator";
 import { readStoredToken } from "@/lib/access-token";
 import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
+import { isVisualReviewHost } from "@/lib/visual-review";
 import { verifyAccessToken } from "@/lib/lead.functions";
 
 export const Route = createFileRoute("/")({
@@ -47,6 +48,11 @@ const steps = [
 function Index() {
   const verifyToken = useServerFn(verifyAccessToken);
   const [hasPlan, setHasPlan] = useState(false);
+  const [visualReviewHost, setVisualReviewHost] = useState(false);
+
+  useEffect(() => {
+    setVisualReviewHost(isVisualReviewHost());
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -68,7 +74,7 @@ function Index() {
   const ctaLabel = hasPlan ? "Continue My Plan" : "Create My 7-Day Plan";
   const ctaTo = hasPlan ? "/your-plan" : "/start/7-day";
 
-  if (!NEW_PLAN_INTAKE_OPEN && !hasPlan) {
+  if (!NEW_PLAN_INTAKE_OPEN && !hasPlan && !visualReviewHost) {
     return (
       <div className="mx-auto w-full max-w-2xl px-5 py-10 sm:py-16">
         <IntakeClosed />

@@ -17,6 +17,9 @@ const start = source("../../routes/assessment.start.tsx");
 const assessment = source("../../routes/assessment.index.tsx");
 const complete = source("../../routes/assessment.complete.tsx");
 const closed = source("../../components/intake-closed.tsx");
+const visualReview = source("../visual-review.ts");
+const welcome = source("../../routes/welcome.tsx");
+const planReady = source("../../routes/plan-ready.tsx");
 
 describe("pre-launch intake gate", () => {
   it("defaults new-plan intake to closed", () => {
@@ -40,14 +43,26 @@ describe("pre-launch intake gate", () => {
   });
 
   it("blocks every public entry surface without blocking existing-plan actions", () => {
-    expect(home).toContain("!NEW_PLAN_INTAKE_OPEN && !hasPlan");
-    expect(signup).toContain("NEW_PLAN_INTAKE_OPEN ? (");
+    expect(home).toContain("!NEW_PLAN_INTAKE_OPEN && !hasPlan && !visualReviewHost");
+    expect(signup).toContain("visualReviewHost || NEW_PLAN_INTAKE_OPEN ? (");
     expect(start).toContain('if (intakeAccess === "closed")');
     expect(assessment).toContain('if (intakeAccess === "closed")');
     expect(complete).toContain("!NEW_PLAN_INTAKE_OPEN");
     expect(leadFunctions).not.toContain(
       "export const regeneratePlanWithToken = NEW_PLAN_INTAKE_OPEN",
     );
+  });
+
+  it("allows visual onboarding only on the Lovable id-preview host", () => {
+    expect(visualReview).toContain('hostname.startsWith("id-preview--")');
+    expect(visualReview).toContain('hostname.endsWith(".lovable.app")');
+    expect(home).toContain("isVisualReviewHost");
+    expect(signup).toContain("beginVisualReview");
+    expect(welcome).toContain("isVisualReviewMode");
+    expect(complete).toContain("isVisualReviewMode");
+    expect(planReady).toContain("isVisualReviewMode");
+    expect(leadFunctions).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
+    expect(handoffRoute).toContain("if (!NEW_PLAN_INTAKE_OPEN)");
   });
 
   it("keeps recovery available to existing participants", () => {

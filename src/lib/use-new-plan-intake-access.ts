@@ -8,6 +8,7 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { getLeadIntakeWelcome } from "@/lib/lead-intake.functions";
 import { NEW_PLAN_INTAKE_OPEN } from "@/lib/intake";
+import { isVisualReviewMode } from "@/lib/visual-review";
 
 export type NewPlanIntakeAccess = "checking" | "allowed" | "closed";
 
@@ -18,6 +19,10 @@ export function useNewPlanIntakeAccess(): NewPlanIntakeAccess {
   const [access, setAccess] = useState<NewPlanIntakeAccess>("checking");
 
   useEffect(() => {
+    if (isVisualReviewMode()) {
+      setAccess("allowed");
+      return;
+    }
     let active = true;
     void loadHandoff({ data: { token: readStoredToken() } })
       .then(async (result) => {
