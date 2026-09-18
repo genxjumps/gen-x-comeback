@@ -11,6 +11,7 @@ import type { LeadIntakeWelcomeResult } from "@/lib/lead-intake.functions";
 import { bindSignupDraft, signupDraftDestination } from "@/lib/signup-draft";
 import { ACCESS_TOKEN_STORAGE_KEY } from "@/lib/lead-plan";
 import { readStoredToken, clearStoredToken } from "@/lib/access-token";
+import { isVisualReviewMode } from "@/lib/visual-review";
 
 export const Route = createFileRoute("/welcome")({
   head: () => ({
@@ -36,6 +37,14 @@ function LeadWelcome() {
 
   useEffect(() => {
     let active = true;
+    if (isVisualReviewMode()) {
+      bindSignupDraft("visual-review");
+      setDestination(signupDraftDestination());
+      setResult({ ok: true, state: "setup", firstName: "Todd", draftKey: "visual-review" });
+      return () => {
+        active = false;
+      };
+    }
     void loadWelcome({ data: { token: readStoredToken() } })
       .then((value) => {
         if (!active) return;
